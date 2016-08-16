@@ -1,0 +1,40 @@
+#pragma once
+
+#include "vitiGL.hpp"
+
+class Frame {
+public:
+	Frame();
+	~Frame();
+
+private:
+	void loop();
+	void init();
+	void updateInput();
+
+	void updateNodeList(vitiGL::SceneNode* from);
+	std::vector<vitiGL::SceneNode*> nodeList;
+
+	vitiGL::Window		window;
+	vitiGL::AppState	appState;
+
+	vitiGL::Shader		shader;
+	vitiGL::Shader		fshader;
+
+	vitiGL::SceneNode	scene;
+	vitiGL::dLight		light;
+	vitiGL::pLight		light2;
+
+	vitiGL::Camera		cam;
+
+	vitiGL::Frustum		frustum;
+
+	vitiGL::DirShadowmap shadowmap;
+
+	vitiGL::sQuad		quad;
+
+	vitiGL::Framebuffer framebuffer;
+
+	vitiGL::GUI			gui;
+};
+
