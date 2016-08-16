@@ -3,6 +3,7 @@
 #include "Geometry.hpp"
 #include "Scene.hpp"
 
+
 namespace vitiGL {
 
 class Frustum {

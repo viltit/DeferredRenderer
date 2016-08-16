@@ -1,14 +1,18 @@
 #include "sQuad.hpp"
+
+#include "vitiGlobals.hpp"
 #include <glm/glm.hpp>
 
 
 namespace vitiGL {
 
-sQuad::sQuad() 
+sQuad::sQuad(float w, float h) 
 	:	_vao{ 0 },
-		_vbo{ 0 }
+		_vbo{ 0 },
+		_w  { w },
+		_h  { h }
 {
-	initVertices();
+	initVertices(w, h);
 }
 
 sQuad::~sQuad() {
@@ -18,7 +22,7 @@ sQuad::~sQuad() {
 
 void sQuad::draw(const Shader & shader, GLuint texture, const std::string& textureUniformName) {
 	glDisable(GL_DEPTH_TEST);	//because we are drawing 2D
-	
+
 	shader.on();
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture);
@@ -30,6 +34,7 @@ void sQuad::draw(const Shader & shader, GLuint texture, const std::string& textu
 
 	shader.off();
 	glEnable(GL_DEPTH_TEST);
+	glActiveTexture(GL_TEXTURE0);
 }
 
 void sQuad::draw(const Shader & shader, const std::vector<GLuint>& textures, const std::vector<std::string> textureNames) {
@@ -52,15 +57,15 @@ void sQuad::draw(const Shader & shader, const std::vector<GLuint>& textures, con
 }
 
 
-void sQuad::initVertices() {
+void sQuad::initVertices(float w, float h) {
 
 	float quadVertices[] = {
-		-1.0f,  1.0f,  0.0f, 1.0f,
-		-1.0f, -1.0f,  0.0f, 0.0f,
-		1.0f, -1.0f,  1.0f, 0.0f,
-		-1.0f,  1.0f,  0.0f, 1.0f,
-		1.0f, -1.0f,  1.0f, 0.0f,
-		1.0f,  1.0f,  1.0f, 1.0f
+		-1.0f * w,  1.0f * h,  0.0f, 1.0f,
+		-1.0f * w, -1.0f * h,  0.0f, 0.0f,
+		1.0f * w, -1.0f * h,  1.0f, 0.0f,
+		-1.0f * w,  1.0f * h,  0.0f, 1.0f,
+		1.0f * w, -1.0f * h,  1.0f, 0.0f,
+		1.0f * w,  1.0f * h,  1.0f, 1.0f
 	};
 
 	//create and bind the buffers:

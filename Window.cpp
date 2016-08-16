@@ -1,5 +1,7 @@
 #include "Window.hpp"
 #include "Error.hpp"
+#include "vitiGlobals.hpp"
+
 #include "vitiGL.hpp"
 #include <iostream>
 
@@ -35,6 +37,10 @@ Window::Window(const std::string & name, unsigned int width, unsigned int height
 	//make sure we have a valid with and height:
 	if (w <= 0) w = 600;
 	if (h <= 0) h = 600;
+
+	//give window width and height to globals namespace:
+	globals::window_h = h;
+	globals::window_w = w;
 
 	//create the Window:
 	window = SDL_CreateWindow(name.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, w, h, flags);

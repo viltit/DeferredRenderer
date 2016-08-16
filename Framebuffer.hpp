@@ -30,7 +30,10 @@ public:
 	void	draw();
 
 	void	setKernel(Kernel kernel);
+
 	GLuint	texture() const	{ return _tbo; }
+
+	void	setTextureSize(int w, int h);
 
 protected:
 	virtual void init();

@@ -24,7 +24,7 @@ public:
 
 	/* make sure depth test and face culling is enabled! -> do it in on() function? */
 	void on();
-	void draw(const CamInfo& camera, const SceneNode* scene);
+	void draw(const CamInfo& camera, const Scene* scene);
 	void off();
 
 	void setUniforms(const Shader& shader); //sets all the uniforms relevant to lightning
@@ -47,8 +47,9 @@ protected:
 
 	GLuint		_fbo[4];	// for the three cascades
 	GLuint		_tbo[4];
+	GLuint		_dtbo;
 
-	Framebuffer _framebuffer;
+	Framebuffer _framebuffer; //for a black'n'white image of the scene with shadows
 
 	float		_cascadeEnd[5];
 	float		_cascadeD[4];

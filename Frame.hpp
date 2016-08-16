@@ -12,16 +12,13 @@ private:
 	void init();
 	void updateInput();
 
-	void updateNodeList(vitiGL::SceneNode* from);
-	std::vector<vitiGL::SceneNode*> nodeList;
-
 	vitiGL::Window		window;
 	vitiGL::AppState	appState;
 
 	vitiGL::Shader		shader;
 	vitiGL::Shader		fshader;
 
-	vitiGL::SceneNode	scene;
+	vitiGL::Scene		scene;
 	vitiGL::dLight		light;
 	vitiGL::pLight		light2;
 

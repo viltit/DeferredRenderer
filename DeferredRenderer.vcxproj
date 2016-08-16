@@ -129,6 +129,7 @@
     <ClInclude Include="ShapeLoader.hpp" />
     <ClInclude Include="sQuad.hpp" />
     <ClInclude Include="Timer.hpp" />
+    <ClInclude Include="vitiGlobals.hpp" />
     <ClInclude Include="vitiTypes.hpp" />
     <ClInclude Include="Error.hpp" />
     <ClInclude Include="Frame.hpp" />
@@ -155,6 +156,7 @@
     <ClCompile Include="sQuad.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="vitiGL.cpp" />
+    <ClCompile Include="vitiGlobals.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>

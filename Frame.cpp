@@ -35,11 +35,9 @@ void Frame::init() {
 	light2.setProperty(lightProps::pos, glm::vec3{ 2.0f, 2.0f, 1.0f }, shader);
 	for (int i = -5; i < 5; i++)
 		for (int j = -5; j < 5; j++) {
-			SceneNode* node = new SceneNode{ new Cuboid{ "xml/cube.xml" }, glm::vec3{ i*3.0, 2.0f, j*3.0 }, sqrt(2.0f) };
-			scene.addChild(node);
+			scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ i*3.0, 2.0f, j*3.0 }, sqrt(2.0f));
 			}
-	SceneNode* node = new SceneNode{ new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ -3.0f, -1.0f, -3.0f }, sqrt(1800.0f) };
-	scene.addChild(node);
+	scene.addChild( new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ -3.0f, -1.0f, -3.0f }, sqrt(1800.0f), "Floor");
 
 	gui.setScheme("AlfiskoSkin.scheme");
 	gui.setFont("DejaVuSans-10");
@@ -88,10 +86,7 @@ void Frame::loop() {
 		frustum.update(VP);
 		scene.update(time.get_time());
 
-		nodeList.clear();
-		updateNodeList(&scene);
-
-		for (auto& N : nodeList) N->draw(shader);
+		scene.drawCulled(shader, frustum);
 
 		shader.off();
 		//shadowmap.debug();
@@ -141,7 +136,7 @@ void Frame::updateInput() {
 				cam.move(Move::right);
 				break;
 			case SDLK_F1:
-				cam.setTarget(scene.pos());
+				//cam.setTarget(scene.pos());
 				break;
 			case SDLK_F2:
 				framebuffer.setKernel(Kernel::blur);
@@ -176,11 +171,4 @@ void Frame::updateInput() {
 			break;
 		}
 	}
-}
-
-void Frame::updateNodeList(SceneNode * from) {
-	if (frustum.isInside(*from)) nodeList.push_back(from);
-
-	/* visit all childs by recursion: */
-	for (auto i = from->childrenBegin(); i < from->childrenEnd(); i++) updateNodeList(*i);
 }

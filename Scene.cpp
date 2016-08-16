@@ -1,4 +1,6 @@
 #include "Scene.hpp"
+#include "Error.hpp"
+#include "Frustum.hpp"
 
 #include <iostream>
 
@@ -60,6 +62,67 @@ void SceneNode::addChild(SceneNode * s) {
 	s->_parent = this;
 }
 
+/* WIP: Wrapper class to identify Scene Nodes by name ----------------------------------------- */
 
+Scene::Scene() 
+	: _counter{ 0 }
+{
+	_root = new SceneNode{};
+	std::string name = "root";
+	_scene.insert(std::make_pair(name, _root));
+}
+
+Scene::~Scene() {}
+
+void Scene::addChild(Shape* s, glm::vec3 pos, float radius, const std::string& name /*= ""*/, const std::string & parentName /* = "root" */) {
+	/* if no name is given, create a unique one: */
+	_counter++;
+	std::string nodeName = name;
+	if (name == "") nodeName = std::to_string(_counter);
+
+	/* create the scene node and search for parent: */
+	SceneNode* child = new SceneNode(s, pos, radius);
+	SceneNode* parent = findByName(parentName);
+
+	if (parent == nullptr) throw initError(("<Scene::addChild> Could not find a parent with the name " + parentName).c_str());
+
+	/* add the child to its parent and also add it into our map:*/
+	parent->addChild(child);
+	_scene.insert(std::make_pair(nodeName, child));
+}
+
+SceneNode * Scene::findByName(const std::string & name) {
+	auto node = _scene.find(name);
+	if (node == _scene.end()) return nullptr;
+	return node->second;
+}
+
+void Scene::update(const Uint32 & deltaTime) {
+	_root->update(deltaTime);
+}
+
+void Scene::draw(const Shader & shader) {
+	_root->drawAll(shader);
+}
+
+void Scene::drawCulled(const Shader & shader, Frustum& frustum) {
+	_cullingList.clear();
+	updateCullingList(frustum, _root);
+
+	for (auto& N : _cullingList) N->draw(shader); 
+}
+
+void Scene::drawAllNaked(const Shader & shader) const {
+	_root->drawAllNaked(shader);
+}
+
+
+void Scene::updateCullingList(Frustum & frustum, SceneNode* from) {
+	
+	if (frustum.isInside(*from)) _cullingList.push_back(from);
+
+	/* visit all childs by recursion: */
+	for (auto i = from->childrenBegin(); i < from->childrenEnd(); i++) updateCullingList(frustum, *i);
+}
 
 }

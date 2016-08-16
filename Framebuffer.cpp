@@ -158,6 +158,13 @@ void Framebuffer::setKernel(Kernel kernel) {
 	_shader.off();
 }
 
+/* maybe a bad idea? */
+void Framebuffer::setTextureSize(int w, int h) {
+	glBindTexture(GL_TEXTURE_2D, _tbo);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, w, h, 0, GL_RGB, GL_FLOAT, nullptr);
+	glBindTexture(GL_TEXTURE_2D, 0);
+}
+
 void Framebuffer::init() {
 	glGenFramebuffers(1, &_fbo);
 	glBindFramebuffer(GL_FRAMEBUFFER, _fbo);
@@ -165,7 +172,7 @@ void Framebuffer::init() {
 	//generate, bind and configure the framebuffers texture buffer:
 	glGenTextures(1, &_tbo);
 	glBindTexture(GL_TEXTURE_2D, _tbo);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, _width, _height, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, _width, _height, 0, GL_RGB, GL_FLOAT, nullptr);
 	
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);

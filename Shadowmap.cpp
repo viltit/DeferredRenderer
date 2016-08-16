@@ -1,6 +1,7 @@
 #include "Shadowmap.hpp"
 
 #include "vitiGL.hpp"
+#include "vitiGlobals.hpp"
 #include "Cache.hpp"
 
 #include <glm/gtc/type_ptr.hpp>
@@ -16,7 +17,8 @@ DirShadowmap::DirShadowmap(const Camera& cam, const dLight * light, int width, i
 		_fshader{ "Shaders/shadowmapFinal.vert.glsl", "Shaders/shadowmapFinal.frag.glsl"},
 		_dshader{ "Shaders/shadowmap_d.vert.glsl", "Shaders/shadowmap_d.frag.glsl" },
 		_light	{ light },
-		_framebuffer { width, height }
+		_framebuffer { width, height },
+		_quad	{ 0.5f, 0.5f }
 {
 #ifdef CONSOLE_LOG
 	std::cout << "Initializing directional Shadow Map...";
@@ -32,7 +34,6 @@ DirShadowmap::DirShadowmap(const Camera& cam, const dLight * light, int width, i
 	initFramebuffer();
 
 	_framebuffer.setKernel(Kernel::gaussianBlur);
-
 #ifdef CONSOLE_LOG
 	std::cout << "\tfinished.\n";
 #endif
@@ -54,15 +55,15 @@ void DirShadowmap::on() {
 	glClear(GL_DEPTH_BUFFER_BIT);
 }
 
-void DirShadowmap::draw(const CamInfo& camera, const SceneNode* scene) {
+void DirShadowmap::draw(const CamInfo& camera, const Scene* scene) {
 	if (!_light || !scene) return;
 
-	/* First Pass: Render scene from the viewpoint of the light: */
+	/* STEP ONE: Render scene from the viewpoint of the light: */
 	updateMatrices2(camera);
 
 	_shader.on();
 
-	/* draw one depth-image for every cascade: */
+	/* ...do this step for each cascade: */
 	for (int i = 0; i < 4; i++) {
 		glBindFramebuffer(GL_FRAMEBUFFER, _fbo[i]);
 		glClear(GL_DEPTH_BUFFER_BIT);
@@ -72,7 +73,7 @@ void DirShadowmap::draw(const CamInfo& camera, const SceneNode* scene) {
 
 	_shader.off();
 
-	/* Second Pass: Draw Scene with shadows in a black-and-white picture and blur this picture:  */
+	/* STEP TWO: Draw Scene with shadows in a black-and-white picture:  */
 
 	_framebuffer.on();
 	_fshader.on();
@@ -88,6 +89,9 @@ void DirShadowmap::draw(const CamInfo& camera, const SceneNode* scene) {
 	_fshader.off();
 	_framebuffer.off();
 
+	_dtbo = _framebuffer.texture();
+
+	/* STEP 3: Downsample the black'n'white picture, THEN blur it, and upsample again */
 }
 
 void DirShadowmap::off() {
@@ -116,6 +120,7 @@ void DirShadowmap::setUniforms(const Shader & shader) {
 	} 
 }
 
+/* to improve: only use one framebuffer, attach all textures to it, and render into different render targets */
 void DirShadowmap::initFramebuffer() {
 	/* ceate and configure the texture object we draw the shadow map into: */
 	for (int i = 0; i < 4; i++) {
@@ -310,7 +315,7 @@ glm::vec3 DirShadowmap::TransformTransposed(const glm::vec3 &point, const glm::m
 
 
 void DirShadowmap::debug() {
-	_framebuffer.draw();
+	_quad.draw(_dshader, _dtbo);
 }
 
 }

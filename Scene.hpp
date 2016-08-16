@@ -6,14 +6,18 @@
 
 #include <SDL2\SDL.h>
 #include <glm/gtc/matrix_transform.hpp>
+#include <map>
+
 #include "Shape.hpp"
 
 namespace vitiGL {
 
+class Frustum;
+
 class SceneNode {
 public:
 	SceneNode(Shape* shape = nullptr, glm::vec3 pos = { 0.0f, 0.0f, 0.0f }, float radius = 1.0f);
-	~SceneNode();
+	virtual ~SceneNode();
 
 	virtual void	update(const Uint32& deltaTime);
 
@@ -41,8 +45,8 @@ public:
 	float		distance() const				{ return _distance; }
 
 	/* get an iterator for the nodes children: */
-	auto		childrenBegin()					{ return _children.begin(); }
-	auto		childrenEnd()					{ return _children.end(); }
+	auto		childrenBegin()	const			{ return _children.begin(); }
+	auto		childrenEnd() const				{ return _children.end(); }
 
 	/* static function to compare the distance to the camera between two nodes: */
 	static bool compareDistance(SceneNode* a, SceneNode* b) {
@@ -62,4 +66,41 @@ private:
 	float		_distance;	/* distance to the camera */
 	float		_radius;	/* radius of the bounding sphere */
 };
+
+/* -------------------------------------------------------------------------
+	Wrapper class for handling the scene nodes:
+	(Until now, its only advantage is to identify sceneNodes by a name)
+---------------------------------------------------------------------------- */
+class Scene {
+public:
+	Scene();
+	~Scene();
+
+	void addChild(Shape* s, glm::vec3 pos, float radius, 
+				  const std::string& name = "", 
+				  const std::string& parentName = "root");
+
+	SceneNode* findByName(const std::string& name);
+	
+	void update(const Uint32& deltaTime);
+
+	/* draw everything in the scene: */
+	void draw(const Shader& shader);
+	/* draw the scene with view-frustum culling: */
+	void drawCulled(const Shader& shader, Frustum& frustum);
+
+	/* draw everything, but without textures (->for the shadowmap) */
+	void drawAllNaked(const Shader& shader) const;
+
+private:
+	void updateCullingList(Frustum& frustum, SceneNode* from);
+
+	int _counter;
+	std::vector<SceneNode*> _cullingList;
+
+	SceneNode* _root; //we store root so we dont need to search it
+
+	std::map<std::string, SceneNode*> _scene;
+};
+
 }
