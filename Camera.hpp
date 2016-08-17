@@ -7,6 +7,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "vitiTypes.hpp"
+#include "Shader.hpp"
 
 namespace vitiGL {
 
@@ -43,8 +44,11 @@ public:
 	void		rotate(int mouseX, int mouseY);
 	void		zoom(int z);
 
+	/* sets the position as "viewPos" and the View-Perspective-Matrix as "VP". The shader needs to be active! */
+	void		setUniforms(const Shader& shader) const;
+
 	/* getters ans setters, all inline: */
-	CamInfo		getMatrizes()  { 
+	CamInfo		getMatrizes() { 
 		CamInfo temp = CamInfo{ _P, _V, _pos, _dir, _up, _right, _fov, _near, _far, _aspect, _didUpdate };
 		_didUpdate = false; 
 		return temp;

@@ -11,6 +11,7 @@
 #include <map>
 
 #include "Shape.hpp"
+#include "Error.hpp"
 
 namespace vitiGL {
 
@@ -33,7 +34,8 @@ public:
 
 	void addChild(SceneNode* s);
 
-	/* getters and setters, all inline: */
+	/*	getters and setters, all inline: 
+		rotation, scaling, positioning will always affect the children too!		*/
 	void		move(const glm::vec3& pos)		{ _W = glm::translate(_W, pos); _M = glm::translate(_M, pos); }
 	void		setPos(const glm::vec3& pos)	{ _M[3][0] = pos.x; _M[3][1] = pos.y; _M[3][2] = pos.z; }
 	glm::vec3	pos() const						{ return glm::vec3{ _W[3][0], _W[3][1], _W[3][2] }; }
@@ -42,6 +44,8 @@ public:
 	void		rotate(float angle, const glm::vec3& axis) {
 		_M = glm::rotate(_M, glm::radians(angle), axis);
 	}
+
+	void		scale(const glm::vec3& scale)	{ _M = glm::scale(_M, scale); }
 
 	void		setShape(Shape* s)				{ _shape = s; }
 
@@ -98,6 +102,13 @@ public:
 
 	/* draw everything, but without textures (->for the shadowmap) */
 	void drawAllNaked(const Shader& shader) const;
+
+	/* allow indexing the scene: */
+	SceneNode* operator [] (const std::string& nodeName) {
+		SceneNode* node = findByName(nodeName);
+		if (node == nullptr) throw vitiError{ ("Invalid index in scene[" + nodeName + "]").c_str() };
+		return node;
+	}
 
 private:
 	void updateCullingList(Frustum& frustum, SceneNode* from);

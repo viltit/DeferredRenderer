@@ -13,6 +13,7 @@
 #include "Frustum.hpp"
 #include "Shadowmap.hpp"
 #include "GUI.hpp"
+#include "glRenderer.hpp"
 
 
 namespace vitiGL {

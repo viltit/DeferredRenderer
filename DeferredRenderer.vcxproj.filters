@@ -75,6 +75,9 @@
     <ClInclude Include="vitiGlobals.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="glRenderer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Shader.cpp">
@@ -136,6 +139,9 @@
     </ClCompile>
     <ClCompile Include="vitiGlobals.cpp">
       <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="glRenderer.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

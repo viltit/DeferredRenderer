@@ -18,5 +18,9 @@ struct initError {
 	~initError() {};
 };
 
+struct vitiError {
+	vitiError(const char* message);
+};
+
 }
 

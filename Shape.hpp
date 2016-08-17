@@ -8,12 +8,6 @@
 #include "vitiTypes.hpp"
 #include "ShapeLoader.hpp"
 
-/*	
-	Base class Shape. All drawable objects should inhert from Shape so
-	we can draw everything with a single command.
-	Be aware that the shader has to be delivered AND activated from within
-	the class that calls the draw command.
-*/
 
 namespace vitiGL {
 
@@ -25,7 +19,18 @@ struct slData {
 	bool invert;
 };
 
-class Shape {
+/* wrapper class for all objects that are included in the Scene */
+class SceneObject {
+
+};
+
+/*
+	Base class Shape. All drawable objects should inhert from Shape so
+	we can draw everything with a single command.
+	Be aware that the shader has to be delivered AND activated from within
+	the class that calls the draw command.
+*/
+class Shape : public SceneObject{
 public:
 	Shape();
 	virtual ~Shape();

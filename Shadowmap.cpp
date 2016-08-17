@@ -19,6 +19,7 @@ DirShadowmap::DirShadowmap(const Camera& cam, const dLight * light, int width, i
 		_dshader{ "Shaders/shadowmap_d.vert.glsl", "Shaders/shadowmap_d.frag.glsl" },
 		_light	{ light },
 		_framebuffer { width, height },
+		_sampleBuffer { width / 2, height / 2 },
 		_quad	{ 0.5f, 0.5f }
 {
 #ifdef CONSOLE_LOG
@@ -92,12 +93,19 @@ void DirShadowmap::draw(const CamInfo& camera, const Scene* scene) {
 
 	_dtbo = _framebuffer.texture();
 
-	/* STEP 3: Downsample the black'n'white picture, THEN blur it, and upsample again */
+	/* STEP 3: Downsample the black'n'white picture, THEN blur it, and upsample again 
+	_sampleBuffer.on();
+	_dshader.on();
+	_quad.draw(_dshader, _dtbo);
+	_sampleBuffer.off();*/
+	
+	//_sampleBuffer.draw();
 }
 
 void DirShadowmap::off() {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glCullFace(GL_BACK);
+	glViewport(0, 0, globals::window_w, globals::window_h);
 }
 
 void DirShadowmap::setUniforms(const Shader & shader) {
@@ -220,7 +228,8 @@ void DirShadowmap::updateMatrices2(const CamInfo& camera) {
 	/* only update if the camera perspective matrix was updated: */
 	//if (!camera.updated) return;
 
-	/* calculate three camera perspective matrices from the cascades: */
+	/*	calculate three camera perspective matrices from the cascades: 
+		?? is aspect the framebuffer aspect ?? */
 	for (int i = 0; i < 4; i++) {
 		_P[i] = glm::perspective(glm::radians(camera.fov), camera.aspect, _cascadeEnd[i], _cascadeEnd[i + 1]);
 	}
@@ -259,7 +268,7 @@ void DirShadowmap::updateMatrices2(const CamInfo& camera) {
 		// take the farthest corners of the frustum to calculate a bounding radius:
 		// (see the link at the top of this functions for why we work with a radius)
 		float radius = glm::length(frustumCorners[0] - frustumCorners[6]) / 2.0f;
-		radius *= 1.6f; //ugly hack
+		//radius *= 2.f; //ugly hack
 
 		// calculate texels per unit by dividing the shadow map size with twice the radius 
 		// (ie the space the shadowmap covers):
@@ -316,7 +325,7 @@ glm::vec3 DirShadowmap::TransformTransposed(const glm::vec3 &point, const glm::m
 
 
 void DirShadowmap::debug() {
-	_quad.draw(_dshader, _dtbo);
+	_sampleBuffer.draw();
 }
 
 }

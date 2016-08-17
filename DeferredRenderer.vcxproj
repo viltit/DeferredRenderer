@@ -120,6 +120,7 @@
     <ClInclude Include="Framebuffer.hpp" />
     <ClInclude Include="Frustum.hpp" />
     <ClInclude Include="Geometry.hpp" />
+    <ClInclude Include="glRenderer.hpp" />
     <ClInclude Include="GUI.hpp" />
     <ClInclude Include="Light.hpp" />
     <ClInclude Include="Scene.hpp" />
@@ -144,6 +145,7 @@
     <ClCompile Include="Framebuffer.cpp" />
     <ClCompile Include="Frustum.cpp" />
     <ClCompile Include="Geometry.cpp" />
+    <ClCompile Include="glRenderer.cpp" />
     <ClCompile Include="GUI.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="Scene.cpp" />

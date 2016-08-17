@@ -44,6 +44,7 @@ Framebuffer::~Framebuffer() {
 
 void Framebuffer::on() {
 	glBindFramebuffer(GL_FRAMEBUFFER, _fbo);
+	glViewport(0, 0, _width, _height);
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
@@ -51,6 +52,7 @@ void Framebuffer::on() {
 
 void Framebuffer::off() {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glViewport(0, 0, globals::window_w, globals::window_h);
 }
 
 void Framebuffer::draw() {

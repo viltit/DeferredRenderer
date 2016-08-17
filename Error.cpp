@@ -19,4 +19,8 @@ initError::initError(const char* messageA, const char* messageB) {
 initError::initError(const char * message) {
 	std::cout << message << std::endl;
 }
+
+vitiError::vitiError(const char * message) {
+	std::cout << message << std::endl;
+}
 }

@@ -8,16 +8,11 @@
 using namespace vitiGL;
 
 Frame::Frame() 
-	:	window		{ "OpenGL", 600, 600, wStyle::max },
-		appState	{ AppState::run },
+	:	appState	{ AppState::run },
+		window		{ "OpenGL", 600, 600, wStyle::max },
 		cam			{ float(window.width()) / float(window.height()) },
-		shader		{ "Shaders/vertex.glsl", "Shaders/fragment.glsl" },
-		fshader		{ "Shaders/final.vert.glsl", "Shaders/final.frag.glsl"},
-		light		{ "dlight"},
-		light2		{ "plight" },
-		framebuffer { window.width(), window.height(), "Shaders/framebuffer.vert.glsl", "Shaders/framebuffer.frag.glsl" },
-		shadowmap	{ cam, &light },
-		gui			{ "GUI" }
+		gui			{ "GUI" },
+		renderer	{ &window, &scene, &cam }
 {
 	init();
 	loop();
@@ -28,11 +23,6 @@ Frame::~Frame() {
 }
 
 void Frame::init() {
-
-	light.setUniforms(shader);
-	light.setProperty(lightProps::dir, glm::vec3{ 0.0f, -1.0f, 0.1f }, shader);
-	light2.setUniforms(shader);
-	light2.setProperty(lightProps::pos, glm::vec3{ 2.0f, 2.0f, 1.0f }, shader);
 
 	for (int i = -5; i < 4; i++) {
 		std::string parentName = "Cube" + std::to_string(i);
@@ -68,58 +58,24 @@ void Frame::loop() {
 			std::string text = "FPS: " + std::to_string(fps);
 			fpsCounter->setText(CEGUI::String(text));
 		}
-
-		window.clear();
-
-		cam.update();
-
-		CamInfo cInfo = cam.getMatrizes();
-		glm::mat4 VP = cInfo.P * cInfo.V;
-
-		shadowmap.on();
-		shadowmap.draw(cInfo, &scene);
-		shadowmap.off();
-		glViewport(0, 0, window.width(), window.height());
-
-		framebuffer.on();
-		shader.on();
-
-		glUniformMatrix4fv(shader.getUniform("VP"), 1, GL_FALSE, glm::value_ptr(VP));
-		glUniform3f(shader.getUniform("viewPos"), cInfo.pos.x, cInfo.pos.y, cInfo.pos.z);
-
-		frustum.update(VP);
-
+		
+		/* this should happen in a sceneNode-derived class on sceen::update: */
 		for (int i = -5; i < 4; i++) {
 			std::string parent = "Cube" + std::to_string(i);
 			std::string child = "Cuboid" + std::to_string(i);
 
-			auto temp = scene.findByName(parent);
+			auto temp = scene[parent];
 			temp->rotate(float(frameTime) / (10.0f * i + 5), glm::vec3{ 0.0f, 1.0f, 0.0f });
 
-			temp = scene.findByName(child);
+			temp = scene[child];
 			temp->rotate(float(frameTime) / (20.0f * i + 5), glm::vec3{ 0.0f, 1.0f, 0.0f });
 		}
+		window.clear();
 
+		cam.update();
 		scene.update(time.get_time());
-		scene.drawCulled(shader, frustum);
 
-		shader.off();
-		//shadowmap.debug();
-		framebuffer.off();
-
-		/**/
-		std::vector<GLuint> textures;
-		textures.push_back(framebuffer.texture());
-		textures.push_back(shadowmap.texture());
-		std::vector<std::string> names;
-		names.push_back("image");
-		names.push_back("shadowMap");
-
-		quad.draw(fshader, textures, names);
-
-		//shadowmap.debug();
-		//framebuffer.draw();
-
+		renderer.draw();
 		gui.draw();
 		updateInput();
 		window.swap();
@@ -151,7 +107,9 @@ void Frame::updateInput() {
 				cam.move(Move::right);
 				break;
 			case SDLK_F1:
+				scene["Cube0"]->scale(glm::vec3{ 1.0f, 1.5f, 1.0f });
 				break;
+				/*
 			case SDLK_F2:
 				framebuffer.setKernel(Kernel::blur);
 				break; 
@@ -172,7 +130,7 @@ void Frame::updateInput() {
 				break;
 			case SDLK_F9:
 				framebuffer.setKernel(Kernel::none);
-				break;
+				break;*/
 			}
 			break;
 		case SDL_MOUSEMOTION:

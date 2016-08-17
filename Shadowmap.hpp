@@ -49,7 +49,8 @@ protected:
 	GLuint		_tbo[4];
 	GLuint		_dtbo;
 
-	Framebuffer _framebuffer; //for a black'n'white image of the scene with shadows
+	Framebuffer _framebuffer;  //for a black'n'white image of the scene with shadows
+	Framebuffer _sampleBuffer; //for downsampling the above image
 
 	float		_cascadeEnd[5];
 	float		_cascadeD[4];

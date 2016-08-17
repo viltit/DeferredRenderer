@@ -3,6 +3,7 @@
 #include <glm/glm.hpp>
 #include <string>
 #include "Shader.hpp"
+#include "Shape.hpp"
 
 namespace vitiGL {
 
@@ -16,7 +17,7 @@ enum class lightProps {
 };
 
 /* Base class for all lights: --------------------------------------------------------------------- */
-class Light {
+class Light : public SceneObject {
 public:
 	Light() {}
 	virtual ~Light() {}

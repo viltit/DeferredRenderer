@@ -1,5 +1,4 @@
 #include "Scene.hpp"
-#include "Error.hpp"
 #include "Frustum.hpp"
 #include "vitiGlobals.hpp"
 
