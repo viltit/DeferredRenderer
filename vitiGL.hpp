@@ -14,8 +14,6 @@
 #include "Shadowmap.hpp"
 #include "GUI.hpp"
 
-#define CONSOLE_LOG		//give messages about programm progress to the console
-
 
 namespace vitiGL {
 

@@ -35,7 +35,7 @@ public:
 	//virtual void multidraw(const Shader& shader) = 0;
 
 	void setPos(const glm::vec3& position);
-	void setPosMatrix(const glm::mat4& P)		{ M = P; }
+	void setModelMatrix(const glm::mat4& P)		{ M = P; }
 	void rotate(float angle, const glm::vec3& axis);
 
 protected:

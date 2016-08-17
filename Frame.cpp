@@ -33,11 +33,14 @@ void Frame::init() {
 	light.setProperty(lightProps::dir, glm::vec3{ 0.0f, -1.0f, 0.1f }, shader);
 	light2.setUniforms(shader);
 	light2.setProperty(lightProps::pos, glm::vec3{ 2.0f, 2.0f, 1.0f }, shader);
-	for (int i = -5; i < 5; i++)
-		for (int j = -5; j < 5; j++) {
-			scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ i*3.0, 2.0f, j*3.0 }, sqrt(2.0f));
-			}
-	scene.addChild( new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ -3.0f, -1.0f, -3.0f }, sqrt(1800.0f), "Floor");
+
+	for (int i = -5; i < 4; i++) {
+		std::string parentName = "Cube" + std::to_string(i);
+		std::string childName = "Cuboid" + std::to_string(i);
+		scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ i * 3.0, 2.0f, i * 3.0}, sqrt(2.0f), parentName);
+		scene.addChild(new Cuboid{ "xml/cubeSmall.xml" }, glm::vec3{ 2.0, 0.0f, 2.0 }, sqrt(1.0f), childName, parentName);
+		scene.addChild(new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ -3.0f, -1.0f, -3.0f }, sqrt(1800.0f), "Floor");
+	}
 
 	gui.setScheme("AlfiskoSkin.scheme");
 	gui.setFont("DejaVuSans-10");
@@ -54,7 +57,8 @@ void Frame::loop() {
 		gui.createWidget(glm::vec4{ 0.01f, 0.03f, 0.1f, 0.05f }, glm::vec4{}, "AlfiskoSkin/Button", "TestButton"));
 
 	while (appState != AppState::quit) {
-		accTime += time.frame_time();
+		Uint32 frameTime = time.frame_time();
+		accTime += frameTime;
 		loops++;
 		if (loops >= 30) {
 			int fps = 1000 * loops/ accTime;
@@ -84,8 +88,19 @@ void Frame::loop() {
 		glUniform3f(shader.getUniform("viewPos"), cInfo.pos.x, cInfo.pos.y, cInfo.pos.z);
 
 		frustum.update(VP);
-		scene.update(time.get_time());
 
+		for (int i = -5; i < 4; i++) {
+			std::string parent = "Cube" + std::to_string(i);
+			std::string child = "Cuboid" + std::to_string(i);
+
+			auto temp = scene.findByName(parent);
+			temp->rotate(float(frameTime) / (10.0f * i + 5), glm::vec3{ 0.0f, 1.0f, 0.0f });
+
+			temp = scene.findByName(child);
+			temp->rotate(float(frameTime) / (20.0f * i + 5), glm::vec3{ 0.0f, 1.0f, 0.0f });
+		}
+
+		scene.update(time.get_time());
 		scene.drawCulled(shader, frustum);
 
 		shader.off();
@@ -136,7 +151,6 @@ void Frame::updateInput() {
 				cam.move(Move::right);
 				break;
 			case SDLK_F1:
-				//cam.setTarget(scene.pos());
 				break;
 			case SDLK_F2:
 				framebuffer.setKernel(Kernel::blur);

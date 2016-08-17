@@ -2,6 +2,8 @@
 
 #pragma once
 
+#define CONSOLE_LOG		//give messages about programm progress to the console
+
 namespace vitiGL {
 
 	namespace globals {

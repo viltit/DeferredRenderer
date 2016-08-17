@@ -1,6 +1,7 @@
 #include "Scene.hpp"
 #include "Error.hpp"
 #include "Frustum.hpp"
+#include "vitiGlobals.hpp"
 
 #include <iostream>
 
@@ -30,10 +31,7 @@ void SceneNode::update(const Uint32 & deltaTime) {
 	else _W = _M;
 	
 	/* give world position to the shape for drawing: */
-	if (_shape) {
-		_shape->setPosMatrix(_W);
-		_shape->rotate(glm::radians(float(deltaTime)), glm::vec3{ 0.0f, 1.0f, 0.0f });
-	}
+	if (_shape) _shape->setModelMatrix(_W);
 
 	/* update all children: */
 	for (auto& C : _children) C->update(deltaTime);
@@ -76,9 +74,12 @@ Scene::~Scene() {}
 
 void Scene::addChild(Shape* s, glm::vec3 pos, float radius, const std::string& name /*= ""*/, const std::string & parentName /* = "root" */) {
 	/* if no name is given, create a unique one: */
-	_counter++;
 	std::string nodeName = name;
-	if (name == "") nodeName = std::to_string(_counter);
+	if (name == "" ) nodeName = "Node" + std::to_string(++_counter);
+
+#ifdef CONSOLE_LOG
+	std::cout << "<Scene::addChild>Added a Scene Node with the name " << nodeName << " and the parent " << parentName << std::endl;
+#endif
 
 	/* create the scene node and search for parent: */
 	SceneNode* child = new SceneNode(s, pos, radius);
@@ -93,7 +94,7 @@ void Scene::addChild(Shape* s, glm::vec3 pos, float radius, const std::string& n
 
 SceneNode * Scene::findByName(const std::string & name) {
 	auto node = _scene.find(name);
-	if (node == _scene.end()) return nullptr;
+	if (node == _scene.end()) return nullptr; //possibly dangerous!
 	return node->second;
 }
 

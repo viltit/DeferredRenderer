@@ -1,6 +1,6 @@
 #include "Framebuffer.hpp"
 #include "Error.hpp"
-#include "vitiGL.hpp"
+#include "vitiGlobals.hpp"
 
 #include <iostream>
 #include <glm/gtc/type_ptr.hpp>

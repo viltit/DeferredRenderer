@@ -1,13 +1,13 @@
 <SHAPE>
 	<TEXTURE>
 		<DIFFUSE>
-		Textures/MetalFloorsBare_Diffuse.png
+		Textures/planks_Diffuse.png
 		</DIFFUSE>
 		<SPECULAR>
-		Textures/MetalFloorsBare_Specular.png
+		Textures/planks_Specular.png
 		</SPECULAR>
 		<NORMAL>
-		Textures/MetalFloorsBare_Normal.png
+		Textures/planks_Normal.png
 		</NORMAL>
 	</TEXTURE>
 	<DIMENSION>

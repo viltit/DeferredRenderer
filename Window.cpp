@@ -2,7 +2,6 @@
 #include "Error.hpp"
 #include "vitiGlobals.hpp"
 
-#include "vitiGL.hpp"
 #include <iostream>
 
 namespace vitiGL {
