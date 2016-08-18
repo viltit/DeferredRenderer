@@ -53,7 +53,6 @@ protected:
 	Framebuffer _sampleBuffer; //for downsampling the above image
 
 	float		_cascadeEnd[5];
-	float		_cascadeD[4];
 
 	glm::mat4	_V[4];		/* view and ortho matrix of the shadowmap projection */
 	glm::mat4	_O[4];

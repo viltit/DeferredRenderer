@@ -117,7 +117,7 @@ void DirShadowmap::setUniforms(const Shader & shader) {
 
 		//Cascades End Point:
 		uniformName = "cascadeEnd[" + std::to_string(i) + ']';
-		glUniform1f(shader.getUniform(uniformName), _cascadeD[i]);
+		glUniform1f(shader.getUniform(uniformName), _cascadeEnd[i + 1]);
 	}
 
 	/* bind the shadowmap textures:*/
@@ -236,10 +236,10 @@ void DirShadowmap::updateMatrices2(const CamInfo& camera) {
 
 	for (int i = 0; i < 4; i++) {
 		glm::vec3 frustumCorners[8] = {
-			glm::vec3{ -1.0f, 1.0f, 0.0f },
-			glm::vec3{ 1.0f, 1.0f, 0.0f },
-			glm::vec3{ 1.0f, -1.0f, 0.0f },
-			glm::vec3{ -1.0f, -1.0f, 0.0f },
+			glm::vec3{ -1.0f, 1.0f, -1.0f },
+			glm::vec3{ 1.0f, 1.0f, -1.0f },
+			glm::vec3{ 1.0f, -1.0f, -1.0f },
+			glm::vec3{ -1.0f, -1.0f, -1.0f },
 			glm::vec3{ -1.0f, 1.0f, 1.0f },
 			glm::vec3{ 1.0f, 1.0f, 1.0f },
 			glm::vec3{ 1.0f, -1.0f, 1.0f },
@@ -268,7 +268,6 @@ void DirShadowmap::updateMatrices2(const CamInfo& camera) {
 		// take the farthest corners of the frustum to calculate a bounding radius:
 		// (see the link at the top of this functions for why we work with a radius)
 		float radius = glm::length(frustumCorners[0] - frustumCorners[6]) / 2.0f;
-		//radius *= 2.f; //ugly hack
 
 		// calculate texels per unit by dividing the shadow map size with twice the radius 
 		// (ie the space the shadowmap covers):
@@ -299,9 +298,6 @@ void DirShadowmap::updateMatrices2(const CamInfo& camera) {
 		// objects casting a shadow:
 
 		_O[i] = glm::ortho(-radius, radius, -radius, radius, -5.0f * radius, 5.0f * radius);
-
-		radius /= 1.6f;
-		_cascadeD[i] = _cascadeEnd[i] + 2.0f * radius;
 	}
 }
 

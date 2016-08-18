@@ -119,6 +119,7 @@
     <ClInclude Include="Camera.hpp" />
     <ClInclude Include="Framebuffer.hpp" />
     <ClInclude Include="Frustum.hpp" />
+    <ClInclude Include="GaussBlur.hpp" />
     <ClInclude Include="Geometry.hpp" />
     <ClInclude Include="glRenderer.hpp" />
     <ClInclude Include="GUI.hpp" />
@@ -144,6 +145,7 @@
     <ClCompile Include="Frame.cpp" />
     <ClCompile Include="Framebuffer.cpp" />
     <ClCompile Include="Frustum.cpp" />
+    <ClCompile Include="GaussBlur.cpp" />
     <ClCompile Include="Geometry.cpp" />
     <ClCompile Include="glRenderer.cpp" />
     <ClCompile Include="GUI.cpp" />
@@ -167,6 +169,8 @@
     <None Include="Shaders\fragment.glsl" />
     <None Include="Shaders\framebuffer.frag.glsl" />
     <None Include="Shaders\framebuffer.vert.glsl" />
+    <None Include="Shaders\gaussianBlur.frag.glsl" />
+    <None Include="Shaders\gaussianBlur.vert.glsl" />
     <None Include="Shaders\shadowmap.frag.glsl" />
     <None Include="Shaders\shadowmap.vert.glsl" />
     <None Include="Shaders\shadowmapFinal.frag.glsl" />

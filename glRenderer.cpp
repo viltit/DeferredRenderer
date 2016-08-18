@@ -1,6 +1,7 @@
 #include "glRenderer.hpp"
 
 #include "Error.hpp"
+#include "GaussBlur.hpp"
 #include <glm/gtc/type_ptr.hpp>
 
 namespace vitiGL {
@@ -17,7 +18,7 @@ glRenderer::glRenderer(Window* window, Scene* scene, Camera* camera)
 		_dshadow	{ new DirShadowmap{ *camera, &_dlight }}
 {
 	_dlight.setUniforms(_mainShader);
-	_dlight.setProperty(lightProps::dir, glm::vec3{ 0.0f, -1.0f, 0.1f }, _mainShader);
+	_dlight.setProperty(lightProps::dir, glm::vec3{ 0.0f, -1.0f, 1.f }, _mainShader);
 	_plight.setUniforms(_mainShader);
 	_plight.setProperty(lightProps::pos, glm::vec3{ 2.0f, 2.0f, 1.0f }, _mainShader);
 }
@@ -58,13 +59,19 @@ void glRenderer::draw() {
 	std::vector<GLuint> textures;
 	std::vector<std::string> names;
 
-	textures.push_back(_framebuffer.texture());
+	/* just to test if it works: */
+	GaussBlur gauss{};
+	GLuint tex = gauss.blur(_framebuffer.texture());
+
+	textures.push_back(tex);
 	names.push_back("image");
+
 
 	if (_dshadow) {
 		textures.push_back(_dshadow->texture());
 		names.push_back("shadowMap");
 	}
+
 
 	/* final on-screen image: */
 	_quad.draw(_quadShader, textures, names);
