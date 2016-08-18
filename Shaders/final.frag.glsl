@@ -8,7 +8,7 @@ uniform sampler2D image;
 uniform sampler2D shadowMap;
 
 void main() {
-	float shadow = texture(shadowMap, fUV).r + 0.3;
+	float shadow = (texture(shadowMap, fUV).r + 1.0f) / 2.0f;
 	color = texture(image, fUV);
 	color = vec4(color.r * shadow, color.g * shadow, color.b * shadow, color);
 }

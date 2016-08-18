@@ -10,17 +10,16 @@
 #include "Scene.hpp"
 #include "sQuad.hpp"
 #include "Framebuffer.hpp"
+#include "GaussBlur.hpp"
 
 namespace vitiGL {
 
 class DirShadowmap {
 public:
 	DirShadowmap	(const Camera& cam,
-					 const dLight* light = nullptr,
-					 int width = 1024, int height = 1024,
-					 const std::string& vertexPath = "Shaders/shadowmap.vert.glsl", 
-					 const std::string& fragmentPath = "Shaders/shadowmap.frag.glsl" );
-	~DirShadowmap();
+					const dLight* light = nullptr,
+					int width = 1024, int height = 1024);
+	~DirShadowmap	();
 
 	/* make sure depth test and face culling is enabled! -> do it in on() function? */
 	void on();
@@ -35,7 +34,7 @@ public:
 
 	/* getters and setters are inline: */
 	void		setLight(const dLight* light)	{ _light = light; }
-	GLuint		texture() const { return _framebuffer.texture(); }
+	GLuint		texture() const { return _finalImg; }
 
 	glm::vec3 DirShadowmap::TransformTransposed(const glm::vec3 &point, const glm::mat4& matrix);
 
@@ -47,10 +46,9 @@ protected:
 
 	GLuint		_fbo[4];	// for the three cascades
 	GLuint		_tbo[4];
-	GLuint		_dtbo;
+	GLuint		_finalImg;  // final Shadow Image
 
 	Framebuffer _framebuffer;  //for a black'n'white image of the scene with shadows
-	Framebuffer _sampleBuffer; //for downsampling the above image
 
 	float		_cascadeEnd[5];
 
@@ -63,9 +61,8 @@ protected:
 
 	Shader		_shader;	//first pass: draw scene from the lights view
 	Shader		_fshader;	//second pass: draw black and white scene
-	Shader		_dshader;	//debug Shader
 
-	sQuad		_quad;		//debug plane
+	GaussBlur	_gauss;		//to blur the shadowmap
 
 	const dLight* _light;
 };

@@ -59,14 +59,8 @@ void glRenderer::draw() {
 	std::vector<GLuint> textures;
 	std::vector<std::string> names;
 
-	/* just to test if it works: */
-	GaussBlur gauss{};
-	GLuint tex = gauss.blur(_framebuffer.texture());
-
-	textures.push_back(tex);
+	textures.push_back(_framebuffer.texture());
 	names.push_back("image");
-
-
 	if (_dshadow) {
 		textures.push_back(_dshadow->texture());
 		names.push_back("shadowMap");

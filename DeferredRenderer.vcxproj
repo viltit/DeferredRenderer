@@ -69,8 +69,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\Users\viti\Desktop\c++\dependencies\includes;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\viti\Desktop\c++\dependencies\libs;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\Titus\Desktop\c++\dependencies\includes;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\Titus\Desktop\c++\dependencies\libs;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>C:\Users\Titus\Desktop\c++\dependencies\includes;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\Titus\Desktop\c++\dependencies\libs;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -79,7 +83,7 @@
       <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>glew32.lib;SDL2.lib;openGL32.lib;SOIL.lib;CEGUIBase-0_d.lib;CEGUIOpenGLRenderer-0_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;openGL32.lib;glew32.lib;SOIL.lib;CEGUIBase-0_d.lib;CEGUIOpenGLRenderer-0_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -88,6 +92,9 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
     </ClCompile>
+    <Link>
+      <AdditionalDependencies>glew32.lib;opengl32.lib;SDL2.lib;SOIL.lib;CEGUIBase-0_d.lib;CEGUIOpenGLRenderer-0_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>

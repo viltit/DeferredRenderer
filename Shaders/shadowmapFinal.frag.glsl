@@ -46,7 +46,7 @@ float updateDirShadow(int c) {
 	fragPosNormed = fragPosNormed * 0.5f + 0.5f;
 
 	/* be aware: some bias vlaues may lead to vanishing shadows !!*/
-	float bias = max(0.005 * dot(1.0 - normalize(fsIn.normal), dlightDir), 0.0005);
+	float bias = max(0.0005 * dot(1.0 - normalize(fsIn.normal), dlightDir), 0.00005);
 	fragPosNormed.z -= bias;
 
 	/* take samples and average them for smooth shadows: */

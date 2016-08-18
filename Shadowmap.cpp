@@ -10,17 +10,13 @@
 
 namespace vitiGL {
 
-DirShadowmap::DirShadowmap(const Camera& cam, const dLight * light, int width, int height,
-						   const std::string & vertexPath, const std::string & fragmentPath) 
+DirShadowmap::DirShadowmap(const Camera& cam, const dLight * light, int width, int height) 
 	:	_w		{ width },
 		_h		{ height },
-		_shader { vertexPath, fragmentPath },
+		_shader { "Shaders/shadowmap.vert.glsl", "Shaders/shadowmap.frag.glsl" },
 		_fshader{ "Shaders/shadowmapFinal.vert.glsl", "Shaders/shadowmapFinal.frag.glsl"},
-		_dshader{ "Shaders/shadowmap_d.vert.glsl", "Shaders/shadowmap_d.frag.glsl" },
 		_light	{ light },
-		_framebuffer { width, height },
-		_sampleBuffer { width / 2, height / 2 },
-		_quad	{ 0.5f, 0.5f }
+		_framebuffer { globals::window_w, globals::window_h }
 {
 #ifdef CONSOLE_LOG
 	std::cout << "Initializing directional Shadow Map...";
@@ -91,15 +87,8 @@ void DirShadowmap::draw(const CamInfo& camera, const Scene* scene) {
 	_fshader.off();
 	_framebuffer.off();
 
-	_dtbo = _framebuffer.texture();
-
-	/* STEP 3: Downsample the black'n'white picture, THEN blur it, and upsample again 
-	_sampleBuffer.on();
-	_dshader.on();
-	_quad.draw(_dshader, _dtbo);
-	_sampleBuffer.off();*/
-	
-	//_sampleBuffer.draw();
+	/* STEP 3: Blur the black-and-white picture with gaussian blur */
+	_finalImg = _gauss.blur(_framebuffer.texture(), 2);
 }
 
 void DirShadowmap::off() {
@@ -321,7 +310,6 @@ glm::vec3 DirShadowmap::TransformTransposed(const glm::vec3 &point, const glm::m
 
 
 void DirShadowmap::debug() {
-	_sampleBuffer.draw();
 }
 
 }

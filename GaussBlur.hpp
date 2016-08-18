@@ -13,10 +13,10 @@ namespace vitiGL {
 
 class GaussBlur {
 public:
-	GaussBlur(int iterations = 5, int width = globals::window_w, int height = globals::window_h);
+	GaussBlur(int width = globals::window_w, int height = globals::window_h);
 	~GaussBlur();
 
-	GLuint blur(GLuint texture);
+	GLuint blur(GLuint texture, int iterations = 5);
 
 private:
 	void initFramebuffer();
@@ -28,7 +28,6 @@ private:
 
 	int		_w;
 	int		_h;
-	int		_iterations; //how many times we blur(1*horizontal and 1*vertical -> amount = 1);
 
 	sQuad	_quad;
 };

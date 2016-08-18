@@ -3,11 +3,10 @@
 
 namespace vitiGL {
 
-GaussBlur::GaussBlur(int iterations,  int w, int h)
+GaussBlur::GaussBlur(int w, int h)
 	:	_shader	{ "Shaders/gaussianBlur.vert.glsl", "Shaders/gaussianBlur.frag.glsl" },
 		_w		{ w },
 		_h		{ h },
-		_iterations { iterations },
 		_quad	{ float(w) / float(globals::window_w), float(h) / float(globals::window_h) }
 {
 	initFramebuffer();
@@ -23,11 +22,11 @@ GaussBlur::~GaussBlur() {
 	}
 }
 
-GLuint GaussBlur::blur(GLuint texture) {
+GLuint GaussBlur::blur(GLuint texture, int iterations) {
 	bool horizontal = true;
 	bool firstIteration = true;
 
-	for (int i = 0; i < _iterations * 2; i++) {
+	for (int i = 0; i < iterations * 2; i++) {
 		_shader.on();		//a lot of on and offs, need to modify quad.draw() function to avoid
 		glBindFramebuffer(GL_FRAMEBUFFER, _fbo[horizontal]);
 		glUniform1i(_shader.getUniform("horizontal"), horizontal);
