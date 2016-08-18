@@ -1,0 +1,24 @@
+<SHAPE>
+	<TEXTURE>
+	<DIFFUSE>
+      Textures/MetalFloorsBare_Diffuse.png
+    </DIFFUSE>
+	<SPECULAR>
+      Textures/MetalFloorsBare_Specular.png
+    </SPECULAR>
+	<NORMAL>
+      Textures/MetalFloorsBare_Normal.png
+    </NORMAL>
+	</TEXTURE>
+	<DIMENSION>
+		<SIZE>
+			0.3
+			0.3
+			0.3
+		</SIZE>
+		<UV>
+			1.0
+			1.0
+		</UV>
+	</DIMENSION>
+</SHAPE>

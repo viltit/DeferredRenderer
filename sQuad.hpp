@@ -10,11 +10,17 @@
 
 namespace vitiGL {
 
+enum class QuadPos {
+	fullscreen,
+	topRight
+	//to be continued...
+};
+
 class sQuad {
 public:
 
 	/* w and h = 1 -> draw screen sized */
-	sQuad		(float w = 1.0f, float h = 1.0f);
+	sQuad		(QuadPos pos = QuadPos::fullscreen);
 	~sQuad		();
 
 	void draw	(const Shader& shader, GLuint texture, 
@@ -25,12 +31,11 @@ public:
 				const std::vector<std::string> textureNames);
 
 private:
-	void initVertices(float w, float h);
+	void initVertices();
 
-	GLuint _vao;
-	GLuint _vbo;
+	GLuint	_vao;
+	GLuint	_vbo;
 
-	float _w;
-	float _h;
+	QuadPos	_pos;
 };
 }

@@ -12,10 +12,12 @@ glRenderer::glRenderer(Window* window, Scene* scene, Camera* camera)
 		_camera		{ camera },
 		_mainShader { "Shaders/vertex.glsl", "Shaders/fragment.glsl" },
 		_quadShader { "Shaders/final.vert.glsl", "Shaders/final.frag.glsl" },
+		_dShader	{ "Shaders/simple.vert.glsl", "Shaders/simple.frag.glsl" },
 		_framebuffer{ window->width(), window->height(), "Shaders/framebuffer.vert.glsl", "Shaders/framebuffer.frag.glsl" }, //dangerous!
 		_dlight		{ "dlight" }, //needs to be part of the scene
 		_plight		{ "plight" },
-		_dshadow	{ new DirShadowmap{ *camera, &_dlight }}
+		_dshadow	{ new DirShadowmap{ *camera, &_dlight }},
+		_debugQuad  { QuadPos::topRight }
 {
 	_dlight.setUniforms(_mainShader);
 	_dlight.setProperty(lightProps::dir, glm::vec3{ 0.0f, -1.0f, 1.f }, _mainShader);
@@ -69,6 +71,12 @@ void glRenderer::draw() {
 
 	/* final on-screen image: */
 	_quad.draw(_quadShader, textures, names);
+
+	debug(_dshadow->texture());
+}
+
+void glRenderer::debug(GLuint texture) {
+	_debugQuad.draw(_dShader, texture, "tex");
 }
 
 }

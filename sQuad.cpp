@@ -6,13 +6,12 @@
 
 namespace vitiGL {
 
-sQuad::sQuad(float w, float h) 
+sQuad::sQuad(QuadPos pos)
 	:	_vao{ 0 },
 		_vbo{ 0 },
-		_w  { w },
-		_h  { h }
+		_pos{ pos }
 {
-	initVertices(w, h);
+	initVertices();
 }
 
 sQuad::~sQuad() {
@@ -57,16 +56,39 @@ void sQuad::draw(const Shader & shader, const std::vector<GLuint>& textures, con
 }
 
 
-void sQuad::initVertices(float w, float h) {
+void sQuad::initVertices() {
+	float quadVertices[24];
 
-	float quadVertices[] = {
-		-1.0f * w,  1.0f * h,  0.0f, 1.0f,
-		-1.0f * w, -1.0f * h,  0.0f, 0.0f,
-		1.0f * w, -1.0f * h,  1.0f, 0.0f,
-		-1.0f * w,  1.0f * h,  0.0f, 1.0f,
-		1.0f * w, -1.0f * h,  1.0f, 0.0f,
-		1.0f * w,  1.0f * h,  1.0f, 1.0f
-	};
+	switch (_pos) {
+	case QuadPos::fullscreen:
+	{
+		float vertices[] = {
+			-1.0f,  1.0f,  0.0f, 1.0f,
+			-1.0f, -1.0f,  0.0f, 0.0f,
+			1.0f, -1.0f,  1.0f, 0.0f,
+			-1.0f,  1.0f,  0.0f, 1.0f,
+			1.0f, -1.0f,  1.0f, 0.0f,
+			1.0f,  1.0f,  1.0f, 1.0f
+		};
+		std::copy(vertices, vertices + 24, quadVertices);
+	}
+		break;
+
+	case QuadPos::topRight:
+	{
+		float vertices[] = {
+			0.5f, 1.0f, 0.0f, 1.0f,
+			0.5f, 0.5f, 0.0f, 0.0f,
+			1.0f, 0.5f,  1.0f, 0.0f,
+			0.5f,  1.0f,  0.0f, 1.0f,
+			1.0f, 0.5f,  1.0f, 0.0f,
+			1.0f,  1.0f,  1.0f, 1.0f
+		};
+		std::copy(vertices, vertices + 24, quadVertices);
+	}
+		break;
+	}
+
 
 	//create and bind the buffers:
 	glGenVertexArrays(1, &_vao);

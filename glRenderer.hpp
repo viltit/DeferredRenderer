@@ -16,6 +16,7 @@ public:
 	virtual ~glRenderer();
 
 	virtual void draw();
+	virtual void debug(GLuint texture);
 
 protected:
 	/* Scene, Camera, ...*/
@@ -35,8 +36,10 @@ protected:
 	Framebuffer		_framebuffer;
 	Shader			_mainShader;  //for drawing the scene in 3d
 	Shader			_quadShader;  //for drawing the final image on a screen-sized quad
+	Shader			_dShader;	  //for a debugging window
 
 	sQuad			_quad;
+	sQuad			_debugQuad;
 
 	bool			_drawDShadows;
 };

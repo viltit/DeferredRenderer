@@ -7,7 +7,7 @@ GaussBlur::GaussBlur(int w, int h)
 	:	_shader	{ "Shaders/gaussianBlur.vert.glsl", "Shaders/gaussianBlur.frag.glsl" },
 		_w		{ w },
 		_h		{ h },
-		_quad	{ float(w) / float(globals::window_w), float(h) / float(globals::window_h) }
+		_quad	{  }
 {
 	initFramebuffer();
 }

@@ -27,8 +27,10 @@ void Frame::init() {
 	for (int i = -5; i < 4; i++) {
 		std::string parentName = "Cube" + std::to_string(i);
 		std::string childName = "Cuboid" + std::to_string(i);
+		std::string child2Name = "SmallCuboid" + std::to_string(i);
 		scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ i * 3.0, 2.0f, i * 3.0}, sqrt(2.0f), parentName);
 		scene.addChild(new Cuboid{ "xml/cubeSmall.xml" }, glm::vec3{ 2.0, 0.0f, 2.0 }, sqrt(1.0f), childName, parentName);
+		scene.addChild(new Cuboid{ "xml/cubeTiny.xml" }, glm::vec3{ 0.0, 1.0f, 0.0 }, sqrt(1.0f), child2Name, childName);
 		scene.addChild(new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ -3.0f, -1.0f, -3.0f }, sqrt(1800.0f), "Floor");
 	}
 
@@ -63,12 +65,16 @@ void Frame::loop() {
 		for (int i = -5; i < 4; i++) {
 			std::string parent = "Cube" + std::to_string(i);
 			std::string child = "Cuboid" + std::to_string(i);
+			std::string child2 = "SmallCuboid" + std::to_string(i);
 
 			auto temp = scene[parent];
-			temp->rotate(float(frameTime) / (10.0f * i + 5), glm::vec3{ 0.0f, 1.0f, 0.0f });
+			temp->rotate(float(frameTime) / (20.0f * i + 5), glm::vec3{ 0.0f, 1.0f, 0.0f });
 
 			temp = scene[child];
-			temp->rotate(float(frameTime) / (20.0f * i + 5), glm::vec3{ 0.0f, 1.0f, 0.0f });
+			temp->rotate(float(frameTime) / (10.0f * i + 5), glm::vec3{ 0.0f, 0.0f, 1.0f });
+
+			temp = scene[child2];
+			temp->rotate(float(frameTime) / (5.0f * i + 5), glm::vec3{ 0.0f, 1.0f, 0.0f });
 		}
 		window.clear();
 

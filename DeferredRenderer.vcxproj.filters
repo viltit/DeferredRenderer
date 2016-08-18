@@ -169,12 +169,6 @@
     <None Include="Shaders\shadowmap.vert.glsl">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="Shaders\shadowmap_d.frag.glsl">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="Shaders\shadowmap_d.vert.glsl">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="Shaders\shadowmapFinal.frag.glsl">
       <Filter>Resource Files</Filter>
     </None>
@@ -191,6 +185,12 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="Shaders\gaussianBlur.vert.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Shaders\simple.vert.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Shaders\simple.frag.glsl">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
