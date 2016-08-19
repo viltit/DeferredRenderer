@@ -24,12 +24,13 @@ class SceneObject {
 
 };
 
-/*
+/*	--------------------- CLASS SHAPE --------------------------------------------------------
 	Base class Shape. All drawable objects should inhert from Shape so
 	we can draw everything with a single command.
 	Be aware that the shader has to be delivered AND activated from within
 	the class that calls the draw command.
-*/
+	------------------------------------------------------------------------------------------ */
+
 class Shape : public SceneObject{
 public:
 	Shape();
@@ -60,6 +61,8 @@ protected:
 	bool		invert;
 };
 
+/*	---------------------- GEOMETRIC FORMS DERIVED FROM SHAPE ------------------------------- */
+
 class Cuboid : public Shape {
 public:
 	Cuboid(const std::string& configFile, const glm::vec3& position = { 0.0f, 0.0f, 0.0f });
@@ -70,6 +73,47 @@ protected:
 
 	glm::vec3	size;
 	glm::vec2	uv;
+};
+
+/* ------------------------------------------------------------------------------------------- */
+class Tetrahedron : public Shape {
+public:
+	Tetrahedron(const std::string& configFile, const glm::vec3& position = { 0.0f, 0.0f, 0.0f });
+	~Tetrahedron();
+
+private:
+	void initVertices(std::vector<Vertex>& vertices) override;
+
+	glm::vec3	size;
+	glm::vec2	uv;
+};
+
+/* ------------------------------------------------------------------------------------------- */
+class Octahedron : public Shape {
+public:
+	Octahedron(const std::string& config_file, const glm::vec3& position = { 0.0f, 0.0f, 0.0f });
+	~Octahedron();
+
+private:
+	void initVertices(std::vector<Vertex>& vertices) override;
+
+	glm::vec3	size;
+	glm::vec2	uv;
+};
+
+/* ------------------------------------------------------------------------------------------- */
+class Icosahedron : public Shape {
+public:
+	Icosahedron(const std::string& config_file, const glm::vec3& position = { 0.0f, 0.0f, 0.0f });
+	~Icosahedron();
+
+protected:
+	Icosahedron() : Shape() {}	/* for sub-class sphere */
+	void initVertices(std::vector<Vertex>& vertices) override;
+
+	glm::vec3	size;
+	glm::vec2	uv;
+
 };
 
 }

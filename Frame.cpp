@@ -28,9 +28,9 @@ void Frame::init() {
 		std::string parentName = "Cube" + std::to_string(i);
 		std::string childName = "Cuboid" + std::to_string(i);
 		std::string child2Name = "SmallCuboid" + std::to_string(i);
-		scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ i * 3.0, 2.0f, i * 3.0}, sqrt(2.0f), parentName);
+		scene.addChild(new Octahedron{ "xml/cube.xml" }, glm::vec3{ i * 3.0, 2.0f, i * 3.0}, sqrt(2.0f), parentName);
 		scene.addChild(new Cuboid{ "xml/cubeSmall.xml" }, glm::vec3{ 2.0, 0.0f, 2.0 }, sqrt(1.0f), childName, parentName);
-		scene.addChild(new Cuboid{ "xml/cubeTiny.xml" }, glm::vec3{ 0.0, 1.0f, 0.0 }, sqrt(1.0f), child2Name, childName);
+		scene.addChild(new Tetrahedron{ "xml/cubeTiny.xml" }, glm::vec3{ 0.0, 1.0f, 0.0 }, sqrt(1.0f), child2Name, childName);
 		scene.addChild(new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ -3.0f, -1.0f, -3.0f }, sqrt(1800.0f), "Floor");
 	}
 

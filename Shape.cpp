@@ -167,6 +167,10 @@ void Shape::calcTangents(std::vector<Vertex>& vertices, bool bitangents) {
 	}
 }
 
+/*	-----------------------------------------------------------------------------------------------------
+	GEOMETRIC FORMS DERIVED FROM SHAPE
+	----------------------------------------------------------------------------------------------------- */
+
 Cuboid::Cuboid(const std::string& configFile, const glm::vec3& position)
 	:	Shape()
 {
@@ -247,6 +251,300 @@ void Cuboid::initVertices(std::vector<Vertex>& vertices) {
 	vertices[numVertices].pos = glm::vec3{ w, -h,  d };		vertices[numVertices++].uv = glm::vec2{ 0.0f, uv_h };
 	vertices[numVertices].pos = glm::vec3{ -w, -h,  d };	vertices[numVertices++].uv = glm::vec2{ 0.0f, 0.0f };
 	vertices[numVertices].pos = glm::vec3{ -w, -h, -d };	vertices[numVertices++].uv = glm::vec2{ uv_w, 0.0f };
+}
+
+/*	------------------------------------------------------------------------------------------------------------- */
+Tetrahedron::Tetrahedron(const std::string & configFile, const glm::vec3& position) : Shape() {
+	/* load data from config file: */
+	slData data;
+	ShapeLoader loader{ data, configFile };
+
+	size = data.size;
+	uv = data.uv;
+
+	tbo.push_back(Cache::getTexture(data.textures[0]));
+	tbo.push_back(Cache::getTexture(data.textures[1]));
+	tbo.push_back(Cache::getTexture(data.textures[2]));
+
+	setPos(position);
+
+	std::vector<Vertex> vertices;
+	initVertices(vertices);
+	calcNormals(vertices);
+	calcTangents(vertices);
+	uploadVertices(vertices);
+}
+
+Tetrahedron::~Tetrahedron() {
+	if (vao) glDeleteVertexArrays(1, &vao);
+	if (vbo) glDeleteBuffers(1, &vbo);
+}
+
+void Tetrahedron::initVertices(std::vector<Vertex>& vertices) {
+	float w = size.x  * 0.5f;
+	float h = size.y * 0.5f;
+	float d = size.z * 0.5f;
+
+	float uv_w = uv.x;
+	float uv_h = uv.y;
+
+	numVertices = 0;
+
+	vertices.resize(12);
+
+	vertices[numVertices].pos = glm::vec3{ -w, h, -d };		vertices[numVertices++].uv = glm::vec2{ 0.75*uv_w, 0.5*uv_h };	/* A-B-C */
+	vertices[numVertices].pos = glm::vec3{ -w, -h, d };		vertices[numVertices++].uv = glm::vec2{ 0.5*uv_w, 0.0f };
+	vertices[numVertices].pos = glm::vec3{ w, h, d };		vertices[numVertices++].uv = glm::vec2{ 0.25*uv_w, 0.5*uv_h };
+
+	vertices[numVertices].pos = glm::vec3{ -w, -h, d };		vertices[numVertices++].uv = glm::vec2{ 0.0f, 0.0f };			/* B-D-C */
+	vertices[numVertices].pos = glm::vec3{ w, -h, -d };		vertices[numVertices++].uv = glm::vec2{ 0.5*uv_w, 0.0f };
+	vertices[numVertices].pos = glm::vec3{ w, h, d };		vertices[numVertices++].uv = glm::vec2{ 0.25*uv_w, 0.5*uv_h };
+
+	vertices[numVertices].pos = glm::vec3{ -w, h, -d };		vertices[numVertices++].uv = glm::vec2{ 0.75*uv_w, 0.5*uv_h };	/* A-C-D */
+	vertices[numVertices].pos = glm::vec3{ w, h, d };		vertices[numVertices++].uv = glm::vec2{ 0.25*uv_w, 0.5*uv_h };
+	vertices[numVertices].pos = glm::vec3{ w, -h, -d };		vertices[numVertices++].uv = glm::vec2{ 0.5*uv_w, 0.0f };
+
+	vertices[numVertices].pos = glm::vec3{ -w, h, -d };		vertices[numVertices++].uv = glm::vec2{ 0.75*uv_w, 0.5*uv_h };	/* A-D-B */
+	vertices[numVertices].pos = glm::vec3{ w, -h, -d };		vertices[numVertices++].uv = glm::vec2{ 0.5*uv_w, 0.0f };
+	vertices[numVertices].pos = glm::vec3{ -w, -h, d };		vertices[numVertices++].uv = glm::vec2{ uv_w, 0.0f };
+}
+
+/*	------------------------------------------------------------------------------------------------------------- */
+
+Octahedron::Octahedron(const std::string& configFile, const glm::vec3& position) : Shape() {
+
+	slData data;
+	ShapeLoader loader{ data, configFile };
+
+	size = data.size;
+	uv = data.uv;
+
+	tbo.push_back(Cache::getTexture(data.textures[0]));
+	tbo.push_back(Cache::getTexture(data.textures[1]));
+	tbo.push_back(Cache::getTexture(data.textures[2]));
+
+	setPos(position);
+
+	std::vector<Vertex> vertices;
+	initVertices(vertices);
+	calcNormals(vertices);
+	calcTangents(vertices);
+	uploadVertices(vertices);
+}
+
+Octahedron::~Octahedron() {
+	if (vao) glDeleteVertexArrays(1, &vao);
+	if (vbo) glDeleteBuffers(1, &vbo);
+}
+
+void Octahedron::initVertices(std::vector<Vertex>& vertices) {
+	float w = size.x  * 0.5f;
+	float h = size.y * 0.5f;
+	float d = size.z * 0.5f;
+
+	float uv_w = uv.x;
+	float uv_h = uv.y;
+
+	vertices.resize(24);
+	numVertices = 0;
+
+
+	/*		   F				lazy try to visualize the octahedron
+			. /\.
+		  .  /  \  .
+		D.  /	 \   .E
+		   A	  C
+			\	 /
+			 \   /
+			  \ /
+			   B
+	*/
+
+	vertices[numVertices].pos = glm::vec3{ -w, 0.0f, 0.0f }; vertices[numVertices++].uv = glm::vec2{ 0.0f, 0.0f };	/* D-A-F */
+	vertices[numVertices].pos = glm::vec3{ 0.0f, 0.0f, d };	vertices[numVertices++].uv = glm::vec2{ uv_w, 0.0f };
+	vertices[numVertices].pos = glm::vec3{ 0.0f, h, 0.0f };	vertices[numVertices++].uv = glm::vec2{ uv_w / 2.0f, uv_h };
+
+	vertices[numVertices].pos = glm::vec3{ 0.0f, 0.0f, d };	vertices[numVertices++].uv = glm::vec2{ 0.0f, 0.0f };	/* A-C-F */
+	vertices[numVertices].pos = glm::vec3{ w, 0.0f, 0.0f };	vertices[numVertices++].uv = glm::vec2{ uv_w, 0.0f };
+	vertices[numVertices].pos = glm::vec3{ 0.0, h, 0.0f };	vertices[numVertices++].uv = glm::vec2{ uv_w / 2.0f, uv_h };
+
+	vertices[numVertices].pos = glm::vec3{ 0.0f, 0.0f, d };	vertices[numVertices++].uv = glm::vec2{ 0.0f, 0.0f };	/* A-B-C */
+	vertices[numVertices].pos = glm::vec3{ 0.0f, -h, 0.0f }; vertices[numVertices++].uv = glm::vec2{ uv_w / 2.0f, uv_h };
+	vertices[numVertices].pos = glm::vec3{ w, 0.0f, 0.0f };	vertices[numVertices++].uv = glm::vec2{ uv_w, 0.0f };
+
+	vertices[numVertices].pos = glm::vec3{ 0.0f, h, 0.0f };	vertices[numVertices++].uv = glm::vec2{ uv_w / 2.0f, uv_h };/* F-C-E*/
+	vertices[numVertices].pos = glm::vec3{ w, 0.0f, 0.0f };	vertices[numVertices++].uv = glm::vec2{ 0.0f, 0.0f };
+	vertices[numVertices].pos = glm::vec3{ 0.0f, 0.0f, -d }; vertices[numVertices++].uv = glm::vec2{ uv_w, 0.0f };
+
+	vertices[numVertices].pos = glm::vec3{ -w, 0.0f, 0.0f }; vertices[numVertices++].uv = glm::vec2{ 0.0f, 0.0f };	/* D-F-E */
+	vertices[numVertices].pos = glm::vec3{ 0.0f, h, 0.0f };	vertices[numVertices++].uv = glm::vec2{ uv_w / 2.0f, uv_h };
+	vertices[numVertices].pos = glm::vec3{ 0.0f, 0.0f, -d }; vertices[numVertices++].uv = glm::vec2{ uv_w, 0.0f };
+
+	vertices[numVertices].pos = glm::vec3{ -w, 0.0f, 0.0f }; vertices[numVertices++].uv = glm::vec2{ 0.0f, 0.0f };	/* D-B-A */
+	vertices[numVertices].pos = glm::vec3{ 0.0f, -h, 0.0f }; vertices[numVertices++].uv = glm::vec2{ uv_w / 2.0f, uv_h };
+	vertices[numVertices].pos = glm::vec3{ 0.0f, 0.0f, d };	vertices[numVertices++].uv = glm::vec2{ uv_w, 0.0f };
+
+	vertices[numVertices].pos = glm::vec3{ 0.0f, -h, 0.0f }; vertices[numVertices++].uv = glm::vec2{ uv_w / 2.0f, uv_h };	/* B-E-C */
+	vertices[numVertices].pos = glm::vec3{ 0.0f, 0.0, -d };	vertices[numVertices++].uv = glm::vec2{ uv_w, 0.0f };
+	vertices[numVertices].pos = glm::vec3{ w, 0.0f, 0.0 };	vertices[numVertices++].uv = glm::vec2{ 0.0f, 0.0f };
+
+	vertices[numVertices].pos = glm::vec3{ -w, 0.0f, 0.0f };	vertices[numVertices++].uv = glm::vec2{ 0.0f, 0.0f };	/* D-E-B*/
+	vertices[numVertices].pos = glm::vec3{ 0.0f, 0.0f, -d };	vertices[numVertices++].uv = glm::vec2{ uv_w, 0.0f };
+	vertices[numVertices].pos = glm::vec3{ 0.0f, -h, 0.0f };	vertices[numVertices++].uv = glm::vec2{ uv_w / 2.0f, uv_h };
+}
+
+/*	------------------------------------------------------------------------------------------------------------- */
+
+Icosahedron::Icosahedron(const std::string & configFile, const glm::vec3& position)
+	: Shape()
+{
+	slData data;
+	ShapeLoader loader{ data, configFile };
+
+	size = data.size;
+	uv = data.uv;
+
+	tbo.push_back(Cache::getTexture(data.textures[0]));
+	tbo.push_back(Cache::getTexture(data.textures[1]));
+	tbo.push_back(Cache::getTexture(data.textures[2]));
+
+	setPos(position);
+
+	std::vector<Vertex> vertices;
+	initVertices(vertices);
+	calcNormals(vertices);
+	calcTangents(vertices);
+	uploadVertices(vertices);
+
+	numVertices = vertices.size();
+}
+
+Icosahedron::~Icosahedron() {
+	if (vao) glDeleteVertexArrays(1, &vao);
+	if (vbo) glDeleteBuffers(1, &vbo);
+}
+
+void Icosahedron::initVertices(std::vector<Vertex>& vertices) {
+	/*	 kudos to this two pages for constructing the vertices:
+	http://blog.andreaskahler.com/2009/06/creating-icosphere-mesh-in-code.html
+	http://blog.coredumping.com/subdivision-of-icosahedrons/					*/
+
+	float w = size.x / 2.0f;
+	float t = w * (1.0f + sqrt(5.0f)) / 2.0f;	/* golden ratio */
+	float uv_w = uv.x;
+	float uv_h = uv.y;
+
+	int id = 0;
+
+	/* define the edges */
+	std::vector<Vertex> edges(12);
+	edges.resize(12);
+	edges[id++].pos = glm::vec3{ -w, t, 0.0f };
+	edges[id++].pos = glm::vec3{ w, t, 0.0f };
+	edges[id++].pos = glm::vec3{ -w, -t, 0.0f };
+	edges[id++].pos = glm::vec3{ w, -t, 0.0f };
+
+	edges[id++].pos = glm::vec3{ 0.0f, -t, w };
+	edges[id++].pos = glm::vec3{ 0.0f, w, t };
+	edges[id++].pos = glm::vec3{ 0.0f, -w, -t };
+	edges[id++].pos = glm::vec3{ 0.0f, w, -t };
+
+	edges[id++].pos = glm::vec3{ t, 0.0f, -w };
+	edges[id++].pos = glm::vec3{ t, 0.0f, w };
+	edges[id++].pos = glm::vec3{ -t, 0.0f, -w };
+	edges[id++].pos = glm::vec3{ -t, 0.0f, w };
+
+	/* define the indices for triangle drawing: */
+	id = 0;
+	std::vector<GLuint> indices(60);
+	indices[id++] = 0; indices[id++] = 11; indices[id++] = 5;
+	indices[id++] = 0; indices[id++] = 5; indices[id++] = 1;
+	indices[id++] = 0; indices[id++] = 1; indices[id++] = 7;
+	indices[id++] = 0; indices[id++] = 7; indices[id++] = 10;
+	indices[id++] = 0; indices[id++] = 10; indices[id++] = 11;
+
+	indices[id++] = 1; indices[id++] = 5; indices[id++] = 9;
+	indices[id++] = 5; indices[id++] = 11; indices[id++] = 4;
+	indices[id++] = 11; indices[id++] = 10; indices[id++] = 2;
+	indices[id++] = 10; indices[id++] = 7; indices[id++] = 6;
+	indices[id++] = 7; indices[id++] = 1; indices[id++] = 8;
+
+	indices[id++] = 3; indices[id++] = 9; indices[id++] = 4;
+	indices[id++] = 3; indices[id++] = 4; indices[id++] = 2;
+	indices[id++] = 3; indices[id++] = 2; indices[id++] = 6;
+	indices[id++] = 3; indices[id++] = 6; indices[id++] = 8;
+	indices[id++] = 3; indices[id++] = 8; indices[id++] = 9;
+
+	indices[id++] = 4; indices[id++] = 9; indices[id++] = 5;
+	indices[id++] = 2; indices[id++] = 4; indices[id++] = 11;
+	indices[id++] = 6; indices[id++] = 2; indices[id++] = 10;
+	indices[id++] = 8; indices[id++] = 6; indices[id++] = 7;
+	indices[id++] = 9; indices[id++] = 8; indices[id++] = 1;
+
+	vertices.resize(60);
+	for (int i = 0; i < 60; i++) {
+		vertices[i] = edges[indices[i]];
+	}
+
+	/* now we calculate the uv coordinates: */
+	id = 0;
+	float pw = 5.5f;
+	float ph = 3.0f;
+	std::vector<glm::vec2> uv(22);
+
+	uv[0] = glm::vec2(uv_w * 0.5f / pw, 0);
+	uv[1] = glm::vec2(uv_w * 1.5f / pw, 0);
+	uv[2] = glm::vec2(uv_w * 2.5f / pw, 0);
+	uv[3] = glm::vec2(uv_w * 3.5f / pw, 0);
+	uv[4] = glm::vec2(uv_w * 4.5f / pw, 0);
+
+	uv[5] = glm::vec2(0, uv_h / ph);
+	uv[6] = glm::vec2(uv_w / pw, uv_h / ph);
+	uv[7] = glm::vec2(2.0f * uv_w / pw, uv_h / ph);
+	uv[8] = glm::vec2(3.0f * uv_w / pw, uv_h / ph);
+	uv[9] = glm::vec2(4.0f * uv_w / pw, uv_h / ph);
+	uv[10] = glm::vec2(5.0f * uv_w / pw, uv_h / ph);
+
+	uv[11] = glm::vec2(0.5f * uv_w / pw, 2.0f * uv_h / ph);
+	uv[12] = glm::vec2(1.5f * uv_w / pw, 2.0f * uv_h / ph);
+	uv[13] = glm::vec2(2.5f * uv_w / pw, 2.0f * uv_h / ph);
+	uv[14] = glm::vec2(3.5f * uv_w / pw, 2.0f * uv_h / ph);
+	uv[15] = glm::vec2(4.5f * uv_w / pw, 2.0f * uv_h / ph);
+	uv[16] = glm::vec2(1.0f * uv_w, 2.0f * uv_h / ph);
+
+	uv[17] = glm::vec2(1.0f * uv_w / pw, uv_h);
+	uv[18] = glm::vec2(2.0f * uv_w / pw, uv_h);
+	uv[19] = glm::vec2(3.0f * uv_w / pw, uv_h);
+	uv[20] = glm::vec2(4.0f * uv_w / pw, uv_h);
+	uv[21] = glm::vec2(5.0f * uv_w / pw, uv_h);
+
+	//first row
+	vertices[id++].uv = uv[0];	vertices[id++].uv = uv[5];	vertices[id++].uv = uv[6];
+	vertices[id++].uv = uv[1];	vertices[id++].uv = uv[6];	vertices[id++].uv = uv[7];
+	vertices[id++].uv = uv[2];	vertices[id++].uv = uv[7];	vertices[id++].uv = uv[8];
+	vertices[id++].uv = uv[3];	vertices[id++].uv = uv[8];	vertices[id++].uv = uv[9];
+	vertices[id++].uv = uv[4];	vertices[id++].uv = uv[9];	vertices[id++].uv = uv[10];
+
+	//second row
+	vertices[id++].uv = uv[7];	vertices[id++].uv = uv[6];	vertices[id++].uv = uv[12];
+	vertices[id++].uv = uv[6];	vertices[id++].uv = uv[5];	vertices[id++].uv = uv[11];
+	vertices[id++].uv = uv[10];	vertices[id++].uv = uv[9];	vertices[id++].uv = uv[15];
+	vertices[id++].uv = uv[9];	vertices[id++].uv = uv[8];	vertices[id++].uv = uv[14];
+	vertices[id++].uv = uv[8];	vertices[id++].uv = uv[7];	vertices[id++].uv = uv[13];
+
+	//fourth row
+	vertices[id++].uv = uv[17];	vertices[id++].uv = uv[12];	vertices[id++].uv = uv[11];
+	vertices[id++].uv = uv[21];	vertices[id++].uv = uv[16];	vertices[id++].uv = uv[15];
+	vertices[id++].uv = uv[20];	vertices[id++].uv = uv[15];	vertices[id++].uv = uv[14];
+	vertices[id++].uv = uv[19];	vertices[id++].uv = uv[14];	vertices[id++].uv = uv[13];
+	vertices[id++].uv = uv[18];	vertices[id++].uv = uv[13];	vertices[id++].uv = uv[12];
+
+	//third row
+	vertices[id++].uv = uv[11];	vertices[id++].uv = uv[12];	vertices[id++].uv = uv[6];
+	vertices[id++].uv = uv[15];	vertices[id++].uv = uv[16];	vertices[id++].uv = uv[10];
+	vertices[id++].uv = uv[14];	vertices[id++].uv = uv[15];	vertices[id++].uv = uv[9];
+	vertices[id++].uv = uv[13];	vertices[id++].uv = uv[14];	vertices[id++].uv = uv[8];
+	vertices[id++].uv = uv[12];	vertices[id++].uv = uv[13];	vertices[id++].uv = uv[7];
 }
 
 }
