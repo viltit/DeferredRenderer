@@ -10,7 +10,11 @@ public:
 private:
 	void loop();
 	void init();
+	void initGUI();
 	void updateInput();
+
+	/* Event Handlers: */
+	bool onExitClicked(const CEGUI::EventArgs& e);
 
 	vitiGL::AppState	appState;
 

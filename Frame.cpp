@@ -34,8 +34,8 @@ void Frame::init() {
 		scene.addChild(new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ -3.0f, -1.0f, -3.0f }, sqrt(1800.0f), "Floor");
 	}
 
-	gui.setScheme("AlfiskoSkin.scheme");
-	gui.setFont("DejaVuSans-10");
+	initGUI();
+	SDL_ShowCursor(0);
 }
 
 void Frame::loop() {
@@ -47,6 +47,10 @@ void Frame::loop() {
 	//Prepare fps-Counter-Widget:
 	auto* fpsCounter = static_cast<CEGUI::PushButton*>(
 		gui.createWidget(glm::vec4{ 0.01f, 0.03f, 0.1f, 0.05f }, glm::vec4{}, "AlfiskoSkin/Button", "TestButton"));
+
+	//test:
+	auto* box = static_cast<CEGUI::Editbox*>(
+		gui.createWidget(glm::vec4{ 0.01f, 0.1f, 0.1f, 0.05f }, glm::vec4{}, "AlfiskoSkin/Editbox", "TextBox"));
 
 	while (appState != AppState::quit) {
 		Uint32 frameTime = time.frame_time();
@@ -79,7 +83,8 @@ void Frame::loop() {
 		window.clear();
 
 		cam.update();
-		scene.update(time.get_time());
+		scene.update(frameTime);
+		gui.update(frameTime);
 
 		renderer.draw();
 		gui.draw();
@@ -88,9 +93,24 @@ void Frame::loop() {
 	}
 }
 
+void Frame::initGUI() {
+	gui.setScheme("AlfiskoSkin.scheme");
+	gui.setFont("DejaVuSans-10");
+	gui.setMouseCursor("AlfiskoSkin/MouseArrow");
+
+	auto* exitButton = static_cast<CEGUI::PushButton*>(
+		gui.createWidget(glm::vec4{ 0.01f, 0.9f, 0.1f, 0.05f }, glm::vec4{}, "AlfiskoSkin/Button", "ExitButton"));
+	exitButton->setText("Exit");
+
+	/* Set Button events: */
+	exitButton->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&Frame::onExitClicked, this));
+
+}
+
 void Frame::updateInput() {
 	SDL_Event input;
 	while (SDL_PollEvent(&input)) {
+		gui.onSDLEvent(input);
 		switch (input.type) {
 		case SDL_QUIT:
 			appState = AppState::quit;
@@ -149,4 +169,9 @@ void Frame::updateInput() {
 			break;
 		}
 	}
+}
+
+bool Frame::onExitClicked(const CEGUI::EventArgs& e) {
+	appState = AppState::quit;
+	return true;
 }

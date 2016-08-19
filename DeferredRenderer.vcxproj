@@ -130,6 +130,7 @@
     <ClInclude Include="Geometry.hpp" />
     <ClInclude Include="glRenderer.hpp" />
     <ClInclude Include="GUI.hpp" />
+    <ClInclude Include="Keytable.hpp" />
     <ClInclude Include="Light.hpp" />
     <ClInclude Include="Scene.hpp" />
     <ClInclude Include="Shadowmap.hpp" />

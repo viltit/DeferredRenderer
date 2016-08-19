@@ -1,4 +1,5 @@
 #include "GUI.hpp"
+#include "Keytable.hpp"
 
 namespace vitiGL {
 
@@ -39,12 +40,61 @@ GUI::~GUI(){
 	CEGUI::System::getSingleton().destroyGUIContext(*_context);
 }
 
+void GUI::update(unsigned int deltaTime) {
+	_context->injectTimePulse((float)deltaTime / 1000.0f);
+}
+
 void GUI::draw() {
 	glDisable(GL_DEPTH_TEST); //no text otherwise
 	_renderer->beginRendering();
 	_context->draw();
 	_renderer->endRendering();
 	glEnable(GL_DEPTH_TEST);
+}
+
+void GUI::onSDLEvent(SDL_Event & event) {
+	CEGUI::utf32 codePoint;
+
+	switch (event.type) {
+	case SDL_MOUSEMOTION:
+		_context->injectMousePosition(event.motion.x, event.motion.y);
+		break;
+	case SDL_KEYDOWN:
+		_context->injectKeyDown(SDLToCEGUI(event.key.keysym.sym));
+		break;
+	case SDL_KEYUP:
+		_context->injectKeyUp(SDLToCEGUI(event.key.keysym.sym));
+		break;
+	case SDL_TEXTINPUT:
+		/*	NOT CORRECT
+			We need to decode utf8 (SDL) and convert to utf-32
+			see http://utfcpp.sourceforge.net/ for a pre-built converter
+		*/
+		codePoint = 0;
+		for (int i = 0; i < event.text.text[i] != '\0'; i++) {
+			codePoint |= (CEGUI::utf32)event.text.text[i] << (i * 8); //bitshift
+		}
+		_context->injectChar(codePoint);
+		break;
+	case SDL_MOUSEBUTTONDOWN:
+		_context->injectMouseButtonDown(SDLToCEGUI_Button(event.button.button));
+		break;
+	case SDL_MOUSEBUTTONUP:
+		_context->injectMouseButtonUp(SDLToCEGUI_Button(event.button.button));
+		break;
+	}
+}
+
+void GUI::setMouseCursor(const std::string& imagePath) {
+	_context->getMouseCursor().setDefaultImage(imagePath); //can crash!
+}
+
+void GUI::mouseOn() {
+	_context->getMouseCursor().show();
+}
+
+void GUI::mouseOff() {
+	_context->getMouseCursor().hide();
 }
 
 void GUI::setScheme(const std::string & schemeFile) {

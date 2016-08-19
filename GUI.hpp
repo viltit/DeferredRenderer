@@ -4,6 +4,7 @@
 #include <CEGUI/RendererModules/OpenGL/GL3Renderer.h>
 
 #include <glm/glm.hpp>
+#include <SDL2/SDL_events.h>
 
 namespace vitiGL {
 
@@ -12,7 +13,14 @@ public:
 	 GUI		(const std::string& resourceDirectory);
 	~GUI		();
 
+	void		update(unsigned int deltaTime);
 	void		draw();
+
+	void		onSDLEvent(SDL_Event& event);
+
+	void		setMouseCursor(const std::string& imagePath);
+	void		mouseOn();
+	void		mouseOff();
 
 	void		setScheme(const std::string& schemeFile);
 	void		setFont(const std::string& fontFile);
