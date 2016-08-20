@@ -19,10 +19,6 @@ struct slData {
 	bool invert;
 };
 
-/* wrapper class for all objects that are included in the Scene */
-class SceneObject {
-
-};
 
 /*	--------------------- CLASS SHAPE --------------------------------------------------------
 	Base class Shape. All drawable objects should inhert from Shape so
@@ -31,7 +27,7 @@ class SceneObject {
 	the class that calls the draw command.
 	------------------------------------------------------------------------------------------ */
 
-class Shape : public SceneObject{
+class Shape {
 public:
 	Shape();
 	virtual ~Shape();

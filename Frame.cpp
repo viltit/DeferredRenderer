@@ -48,42 +48,46 @@ void Frame::loop() {
 	auto* fpsCounter = static_cast<CEGUI::PushButton*>(
 		gui.createWidget(glm::vec4{ 0.01f, 0.03f, 0.1f, 0.05f }, glm::vec4{}, "AlfiskoSkin/Button", "TestButton"));
 
-	//test:
-	auto* box = static_cast<CEGUI::Editbox*>(
-		gui.createWidget(glm::vec4{ 0.01f, 0.1f, 0.1f, 0.05f }, glm::vec4{}, "AlfiskoSkin/Editbox", "TextBox"));
-
 	while (appState != AppState::quit) {
 		Uint32 frameTime = time.frame_time();
 		accTime += frameTime;
 		loops++;
+
+		switch (appState) {
+		case AppState::run:
+			/* this should happen in a sceneNode-derived class on sceen::update: */
+			for (int i = -5; i < 4; i++) {
+				std::string parent = "Cube" + std::to_string(i);
+				std::string child = "Cuboid" + std::to_string(i);
+				std::string child2 = "SmallCuboid" + std::to_string(i);
+
+				auto temp = scene[parent];
+				temp->rotate(float(frameTime) / (20.0f * i + 5), glm::vec3{ 0.0f, 1.0f, 0.0f });
+
+				temp = scene[child];
+				temp->rotate(float(frameTime) / (10.0f * i + 5), glm::vec3{ 0.0f, 0.0f, 1.0f });
+
+				temp = scene[child2];
+				temp->rotate(float(frameTime) / (5.0f * i + 5), glm::vec3{ 0.0f, 1.0f, 0.0f });
+			}
+
+			scene.update(frameTime);
+			break;
+		case AppState::pause:
+			break;
+		}
+
+		/* count fps: */
 		if (loops >= 30) {
 			int fps = 1000 * loops/ accTime;
-			//std::cout << "FPS: " << fps << std::endl;
 			loops = 0;
 			accTime = 0;
 			std::string text = "FPS: " + std::to_string(fps);
 			fpsCounter->setText(CEGUI::String(text));
 		}
-		
-		/* this should happen in a sceneNode-derived class on sceen::update: */
-		for (int i = -5; i < 4; i++) {
-			std::string parent = "Cube" + std::to_string(i);
-			std::string child = "Cuboid" + std::to_string(i);
-			std::string child2 = "SmallCuboid" + std::to_string(i);
-
-			auto temp = scene[parent];
-			temp->rotate(float(frameTime) / (20.0f * i + 5), glm::vec3{ 0.0f, 1.0f, 0.0f });
-
-			temp = scene[child];
-			temp->rotate(float(frameTime) / (10.0f * i + 5), glm::vec3{ 0.0f, 0.0f, 1.0f });
-
-			temp = scene[child2];
-			temp->rotate(float(frameTime) / (5.0f * i + 5), glm::vec3{ 0.0f, 1.0f, 0.0f });
-		}
 		window.clear();
 
 		cam.update();
-		scene.update(frameTime);
 		gui.update(frameTime);
 
 		renderer.draw();
@@ -118,7 +122,7 @@ void Frame::updateInput() {
 		case SDL_KEYDOWN:
 			switch (input.key.keysym.sym) {
 			case SDLK_ESCAPE:
-				appState = AppState::quit;
+				appState = (appState == AppState::run)?  AppState::pause : AppState::run;
 				break;
 			case SDLK_w:
 				cam.move(Move::forward);

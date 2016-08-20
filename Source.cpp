@@ -1,20 +1,19 @@
 #include "Frame.hpp"
 
+#include "App.hpp"
+
 #include <conio.h>
-
-/* 
-	TO DO NEXT: 
-	a) SIMPLE LIGHTNING AND SPECULAR TEXTURE
-*/
-
-namespace A {
-	class X {
-
-	};
-}
 
 
 int main(int argc, char** argv) {
+	try {
+		App app("test");
+		app.run();
+	}
+	catch (...) {
+
+	}
+/*
 	try {
 		vitiGL::start();
 		Frame frame;
@@ -22,7 +21,7 @@ int main(int argc, char** argv) {
 	}
 	catch (...) {
 
-	}
+	}*/
 
 	char c = _getch();
 	return 0;

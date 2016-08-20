@@ -25,7 +25,7 @@ enum class wStyle {
 class Window {
 public:
 	Window	(const std::string& name, unsigned int width, unsigned int height, 
-			 wStyle style = wStyle::none, Color col = {0x00, 0x00, 0x00, 0xFF});
+			 wStyle style = wStyle::max, Color col = {0x00, 0x00, 0x00, 0xFF});
 	~Window	();
 
 	void	clear() const;		//Clear screen

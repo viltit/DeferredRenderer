@@ -17,7 +17,7 @@ enum class lightProps {
 };
 
 /* Base class for all lights: --------------------------------------------------------------------- */
-class Light : public SceneObject {
+class Light  {
 public:
 	Light() {}
 	virtual ~Light() {}
