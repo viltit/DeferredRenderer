@@ -136,6 +136,7 @@
     <ClInclude Include="Keytable.hpp" />
     <ClInclude Include="Light.hpp" />
     <ClInclude Include="IApp.hpp" />
+    <ClInclude Include="MenuScreen.hpp" />
     <ClInclude Include="Scene.hpp" />
     <ClInclude Include="ScreenList.hpp" />
     <ClInclude Include="Shadowmap.hpp" />
@@ -166,6 +167,7 @@
     <ClCompile Include="GUI.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="iApp.cpp" />
+    <ClCompile Include="MenuScreen.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="ScreenList.cpp" />
     <ClCompile Include="Shader.cpp" />

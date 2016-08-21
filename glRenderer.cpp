@@ -46,6 +46,7 @@ void glRenderer::draw() {
 
 	/* turn framebuffer and shader on: */
 	_framebuffer.on();
+	_framebuffer.setKernel(Kernel::none);
 	_mainShader.on();
 
 	_camera->setUniforms(_mainShader);
@@ -61,16 +62,21 @@ void glRenderer::draw() {
 	std::vector<GLuint> textures;
 	std::vector<std::string> names;
 
-	textures.push_back(_framebuffer.texture());
+	textures.push_back(_framebuffer.copyTexture());
 	names.push_back("image");
 	if (_dshadow) {
 		textures.push_back(_dshadow->texture());
 		names.push_back("shadowMap");
 	}
 
-
 	/* final on-screen image: */
+	_framebuffer.on();
+
 	_quad.draw(_quadShader, textures, names);
+
+	_framebuffer.off();
+	_framebuffer.draw();
+	glDeleteTextures(1, &textures[0]);
 
 	debug(_dshadow->texture());
 }

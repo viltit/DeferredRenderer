@@ -17,6 +17,9 @@ void Timer::on() {
 	_start_t = SDL_GetTicks();
 	_paused_t = 0;
 	_frame_t = 0;
+	_fpsTime = 0;
+	_accTime = 0;
+	_fps = 0;
 }
 
 
@@ -63,6 +66,22 @@ Uint32 Timer::frame_time() {
 	Uint32 temp = get_time() - _frame_t;
 	_frame_t = get_time();
 	return temp;
+}
+
+int Timer::fps() {
+	if (!_is_on || _is_paused) return _fps;
+	Uint32 deltaTime = get_time() - _fpsTime;
+	_fpsTime = get_time();
+	_accTime += deltaTime;
+	_fpsLoops++;
+
+	if (_fpsLoops > 30) {
+		_fps = 1000 * _fpsLoops / _accTime;
+		_fpsLoops = 0;
+		_accTime = 0;
+	}
+
+	return _fps;
 }
 
 }

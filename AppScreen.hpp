@@ -21,12 +21,12 @@ public:
 	virtual int next() const override;
 	virtual int previous() const override;
 
+	//get the latest screen content:
+	GLuint	texture() const { return _renderer.texture(); }
+
 protected:
 	void initGUI();
 	void updateInput();
-
-	/* event handlers: */
-	bool AppScreen::onExitClicked(const CEGUI::EventArgs& e);
 
 	vitiGL::Scene		_scene;
 	vitiGL::Camera		_cam;
@@ -34,5 +34,7 @@ protected:
 	vitiGL::GUI			_gui;
 
 	vitiGL::Timer		_timer;
+
+	CEGUI::PushButton*	_fpsInfo;
 };
 

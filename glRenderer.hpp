@@ -18,6 +18,8 @@ public:
 	virtual void draw();
 	virtual void debug(GLuint texture);
 
+	GLuint texture() const { return _framebuffer.copyTexture(); } //to get the latest on-screen picture
+
 protected:
 	/* Scene, Camera, ...*/
 	Scene*			_scene;

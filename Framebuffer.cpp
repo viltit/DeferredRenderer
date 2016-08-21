@@ -160,6 +160,22 @@ void Framebuffer::setKernel(Kernel kernel) {
 	_shader.off();
 }
 
+GLuint Framebuffer::copyTexture() const {
+	/* create and configure a new texture object: */
+	GLuint texture;
+	glGenTextures(1, &texture);
+	glBindTexture(GL_TEXTURE_2D, texture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, _width, _height, 0, GL_RGB, GL_FLOAT, nullptr);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	/* copy fbo-content to the new texture: */
+	glCopyImageSubData(_tbo, GL_TEXTURE_2D, 0, 0, 0, 0, texture, GL_TEXTURE_2D, 0, 0, 0, 0, _width, _height, 1);
+
+	return texture;
+}
+
 /* maybe a bad idea? */
 void Framebuffer::setTextureSize(int w, int h) {
 	glBindTexture(GL_TEXTURE_2D, _tbo);

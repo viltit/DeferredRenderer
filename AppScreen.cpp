@@ -10,48 +10,66 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 		_cam		{ float(window->width()) / float(window->height()) },
 		_renderer	{ window, &_scene, &_cam },
 		_gui		{ "GUI"}
-{}
+{
+	_index = SCREEN_INDEX_APP;
+
+	/* Create the scene elements: */
+	int prefix = 1;
+	for (int i = -5; i < 4; i++) {
+		prefix = (prefix == 1)? -1 : 1;
+		for (int j = 1; j < 5; j++) {
+			std::string parentName = "Cube" + std::to_string(i) + "/" + std::to_string(j);
+			std::string childName = "Cuboid" + std::to_string(i) + "/" + std::to_string(j);
+			std::string child2Name = "SmallCuboid" + std::to_string(i) + "/" + std::to_string(j);
+			_scene.addChild(new Octahedron{ "xml/cube.xml" }, glm::vec3{ prefix * i * 3.0, j * 3.0f, i * 3.0 }, sqrt(2.0f), parentName);
+			_scene.addChild(new Cuboid{ "xml/cubeSmall.xml" }, glm::vec3{ 2.0, 0.0f, 2.0 }, sqrt(1.0f), childName, parentName);
+			_scene.addChild(new Tetrahedron{ "xml/cubeTiny.xml" }, glm::vec3{ 0.0, prefix * 1.0f, 0.0 }, sqrt(1.0f), child2Name, childName);
+		}
+	}
+
+	_scene.addChild(new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ -3.0f, -1.0f, -3.0f }, sqrt(1800.0f), "Floor");
+
+	initGUI();
+	_timer.on();
+}
 
 
 AppScreen::~AppScreen() {
 }
 
 void AppScreen::onEntry() {
-	for (int i = -5; i < 4; i++) {
-		std::string parentName = "Cube" + std::to_string(i);
-		std::string childName = "Cuboid" + std::to_string(i);
-		std::string child2Name = "SmallCuboid" + std::to_string(i);
-		_scene.addChild(new Octahedron{ "xml/cube.xml" }, glm::vec3{ i * 3.0, 2.0f, i * 3.0 }, sqrt(2.0f), parentName);
-		_scene.addChild(new Cuboid{ "xml/cubeSmall.xml" }, glm::vec3{ 2.0, 0.0f, 2.0 }, sqrt(1.0f), childName, parentName);
-		_scene.addChild(new Tetrahedron{ "xml/cubeTiny.xml" }, glm::vec3{ 0.0, 1.0f, 0.0 }, sqrt(1.0f), child2Name, childName);
-		_scene.addChild(new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ -3.0f, -1.0f, -3.0f }, sqrt(1800.0f), "Floor");
-	}
-
-	initGUI();
 	SDL_ShowCursor(0);
 
-	_timer.on();
+	if (_timer.is_paused()) _timer.unpause();
 }
 
 void AppScreen::onExit() {
+	globals::screenshot = _renderer.texture();
+
+	_timer.pause();
 }
 
 void AppScreen::update() {
 	Uint32 frameTime = _timer.frame_time();
 
+	std::string fps = "FPS: " + std::to_string(_timer.fps());
+	_fpsInfo->setText(CEGUI::String(fps));
+
 	for (int i = -5; i < 4; i++) {
-		std::string parent = "Cube" + std::to_string(i);
-		std::string child = "Cuboid" + std::to_string(i);
-		std::string child2 = "SmallCuboid" + std::to_string(i);
+		for (int j = 1; j < 5; j++) {
+			std::string parent = "Cube" + std::to_string(i) + "/" + std::to_string(j);
+			std::string child = "Cuboid" + std::to_string(i) + "/" + std::to_string(j);
+			std::string child2 = "SmallCuboid" + std::to_string(i) + "/" + std::to_string(j);
 
-		auto temp = _scene[parent];
-		temp->rotate(float(frameTime) / (20.0f * i + 5), glm::vec3{ 0.0f, 1.0f, 0.0f });
+			auto temp = _scene[parent];
+			temp->rotate(float(frameTime) / (20.0f * i + 5), glm::vec3{ 0.0f, 1.0f, 0.0f });
 
-		temp = _scene[child];
-		temp->rotate(float(frameTime) / (10.0f * i + 5), glm::vec3{ 0.0f, 0.0f, 1.0f });
+			temp = _scene[child];
+			temp->rotate(float(frameTime) * j / (10.0f * i + 5), glm::vec3{ 0.0f, 0.0f, 1.0f });
 
-		temp = _scene[child2];
-		temp->rotate(float(frameTime) / (5.0f * i + 5), glm::vec3{ 0.0f, 1.0f, 0.0f });
+			temp = _scene[child2];
+			temp->rotate(float(frameTime) * j/ (5.0f * i  + 5), glm::vec3{ 0.0f, 1.0f, 0.0f });
+		}
 	}
 
 	updateInput();
@@ -65,14 +83,12 @@ void AppScreen::draw() {
 	_gui.draw();
 }
 
-int AppScreen::next() const
-{
-	return 0;
+int AppScreen::next() const {
+	return SCREEN_INDEX_NONE;
 }
 
-int AppScreen::previous() const
-{
-	return 0;
+int AppScreen::previous() const {
+	return SCREEN_INDEX_MENU;
 }
 
 void AppScreen::initGUI() {
@@ -80,12 +96,10 @@ void AppScreen::initGUI() {
 	_gui.setFont("DejaVuSans-10");
 	_gui.setMouseCursor("AlfiskoSkin/MouseArrow");
 
-	auto* exitButton = static_cast<CEGUI::PushButton*>(
-		_gui.createWidget(glm::vec4{ 0.01f, 0.9f, 0.1f, 0.05f }, glm::vec4{}, "AlfiskoSkin/Button", "ExitButton"));
-	exitButton->setText("Exit");
 
-	/* Set Button events: */
-	exitButton->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&AppScreen::onExitClicked, this));
+	/* FPS Info: */
+	_fpsInfo = static_cast<CEGUI::PushButton*>(
+		_gui.createWidget(glm::vec4{ 0.01f, 0.03f, 0.1f, 0.05f }, glm::vec4{}, "AlfiskoSkin/Button", "TestButton"));
 }
 
 void AppScreen::updateInput() {
@@ -99,7 +113,7 @@ void AppScreen::updateInput() {
 		case SDL_KEYDOWN:
 			switch (input.key.keysym.sym) {
 			case SDLK_ESCAPE:
-				_state = ScreenState::exit;
+				_state = ScreenState::previous;
 				break;
 			case SDLK_w:
 				_cam.move(Move::forward);
@@ -150,9 +164,4 @@ void AppScreen::updateInput() {
 			break;
 		}
 	}
-}
-
-bool AppScreen::onExitClicked(const CEGUI::EventArgs& e) {
-	_state = ScreenState::exit;
-	return true;
 }

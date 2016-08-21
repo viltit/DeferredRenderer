@@ -21,7 +21,7 @@ sQuad::~sQuad() {
 
 void sQuad::draw(const Shader & shader, GLuint texture, const std::string& textureUniformName) {
 	glDisable(GL_DEPTH_TEST);	//because we are drawing 2D
-
+	 
 	shader.on();
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture);

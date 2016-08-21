@@ -2,7 +2,11 @@
 
 #include "IApp.hpp"
 #include "AppScreen.hpp"
+#include "MenuScreen.hpp"
 #include "ScreenList.hpp"
+
+const int SCREEN_INDEX_MENU = 0;
+const int SCREEN_INDEX_APP	= 1;
 
 class App : public vitiGL::IApp {
 public:
@@ -21,5 +25,6 @@ private:
 	virtual void onExit() override;
 
 	AppScreen* _screen;
+	MenuScreen* _menu;
 };
 

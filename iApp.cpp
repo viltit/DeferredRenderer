@@ -47,7 +47,7 @@ void IApp::init() {
 }
 
 void IApp::exit() {
-	onExit();
+	//onExit();
 
 	_isRunning = false;
 

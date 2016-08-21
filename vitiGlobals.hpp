@@ -9,6 +9,7 @@ namespace vitiGL {
 	namespace globals {
 		extern int window_w;
 		extern int window_h;
+		extern unsigned int screenshot;
 	}
 	
 }

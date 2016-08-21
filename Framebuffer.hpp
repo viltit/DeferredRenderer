@@ -31,7 +31,8 @@ public:
 
 	void	setKernel(Kernel kernel);
 
-	GLuint	texture() const	{ return _tbo; }
+	GLuint	texture() const	{ return _tbo; } //texture will be blank after framebuffer clears
+	GLuint	copyTexture() const;			 //returns a new texture which has to be deleted manually
 
 	void	setTextureSize(int w, int h);
 

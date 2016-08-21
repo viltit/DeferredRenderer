@@ -77,7 +77,7 @@ void Scene::addChild(Shape* s, glm::vec3 pos, float radius, const std::string& n
 	if (name == "" ) nodeName = "Node" + std::to_string(++_counter);
 
 #ifdef CONSOLE_LOG
-	std::cout << "<Scene::addChild>Added a Scene Node with the name " << nodeName << " and the parent " << parentName << std::endl;
+	//std::cout << "<Scene::addChild>Added a Scene Node with the name " << nodeName << " and the parent " << parentName << std::endl;
 #endif
 
 	/* create the scene node and search for parent: */

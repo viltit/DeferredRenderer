@@ -4,7 +4,8 @@
 App::App() 
 {}
 
-App::App(const std::string windowName, int width, int height, vitiGL::wStyle style, vitiGL::Color color) {
+App::App(const std::string windowName, int width, int height, vitiGL::wStyle style, vitiGL::Color color) 
+{
 	addWindow(windowName, width, height, style, color);
 }
 
@@ -18,7 +19,11 @@ void App::onExit() {
 }
 
 void App::addScreens() {
+	_menu = new MenuScreen{ this, _window };
+	_screenList->add(_menu);
+
 	_screen = new AppScreen(this, _window);
 	_screenList->add(_screen);
+
 	_screenList->set(_screen->index());
 }

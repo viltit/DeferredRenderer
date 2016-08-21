@@ -17,6 +17,8 @@ public:
 	Uint32		get_time();		/* returns the time elapsed since the timer is on */
 	Uint32		frame_time();	/* returns the time elapsed since the last call */
 
+	int			fps();
+
 	bool		is_on()			{ return _is_on; }
 	bool		is_paused()		{ return _is_paused; }
 
@@ -27,6 +29,11 @@ private:
 	bool		_is_paused;
 	bool		_is_on;
 
+	/* fps counter: */
+	Uint32		_fpsTime;
+	Uint32		_accTime;
+	int			_fpsLoops;
+	int			_fps;
 };
 
 }
