@@ -174,8 +174,7 @@ void Shape::calcTangents(std::vector<Vertex>& vertices, bool bitangents) {
 Cuboid::Cuboid(const std::string& configFile, const glm::vec3& position)
 	:	Shape()
 {
-	slData data;
-	ShapeLoader loader(data, configFile);
+	slData data = Cache::getShape(configFile);
 	
 	size = data.size;
 	uv = data.uv;
@@ -256,8 +255,7 @@ void Cuboid::initVertices(std::vector<Vertex>& vertices) {
 /*	------------------------------------------------------------------------------------------------------------- */
 Tetrahedron::Tetrahedron(const std::string & configFile, const glm::vec3& position) : Shape() {
 	/* load data from config file: */
-	slData data;
-	ShapeLoader loader{ data, configFile };
+	slData data = Cache::getShape(configFile);
 
 	size = data.size;
 	uv = data.uv;
@@ -313,8 +311,7 @@ void Tetrahedron::initVertices(std::vector<Vertex>& vertices) {
 
 Octahedron::Octahedron(const std::string& configFile, const glm::vec3& position) : Shape() {
 
-	slData data;
-	ShapeLoader loader{ data, configFile };
+	slData data = Cache::getShape(configFile);
 
 	size = data.size;
 	uv = data.uv;
@@ -398,8 +395,7 @@ void Octahedron::initVertices(std::vector<Vertex>& vertices) {
 Icosahedron::Icosahedron(const std::string & configFile, const glm::vec3& position)
 	: Shape()
 {
-	slData data;
-	ShapeLoader loader{ data, configFile };
+	slData data = Cache::getShape(configFile);
 
 	size = data.size;
 	uv = data.uv;

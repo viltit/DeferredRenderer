@@ -4,10 +4,16 @@
 #include <src/SOIL.h>
 #include "Error.hpp"
 
+#include "Shape.hpp"
+
 namespace vitiGL {
 
-//redeclare static member:
+//redeclare static members:
 TextureCache Cache::_textureCache;
+ShapeCache Cache::_shapeCache;
+
+
+/*	TEXTURES -------------------------------------------------------------------------------- */
 
 TextureCache::TextureCache() {
 }
@@ -65,9 +71,36 @@ GLuint TextureCache::loadImage(const std::string& path, bool sRGB) {
 	return id;
 }
 
-//simple wrapper function:
+
+/*	SHAPES -------------------------------------------------------------------------------------- */
+
+ShapeCache::ShapeCache() {
+}
+
+ShapeCache::~ShapeCache() {
+}
+
+slData ShapeCache::load(const std::string & path) {
+	/* check if the shape has already been loaded: */
+	auto i = _cache.find(path);
+	if (i != _cache.end()) return i->second;
+
+	/* if not, load it and insert it into the cache: */
+	slData data;
+	ShapeLoader{ data, path };
+
+	_cache.insert(std::make_pair(path, data));
+	return data;
+}
+
+/*	WRAPPER -----------------------------------------------------------------------------------  */
+
 GLuint Cache::getTexture(const std::string& path, bool sRGB) {
 	return _textureCache.load(path, sRGB);
+}
+
+slData Cache::getShape(const std::string & path) {
+	return _shapeCache.load(path);
 }
 
 }

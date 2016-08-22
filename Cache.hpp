@@ -13,6 +13,21 @@
 
 namespace vitiGL {
 
+struct slData;
+
+/* cache for shapes xml-data: */
+class ShapeCache {
+public:
+	ShapeCache();
+	~ShapeCache();
+
+	slData load(const std::string& path);
+
+private:
+	std::map<std::string, slData> _cache;
+};
+
+/* cache for textures: */
 class TextureCache {
 public:
 	TextureCache();
@@ -25,11 +40,14 @@ private:
 	std::map<std::string, GLuint> _cache;
 };
 
+/* Static wrapper class for access to all caches: */
 class Cache {
 public:
 	static GLuint getTexture(const std::string& path, bool sRGB = false);
+	static slData getShape(const std::string& path);
 private:
 	static TextureCache  _textureCache;
+	static ShapeCache	 _shapeCache;
 };
 
 }

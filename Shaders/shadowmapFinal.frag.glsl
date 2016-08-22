@@ -41,6 +41,9 @@ void main() {
 }
 
 float updateDirShadow(int c) {
+	/* do not shadow the backside of an object: */
+	if (dot(-dlightDir, fsIn.normal) < 0) return 0;
+	
 	/* bring fragments light-space coordinate from range [-1 / 1] to [ 0 / 1]: */
 	vec4 fragPosNormed = fsIn.lFragPos[c] / fsIn.lFragPos[c].w;
 	fragPosNormed = fragPosNormed * 0.5f + 0.5f;
