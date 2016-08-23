@@ -3,12 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DeferredRenderer", "DeferredRenderer.vcxproj", "{24C677BA-C737-46E5-83DA-52196E7ADF43}"
-	ProjectSection(ProjectDependencies) = postProject
-		{7A39AA66-E9A2-4290-AB9D-811DF10C1C15} = {7A39AA66-E9A2-4290-AB9D-811DF10C1C15}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vitiGL", "vitiGL\vitiGL.vcxproj", "{7A39AA66-E9A2-4290-AB9D-811DF10C1C15}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vitiGL", "vitiGL.vcxproj", "{7A39AA66-E9A2-4290-AB9D-811DF10C1C15}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -18,14 +13,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{24C677BA-C737-46E5-83DA-52196E7ADF43}.Debug|x64.ActiveCfg = Debug|x64
-		{24C677BA-C737-46E5-83DA-52196E7ADF43}.Debug|x64.Build.0 = Debug|x64
-		{24C677BA-C737-46E5-83DA-52196E7ADF43}.Debug|x86.ActiveCfg = Debug|Win32
-		{24C677BA-C737-46E5-83DA-52196E7ADF43}.Debug|x86.Build.0 = Debug|Win32
-		{24C677BA-C737-46E5-83DA-52196E7ADF43}.Release|x64.ActiveCfg = Release|x64
-		{24C677BA-C737-46E5-83DA-52196E7ADF43}.Release|x64.Build.0 = Release|x64
-		{24C677BA-C737-46E5-83DA-52196E7ADF43}.Release|x86.ActiveCfg = Release|Win32
-		{24C677BA-C737-46E5-83DA-52196E7ADF43}.Release|x86.Build.0 = Release|Win32
 		{7A39AA66-E9A2-4290-AB9D-811DF10C1C15}.Debug|x64.ActiveCfg = Debug|x64
 		{7A39AA66-E9A2-4290-AB9D-811DF10C1C15}.Debug|x64.Build.0 = Debug|x64
 		{7A39AA66-E9A2-4290-AB9D-811DF10C1C15}.Debug|x86.ActiveCfg = Debug|Win32

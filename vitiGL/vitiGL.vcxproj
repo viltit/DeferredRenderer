@@ -19,36 +19,37 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{24C677BA-C737-46E5-83DA-52196E7ADF43}</ProjectGuid>
-    <RootNamespace>DeferredRenderer</RootNamespace>
+    <ProjectGuid>{7A39AA66-E9A2-4290-AB9D-811DF10C1C15}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>vitiGL</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
-    <CharacterSet>MultiByte</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>MultiByte</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
-    <CharacterSet>MultiByte</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>MultiByte</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -69,42 +70,51 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(SolutionDir)vitiGL/;C:\Users\Titus\Desktop\c++\dependencies\includes;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)Debug/;C:\Users\Titus\Desktop\c++\dependencies\libs;$(LibraryPath)</LibraryPath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>C:\Users\Titus\Desktop\c++\dependencies\includes;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Users\Titus\Desktop\c++\dependencies\libs;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>SDL2.lib;openGL32.lib;glew32.lib;SOIL.lib;CEGUIBase-0_d.lib;CEGUIOpenGLRenderer-0_d.lib;vitiGL.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Windows</SubSystem>
     </Link>
+    <Lib>
+      <AdditionalDependencies>SDL2.lib;openGL32.lib;glew32.lib;SOIL.lib;CEGUIBase-0_d.lib;CEGUIOpenGLRenderer-0_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>glew32.lib;opengl32.lib;SDL2.lib;SOIL.lib;CEGUIBase-0_d.lib;CEGUIOpenGLRenderer-0_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Windows</SubSystem>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
+      <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
@@ -112,44 +122,76 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
+      <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="App.hpp" />
-    <ClInclude Include="AppScreen.hpp" />
-    <ClInclude Include="MenuScreen.hpp" />
-    <ClInclude Include="Frame.hpp" />
+    <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="App.cpp" />
-    <ClCompile Include="AppScreen.cpp" />
-    <ClCompile Include="Frame.cpp" />
-    <ClCompile Include="MenuScreen.cpp" />
-    <ClCompile Include="Source.cpp" />
+    <ClCompile Include="Cache.cpp" />
+    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Error.cpp" />
+    <ClCompile Include="Framebuffer.cpp" />
+    <ClCompile Include="Frustum.cpp" />
+    <ClCompile Include="GaussBlur.cpp" />
+    <ClCompile Include="Geometry.cpp" />
+    <ClCompile Include="glRenderer.cpp" />
+    <ClCompile Include="GUI.cpp" />
+    <ClCompile Include="iApp.cpp" />
+    <ClCompile Include="Light.cpp" />
+    <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="ScreenList.cpp" />
+    <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="Shadowmap.cpp" />
+    <ClCompile Include="Shape.cpp" />
+    <ClCompile Include="ShapeLoader.cpp" />
+    <ClCompile Include="sQuad.cpp" />
+    <ClCompile Include="Timer.cpp" />
+    <ClCompile Include="vitiGL.cpp" />
+    <ClCompile Include="vitiGlobals.cpp" />
+    <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\final.frag.glsl" />
-    <None Include="Shaders\final.vert.glsl" />
-    <None Include="Shaders\fragment.glsl" />
-    <None Include="Shaders\framebuffer.frag.glsl" />
-    <None Include="Shaders\framebuffer.vert.glsl" />
-    <None Include="Shaders\gaussianBlur.frag.glsl" />
-    <None Include="Shaders\gaussianBlur.vert.glsl" />
-    <None Include="Shaders\shadowmap.frag.glsl" />
-    <None Include="Shaders\shadowmap.vert.glsl" />
-    <None Include="Shaders\shadowmapFinal.frag.glsl" />
-    <None Include="Shaders\shadowmapFinal.vert.glsl" />
-    <None Include="Shaders\simple.frag.glsl" />
-    <None Include="Shaders\simple.vert.glsl" />
-    <None Include="Shaders\vertex.glsl" />
+    <ClInclude Include="Cache.hpp" />
+    <ClInclude Include="Camera.hpp" />
+    <ClInclude Include="DataStructures.hpp" />
+    <ClInclude Include="Error.hpp" />
+    <ClInclude Include="Framebuffer.hpp" />
+    <ClInclude Include="Frustum.hpp" />
+    <ClInclude Include="GaussBlur.hpp" />
+    <ClInclude Include="Geometry.hpp" />
+    <ClInclude Include="glRenderer.hpp" />
+    <ClInclude Include="GUI.hpp" />
+    <ClInclude Include="IApp.hpp" />
+    <ClInclude Include="IAppScreen.hpp" />
+    <ClInclude Include="Keytable.hpp" />
+    <ClInclude Include="Light.hpp" />
+    <ClInclude Include="Mesh.hpp" />
+    <ClInclude Include="Scene.hpp" />
+    <ClInclude Include="ScreenList.hpp" />
+    <ClInclude Include="Shader.hpp" />
+    <ClInclude Include="Shadowmap.hpp" />
+    <ClInclude Include="Shape.hpp" />
+    <ClInclude Include="ShapeLoader.hpp" />
+    <ClInclude Include="sQuad.hpp" />
+    <ClInclude Include="Timer.hpp" />
+    <ClInclude Include="vitiGL.h" />
+    <ClInclude Include="vitiGL.hpp" />
+    <ClInclude Include="vitiGlobals.hpp" />
+    <ClInclude Include="vitiTypes.hpp" />
+    <ClInclude Include="Window.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
