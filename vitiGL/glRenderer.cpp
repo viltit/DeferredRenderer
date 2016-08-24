@@ -6,9 +6,8 @@
 
 namespace vitiGL {
 
-glRenderer::glRenderer(Window* window, Scene* scene, Camera* camera) 
+glRenderer::glRenderer(const Window* window, Scene* scene, Camera* camera) 
 	:	_scene		{ scene },
-		_window		{ window },
 		_camera		{ camera },
 		_mainShader { "Shaders/vertex.glsl", "Shaders/fragment.glsl" },
 		_quadShader { "Shaders/final.vert.glsl", "Shaders/final.frag.glsl" },

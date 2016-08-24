@@ -12,7 +12,7 @@ namespace vitiGL {
 
 class glRenderer {
 public:
-	glRenderer(Window* window, Scene* scene, Camera* camera);
+	glRenderer(const Window* window, Scene* scene, Camera* camera);
 	virtual ~glRenderer();
 
 	virtual void draw();
@@ -21,9 +21,8 @@ public:
 	GLuint texture() const { return _framebuffer.copyTexture(); } //to get the latest on-screen picture
 
 protected:
-	/* Scene, Camera, ...*/
+	/* Scene, Camera: */
 	Scene*			_scene;
-	Window*			_window;
 	Camera*			_camera;
 
 	/* view Frustum: */

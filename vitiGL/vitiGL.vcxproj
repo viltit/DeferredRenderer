@@ -70,8 +70,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\Users\Titus\Desktop\c++\dependencies\includes;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\Titus\Desktop\c++\dependencies\libs;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\viti\Desktop\c++\dependencies\includes;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\viti\Desktop\c++\dependencies\libs;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -148,6 +148,7 @@
     <ClCompile Include="GaussBlur.cpp" />
     <ClCompile Include="Geometry.cpp" />
     <ClCompile Include="glRenderer.cpp" />
+    <ClCompile Include="glRendererDeferred.cpp" />
     <ClCompile Include="GUI.cpp" />
     <ClCompile Include="iApp.cpp" />
     <ClCompile Include="Light.cpp" />
@@ -173,6 +174,7 @@
     <ClInclude Include="GaussBlur.hpp" />
     <ClInclude Include="Geometry.hpp" />
     <ClInclude Include="glRenderer.hpp" />
+    <ClInclude Include="glRendererDeferred.hpp" />
     <ClInclude Include="GUI.hpp" />
     <ClInclude Include="IApp.hpp" />
     <ClInclude Include="IAppScreen.hpp" />

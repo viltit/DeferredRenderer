@@ -31,6 +31,7 @@ protected:
 	vitiGL::Scene		_scene;
 	vitiGL::Camera		_cam;
 	vitiGL::glRenderer  _renderer;
+	vitiGL::glRendererDeferred _drender; //test
 	vitiGL::GUI			_gui;
 
 	vitiGL::Timer		_timer;
