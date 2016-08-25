@@ -12,7 +12,10 @@ glRendererDeferred::glRendererDeferred(const Window* window, Scene* scene, Camer
 		_dshader	{ "Shaders/simple.vert.glsl", "Shaders/simple.frag.glsl" },
 		_scene		{ scene },
 		_camera		{ camera },
-		_dlight		{ "dlight" }
+		_dlight		{ "dlight" },
+		_debug		{ QuadPos::topRight },
+		_debug2		{ QuadPos::aboveMiddleRight },
+		_debug3		{ QuadPos::belowMiddleRight }
 {
 	if (_window == nullptr) throw initError("<glRendererDeferred::glRendererDeferred> Window is a nullptr");
 
@@ -50,7 +53,9 @@ void glRendererDeferred::draw() {
 	drawLight();
 	drawFinal();
 
-	//_quad.draw(_dshader, _tbo[specular]);
+	_debug.draw(_dshader, _tbo[color]);
+	_debug2.draw(_dshader, _tbo[diffuse]);
+	_debug3.draw(_dshader, _tbo[specular]);
 }
 
 void glRendererDeferred::drawGeo() {
@@ -111,7 +116,23 @@ void glRendererDeferred::drawLight() {
 }
 
 void glRendererDeferred::drawFinal() {
+	_fshader.on();
 
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, _tbo[color]);
+	glUniform1i(_fshader.getUniform("color"), 0);
+
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, _tbo[diffuse]);
+	glUniform1i(_fshader.getUniform("diffuse"), 1);
+
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, _tbo[specular]);
+	glUniform1i(_fshader.getUniform("specular"), 2);
+
+	_quad.drawNaked(_fshader);
+
+	_fshader.off();
 }
 
 void glRendererDeferred::initGbuffer() {

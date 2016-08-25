@@ -12,7 +12,9 @@ namespace vitiGL {
 
 enum class QuadPos {
 	fullscreen,
-	topRight
+	topRight,
+	aboveMiddleRight,
+	belowMiddleRight
 	//to be continued...
 };
 

@@ -93,6 +93,33 @@ void sQuad::initVertices() {
 		std::copy(vertices, vertices + 24, quadVertices);
 	}
 		break;
+
+	case QuadPos::aboveMiddleRight:
+	{
+		float vertices[] = {
+			0.5f, 0.5f, 0.0f, 1.0f,
+			0.5f, 0.0f, 0.0f, 0.0f,
+			1.0f, 0.0f,  1.0f, 0.0f,
+			0.5f,  0.5f,  0.0f, 1.0f,
+			1.0f, 0.0f,  1.0f, 0.0f,
+			1.0f,  0.5f,  1.0f, 1.0f
+		};
+		std::copy(vertices, vertices + 24, quadVertices);
+	}
+	break;
+	case QuadPos::belowMiddleRight:
+	{
+		float vertices[] = {
+			0.5f, 0.0f, 0.0f, 1.0f,
+			0.5f, -0.5f, 0.0f, 0.0f,
+			1.0f, -0.5f,  1.0f, 0.0f,
+			0.5f,  0.0f,  0.0f, 1.0f,
+			1.0f, -0.5f,  1.0f, 0.0f,
+			1.0f,  0.0f,  1.0f, 1.0f
+		};
+		std::copy(vertices, vertices + 24, quadVertices);
+	}
+	break;
 	}
 
 

@@ -74,6 +74,9 @@ protected:
 
 	/* screen sized quad to to draw into :*/
 	sQuad		_quad;
+	sQuad		_debug;
+	sQuad		_debug2;
+	sQuad		_debug3;
 
 	glm::vec2	_texelSize;
 };

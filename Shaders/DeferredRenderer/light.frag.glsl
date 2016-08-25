@@ -47,7 +47,6 @@ void main() {
 	Light light = updateDLight(worldPos, normal, uv);
 
 	ldiffuse = vec4(light.diffuse, 1.0f);
-	//ldiffuse = vec4(1.0f, 0.0f, 0.0f, 1.0f);
 	lspecular = vec4(light.specular, 1.0f);
 }
 
