@@ -16,7 +16,8 @@ glRendererDeferred::glRendererDeferred(const Window* window, Scene* scene, Camer
 		_debug		{ QuadPos::topRight },
 		_debug2		{ QuadPos::aboveMiddleRight },
 		_debug3		{ QuadPos::belowMiddleRight },
-		_debug4		{ QuadPos::bottomRight }
+		_debug4		{ QuadPos::bottomRight },
+		_dshadow	{ *camera, &_dlight }
 {
 	if (_window == nullptr) throw initError("<glRendererDeferred::glRendererDeferred> Window is a nullptr");
 
@@ -40,6 +41,11 @@ void glRendererDeferred::update() {
 }
 
 void glRendererDeferred::draw() {
+
+	_dshadow.on();
+	_dshadow.draw(_camera->getMatrizes(), _scene);
+	_dshadow.off();
+
 	/* Prepare: */
 	glDepthMask(GL_TRUE);
 	glEnable(GL_DEPTH_TEST);
@@ -131,6 +137,10 @@ void glRendererDeferred::drawFinal() {
 	glActiveTexture(GL_TEXTURE2);
 	glBindTexture(GL_TEXTURE_2D, _tbo[specular]);
 	glUniform1i(_fshader.getUniform("specular"), 2);
+
+	glActiveTexture(GL_TEXTURE3);
+	glBindTexture(GL_TEXTURE_2D, _dshadow.texture());
+	glUniform1i(_fshader.getUniform("shadow"), 3);
 
 	_quad.drawNaked(_fshader);
 

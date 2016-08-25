@@ -7,6 +7,7 @@ out vec4 fcolor;
 uniform sampler2D color;
 uniform sampler2D diffuse;
 uniform sampler2D specular;
+uniform sampler2D shadow;
 
 void main() {
 	/* diffuse and specular color coming from the object: */
@@ -18,8 +19,11 @@ void main() {
 	vec3 diffuseLight = texture(diffuse, fUV).rgb;
 	vec3 specularLight = texture(specular, fUV).rgb;
 
-	/* provisorium: ambient */
-	vec3 ambientLight = texture(color, fUV).rgb * 0.2f;
+	/* shadow: */
+	float s = texture(shadow, fUV).r;
 
-	fcolor = vec4(ambientLight + (diffuseColor * diffuseLight) + (specularColor * specularLight), 1.0f);
+	/* provisorium: ambient */
+	vec3 ambientColor = texture(color, fUV).rgb * 0.2f;
+
+	fcolor = vec4(ambientColor + (diffuseColor * diffuseLight * s) + (specularColor * specularLight * s), 1.0f);
 }

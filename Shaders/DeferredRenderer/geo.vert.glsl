@@ -35,10 +35,9 @@ void main() {
 	vs_out.bitangent = normalize(vec3(M * vec4(bitangent, 0.0f)));
 	vs_out.pos = world_pos;
 
-	/* Gram-Schmidt process: re-orthogonalize 
-	vs_out.tangent		= normalize(world_tangent - dot(world_tangent, world_norm) * world_norm);
-	vs_out.norm			= world_norm;
-	vs_out.bitangent	= normalize(cross(vs_out.norm, vs_out.tangent));*/
+	/* Gram-Schmidt process: re-orthogonalize
+	vs_out.tangent		= normalize(vs_out.tangent - dot(vs_out.tangent,vs_out.norm) * vs_out.norm);
+	vs_out.bitangent	= normalize(cross(vs_out.tangent, vs_out.norm)); */
 
 	gl_Position			= VP * vec4(world_pos, 1.0f);
 }
