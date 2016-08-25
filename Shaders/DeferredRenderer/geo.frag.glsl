@@ -21,7 +21,9 @@ void main() {
 	/* tangent-bitangent-normal matrix: */
 	mat3 TBN		= mat3(fs_in.tangent, fs_in.bitangent, fs_in.norm);
 
-	g_norm			= normalize(TBN * (texture(normal, fs_in.uv).rgb));
+	g_norm			= texture(normal, fs_in.uv).rgb;		//sample normal
+	g_norm			= normalize(g_norm * 2.0f - 1.0f);		//bring it in range [-1 / 1]
+	g_norm			= normalize(TBN * g_norm);				//and transform it to world space
 
 	g_albedo.rgb	= texture(diffuse, fs_in.uv).rgb;
 	g_albedo.a		= texture(specular, fs_in.uv).r;

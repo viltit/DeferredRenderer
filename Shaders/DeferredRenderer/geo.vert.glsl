@@ -30,11 +30,9 @@ void main() {
 	vs_out.uv			= uv;
 
 	/* convert our data into world coordinates: */
-	mat3 N = transpose(inverse(mat3(M)));
-
-	vs_out.norm		= normalize(N * norm);
-	vs_out.tangent	= normalize(N * tangent);
-	vs_out.bitangent = normalize(N * bitangent);
+	vs_out.norm		= normalize(vec3(M * vec4(norm, 0.0f)));
+	vs_out.tangent	= normalize(vec3(M * vec4(tangent, 0.0f)));
+	vs_out.bitangent = normalize(vec3(M * vec4(bitangent, 0.0f)));
 	vs_out.pos = world_pos;
 
 	/* Gram-Schmidt process: re-orthogonalize 
