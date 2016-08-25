@@ -4,8 +4,10 @@
 #include <string>
 #include "Shader.hpp"
 #include "Shape.hpp"
+#include "sQuad.hpp"
 
 namespace vitiGL {
+
 
 enum class lightProps {
 	dir,
@@ -24,6 +26,7 @@ public:
 
 	virtual void setProperty(lightProps property, const glm::vec3& value, const Shader& shader) = 0;
 	virtual void setUniforms(const Shader& shader) = 0;
+	virtual void draw(const Shader& shader) = 0; //for deferred rendering
 
 protected:
 };
@@ -40,6 +43,7 @@ public:
 
 	void setProperty(lightProps property, const glm::vec3& value, const Shader& shader);
 	void setUniforms(const Shader& shader);
+	void draw(const Shader& shader);
 
 	/* getters and setters: */
 	glm::vec3 dir() const	{ return _dir; }
@@ -50,6 +54,7 @@ private:
 	glm::vec3		_ambient;
 	glm::vec3		_diffuse;
 	glm::vec3		_specular;
+	sQuad			_quad;
 };
 
 /* Point Light ----------------------------------------------------------------------------------- */
@@ -64,6 +69,7 @@ public:
 
 	void setProperty(lightProps property, const glm::vec3& value, const Shader& shader);
 	void setUniforms(const Shader& shader);
+	void draw(const Shader& shader);
 
 private:
 	std::string		_uniform;

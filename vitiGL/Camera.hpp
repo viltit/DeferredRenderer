@@ -44,6 +44,8 @@ public:
 	void		rotate(int mouseX, int mouseY);
 	void		zoom(int z);
 
+	/* set view-position matrix uniform, shader has to be active: */
+	void		setVPUniform(const Shader& shader) const;
 	/* sets the position as "viewPos" and the View-Perspective-Matrix as "VP". The shader needs to be active! */
 	void		setUniforms(const Shader& shader) const;
 

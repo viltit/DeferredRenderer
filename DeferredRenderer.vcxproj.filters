@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Resource Files\Deferred">
+      <UniqueIdentifier>{59305eb2-2856-4f87-aa98-efd73db429bb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Frame.hpp">
@@ -87,6 +90,24 @@
     </None>
     <None Include="Shaders\simple.frag.glsl">
       <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Shaders\DeferredRenderer\final.frag.glsl">
+      <Filter>Resource Files\Deferred</Filter>
+    </None>
+    <None Include="Shaders\DeferredRenderer\final.vert.glsl">
+      <Filter>Resource Files\Deferred</Filter>
+    </None>
+    <None Include="Shaders\DeferredRenderer\geo.frag.glsl">
+      <Filter>Resource Files\Deferred</Filter>
+    </None>
+    <None Include="Shaders\DeferredRenderer\geo.vert.glsl">
+      <Filter>Resource Files\Deferred</Filter>
+    </None>
+    <None Include="Shaders\DeferredRenderer\light.frag.glsl">
+      <Filter>Resource Files\Deferred</Filter>
+    </None>
+    <None Include="Shaders\DeferredRenderer\light.vert.glsl">
+      <Filter>Resource Files\Deferred</Filter>
     </None>
   </ItemGroup>
 </Project>

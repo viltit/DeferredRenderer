@@ -55,6 +55,12 @@ void sQuad::draw(const Shader & shader, const std::vector<GLuint>& textures, con
 	glActiveTexture(GL_TEXTURE0);
 }
 
+void sQuad::drawNaked(const Shader & shader) {
+	glBindVertexArray(_vao);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glBindVertexArray(0);
+}
+
 
 void sQuad::initVertices() {
 	float quadVertices[24];

@@ -26,7 +26,7 @@ void Shape::draw(const Shader& shader) const {
 	//give the model matrix to the shader:
 	glUniformMatrix4fv(shader.getUniform("M"), 1, GL_FALSE, glm::value_ptr(M));
 
-	glUniform1f(shader.getUniform("material.shiny"), 22.0f);
+	//glUniform1f(shader.getUniform("material.shiny"), 22.0f);
 
 	//give the textures to the shader:
 	glActiveTexture(GL_TEXTURE0);

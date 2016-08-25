@@ -52,6 +52,10 @@ void dLight::setUniforms(const Shader& shader) {
 	shader.off();
 }
 
+void dLight::draw(const Shader & shader) {
+	_quad.drawNaked(shader);
+}
+
 pLight::pLight	(const std::string & uniformName, const glm::vec3 & attenuation, 
 				const glm::vec3 & pos, const glm::vec3 & ambient, const glm::vec3 & diffuse, const glm::vec3 & specular)
 	:	_uniform		{ uniformName },
@@ -101,6 +105,10 @@ void pLight::setUniforms(const Shader & shader) {
 	glUniform3f(shader.getUniform(_uniform + ".specular"), _specular.r, _specular.g, _specular.b);
 	glUniform3f(shader.getUniform(_uniform + ".attenuation"), _attenuation.x, _attenuation.y, _attenuation.z);
 	shader.off();
+}
+
+void pLight::draw(const Shader & shader)
+{
 }
 
 }

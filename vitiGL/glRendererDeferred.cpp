@@ -1,5 +1,7 @@
 #include "glRendererDeferred.hpp"
 
+#include <glm/gtc/type_ptr.hpp>
+
 namespace vitiGL {
 
 glRendererDeferred::glRendererDeferred(const Window* window, Scene* scene, Camera* camera)
@@ -9,56 +11,107 @@ glRendererDeferred::glRendererDeferred(const Window* window, Scene* scene, Camer
 		_fshader	{ "Shaders/DeferredRenderer/final.vert.glsl", "Shaders/DeferredRenderer/final.frag.glsl" },
 		_dshader	{ "Shaders/simple.vert.glsl", "Shaders/simple.frag.glsl" },
 		_scene		{ scene },
-		_camera		{ camera }
+		_camera		{ camera },
+		_dlight		{ "dlight" }
 {
 	if (_window == nullptr) throw initError("<glRendererDeferred::glRendererDeferred> Window is a nullptr");
+
+	_texelSize.x = 1.0f / float(window->width());
+	_texelSize.y = 1.0f / float(window->height());
+
+	_lshader.on();
+	_dlight.setUniforms(_lshader);
+	_dlight.setProperty(lightProps::dir, glm::vec3{ 0.0f, -1.0f, 1.f }, _lshader);
+	_lshader.off();
+
 	initGbuffer();
 	initLbuffer();
 }
 
 
-glRendererDeferred::~glRendererDeferred()
-{
+glRendererDeferred::~glRendererDeferred() {
 }
 
 void glRendererDeferred::update() {
 }
 
 void glRendererDeferred::draw() {
+	/* Prepare: */
+	glDepthMask(GL_TRUE);
+	glEnable(GL_DEPTH_TEST);
+
 	CamInfo cam = _camera->getMatrizes();
 	glm::mat4 VP = cam.P * cam.V;
 
 	_frustum.update(VP);
 
+	/* draw: */
 	drawGeo();
 	drawLight();
 	drawFinal();
+
+	//_quad.draw(_dshader, _tbo[specular]);
 }
 
 void glRendererDeferred::drawGeo() {
 	glBindFramebuffer(GL_FRAMEBUFFER, _gbuffer);
-	glDepthMask(GL_TRUE);
-	glEnable(GL_DEPTH_TEST);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	_gshader.on();
 
-	_camera->setUniforms(_gshader);
+	_camera->setVPUniform(_gshader);
+
 	_scene->drawCulled(_gshader, _frustum);
 
 	_gshader.off();
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-	_quad.draw(_dshader, _tbo[color]);
 }
 
-void glRendererDeferred::drawLight()
-{
+void glRendererDeferred::drawLight() {
+	glBindFramebuffer(GL_FRAMEBUFFER, _lbuffer);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	_dlight.setUniforms(_lshader); //not needed every frame!
+
+	glEnable(GL_CULL_FACE);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_ONE, GL_ONE);	 //additive blending so multiple lights get brighter
+	
+	_lshader.on();
+
+	/* set texture uniforms from geometry pass (light need depth and normals) */
+	glActiveTexture(GL_TEXTURE3);
+	glBindTexture(GL_TEXTURE_2D, _tbo[depht]);
+	glUniform1i(_lshader.getUniform("depht"), 3);
+
+	glActiveTexture(GL_TEXTURE4);
+	glBindTexture(GL_TEXTURE_2D, _tbo[normal]);
+	glUniform1i(_lshader.getUniform("normal"), 4);
+
+	glActiveTexture(GL_TEXTURE5);
+	glBindTexture(GL_TEXTURE_2D, _tbo[position]);
+	glUniform1i(_lshader.getUniform("position"), 5);
+
+	/* set view pos and texel size uniform: */
+	glUniform3f(_lshader.getUniform("viewPos"), _camera->pos().x, _camera->pos().y, _camera->pos().z);
+	glUniform2f(_lshader.getUniform("texelSize"), _texelSize.x, _texelSize.y); // to do: not needed every frame!
+
+	/* set model and VP-Matrix uniform (which are both the identity matrix for directional lights) */
+	glm::mat4 M{};
+	glUniformMatrix4fv(_lshader.getUniform("M"), 1, GL_FALSE, glm::value_ptr(M));
+	glUniformMatrix4fv(_lshader.getUniform("VP"), 1, GL_FALSE, glm::value_ptr(M));
+
+	_dlight.draw(_lshader);
+
+	_lshader.off();
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	glDisable(GL_BLEND);
 }
 
-void glRendererDeferred::drawFinal()
-{
+void glRendererDeferred::drawFinal() {
+
 }
 
 void glRendererDeferred::initGbuffer() {

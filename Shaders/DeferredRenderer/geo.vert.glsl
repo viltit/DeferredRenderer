@@ -20,7 +20,7 @@ out VS_OUT{
 } vs_out;
 
 uniform mat4 M;		/* model matrix */
-uniform mat4 PV;	/* view-perspective matrix */
+uniform mat4 VP;	/* view-perspective matrix */
 
 
 /* ---------------------------- SHADERS ENTRY POINT ---------------------------- */
@@ -42,5 +42,5 @@ void main() {
 	vs_out.norm			= world_norm;
 	vs_out.bitangent	= normalize(cross(vs_out.norm, vs_out.tangent));*/
 
-	gl_Position			= PV * vec4(world_pos, 1.0f);
+	gl_Position			= VP * vec4(world_pos, 1.0f);
 }

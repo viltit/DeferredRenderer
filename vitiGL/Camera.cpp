@@ -101,6 +101,11 @@ void vitiGL::Camera::zoom(int z) {
 	_didUpdate = true;
 }
 
+void Camera::setVPUniform(const Shader& shader) const {
+	glm::mat4 VP = _P * _V;
+	glUniformMatrix4fv(shader.getUniform("VP"), 1, GL_FALSE, glm::value_ptr(VP));
+}
+
 void Camera::setUniforms(const Shader & shader) const {
 	glm::mat4 VP = _P * _V;
 	glUniformMatrix4fv(shader.getUniform("VP"), 1, GL_FALSE, glm::value_ptr(VP));

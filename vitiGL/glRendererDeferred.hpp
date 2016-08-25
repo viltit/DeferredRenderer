@@ -5,6 +5,7 @@
 #include "Camera.hpp"
 #include "Frustum.hpp"
 #include "sQuad.hpp"
+#include "Light.hpp"
 
 
 /*	Deferred Renderer
@@ -12,13 +13,13 @@
 	naming convention: g- for geometry, l- for lightning, f- for finalizing 
 */
 
+namespace vitiGL {
+
 enum class textureType {
 	color,
 	float16,
 	depth
 };
-
-namespace vitiGL {
 
 class glRendererDeferred {
 public:
@@ -66,11 +67,15 @@ protected:
 	Camera*		_camera;
 	const Window*	_window;
 
+	dLight		_dlight;	//NEEDS TO GET PART OF THE SCENE
+
 	/* cameras view-perspective frustum: */
 	Frustum		_frustum;
 
 	/* screen sized quad to to draw into :*/
 	sQuad		_quad;
+
+	glm::vec2	_texelSize;
 };
 
 /* helper functions that may be useful for other classes too: */
