@@ -18,5 +18,8 @@ void main() {
 	vec3 diffuseLight = texture(diffuse, fUV).rgb;
 	vec3 specularLight = texture(specular, fUV).rgb;
 
-	fcolor = vec4(diffuseColor * diffuseLight + specularColor * specularLight, 1.0f);
+	/* provisorium: ambient */
+	vec3 ambientLight = texture(color, fUV).rgb * 0.2f;
+
+	fcolor = vec4(ambientLight + (diffuseColor * diffuseLight) + (specularColor * specularLight), 1.0f);
 }

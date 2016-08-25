@@ -66,8 +66,8 @@ Light updateDLight(vec3 worldPos, vec3 normal, vec2 uv) {
 	Light light;
 
 	light.ambient	= dlight.ambient;
-	light.diffuse	= dlight.diffuse * diff;
-	light.specular	= dlight.specular * spec;
+	light.diffuse	= diff * dlight.diffuse;
+	light.specular	= spec * dlight.specular;
 
 	return light;
 }

@@ -15,7 +15,8 @@ glRendererDeferred::glRendererDeferred(const Window* window, Scene* scene, Camer
 		_dlight		{ "dlight" },
 		_debug		{ QuadPos::topRight },
 		_debug2		{ QuadPos::aboveMiddleRight },
-		_debug3		{ QuadPos::belowMiddleRight }
+		_debug3		{ QuadPos::belowMiddleRight },
+		_debug4		{ QuadPos::bottomRight }
 {
 	if (_window == nullptr) throw initError("<glRendererDeferred::glRendererDeferred> Window is a nullptr");
 
@@ -56,6 +57,7 @@ void glRendererDeferred::draw() {
 	_debug.draw(_dshader, _tbo[color]);
 	_debug2.draw(_dshader, _tbo[diffuse]);
 	_debug3.draw(_dshader, _tbo[specular]);
+	_debug4.draw(_dshader, _tbo[normal]);
 }
 
 void glRendererDeferred::drawGeo() {

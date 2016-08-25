@@ -14,7 +14,8 @@ enum class QuadPos {
 	fullscreen,
 	topRight,
 	aboveMiddleRight,
-	belowMiddleRight
+	belowMiddleRight,
+	bottomRight
 	//to be continued...
 };
 

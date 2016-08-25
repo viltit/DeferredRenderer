@@ -6,7 +6,7 @@
 #include "Frustum.hpp"
 #include "sQuad.hpp"
 #include "Light.hpp"
-
+#include "Shadowmap.hpp"
 
 /*	Deferred Renderer
 
@@ -68,6 +68,7 @@ protected:
 	const Window*	_window;
 
 	dLight		_dlight;	//NEEDS TO GET PART OF THE SCENE
+	
 
 	/* cameras view-perspective frustum: */
 	Frustum		_frustum;
@@ -77,6 +78,7 @@ protected:
 	sQuad		_debug;
 	sQuad		_debug2;
 	sQuad		_debug3;
+	sQuad		_debug4;
 
 	glm::vec2	_texelSize;
 };
