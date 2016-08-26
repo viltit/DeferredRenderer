@@ -41,7 +41,6 @@ void Shape::draw(const Shader& shader) const {
 	glBindTexture(GL_TEXTURE_2D, tbo[2]);
 	glUniform1i(shader.getUniform("normal"), 2);
 
-
 	//draw:
 	glBindVertexArray(vao);
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -55,16 +54,6 @@ void Shape::drawNaked(const Shader & shader) const {
 	glBindVertexArray(vao);
 	glDrawArrays(GL_TRIANGLES, 0, numVertices);
 	glBindVertexArray(0);
-}
-
-void Shape::setPos(const glm::vec3& pos) {
-	M[3][0] = pos.x;
-	M[3][1] = pos.y;
-	M[3][2] = pos.z;
-}
-
-void Shape::rotate(float angle, const glm::vec3& axis) {
-	M = glm::rotate(M, glm::radians(angle), axis);
 }
 
 void Shape::uploadVertices(const std::vector<Vertex>& vertices) {
@@ -173,22 +162,33 @@ void Shape::calcTangents(std::vector<Vertex>& vertices, bool bitangents) {
 Cuboid::Cuboid(const std::string& configFile, const glm::vec3& position)
 	:	Shape()
 {
-	slData data = Cache::getShape(configFile);
-	
-	size = data.size;
-	uv = data.uv;
+	VertexData vdata{ 0, 0, 0 };
+	slData sdata = Cache::getShape(configFile);
 
-	tbo.push_back(Cache::getTexture(data.textures[0]));
-	tbo.push_back(Cache::getTexture(data.textures[1]));
-	tbo.push_back(Cache::getTexture(data.textures[2]));
+	size = sdata.size;
+	uv = sdata.uv;
 
-	setPos(position);
+	tbo.push_back(Cache::getTexture(sdata.textures[0]));
+	tbo.push_back(Cache::getTexture(sdata.textures[1]));
+	tbo.push_back(Cache::getTexture(sdata.textures[2]));
 
-	std::vector<Vertex> vertices;
-	initVertices(vertices);
-	calcNormals(vertices);
-	calcTangents(vertices);
-	uploadVertices(vertices);
+	if (!Cache::isVertexLoaded(configFile)) {
+		std::vector<Vertex> vertices;
+		initVertices(vertices);
+		calcNormals(vertices);
+		calcTangents(vertices);
+		uploadVertices(vertices);
+		numVertices = vertices.size();
+		Cache::pushVertex(configFile, vao, vbo, numVertices);
+	}
+	else {
+		vdata = Cache::pullVertex(configFile);
+		vao = vdata.vao;
+		vbo = vdata.vbo;
+		numVertices = vdata.numVertices;
+	}
+
+	M = glm::translate(M, position);
 }
 
 Cuboid::~Cuboid() {
@@ -254,22 +254,33 @@ void Cuboid::initVertices(std::vector<Vertex>& vertices) {
 /*	------------------------------------------------------------------------------------------------------------- */
 Tetrahedron::Tetrahedron(const std::string & configFile, const glm::vec3& position) : Shape() {
 	/* load data from config file: */
-	slData data = Cache::getShape(configFile);
+	VertexData vdata{ 0, 0, 0 };
+	slData sdata = Cache::getShape(configFile);
 
-	size = data.size;
-	uv = data.uv;
+	size = sdata.size;
+	uv = sdata.uv;
 
-	tbo.push_back(Cache::getTexture(data.textures[0]));
-	tbo.push_back(Cache::getTexture(data.textures[1]));
-	tbo.push_back(Cache::getTexture(data.textures[2]));
+	tbo.push_back(Cache::getTexture(sdata.textures[0]));
+	tbo.push_back(Cache::getTexture(sdata.textures[1]));
+	tbo.push_back(Cache::getTexture(sdata.textures[2]));
 
-	setPos(position);
+	if (!Cache::isVertexLoaded(configFile)) {
+		std::vector<Vertex> vertices;
+		initVertices(vertices);
+		calcNormals(vertices);
+		calcTangents(vertices);
+		uploadVertices(vertices);
+		numVertices = vertices.size();
+		Cache::pushVertex(configFile, vao, vbo, numVertices);
+	}
+	else {
+		vdata = Cache::pullVertex(configFile);
+		vao = vdata.vao;
+		vbo = vdata.vbo;
+		numVertices = vdata.numVertices;
+	}
 
-	std::vector<Vertex> vertices;
-	initVertices(vertices);
-	calcNormals(vertices);
-	calcTangents(vertices);
-	uploadVertices(vertices);
+	M = glm::translate(M, position);
 }
 
 Tetrahedron::~Tetrahedron() {
@@ -309,33 +320,34 @@ void Tetrahedron::initVertices(std::vector<Vertex>& vertices) {
 /*	------------------------------------------------------------------------------------------------------------- */
 
 Octahedron::Octahedron(const std::string& configFile, const glm::vec3& position) : Shape() {
+	
+	VertexData vdata{ 0, 0, 0 };
+	slData sdata = Cache::getShape(configFile);
 
-	slData data = Cache::getShape(configFile);
+	size = sdata.size;
+	uv = sdata.uv;
 
-	size = data.size;
-	uv = data.uv;
+	tbo.push_back(Cache::getTexture(sdata.textures[0]));
+	tbo.push_back(Cache::getTexture(sdata.textures[1]));
+	tbo.push_back(Cache::getTexture(sdata.textures[2]));
 
-	tbo.push_back(Cache::getTexture(data.textures[0]));
-	tbo.push_back(Cache::getTexture(data.textures[1]));
-	tbo.push_back(Cache::getTexture(data.textures[2]));
-
-	setPos(position);
-
-	if (!Cache::isVertexLoaded("Octahedron")) {
+	if (!Cache::isVertexLoaded(configFile)) {
 		std::vector<Vertex> vertices;
 		initVertices(vertices);
 		calcNormals(vertices);
 		calcTangents(vertices);
 		uploadVertices(vertices);
-		Cache::pushVertex("Octahedron", vao, vbo, numVertices);
+		numVertices = vertices.size();
+		Cache::pushVertex(configFile, vao, vbo, numVertices);
+	}
+	else {
+		vdata = Cache::pullVertex(configFile);
+		vao = vdata.vao;
+		vbo = vdata.vbo;
+		numVertices = vdata.numVertices;
 	}
 
-	else {
-		VertexData data = Cache::pullVertex("Octahedron");
-		vao = data.vao;
-		vbo = data.vbo;
-		numVertices = data.numVertices;
-	}
+	M = glm::translate(M, position);
 }
 
 Octahedron::~Octahedron() {
@@ -404,24 +416,34 @@ void Octahedron::initVertices(std::vector<Vertex>& vertices) {
 Icosahedron::Icosahedron(const std::string & configFile, const glm::vec3& position)
 	: Shape()
 {
-	slData data = Cache::getShape(configFile);
+	/* load data from config file: */
+	VertexData vdata{ 0, 0, 0 };
+	slData sdata = Cache::getShape(configFile);
 
-	size = data.size;
-	uv = data.uv;
+	size = sdata.size;
+	uv = sdata.uv;
 
-	tbo.push_back(Cache::getTexture(data.textures[0]));
-	tbo.push_back(Cache::getTexture(data.textures[1]));
-	tbo.push_back(Cache::getTexture(data.textures[2]));
+	tbo.push_back(Cache::getTexture(sdata.textures[0]));
+	tbo.push_back(Cache::getTexture(sdata.textures[1]));
+	tbo.push_back(Cache::getTexture(sdata.textures[2]));
 
-	setPos(position);
+	if (!Cache::isVertexLoaded(configFile)) {
+		std::vector<Vertex> vertices;
+		initVertices(vertices);
+		calcNormals(vertices);
+		calcTangents(vertices);
+		uploadVertices(vertices);
+		numVertices = vertices.size();
+		Cache::pushVertex(configFile, vao, vbo, numVertices);
+	}
+	else {
+		vdata = Cache::pullVertex(configFile);
+		vao = vdata.vao;
+		vbo = vdata.vbo;
+		numVertices = vdata.numVertices;
+	}
 
-	std::vector<Vertex> vertices;
-	initVertices(vertices);
-	calcNormals(vertices);
-	calcTangents(vertices);
-	uploadVertices(vertices);
-
-	numVertices = vertices.size();
+	M = glm::translate(M, position);
 }
 
 Icosahedron::~Icosahedron() {

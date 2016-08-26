@@ -20,11 +20,16 @@ struct slData {
 };
 
 
-/*	--------------------- CLASS SHAPE --------------------------------------------------------
-	Base class Shape. All drawable objects should inhert from Shape so
-	we can draw everything with a single command.
-	Be aware that the shader has to be delivered AND activated from within
-	the class that calls the draw command.
+/*	ABSTRACT CLASS SHAPE -----------------------------------------------------------------------
+	 
+	Task:	Keep all variables and methods needed for drawing the Shape with openGL
+			Things like scaling, moving, ... should happen in the class that holds the Shape.
+
+	Caveats:	The shader has to be delivered AND activated from within the class that calls 
+				the draw command.
+
+	to do:	Implement glInstancedDraw
+			Implement element buffers and element drawing
 	------------------------------------------------------------------------------------------ */
 
 class Shape {
@@ -36,9 +41,8 @@ public:
 	virtual void drawNaked(const Shader& shader) const;
 	//virtual void multidraw(const Shader& shader) = 0;
 
-	void setPos(const glm::vec3& position);
-	void setModelMatrix(const glm::mat4& P)		{ M = P; }
-	void rotate(float angle, const glm::vec3& axis);
+	virtual void setModelMatrix(const glm::mat4& P)		{ M = P; }
+	//virtual glm::mat4 modelMatrix()						{ return M; }
 
 protected:
 	virtual void initVertices(std::vector<Vertex>& vertices) = 0; //pure abstract function !!

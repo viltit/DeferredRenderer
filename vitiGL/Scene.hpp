@@ -78,10 +78,12 @@ private:
 	float		_radius;	/* radius of the bounding sphere */
 };
 
-/* -------------------------------------------------------------------------
-	Wrapper class for handling the scene nodes:
-	(Until now, its only advantage is to identify sceneNodes by a name)
----------------------------------------------------------------------------- */
+
+/*	CLASS SCENE --------------------------------------------------------------------
+Wrapper to identify Scene Nodes by name and adding childs to a parent by the
+parent name
+----------------------------------------------------------------------------------- */
+
 class Scene {
 public:
 	Scene();

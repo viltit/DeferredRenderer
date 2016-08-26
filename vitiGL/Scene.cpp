@@ -13,6 +13,7 @@ SceneNode::SceneNode(Shape* s, glm::vec3 pos, float radius)
 		_radius		{ radius },
 		_distance	{ 0.0f }
 {
+	/* get the initial position in case the Shape already has one: */
 	setPos(pos);
 }
 
@@ -59,7 +60,7 @@ void SceneNode::addChild(SceneNode * s) {
 	s->_parent = this;
 }
 
-/* WIP: Wrapper class to identify Scene Nodes by name ----------------------------------------- */
+/*	CLASS SCENE -------------------------------------------------------------------- */
 
 Scene::Scene() 
 	: _counter{ 0 }
@@ -69,7 +70,9 @@ Scene::Scene()
 	_scene.insert(std::make_pair(name, _root));
 }
 
-Scene::~Scene() {}
+Scene::~Scene() {
+	delete _root;
+}
 
 void Scene::addChild(Shape* s, glm::vec3 pos, float radius, const std::string& name /*= ""*/, const std::string & parentName /* = "root" */) {
 	/* if no name is given, create a unique one: */
@@ -84,7 +87,10 @@ void Scene::addChild(Shape* s, glm::vec3 pos, float radius, const std::string& n
 	SceneNode* child = new SceneNode(s, pos, radius);
 	SceneNode* parent = findByName(parentName);
 
-	if (parent == nullptr) throw initError(("<Scene::addChild> Could not find a parent with the name " + parentName).c_str());
+	if (parent == nullptr) {
+		delete child;
+		throw initError(("<Scene::addChild> Could not find a parent with the name " + parentName).c_str());
+	}
 
 	/* add the child to its parent and also add it into our map:*/
 	parent->addChild(child);

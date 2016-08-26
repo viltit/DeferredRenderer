@@ -1,6 +1,9 @@
 #include "ShapeLoader.hpp"
 #include "Shape.hpp"
 #include "Error.hpp"
+#include "vitiGlobals.hpp"
+
+#include <iostream>
 
 namespace vitiGL {
 
@@ -26,6 +29,9 @@ StringBuffer::StringBuffer(const std::string& file_path)
 	full{ false }
 {
 	if (!input) throw fileError(file_path.c_str());
+#ifdef CONSOLE_LOG
+	std::cout << "Opening file\t" << file_path << std::endl;
+#endif
 }
 
 std::string	StringBuffer::get() {

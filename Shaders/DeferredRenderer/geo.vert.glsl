@@ -30,7 +30,7 @@ void main() {
 	vs_out.uv			= uv;
 
 	/* convert our data into world coordinates: */
-	vs_out.norm		= normalize(vec3(M * vec4(norm, 0.0f)));
+	vs_out.norm		= mat3(transpose(inverse(M))) * norm;
 	vs_out.tangent	= normalize(vec3(M * vec4(tangent, 0.0f)));
 	vs_out.bitangent = normalize(vec3(M * vec4(bitangent, 0.0f)));
 	vs_out.pos = world_pos;

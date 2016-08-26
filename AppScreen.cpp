@@ -129,7 +129,7 @@ void AppScreen::updateInput() {
 				_cam.move(Move::right);
 				break;
 			case SDLK_F1:
-				_scene["Cube0"]->scale(glm::vec3{ 1.0f, 1.5f, 1.0f });
+				_scene["Cube0/1"]->scale(glm::vec3{ 1.0f, 1.5f, 1.0f });
 				break;
 				/*
 				case SDLK_F2:
