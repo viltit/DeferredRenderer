@@ -9,8 +9,43 @@
 namespace vitiGL {
 
 //redeclare static members:
-TextureCache Cache::_textureCache;
-ShapeCache Cache::_shapeCache;
+TextureCache	Cache::_textureCache;
+ShapeCache		Cache::_shapeCache;
+VertexCache		Cache::_vertexCache;
+
+
+/*	VERTEX BUFFERS ------------------------------------------------------------------------ */
+
+VertexCache::VertexCache() {
+}
+
+VertexCache::~VertexCache() {
+	//TO DO: DELETE ALL
+}
+
+bool VertexCache::isLoaded(const std::string & meshName) {
+	auto i = _cache.find(meshName);
+	if (i != _cache.end()) return true;
+	return false;
+}
+
+VertexData VertexCache::pull(const std::string & meshName) {
+	auto i = _cache.find(meshName);
+	if (i == _cache.end()) throw vitiError(("<VertexCache::pull>Trying to access inexisting data (name identifier = " + meshName + ").").c_str());
+
+	return i->second;
+}
+
+void VertexCache::push(const std::string & meshName, VertexData vertexData) {
+	auto i = _cache.find(meshName);
+	if (i != _cache.end()) throw vitiError(("<VertexCache::push>Trying to push already existing data (name identifier = " + meshName + ").").c_str());
+	_cache.insert(std::make_pair(meshName, vertexData));
+}
+
+void VertexCache::push(const std::string & meshName, GLuint vao, GLuint vbo, int numVertices) {
+	VertexData data{ vao, vbo, numVertices };
+	push(meshName, data);
+}
 
 
 /*	TEXTURES -------------------------------------------------------------------------------- */
@@ -19,6 +54,7 @@ TextureCache::TextureCache() {
 }
 
 TextureCache::~TextureCache() {
+	//TO DO: DELETE ALL
 }
 
 /*	First, look if the wanted texture is already stored. If yes, give back 
@@ -102,5 +138,18 @@ GLuint Cache::getTexture(const std::string& path, bool sRGB) {
 slData Cache::getShape(const std::string & path) {
 	return _shapeCache.load(path);
 }
+
+bool Cache::isVertexLoaded(const std::string & meshName) {
+	return _vertexCache.isLoaded(meshName);
+}
+
+VertexData Cache::pullVertex(const std::string & meshName) {
+	return _vertexCache.pull(meshName);
+}
+
+void Cache::pushVertex(const std::string & meshName, GLuint vao, GLuint vbo, int numVertices) {
+	_vertexCache.push(meshName, vao, vbo, numVertices);
+}
+
 
 }

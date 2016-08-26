@@ -321,11 +321,21 @@ Octahedron::Octahedron(const std::string& configFile, const glm::vec3& position)
 
 	setPos(position);
 
-	std::vector<Vertex> vertices;
-	initVertices(vertices);
-	calcNormals(vertices);
-	calcTangents(vertices);
-	uploadVertices(vertices);
+	if (!Cache::isVertexLoaded("Octahedron")) {
+		std::vector<Vertex> vertices;
+		initVertices(vertices);
+		calcNormals(vertices);
+		calcTangents(vertices);
+		uploadVertices(vertices);
+		Cache::pushVertex("Octahedron", vao, vbo, numVertices);
+	}
+
+	else {
+		VertexData data = Cache::pullVertex("Octahedron");
+		vao = data.vao;
+		vbo = data.vbo;
+		numVertices = data.numVertices;
+	}
 }
 
 Octahedron::~Octahedron() {
