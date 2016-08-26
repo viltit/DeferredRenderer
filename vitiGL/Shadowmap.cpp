@@ -53,7 +53,7 @@ void DirShadowmap::on() {
 	glClear(GL_DEPTH_BUFFER_BIT);
 }
 
-void DirShadowmap::draw(const CamInfo& camera, const Scene* scene) {
+void DirShadowmap::draw(const CamInfo& camera, Scene* scene, Frustum& frustum) {
 	if (!_light || !scene) return;
 
 	/* STEP ONE: Render scene from the viewpoint of the light: */
@@ -72,7 +72,6 @@ void DirShadowmap::draw(const CamInfo& camera, const Scene* scene) {
 	_shader.off();
 
 	/* STEP TWO: Draw Scene with shadows in a black-and-white picture:  */
-
 	_framebuffer.on();
 	_fshader.on();
 
@@ -82,7 +81,7 @@ void DirShadowmap::draw(const CamInfo& camera, const Scene* scene) {
 	glUniform3f(_fshader.getUniform("dlightDir"), _light->dir().x, _light->dir().y, _light->dir().z);
 	glm::mat4 VP = camera.P * camera.V;
 	glUniformMatrix4fv(_fshader.getUniform("VP"), 1, GL_FALSE, glm::value_ptr(VP));
-	scene->drawAllNaked(_fshader);
+	scene->drawAllNakedCulled(_fshader, frustum);
 	
 	_fshader.off();
 	_framebuffer.off();

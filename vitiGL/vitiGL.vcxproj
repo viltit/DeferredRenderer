@@ -187,7 +187,6 @@
     <ClInclude Include="IAppScreen.hpp" />
     <ClInclude Include="Keytable.hpp" />
     <ClInclude Include="Light.hpp" />
-    <ClInclude Include="Mesh.hpp" />
     <ClInclude Include="Scene.hpp" />
     <ClInclude Include="ScreenList.hpp" />
     <ClInclude Include="Shader.hpp" />

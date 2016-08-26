@@ -39,7 +39,7 @@ void glRenderer::draw() {
 	/* draw dir light shadowmap: */
 	if (_dshadow) {
 		_dshadow->on();
-		_dshadow->draw(cam, _scene);
+		_dshadow->draw(cam, _scene, _frustum);
 		_dshadow->off();
 	}
 

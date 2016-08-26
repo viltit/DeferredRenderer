@@ -23,7 +23,7 @@ public:
 
 	/* make sure depth test and face culling is enabled! -> do it in on() function? */
 	void on();
-	void draw(const CamInfo& camera, const Scene* scene);
+	void draw(const CamInfo & camera, Scene * scene, Frustum & frustum);
 	void off();
 
 	void setUniforms(const Shader& shader); //sets all the uniforms relevant to lightning

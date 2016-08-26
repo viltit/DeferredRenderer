@@ -104,6 +104,7 @@ public:
 
 	/* draw everything, but without textures (->for the shadowmap) */
 	void drawAllNaked(const Shader& shader) const;
+	void drawAllNakedCulled(const Shader& shader, Frustum& frustum);
 
 	/* allow indexing the scene: */
 	SceneNode* operator [] (const std::string& nodeName) {

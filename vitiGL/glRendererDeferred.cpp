@@ -42,19 +42,18 @@ void glRendererDeferred::update() {
 }
 
 void glRendererDeferred::draw() {
-
-	_dshadow.on();
-	_dshadow.draw(_camera->getMatrizes(), _scene);
-	_dshadow.off();
-
-	/* Prepare: */
-	glDepthMask(GL_TRUE);
-	glEnable(GL_DEPTH_TEST);
-
 	CamInfo cam = _camera->getMatrizes();
 	glm::mat4 VP = cam.P * cam.V;
 
 	_frustum.update(VP);
+
+	/* shadowmap: */
+	_dshadow.on();
+	_dshadow.draw(_camera->getMatrizes(), _scene, _frustum);
+	_dshadow.off();
+
+	glDepthMask(GL_TRUE);
+	glEnable(GL_DEPTH_TEST);
 
 	/* draw: */
 	drawGeo();

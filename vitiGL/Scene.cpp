@@ -122,6 +122,13 @@ void Scene::drawAllNaked(const Shader & shader) const {
 	_root->drawAllNaked(shader);
 }
 
+void Scene::drawAllNakedCulled(const Shader & shader, Frustum& frustum) {
+	_cullingList.clear();
+	updateCullingList(frustum, _root);
+
+	for (auto& N : _cullingList) N->drawNaked(shader);
+}
+
 
 void Scene::updateCullingList(Frustum & frustum, SceneNode* from) {
 	
