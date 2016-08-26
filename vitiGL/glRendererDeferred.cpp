@@ -17,7 +17,8 @@ glRendererDeferred::glRendererDeferred(const Window* window, Scene* scene, Camer
 		_debug2		{ QuadPos::aboveMiddleRight },
 		_debug3		{ QuadPos::belowMiddleRight },
 		_debug4		{ QuadPos::bottomRight },
-		_dshadow	{ *camera, &_dlight }
+		_dshadow	{ *camera, &_dlight },
+		_framebuffer{ globals::window_w, globals::window_h }
 {
 	if (_window == nullptr) throw initError("<glRendererDeferred::glRendererDeferred> Window is a nullptr");
 
@@ -58,12 +59,17 @@ void glRendererDeferred::draw() {
 	/* draw: */
 	drawGeo();
 	drawLight();
+
+	_framebuffer.on();
 	drawFinal();
 
 	_debug.draw(_dshader, _tbo[color]);
 	_debug2.draw(_dshader, _tbo[diffuse]);
 	_debug3.draw(_dshader, _tbo[specular]);
 	_debug4.draw(_dshader, _tbo[normal]);
+	_framebuffer.off();
+
+	_framebuffer.draw();
 }
 
 void glRendererDeferred::drawGeo() {
@@ -93,10 +99,10 @@ void glRendererDeferred::drawLight() {
 	
 	_lshader.on();
 
-	/* set texture uniforms from geometry pass (light need depth and normals) */
+	/* set texture uniforms from geometry pass (light need depth and normals)
 	glActiveTexture(GL_TEXTURE3);
 	glBindTexture(GL_TEXTURE_2D, _tbo[depht]);
-	glUniform1i(_lshader.getUniform("depht"), 3);
+	glUniform1i(_lshader.getUniform("depht"), 3); */
 
 	glActiveTexture(GL_TEXTURE4);
 	glBindTexture(GL_TEXTURE_2D, _tbo[normal]);

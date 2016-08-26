@@ -8,7 +8,7 @@ using namespace vitiGL;
 AppScreen::AppScreen(App* app, vitiGL::Window* window) 
 	:	IAppScreen	{ app },
 		_cam		{ float(window->width()) / float(window->height()) },
-		_renderer	{ window, &_scene, &_cam },
+		//_renderer	{ window, &_scene, &_cam },
 		_drender	{ window, &_scene, &_cam },
 		_gui		{ "GUI"}
 {
@@ -45,7 +45,7 @@ void AppScreen::onEntry() {
 }
 
 void AppScreen::onExit() {
-	globals::screenshot = _renderer.texture();
+	globals::screenshot = _drender.texture();
 
 	_timer.pause();
 }

@@ -29,6 +29,8 @@ public:
 	virtual void update();
 	virtual void draw();
 
+	GLuint texture() const { return _framebuffer.copyTexture(); } //to get the latest on-screen picture
+
 protected:
 	/* enum for indexing the texture attachments: */
 	enum texureBuffer {
@@ -61,6 +63,8 @@ protected:
 	/* ...and the framebuffers: */
 	GLuint		_gbuffer;
 	GLuint		_lbuffer;
+
+	Framebuffer _framebuffer;
 
 	/* Scene and Camera: */
 	Scene*		_scene;

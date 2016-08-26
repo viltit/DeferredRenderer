@@ -22,7 +22,7 @@ public:
 	virtual int previous() const override;
 
 	//get the latest screen content:
-	GLuint	texture() const { return _renderer.texture(); }
+	GLuint	texture() const { return _drender.texture(); }
 
 protected:
 	void initGUI();
@@ -30,7 +30,7 @@ protected:
 
 	vitiGL::Scene		_scene;
 	vitiGL::Camera		_cam;
-	vitiGL::glRenderer  _renderer;
+	//vitiGL::glRenderer  _renderer;
 	vitiGL::glRendererDeferred _drender; //test
 	vitiGL::GUI			_gui;
 
