@@ -60,8 +60,8 @@ Light updateDLight(vec3 worldPos, vec3 normal, vec2 uv) {
 	vec3 viewDir	= normalize(viewPos - worldPos);
 	vec3 halfway	= normalize(viewDir + ldir);
 
-	float diff		= max(dot(normal, ldir), 0.0f);
-	float spec		= pow(max(dot(normal, halfway), 0.0f), 22.0f);	//TO DO: 22.0f needs to be a variable !
+	float diff		= clamp(dot(normal, ldir), 0.0f, 1.0f);
+	float spec		= pow(clamp(dot(normal, halfway), 0.0f, 1.0f), 22.0f);	//TO DO: 22.0f needs to be a variable !
 
 	Light light;
 

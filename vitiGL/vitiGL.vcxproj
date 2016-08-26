@@ -70,8 +70,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\Users\Titus\Desktop\c++\dependencies\includes;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\Titus\Desktop\c++\dependencies\libs;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)../dependencies/includes/;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)../dependencies/libs;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

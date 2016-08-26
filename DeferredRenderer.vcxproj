@@ -69,8 +69,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(SolutionDir)vitiGL/;C:\Users\Titus\Desktop\c++\dependencies\includes;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)Debug/;C:\Users\Titus\Desktop\c++\dependencies\libs;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)vitiGL/;$(SolutionDir)../dependencies/includes;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)Debug/;$(SolutionDir)../dependencies/libs;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>C:\Users\Titus\Desktop\c++\dependencies\includes;$(IncludePath)</IncludePath>
