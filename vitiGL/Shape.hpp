@@ -116,4 +116,20 @@ protected:
 
 };
 
+/* ONLY USE FOR POINT LIGHT DRAWING FOR NOW (the normals are very wrong!) ---------------------- */
+class Sphere : public Icosahedron {
+public:
+	Sphere(const std::string& config_file);
+	~Sphere();
+
+private:
+	/* subdivide the icosahedrons triangles to form a sphere: */
+	void subdivide(std::vector<Vertex>& vertices, float size);
+
+	/*	function for refining the triangles, ie find the middle and move the middle point
+	away from the spheres center */
+	glm::vec3 middle_pos(const glm::vec3& point_a, const glm::vec3& point_b, float size);
+	glm::vec2 middle_uv(const glm::vec2& uv_a, const glm::vec2& uv_b);
+};
+
 }

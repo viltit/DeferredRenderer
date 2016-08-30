@@ -106,10 +106,12 @@ public:
 
 	/* no parent-child relation for lights yet: */
 	void addDLight(dLight* l, const std::string& name = "");
+	void addPLight(pLight* p, const std::string& name = "");
 
 	/* access scene elements: */
 	SceneNode* findByName(const std::string& name);
 	dLight* findDLight(const std::string& name);
+	pLight* findPLight(const std::string& name);
 	
 	void update(const Uint32& deltaTime);
 
@@ -124,6 +126,7 @@ public:
 
 	/* draw lights (for second pass in deferred rendering) */
 	void drawDLights(const Shader& shader) const;
+	void drawPlights(const Shader& shader) const;
 
 
 	/* allow indexing the scene: */
@@ -145,6 +148,7 @@ private:
 	/* two seperate lists for shapes and for lights: */
 	std::map<std::string, SceneNode*> _scene;
 	std::map<std::string, dLight*> _dlights;
+	std::map<std::string, pLight*> _plights;
 };
 
 }

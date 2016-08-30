@@ -574,4 +574,99 @@ void Icosahedron::initVertices(std::vector<Vertex>& vertices) {
 	vertices[id++].uv = uv[12];	vertices[id++].uv = uv[13];	vertices[id++].uv = uv[7];
 }
 
+Sphere::Sphere(const std::string & configFile) : Icosahedron() {
+	/* load data from config file: */
+	VertexData vdata{ 0, 0, 0 };
+	slData sdata = Cache::getShape(configFile);
+
+	size = sdata.size;
+	uv = sdata.uv;
+
+	tbo.push_back(Cache::getTexture(sdata.textures[0]));
+	tbo.push_back(Cache::getTexture(sdata.textures[1]));
+	tbo.push_back(Cache::getTexture(sdata.textures[2]));
+
+	if (!Cache::isVertexLoaded(configFile)) {
+		std::vector<Vertex> vertices;
+		initVertices(vertices);
+
+		/* refine the vertices to form a sphere: */
+		for (int i = 0; i < 5; i++) {
+			subdivide(vertices, size.x * 0.5f);
+		}
+		calcNormals(vertices);
+		calcTangents(vertices);
+		uploadVertices(vertices);
+		numVertices = vertices.size();
+		Cache::pushVertex(configFile, vao, vbo, numVertices);
+	}
+	else {
+		vdata = Cache::pullVertex(configFile);
+		vao = vdata.vao;
+		vbo = vdata.vbo;
+		numVertices = vdata.numVertices;
+	}
+}
+
+Sphere::~Sphere() {
+	if (vao) glDeleteVertexArrays(1, &vao);
+	if (vbo) glDeleteBuffers(1, &vbo);
+}
+
+void Sphere::subdivide(std::vector<Vertex>& vertices, float size) {
+	std::vector<Vertex> new_vertices;
+	new_vertices.resize(4 * vertices.size());
+	Vertex knot_a;
+	Vertex knot_b;
+	Vertex knot_c;
+
+	int j = 0;
+	for (int i = 0; i < vertices.size(); i = i + 3) {
+		knot_a.pos = middle_pos(vertices[i].pos, vertices[i + 1].pos, size);
+		knot_b.pos = middle_pos(vertices[i + 1].pos, vertices[i + 2].pos, size);
+		knot_c.pos = middle_pos(vertices[i + 2].pos, vertices[i].pos, size);
+
+		knot_a.uv = middle_uv(vertices[i].uv, vertices[i + 1].uv);
+		knot_b.uv = middle_uv(vertices[i + 1].uv, vertices[i + 2].uv);
+		knot_c.uv = middle_uv(vertices[i + 2].uv, vertices[i].uv);
+
+		/* 1st. triangle: */
+		new_vertices[j++] = knot_c;
+		new_vertices[j++] = vertices[i];
+		new_vertices[j++] = knot_a;
+
+		/* 2nd. triangle: */
+		new_vertices[j++] = knot_a;
+		new_vertices[j++] = vertices[i + 1];
+		new_vertices[j++] = knot_b;
+
+		/* 3rd triangle: */
+		new_vertices[j++] = knot_b;
+		new_vertices[j++] = vertices[i + 2];
+		new_vertices[j++] = knot_c;
+
+		/* 4th triangle: */
+		new_vertices[j++] = knot_c;
+		new_vertices[j++] = knot_a;
+		new_vertices[j++] = knot_b;
+	}
+	vertices = new_vertices;
+}
+
+
+glm::vec3 Sphere::middle_pos(const glm::vec3 & point_a, const glm::vec3 & point_b, float size) {
+	float t = (1.0f + sqrt(5.0f)) / 2.0f;					/* golden ratio */
+	glm::vec3 temp = (point_b - point_a) * 0.5f + point_a;	/* middle point */
+
+															/* add offset to form a sphere: */
+	temp = glm::normalize(temp);
+	temp *= sqrt(t*t + 1.0) * size;
+
+	return temp;
+}
+
+glm::vec2 Sphere::middle_uv(const glm::vec2& uv_a, const glm::vec2& uv_b) {
+	return (uv_b - uv_a) * 0.5f + uv_a;		/* plain middle point: */
+}
+
 }

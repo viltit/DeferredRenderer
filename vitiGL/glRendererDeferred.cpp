@@ -59,7 +59,7 @@ void glRendererDeferred::draw() {
 	_debug.draw(_dshader, _tbo[color]);
 	_debug2.draw(_dshader, _tbo[diffuse]);
 	_debug3.draw(_dshader, _tbo[specular]);
-	_debug4.draw(_dshader, _dshadow.texture());
+	_debug4.draw(_dshader, _tbo[normal]);
 	_framebuffer.off();
 
 	_framebuffer.draw();
@@ -81,7 +81,8 @@ void glRendererDeferred::drawGeo() {
 }
 
 void glRendererDeferred::drawLight() {
-	auto dlight = _scene->findDLight("dlight");
+	auto dlight = _scene->findDLight("dlight"); //bad!! should not need name.
+
 	/*
 	glm::vec4 lightDir = { dlight->dir().x, dlight->dir().y, dlight->dir().z, 0.0f };
 	glm::mat4 R;
@@ -90,11 +91,10 @@ void glRendererDeferred::drawLight() {
 	dlight->setProperty(lightProps::dir, glm::vec3{ lightDir.x, lightDir.y, lightDir.z }, _lshader);*/
 
 	_dshadow.setLight(dlight);
+	dlight->setUniforms(_lshader); //not needed every frame!
 
 	glBindFramebuffer(GL_FRAMEBUFFER, _lbuffer);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	dlight->setUniforms(_lshader); //not needed every frame!
 
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_BLEND);
@@ -119,6 +119,10 @@ void glRendererDeferred::drawLight() {
 	glUniform3f(_lshader.getUniform("viewPos"), _camera->pos().x, _camera->pos().y, _camera->pos().z);
 	glUniform2f(_lshader.getUniform("texelSize"), _texelSize.x, _texelSize.y); // to do: not needed every frame!
 
+	/* DIRECTIONAL LIGHT: */
+	/* set subroutine uniform: */
+	GLuint dlightPass = glGetSubroutineIndex(_lshader.program(), GL_FRAGMENT_SHADER, "updateDlight");
+	
 	/* set model and VP-Matrix uniform (which are both the identity matrix for directional lights) */
 	glm::mat4 M{};
 	glUniformMatrix4fv(_lshader.getUniform("M"), 1, GL_FALSE, glm::value_ptr(M));

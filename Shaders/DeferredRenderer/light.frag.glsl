@@ -8,11 +8,23 @@ struct DLight {
 	vec3 dir;
 };
 
+struct PLight {
+	vec3	diffuse;
+	vec3	specular;
+	float	constant;
+	float	linear;
+	float	quadratic;
+};
+
 struct Light {
 	vec3 ambient;	//TO DO: We don't store ambient values in this shader!
 	vec3 diffuse;
 	vec3 specular;
 };
+
+/* Subroutines to switch between point lights and dir lights via uniform: */
+subroutine Light UpdateLight(vec3 worldPos, vec3 worldNorm, vec2 uv);
+subroutine uniform UpdateLight updateLight;
 
 /* texture output of this shader: -------------------------------------- */
 layout (location = 0) out vec4 ldiffuse;
@@ -28,6 +40,7 @@ uniform vec2 texelSize;
 uniform vec3 viewPos;
 
 uniform DLight dlight;
+uniform	PLight	plight;
 
 in vec3 lightPos;
 
@@ -55,6 +68,7 @@ vec2 getUV() {
 	return vec2(gl_FragCoord.x * texelSize.x, gl_FragCoord.y * texelSize.y);
 }
 
+subroutine (UpdateLight)
 Light updateDLight(vec3 worldPos, vec3 normal, vec2 uv) {
 	vec3 ldir		= normalize(-dlight.dir);
 	vec3 viewDir	= normalize(viewPos - worldPos);
@@ -68,6 +82,31 @@ Light updateDLight(vec3 worldPos, vec3 normal, vec2 uv) {
 	light.ambient	= dlight.ambient;
 	light.diffuse	= diff * dlight.diffuse;
 	light.specular	= spec * dlight.specular;
+
+	return light;
+}
+
+subroutine (UpdateLight)
+Light updatePlight(vec3 worldPos, vec3 normal, vec2 uv) {
+	/* Check the distance from fragment to light source: */
+	float dist = length(lightPos - worldPos);
+	float attenuation = 1.0f / (plight.constant + plight.linear * dist + plight.quadratic * dist * dist);
+
+	/* abort if fragment is outside the lights radius: */
+	if (attenuation < 1.0f / 256.0f) discard;
+
+	vec3 lightDir	= normalize(lightPos - worldPos);
+	vec3 viewDir	= normalize(viewPos - worldPos);
+	vec3 halfway	= normalize(lightDir + viewDir);
+
+	float diff		= clamp(dot(normal, lightDir), 0.0f, 1.0f);
+	float spec		= pow(clamp(dot(normal, halfway), 0.0f, 1.0f), 22.0f);	//TO DO: 22.0f needs to be a variable !
+
+	Light light;
+
+	light.ambient	= vec3(0.0f, 0.0f, 0.0f);
+	light.diffuse	= diff * plight.diffuse;
+	light.specular	= spec * plight.specular;
 
 	return light;
 }

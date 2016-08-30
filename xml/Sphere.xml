@@ -1,0 +1,24 @@
+<SHAPE>
+	<TEXTURE>
+		<DIFFUSE>
+      Textures/StoneFloor_Diffuse.png
+    </DIFFUSE>
+		<SPECULAR>
+      Textures/StoneFloor_Specular.png
+    </SPECULAR>
+		<NORMAL>
+      Textures/StoneFloor_Normal.png
+    </NORMAL>
+	</TEXTURE>
+	<DIMENSION>
+		<SIZE>
+			1.0
+			1.0
+			1.0
+		</SIZE>
+		<UV>
+			1.0
+			1.0
+		</UV>
+	</DIMENSION>
+</SHAPE>

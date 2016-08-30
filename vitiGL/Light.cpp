@@ -1,5 +1,6 @@
 #include "Light.hpp"
 #include "vitiGL.hpp"
+#include "vitiGlobals.hpp"
 
 namespace vitiGL {
 
@@ -56,15 +57,36 @@ void dLight::draw(const Shader & shader) {
 	_quad.drawNaked(shader);
 }
 
-pLight::pLight	(const std::string & uniformName, const glm::vec3 & attenuation, 
-				const glm::vec3 & pos, const glm::vec3 & ambient, const glm::vec3 & diffuse, const glm::vec3 & specular)
+/* ----------------------------------------------------------------------------------------------------------- */
+
+pLight::pLight	(const std::string & uniformName, const glm::vec3 & pos, const glm::vec3 & ambient, 
+				 const glm::vec3 & diffuse, const glm::vec3 & specular, const glm::vec3 & attenuation)
 	:	_uniform		{ uniformName },
 		_attenuation	{ attenuation },
 		_pos			{ pos },
 		_ambient		{ ambient },
 		_diffuse		{ diffuse },
-		_specular		{ specular }
-{}
+		_specular		{ specular },
+		_sphere{ new Sphere{"xml/sphere.xml" } }
+{
+	calcRadius();
+
+	/* set the lights sphere original model matrix: */
+	glm::mat4 S{};
+	S = glm::scale(S, glm::vec3{ _r, _r, _r });
+	glm::mat4 T{};
+	T = glm::translate(T, pos);
+	glm::mat4 M = T * S;
+	_sphere->setModelMatrix(M);
+}
+
+/*
+pLight::~pLight() {
+	if (_sphere != nullptr) {
+		delete _sphere;
+		_sphere = nullptr;
+	}
+}*/
 
 void pLight::setProperty(lightProps property, const glm::vec3 & value, const Shader & shader) {
 	shader.on();
@@ -107,8 +129,30 @@ void pLight::setUniforms(const Shader & shader) {
 	shader.off();
 }
 
-void pLight::draw(const Shader & shader)
-{
+void pLight::draw(const Shader & shader) {
+	_sphere->drawNaked(shader);
+}
+
+void pLight::calcRadius() {
+	/*	calculate the radius of the light based of the attenuation constants.
+	forumla: attenuation = intensity / (constant + linear*distance + quadratic^2*distance)
+	-> we assume the lights radius ends with an attenuation value of 1/256
+	-> solve the quadratic equation
+
+	to improve: take light intensity into account (we assume its 1 now)
+	*/
+	float c = _attenuation.x;
+	float l = _attenuation.y;
+	float q = _attenuation.z;
+
+	float det = l*l / (4.0*q*q) + ((256.0 - c) / q);
+	_r = -l / (2.0 * q) + sqrtf(det);
+
+#ifdef CONSOLE_LOG
+	std::cout << "Point light sphere calculation:\n";
+	std::cout << c << "/" << l << "/" << q << std::endl;
+	std::cout << "Radius " << _r << std::endl;
+#endif
 }
 
 }

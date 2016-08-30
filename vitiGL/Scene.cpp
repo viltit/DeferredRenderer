@@ -104,6 +104,13 @@ void Scene::addDLight(dLight * l, const std::string & name) {
 	_dlights.insert(std::make_pair(name, l));
 }
 
+void Scene::addPLight(pLight * p, const std::string & name) {
+	std::string lightName = name;
+	if (name == "") lightName = "Light[" + std::to_string(++_counter) + "]";
+
+	_plights.insert(std::make_pair(name, p));
+}
+
 SceneNode * Scene::findByName(const std::string & name) {
 	auto node = _scene.find(name);
 	if (node == _scene.end()) return nullptr; //possibly dangerous!
@@ -113,6 +120,12 @@ SceneNode * Scene::findByName(const std::string & name) {
 dLight * Scene::findDLight(const std::string & name) {
 	auto light = _dlights.find(name);
 	if (light == _dlights.end()) return nullptr;
+	return light->second;
+}
+
+pLight * Scene::findPLight(const std::string & name) {
+	auto light = _plights.find(name);
+	if (light == _plights.end()) return nullptr;
 	return light->second;
 }
 
@@ -144,6 +157,12 @@ void Scene::drawAllNakedCulled(const Shader & shader, Frustum& frustum) {
 
 void Scene::drawDLights(const Shader & shader) const {
 	for (auto i = _dlights.begin(); i != _dlights.end(); i++) {
+		if (i->second) i->second->draw(shader);
+	}
+}
+
+void Scene::drawPlights(const Shader & shader) const {
+	for (auto i = _plights.begin(); i != _plights.end(); i++) {
 		if (i->second) i->second->draw(shader);
 	}
 }

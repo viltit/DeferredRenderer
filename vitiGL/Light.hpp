@@ -1,3 +1,11 @@
+/*	CLASS LIGHT --------------------------------------------------------------------------- 
+	
+	Task:	Hold all relevant information and methods for point lights and dir lights. 
+			Also give a draw function for deferred rendering.
+
+	To Do:	Add rim lights?
+-------------------------------------------------------------------------------------------- */
+
 #pragma once
 
 #include <glm/glm.hpp>
@@ -18,7 +26,6 @@ enum class lightProps {
 	attenuation
 };
 
-/* Base class for all lights: --------------------------------------------------------------------- */
 class Light  {
 public:
 	Light() {}
@@ -61,23 +68,31 @@ private:
 class pLight : public Light {
 public:
 	pLight	(const std::string& uniformName,
-			 const glm::vec3& attenuation = { 1.0f, 0.07f, 0.017f },
 			 const glm::vec3& pos =		{ 0.0f, 1.0f, 0.0f }, 
 			 const glm::vec3& ambient = { 0.1f, 0.1f, 0.1f },
 			 const glm::vec3& diffuse = { 0.6f, 0.6f, 0.6f }, 
-			 const glm::vec3& specular = { 1.0f, 1.0f, 1.0f });
+			 const glm::vec3& specular = { 1.0f, 1.0f, 1.0f },
+			 const glm::vec3& attenuation = { 1.0f, 0.7f, 1.8f });
+
+	//~pLight();
 
 	void setProperty(lightProps property, const glm::vec3& value, const Shader& shader);
 	void setUniforms(const Shader& shader);
 	void draw(const Shader& shader);
 
 private:
+	/* calculate the lights radius based on the attenuation constants: */
+	void calcRadius();
+
 	std::string		_uniform;
 	glm::vec3		_pos;
 	glm::vec3		_attenuation;
 	glm::vec3		_ambient;
 	glm::vec3		_diffuse;
 	glm::vec3		_specular;
+
+	Sphere*			_sphere;
+	float			_r;
 };
 
 }

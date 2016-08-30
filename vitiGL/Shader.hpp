@@ -27,6 +27,8 @@ public:
 
 	GLint	getUniform(const std::string& name) const;
 
+	GLuint	program() const { return programID; }
+
 private:
 	void	init(const std::string& vertexPath, const std::string& fragmentPath,
 				 const std::string& geoPath = "", const std::string& tessPath = "");
