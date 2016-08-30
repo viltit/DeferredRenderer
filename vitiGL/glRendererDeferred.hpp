@@ -71,7 +71,6 @@ protected:
 	Camera*		_camera;
 	const Window*	_window;
 
-	dLight		_dlight;	//NEEDS TO GET PART OF THE SCENE
 	DirShadowmap _dshadow;
 
 	/* cameras view-perspective frustum: */

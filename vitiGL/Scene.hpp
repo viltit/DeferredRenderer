@@ -1,8 +1,12 @@
-/*	partly following this tutorial: 
-	https://research.ncl.ac.uk/game/mastersdegree/graphicsforgames/scenemanagement/ 
-*/
+/*	CLASS SCENE_NODE -------------------------------------------------------------------------
+	
+	loosly following this tutorial:
+	https://research.ncl.ac.uk/game/mastersdegree/graphicsforgames/scenemanagement/
 
-/* TO DO: Add possibility to select scene node with scene["nodeName"] */
+	Task:	Hold the objects in our scene and establish a parent-child relationship between
+			them. Also, together with class Scene, perform viewFrustum culling
+------------------------------------------------------------------------------------------------ */
+
 
 #pragma once
 
@@ -12,6 +16,7 @@
 
 #include "Shape.hpp"
 #include "Error.hpp"
+#include "Light.hpp"
 
 namespace vitiGL {
 
@@ -79,10 +84,16 @@ private:
 };
 
 
-/*	CLASS SCENE --------------------------------------------------------------------
-Wrapper to identify Scene Nodes by name and adding childs to a parent by the
-parent name
------------------------------------------------------------------------------------ */
+/*	CLASS SCENE ------------------------------------------------------------------------------
+	Task:	Wrapper to identify Scene Nodes by name and adding childs to a parent by the
+			parent name. Scene also holds all lights.
+
+	Problems:	Ideally, the lights would be SceneNodes too (ie a light can circle around a 
+				parent). But right now, dir- and pointLights are both held in a seperate list
+
+				Merging the list would require the lights to inherit from Shape, which in turn
+				would add not-needed methods to them
+--------------------------------------------------------------------------------------------- */
 
 class Scene {
 public:
@@ -93,7 +104,12 @@ public:
 				  const std::string& name = "", 
 				  const std::string& parentName = "root");
 
+	/* no parent-child relation for lights yet: */
+	void addDLight(dLight* l, const std::string& name = "");
+
+	/* access scene elements: */
 	SceneNode* findByName(const std::string& name);
+	dLight* findDLight(const std::string& name);
 	
 	void update(const Uint32& deltaTime);
 
@@ -106,6 +122,10 @@ public:
 	void drawAllNaked(const Shader& shader) const;
 	void drawAllNakedCulled(const Shader& shader, Frustum& frustum);
 
+	/* draw lights (for second pass in deferred rendering) */
+	void drawDLights(const Shader& shader) const;
+
+
 	/* allow indexing the scene: */
 	SceneNode* operator [] (const std::string& nodeName) {
 		SceneNode* node = findByName(nodeName);
@@ -117,11 +137,14 @@ private:
 	void updateCullingList(Frustum& frustum, SceneNode* from);
 
 	int _counter;
+
 	std::vector<SceneNode*> _cullingList;
 
 	SceneNode* _root; //we store root so we dont need to search it
 
+	/* two seperate lists for shapes and for lights: */
 	std::map<std::string, SceneNode*> _scene;
+	std::map<std::string, dLight*> _dlights;
 };
 
 }

@@ -38,8 +38,8 @@ DirShadowmap::DirShadowmap(const Camera& cam, const dLight * light, int width, i
 }
 
 DirShadowmap::~DirShadowmap() {
-	//if (_fbo = 0) glDeleteFramebuffers(1, &_fbo);
-	//if (_tbo = 0) glDeleteTextures(1, &_tbo);
+	if (_fbo[0] != 0) glDeleteFramebuffers(4, _fbo);
+	if (_tbo[0] != 0) glDeleteTextures(4, _tbo);
 }
 
 void DirShadowmap::on() {

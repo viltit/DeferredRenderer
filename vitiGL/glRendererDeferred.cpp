@@ -12,23 +12,17 @@ glRendererDeferred::glRendererDeferred(const Window* window, Scene* scene, Camer
 		_dshader	{ "Shaders/simple.vert.glsl", "Shaders/simple.frag.glsl" },
 		_scene		{ scene },
 		_camera		{ camera },
-		_dlight		{ "dlight" },
 		_debug		{ QuadPos::topRight },
 		_debug2		{ QuadPos::aboveMiddleRight },
 		_debug3		{ QuadPos::belowMiddleRight },
 		_debug4		{ QuadPos::bottomRight },
-		_dshadow	{ *camera, &_dlight },
+		_dshadow	{ *camera },
 		_framebuffer{ globals::window_w, globals::window_h }
 {
 	if (_window == nullptr) throw initError("<glRendererDeferred::glRendererDeferred> Window is a nullptr");
 
 	_texelSize.x = 1.0f / float(window->width());
 	_texelSize.y = 1.0f / float(window->height());
-
-	_lshader.on();
-	_dlight.setUniforms(_lshader);
-	_dlight.setProperty(lightProps::dir, glm::vec3{ 0.0f, -1.0f, 1.f }, _lshader);
-	_lshader.off();
 
 	initGbuffer();
 	initLbuffer();
@@ -65,7 +59,7 @@ void glRendererDeferred::draw() {
 	_debug.draw(_dshader, _tbo[color]);
 	_debug2.draw(_dshader, _tbo[diffuse]);
 	_debug3.draw(_dshader, _tbo[specular]);
-	_debug4.draw(_dshader, _tbo[normal]);
+	_debug4.draw(_dshader, _dshadow.texture());
 	_framebuffer.off();
 
 	_framebuffer.draw();
@@ -87,10 +81,20 @@ void glRendererDeferred::drawGeo() {
 }
 
 void glRendererDeferred::drawLight() {
+	auto dlight = _scene->findDLight("dlight");
+	/*
+	glm::vec4 lightDir = { dlight->dir().x, dlight->dir().y, dlight->dir().z, 0.0f };
+	glm::mat4 R;
+	R = glm::rotate(R, 0.50f / 20.0f, glm::vec3{ 0.0f, 1.0f, 0.0f });
+	lightDir = R * lightDir;
+	dlight->setProperty(lightProps::dir, glm::vec3{ lightDir.x, lightDir.y, lightDir.z }, _lshader);*/
+
+	_dshadow.setLight(dlight);
+
 	glBindFramebuffer(GL_FRAMEBUFFER, _lbuffer);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	_dlight.setUniforms(_lshader); //not needed every frame!
+	dlight->setUniforms(_lshader); //not needed every frame!
 
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_BLEND);
@@ -120,7 +124,7 @@ void glRendererDeferred::drawLight() {
 	glUniformMatrix4fv(_lshader.getUniform("M"), 1, GL_FALSE, glm::value_ptr(M));
 	glUniformMatrix4fv(_lshader.getUniform("VP"), 1, GL_FALSE, glm::value_ptr(M));
 
-	_dlight.draw(_lshader);
+	dlight->draw(_lshader);
 
 	_lshader.off();
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);

@@ -29,6 +29,7 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	}
 
 	_scene.addChild(new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ -3.0f, -1.0f, -3.0f }, sqrt(1800.0f), "Floor");
+	_scene.addDLight(new dLight{ "dlight", glm::vec3{ 0.5f, -1.0f, 0.5f } }, "dlight");
 
 	initGUI();
 	_timer.on();

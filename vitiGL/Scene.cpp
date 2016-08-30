@@ -71,13 +71,13 @@ Scene::Scene()
 }
 
 Scene::~Scene() {
-	delete _root;
+	//needs cleanup
 }
 
 void Scene::addChild(Shape* s, glm::vec3 pos, float radius, const std::string& name /*= ""*/, const std::string & parentName /* = "root" */) {
 	/* if no name is given, create a unique one: */
 	std::string nodeName = name;
-	if (name == "" ) nodeName = "Node" + std::to_string(++_counter);
+	if (name == "" ) nodeName = "Node[" + std::to_string(++_counter) + "]";
 
 #ifdef CONSOLE_LOG
 	//std::cout << "<Scene::addChild>Added a Scene Node with the name " << nodeName << " and the parent " << parentName << std::endl;
@@ -97,10 +97,23 @@ void Scene::addChild(Shape* s, glm::vec3 pos, float radius, const std::string& n
 	_scene.insert(std::make_pair(nodeName, child));
 }
 
+void Scene::addDLight(dLight * l, const std::string & name) {
+	std::string lightName = name;
+	if (name == "") lightName = "Light[" + std::to_string(++_counter) + "]";
+
+	_dlights.insert(std::make_pair(name, l));
+}
+
 SceneNode * Scene::findByName(const std::string & name) {
 	auto node = _scene.find(name);
 	if (node == _scene.end()) return nullptr; //possibly dangerous!
 	return node->second;
+}
+
+dLight * Scene::findDLight(const std::string & name) {
+	auto light = _dlights.find(name);
+	if (light == _dlights.end()) return nullptr;
+	return light->second;
 }
 
 void Scene::update(const Uint32 & deltaTime) {
@@ -127,6 +140,12 @@ void Scene::drawAllNakedCulled(const Shader & shader, Frustum& frustum) {
 	updateCullingList(frustum, _root);
 
 	for (auto& N : _cullingList) N->drawNaked(shader);
+}
+
+void Scene::drawDLights(const Shader & shader) const {
+	for (auto i = _dlights.begin(); i != _dlights.end(); i++) {
+		if (i->second) i->second->draw(shader);
+	}
 }
 
 
