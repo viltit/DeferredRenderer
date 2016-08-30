@@ -102,11 +102,7 @@ void glRendererDeferred::drawLight() {
 	
 	_lshader.on();
 
-	/* set texture uniforms from geometry pass (light need depth and normals)
-	glActiveTexture(GL_TEXTURE3);
-	glBindTexture(GL_TEXTURE_2D, _tbo[depht]);
-	glUniform1i(_lshader.getUniform("depht"), 3); */
-
+	/* set texture uniforms from geometry pass */
 	glActiveTexture(GL_TEXTURE4);
 	glBindTexture(GL_TEXTURE_2D, _tbo[normal]);
 	glUniform1i(_lshader.getUniform("normal"), 4);
@@ -122,6 +118,7 @@ void glRendererDeferred::drawLight() {
 	/* DIRECTIONAL LIGHT: */
 	/* set subroutine uniform: */
 	GLuint dlightPass = glGetSubroutineIndex(_lshader.program(), GL_FRAGMENT_SHADER, "updateDlight");
+	glUniformSubroutinesuiv(GL_FRAGMENT_SHADER, 1, &dlightPass);
 	
 	/* set model and VP-Matrix uniform (which are both the identity matrix for directional lights) */
 	glm::mat4 M{};
@@ -129,6 +126,17 @@ void glRendererDeferred::drawLight() {
 	glUniformMatrix4fv(_lshader.getUniform("VP"), 1, GL_FALSE, glm::value_ptr(M));
 
 	dlight->draw(_lshader);
+
+	/* POINT LIGHTS: */
+	/* override subroutine uniform: */
+	GLuint plightPass = glGetSubroutineIndex(_lshader.program(), GL_FRAGMENT_SHADER, "updatePlight");
+	glUniformSubroutinesuiv(GL_FRAGMENT_SHADER, 1, &plightPass);
+
+	/* set view-perspective matrix: */
+	_camera->setVPUniform(_gshader);
+
+	/* draw the point lights: (more happening in the plight::draw() function!) */
+	_scene->drawPlights(_lshader);
 
 	_lshader.off();
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);

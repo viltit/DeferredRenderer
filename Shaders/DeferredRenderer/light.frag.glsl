@@ -1,6 +1,19 @@
+/*--------------------------------------------------------------------------
+Shader for lightning pass in deferred rendering
+
+->	calculates diffuse and specular values of directional and point lights
+->	works with a subroutine uniform so our app does not need to switch between
+	Shaders for dir and point lights
+
+ToDo:	
+->	!Read the shadowmap in this shader! 
+->	Read the shinyness value from the alpha-channel of the specular texture
+
+--------------------------------------------------------------------------- */
+
 #version 400 core
 
-/* light structures: -------------------------------------------------- */
+/* light structures: ------------------------------------------------------ */
 struct DLight {
 	vec3 ambient;
 	vec3 diffuse;
@@ -26,38 +39,37 @@ struct Light {
 subroutine Light UpdateLight(vec3 worldPos, vec3 worldNorm, vec2 uv);
 subroutine uniform UpdateLight updateLight;
 
-/* texture output of this shader: -------------------------------------- */
+/* texture output of this shader: ---------------------------------------- */
 layout (location = 0) out vec4 ldiffuse;
 layout (location = 1) out vec4 lspecular;
 
-/* texture input from geometry pass: ----------------------------------- */
+/* texture input from geometry pass: ------------------------------------- */
 //uniform sampler2D depht;
 uniform sampler2D normal;
 uniform sampler2D position;
 
-/* more uniforms we need: ----------------------------------------------- */
+/* more uniforms we need: ------------------------------------------------ */
 uniform vec2 texelSize;
 uniform vec3 viewPos;
 
 uniform DLight dlight;
 uniform	PLight	plight;
 
-in vec3 lightPos;
+uniform vec3 lightPos;
 
 out vec4 color;
 
-/* Function prototypes: ------------------------------------------------ */
+/* Function prototypes: -------------------------------------------------- */
 vec2 getUV();
-Light updateDLight(vec3 worldPos, vec3 worldNorm, vec2 uv);
 
-/* Shaders entry point: ------------------------------------------------ */
+/* Shaders entry point: -------------------------------------------------- */
 void main() {
 	/* get uv coordinates, fragments world position and the normal: */
 	vec2 uv = getUV();
 	vec3 worldPos	= texture(position, uv).xyz;
 	vec3 normal		= normalize(texture(normal, uv).xyz);
 
-	Light light = updateDLight(worldPos, normal, uv);
+	Light light = updateLight(worldPos, normal, uv);
 
 	ldiffuse = vec4(light.diffuse, 1.0f);
 	lspecular = vec4(light.specular, 1.0f);
@@ -93,7 +105,7 @@ Light updatePlight(vec3 worldPos, vec3 normal, vec2 uv) {
 	float attenuation = 1.0f / (plight.constant + plight.linear * dist + plight.quadratic * dist * dist);
 
 	/* abort if fragment is outside the lights radius: */
-	if (attenuation < 1.0f / 256.0f) discard;
+	//if (attenuation < 1.0f / 256.0f) discard;	//if-branch in fragment shader is suboptimal!
 
 	vec3 lightDir	= normalize(lightPos - worldPos);
 	vec3 viewDir	= normalize(viewPos - worldPos);
@@ -107,6 +119,11 @@ Light updatePlight(vec3 worldPos, vec3 normal, vec2 uv) {
 	light.ambient	= vec3(0.0f, 0.0f, 0.0f);
 	light.diffuse	= diff * plight.diffuse;
 	light.specular	= spec * plight.specular;
+
+	/* debug: */
+	light.ambient = vec3(0.0f, 0.0f, 0.0f);
+	light.diffuse = vec3(1.0f, 0.0f, 0.0f);
+	light.specular = vec3(1.0f, 0.0f, 0.0f);
 
 	return light;
 }

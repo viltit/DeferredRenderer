@@ -130,6 +130,7 @@ void pLight::setUniforms(const Shader & shader) {
 }
 
 void pLight::draw(const Shader & shader) {
+	glUniform3f(shader.getUniform("lightPos"), _pos.x, _pos.y, _pos.z);
 	_sphere->drawNaked(shader);
 }
 

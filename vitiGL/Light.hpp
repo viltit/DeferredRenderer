@@ -10,12 +10,10 @@
 
 #include <glm/glm.hpp>
 #include <string>
-#include "Shader.hpp"
 #include "Shape.hpp"
 #include "sQuad.hpp"
 
 namespace vitiGL {
-
 
 enum class lightProps {
 	dir,
@@ -72,7 +70,7 @@ public:
 			 const glm::vec3& ambient = { 0.1f, 0.1f, 0.1f },
 			 const glm::vec3& diffuse = { 0.6f, 0.6f, 0.6f }, 
 			 const glm::vec3& specular = { 1.0f, 1.0f, 1.0f },
-			 const glm::vec3& attenuation = { 1.0f, 0.7f, 1.8f });
+			 const glm::vec3& attenuation = { 1.0f, 0.35f, 0.44 });
 
 	//~pLight();
 
