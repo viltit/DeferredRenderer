@@ -4,6 +4,15 @@
 
 namespace vitiGL {
 
+namespace Attenuation {
+	glm::vec3 r7 = { 1.0f, 0.7f, 1.8f };
+	glm::vec3 r20 = { 1.0f, 0.22f, 0.2f };
+	glm::vec3 r50 = { 1.0f, 0.09f, 0.032f };
+	glm::vec3 r100 = { 1.0f, 0.0045f, 0.0075f };
+	glm::vec3 r160 = { 1.0f, 0.027f, 0.0028f };
+	glm::vec3 r200 = { 1.0f, 0.022f, 0.0019 };
+}
+
 dLight::dLight(const std::string& uniformName, const glm::vec3& dir, 
 			   const glm::vec3& ambient, const glm::vec3& diffuse, const glm::vec3& specular)
 	:	_uniform	{ uniformName },
@@ -67,19 +76,17 @@ pLight::pLight	(const std::string & uniformName, const glm::vec3 & pos, const gl
 		_ambient		{ ambient },
 		_diffuse		{ diffuse },
 		_specular		{ specular },
-		_sphere{ new Sphere{"xml/sphere.xml" } }
+		_sphere			{ new Sphere{"xml/sphere.xml" } }
 {
-	_attenuation = { 1.0f, 0.09f, 0.032 };
+	_attenuation = Attenuation::r50;
 
-	calcRadius();
+	calcRadius(); //the math here is correct
 
 	/* set the lights sphere original model matrix: */
 	glm::mat4 S{};
-	S = glm::scale(S, glm::vec3{ 0.3 * _r, 0.3 * _r, 0.3 * _r });
-	glm::mat4 T{};
-	T = glm::translate(T, pos);
-	glm::mat4 M = T * S;
-	_sphere->setModelMatrix(M);
+	S = glm::translate(S, pos);
+	S = glm::scale(S, glm::vec3{ 0.5*_r, 0.5*_r,  0.5*_r });
+	_sphere->setModelMatrix(S);
 }
 
 /*
@@ -136,16 +143,13 @@ void pLight::draw(const Shader & shader, const glm::vec3& viewPos) {
 	setUniforms(shader);
 
 	/* determine if we are inside or outside the lights radius: */
-	/* SOMETHING IS WRONG HERE: */
+	/* SOMETHING IS WRONG HERE: 
 	float distance = glm::length(viewPos - _pos);
-	std::cout << "distance: " << distance << std::endl;
-	std::cout << "radius: " << _r << std::endl;
-	std::cout << "d / r :" << distance / _r;
 	if (distance < _r) glCullFace(GL_FRONT);
 	else {
 		std::cout << "outside\n";
 		glCullFace(GL_BACK);
-	}
+	}*/
 	_sphere->drawNaked(shader);
 }
 

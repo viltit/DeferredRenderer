@@ -79,7 +79,7 @@ vec2 getUV() {
 }
 
 subroutine (UpdateLight)
-Light updateDLight(vec3 worldPos, vec3 normal, vec2 uv) {
+Light updateDlight(vec3 worldPos, vec3 normal, vec2 uv) {
 	vec3 ldir		= normalize(-dlight.dir);
 	vec3 viewDir	= normalize(viewPos - worldPos);
 	vec3 halfway	= normalize(viewDir + ldir);
@@ -121,10 +121,10 @@ Light updatePlight(vec3 worldPos, vec3 normal, vec2 uv) {
 	light.diffuse	= attenuation * diff * plight.diffuse;
 	light.specular	= attenuation * spec * plight.specular;
 
-	/* debug: 
-	light.ambient = attenuation * vec3(0.0f, 0.0f, 0.0f);
+	/* debug: */
+	light.ambient = vec3(0.0f, 0.0f, 0.0f);
 	light.diffuse = attenuation * vec3(1.0, 0.0f, 0.0f);
-	light.specular = attenuation * vec3(1.0f, 0.0f, 0.0f);*/
+	light.specular = attenuation * vec3(1.0f, 0.0f, 0.0f);
 
 	return light;
 }

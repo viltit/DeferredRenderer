@@ -24,6 +24,16 @@ enum class lightProps {
 	attenuation
 };
 
+/* some usefuel attenuation constants: */
+namespace Attenuation {
+	extern glm::vec3 r7;
+	extern glm::vec3 r20;
+	extern glm::vec3 r50;
+	extern glm::vec3 r100;
+	extern glm::vec3 r160;
+	extern glm::vec3 r200;
+}
+
 class Light  {
 public:
 	Light() {}

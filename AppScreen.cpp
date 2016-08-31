@@ -5,19 +5,19 @@
 
 using namespace vitiGL;
 
-AppScreen::AppScreen(App* app, vitiGL::Window* window) 
-	:	IAppScreen	{ app },
-		_cam		{ float(window->width()) / float(window->height()) },
-		//_renderer	{ window, &_scene, &_cam },
-		_drender	{ window, &_scene, &_cam },
-		_gui		{ "GUI"}
+AppScreen::AppScreen(App* app, vitiGL::Window* window)
+	: IAppScreen{ app },
+	_cam{ float(window->width()) / float(window->height()) },
+	//_renderer	{ window, &_scene, &_cam },
+	_drender{ window, &_scene, &_cam },
+	_gui{ "GUI" }
 {
 	_index = SCREEN_INDEX_APP;
 
 	/* Create the scene elements: */
 	int prefix = 1;
 	for (int i = -5; i < 4; i++) {
-		prefix = (prefix == 1)? -1 : 1;
+		prefix = (prefix == 1) ? -1 : 1;
 		for (int j = 1; j < 5; j++) {
 			std::string parentName = "Cube" + std::to_string(i) + "/" + std::to_string(j);
 			std::string childName = "Cuboid" + std::to_string(i) + "/" + std::to_string(j);
