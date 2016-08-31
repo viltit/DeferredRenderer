@@ -161,9 +161,9 @@ void Scene::drawDLights(const Shader & shader) const {
 	}
 }
 
-void Scene::drawPlights(const Shader & shader) const {
+void Scene::drawPlights(const Shader & shader, const glm::vec3& camPos) const {
 	for (auto i = _plights.begin(); i != _plights.end(); i++) {
-		if (i->second) i->second->draw(shader);
+		if (i->second) i->second->draw(shader, camPos);
 	}
 }
 

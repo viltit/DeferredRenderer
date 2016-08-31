@@ -31,7 +31,6 @@ public:
 
 	virtual void setProperty(lightProps property, const glm::vec3& value, const Shader& shader) = 0;
 	virtual void setUniforms(const Shader& shader) = 0;
-	virtual void draw(const Shader& shader) = 0; //for deferred rendering
 
 protected:
 };
@@ -70,13 +69,15 @@ public:
 			 const glm::vec3& ambient = { 0.1f, 0.1f, 0.1f },
 			 const glm::vec3& diffuse = { 0.6f, 0.6f, 0.6f }, 
 			 const glm::vec3& specular = { 1.0f, 1.0f, 1.0f },
-			 const glm::vec3& attenuation = { 1.0f, 0.35f, 0.44 });
+			 const glm::vec3& attenuation = { 1.0f, 0.09f, 0.032 });
 
 	//~pLight();
 
 	void setProperty(lightProps property, const glm::vec3& value, const Shader& shader);
 	void setUniforms(const Shader& shader);
-	void draw(const Shader& shader);
+	void draw(const Shader& shader, const glm::vec3& viewPos);
+
+	float radius() const { return _r; }
 
 private:
 	/* calculate the lights radius based on the attenuation constants: */

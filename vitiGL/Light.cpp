@@ -69,11 +69,13 @@ pLight::pLight	(const std::string & uniformName, const glm::vec3 & pos, const gl
 		_specular		{ specular },
 		_sphere{ new Sphere{"xml/sphere.xml" } }
 {
+	_attenuation = { 1.0f, 0.09f, 0.032 };
+
 	calcRadius();
 
 	/* set the lights sphere original model matrix: */
 	glm::mat4 S{};
-	S = glm::scale(S, glm::vec3{ _r, _r, _r });
+	S = glm::scale(S, glm::vec3{ 0.3 * _r, 0.3 * _r, 0.3 * _r });
 	glm::mat4 T{};
 	T = glm::translate(T, pos);
 	glm::mat4 M = T * S;
@@ -119,18 +121,31 @@ void pLight::setProperty(lightProps property, const glm::vec3 & value, const Sha
 }
 
 void pLight::setUniforms(const Shader & shader) {
-	shader.on();
+	//shader.on();
 	glUniform3f(shader.getUniform(_uniform + ".pos"), _pos.x, _pos.y, _pos.z);
-	glUniform3f(shader.getUniform(_uniform + "Pos"), _pos.x, _pos.y, _pos.z);
-	glUniform3f(shader.getUniform(_uniform + ".ambient"), _ambient.r, _ambient.g, _ambient.b);
+	//glUniform3f(shader.getUniform(_uniform + "Pos"), _pos.x, _pos.y, _pos.z);
+	//glUniform3f(shader.getUniform(_uniform + ".ambient"), _ambient.r, _ambient.g, _ambient.b);
 	glUniform3f(shader.getUniform(_uniform + ".diffuse"), _diffuse.r, _diffuse.g, _diffuse.b);
 	glUniform3f(shader.getUniform(_uniform + ".specular"), _specular.r, _specular.g, _specular.b);
 	glUniform3f(shader.getUniform(_uniform + ".attenuation"), _attenuation.x, _attenuation.y, _attenuation.z);
-	shader.off();
+	//shader.off();
 }
 
-void pLight::draw(const Shader & shader) {
-	glUniform3f(shader.getUniform("lightPos"), _pos.x, _pos.y, _pos.z);
+void pLight::draw(const Shader & shader, const glm::vec3& viewPos) {
+	//glUniform3f(shader.getUniform("lightPos"), _pos.x, _pos.y, _pos.z);
+	setUniforms(shader);
+
+	/* determine if we are inside or outside the lights radius: */
+	/* SOMETHING IS WRONG HERE: */
+	float distance = glm::length(viewPos - _pos);
+	std::cout << "distance: " << distance << std::endl;
+	std::cout << "radius: " << _r << std::endl;
+	std::cout << "d / r :" << distance / _r;
+	if (distance < _r) glCullFace(GL_FRONT);
+	else {
+		std::cout << "outside\n";
+		glCullFace(GL_BACK);
+	}
 	_sphere->drawNaked(shader);
 }
 

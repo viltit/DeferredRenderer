@@ -22,11 +22,10 @@ struct DLight {
 };
 
 struct PLight {
+	vec3	pos;
 	vec3	diffuse;
 	vec3	specular;
-	float	constant;
-	float	linear;
-	float	quadratic;
+	vec3	attenuation; //x->constant, y->linear, z->quadratic
 };
 
 struct Light {
@@ -47,6 +46,7 @@ layout (location = 1) out vec4 lspecular;
 //uniform sampler2D depht;
 uniform sampler2D normal;
 uniform sampler2D position;
+uniform sampler2D shadowmap;
 
 /* more uniforms we need: ------------------------------------------------ */
 uniform vec2 texelSize;
@@ -54,8 +54,6 @@ uniform vec3 viewPos;
 
 uniform DLight dlight;
 uniform	PLight	plight;
-
-uniform vec3 lightPos;
 
 out vec4 color;
 
@@ -89,11 +87,14 @@ Light updateDLight(vec3 worldPos, vec3 normal, vec2 uv) {
 	float diff		= clamp(dot(normal, ldir), 0.0f, 1.0f);
 	float spec		= pow(clamp(dot(normal, halfway), 0.0f, 1.0f), 22.0f);	//TO DO: 22.0f needs to be a variable !
 
+	/* shadow: */
+	float shadow = texture(shadowmap, uv).r;
+
 	Light light;
 
 	light.ambient	= dlight.ambient;
-	light.diffuse	= diff * dlight.diffuse;
-	light.specular	= spec * dlight.specular;
+	light.diffuse	= shadow * diff * dlight.diffuse;
+	light.specular	= shadow * spec * dlight.specular;
 
 	return light;
 }
@@ -101,13 +102,13 @@ Light updateDLight(vec3 worldPos, vec3 normal, vec2 uv) {
 subroutine (UpdateLight)
 Light updatePlight(vec3 worldPos, vec3 normal, vec2 uv) {
 	/* Check the distance from fragment to light source: */
-	float dist = length(lightPos - worldPos);
-	float attenuation = 1.0f / (plight.constant + plight.linear * dist + plight.quadratic * dist * dist);
+	float dist = length(plight.pos - worldPos);
+	float attenuation = 1.0f / (plight.attenuation.x + plight.attenuation.y * dist + plight.attenuation.z * dist * dist);
 
 	/* abort if fragment is outside the lights radius: */
 	//if (attenuation < 1.0f / 256.0f) discard;	//if-branch in fragment shader is suboptimal!
 
-	vec3 lightDir	= normalize(lightPos - worldPos);
+	vec3 lightDir	= normalize(plight.pos - worldPos);
 	vec3 viewDir	= normalize(viewPos - worldPos);
 	vec3 halfway	= normalize(lightDir + viewDir);
 
@@ -117,13 +118,13 @@ Light updatePlight(vec3 worldPos, vec3 normal, vec2 uv) {
 	Light light;
 
 	light.ambient	= vec3(0.0f, 0.0f, 0.0f);
-	light.diffuse	= diff * plight.diffuse;
-	light.specular	= spec * plight.specular;
+	light.diffuse	= attenuation * diff * plight.diffuse;
+	light.specular	= attenuation * spec * plight.specular;
 
-	/* debug: */
-	light.ambient = vec3(0.0f, 0.0f, 0.0f);
-	light.diffuse = vec3(1.0f, 0.0f, 0.0f);
-	light.specular = vec3(1.0f, 0.0f, 0.0f);
+	/* debug: 
+	light.ambient = attenuation * vec3(0.0f, 0.0f, 0.0f);
+	light.diffuse = attenuation * vec3(1.0, 0.0f, 0.0f);
+	light.specular = attenuation * vec3(1.0f, 0.0f, 0.0f);*/
 
 	return light;
 }

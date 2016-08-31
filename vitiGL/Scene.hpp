@@ -126,7 +126,7 @@ public:
 
 	/* draw lights (for second pass in deferred rendering) */
 	void drawDLights(const Shader& shader) const;
-	void drawPlights(const Shader& shader) const;
+	void drawPlights(const Shader& shader, const glm::vec3& camPos) const;
 
 
 	/* allow indexing the scene: */

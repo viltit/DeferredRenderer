@@ -103,6 +103,10 @@ void glRendererDeferred::drawLight() {
 	_lshader.on();
 
 	/* set texture uniforms from geometry pass */
+	glActiveTexture(GL_TEXTURE3);
+	glBindTexture(GL_TEXTURE_2D, _dshadow.texture());
+	glUniform1i(_lshader.getUniform("shadowmap"), 3);
+
 	glActiveTexture(GL_TEXTURE4);
 	glBindTexture(GL_TEXTURE_2D, _tbo[normal]);
 	glUniform1i(_lshader.getUniform("normal"), 4);
@@ -119,7 +123,7 @@ void glRendererDeferred::drawLight() {
 	/* set subroutine uniform: */
 	GLuint dlightPass = glGetSubroutineIndex(_lshader.program(), GL_FRAGMENT_SHADER, "updateDlight");
 	glUniformSubroutinesuiv(GL_FRAGMENT_SHADER, 1, &dlightPass);
-	
+
 	/* set model and VP-Matrix uniform (which are both the identity matrix for directional lights) */
 	glm::mat4 M{};
 	glUniformMatrix4fv(_lshader.getUniform("M"), 1, GL_FALSE, glm::value_ptr(M));
@@ -136,11 +140,12 @@ void glRendererDeferred::drawLight() {
 	_camera->setVPUniform(_gshader);
 
 	/* draw the point lights: (more happening in the plight::draw() function!) */
-	_scene->drawPlights(_lshader);
+	_scene->drawPlights(_lshader, _camera->pos());
 
 	_lshader.off();
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+	glCullFace(GL_BACK);
 	glDisable(GL_BLEND);
 }
 
@@ -158,10 +163,6 @@ void glRendererDeferred::drawFinal() {
 	glActiveTexture(GL_TEXTURE2);
 	glBindTexture(GL_TEXTURE_2D, _tbo[specular]);
 	glUniform1i(_fshader.getUniform("specular"), 2);
-
-	glActiveTexture(GL_TEXTURE3);
-	glBindTexture(GL_TEXTURE_2D, _dshadow.texture());
-	glUniform1i(_fshader.getUniform("shadow"), 3);
 
 	_quad.drawNaked(_fshader);
 
