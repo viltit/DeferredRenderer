@@ -19,7 +19,7 @@ glRendererDeferred::glRendererDeferred(const Window* window, Scene* scene, Camer
 		_debug4		{ QuadPos::bottomRight },
 		_dshadow	{ *camera },
 		_framebuffer{ globals::window_w, globals::window_h },
-		_gamma		{ 2.2f }
+		_gamma		{ 1.2f }
 {
 	if (_window == nullptr) throw initError("<glRendererDeferred::glRendererDeferred> Window is a nullptr");
 

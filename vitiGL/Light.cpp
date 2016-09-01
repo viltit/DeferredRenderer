@@ -199,9 +199,9 @@ void pLight::calcRadius() {
 	_r = -l / (2.0 * q) + sqrtf(det);
 
 #ifdef CONSOLE_LOG
-	std::cout << "Point light sphere calculation:\n";
-	std::cout << c << "/" << l << "/" << q << std::endl;
-	std::cout << "Radius " << _r << std::endl;
+	//std::cout << "Point light sphere calculation:\n";
+	//std::cout << c << "/" << l << "/" << q << std::endl;
+	//std::cout << "Radius " << _r << std::endl;
 #endif
 }
 

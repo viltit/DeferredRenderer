@@ -9,7 +9,7 @@ uniform mat3 kernel;
 uniform float width;
 uniform float height;
 
-uniform float gamma = 2.2;
+uniform float gamma = 1.2;
 
 void main() { 
 	float offset_x = 1.0f / width;
