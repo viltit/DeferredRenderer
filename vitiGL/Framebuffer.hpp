@@ -36,6 +36,8 @@ public:
 
 	void	setTextureSize(int w, int h);
 
+	Shader*	shader() { return &_shader;  }
+
 protected:
 	virtual void init();
 

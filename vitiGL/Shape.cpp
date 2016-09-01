@@ -13,7 +13,8 @@ Shape::Shape()
 	:	vao			{ 0 },
 		vbo			{ 0 },
 		numVertices	{ 0 },
-		invert		{ false }
+		invert		{ false },
+		sRGB		{ true }
 {}
 
 
@@ -168,7 +169,7 @@ Cuboid::Cuboid(const std::string& configFile, const glm::vec3& position)
 	size = sdata.size;
 	uv = sdata.uv;
 
-	tbo.push_back(Cache::getTexture(sdata.textures[0]));
+	tbo.push_back(Cache::getTexture(sdata.textures[0], sRGB));
 	tbo.push_back(Cache::getTexture(sdata.textures[1]));
 	tbo.push_back(Cache::getTexture(sdata.textures[2]));
 
@@ -260,7 +261,7 @@ Tetrahedron::Tetrahedron(const std::string & configFile, const glm::vec3& positi
 	size = sdata.size;
 	uv = sdata.uv;
 
-	tbo.push_back(Cache::getTexture(sdata.textures[0]));
+	tbo.push_back(Cache::getTexture(sdata.textures[0], sRGB));
 	tbo.push_back(Cache::getTexture(sdata.textures[1]));
 	tbo.push_back(Cache::getTexture(sdata.textures[2]));
 
@@ -327,7 +328,7 @@ Octahedron::Octahedron(const std::string& configFile, const glm::vec3& position)
 	size = sdata.size;
 	uv = sdata.uv;
 
-	tbo.push_back(Cache::getTexture(sdata.textures[0]));
+	tbo.push_back(Cache::getTexture(sdata.textures[0], sRGB));
 	tbo.push_back(Cache::getTexture(sdata.textures[1]));
 	tbo.push_back(Cache::getTexture(sdata.textures[2]));
 
@@ -423,7 +424,7 @@ Icosahedron::Icosahedron(const std::string & configFile, const glm::vec3& positi
 	size = sdata.size;
 	uv = sdata.uv;
 
-	tbo.push_back(Cache::getTexture(sdata.textures[0]));
+	tbo.push_back(Cache::getTexture(sdata.textures[0], sRGB));
 	tbo.push_back(Cache::getTexture(sdata.textures[1]));
 	tbo.push_back(Cache::getTexture(sdata.textures[2]));
 
@@ -582,7 +583,7 @@ Sphere::Sphere(const std::string & configFile) : Icosahedron() {
 	size = sdata.size;
 	uv = sdata.uv;
 
-	tbo.push_back(Cache::getTexture(sdata.textures[0]));
+	tbo.push_back(Cache::getTexture(sdata.textures[0], sRGB));
 	tbo.push_back(Cache::getTexture(sdata.textures[1]));
 	tbo.push_back(Cache::getTexture(sdata.textures[2]));
 

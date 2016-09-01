@@ -9,6 +9,8 @@ uniform mat3 kernel;
 uniform float width;
 uniform float height;
 
+uniform float gamma = 2.2;
+
 void main() { 
 	float offset_x = 1.0f / width;
 	float offset_y = 1.0f / height;
@@ -35,6 +37,8 @@ void main() {
 		for (int j = 0; j < 3; j++)
 			col += sampleTex[i*3 + j] * kernel[j][i];
 	}
-
 	color = vec4(col, 1.0);
+	
+	//gamma adjustment:
+	color.rgb = pow(color.rgb, vec3(1.0/gamma));
 }

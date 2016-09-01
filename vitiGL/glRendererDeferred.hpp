@@ -31,6 +31,11 @@ public:
 
 	GLuint texture() const { return _framebuffer.copyTexture(); } //to get the latest on-screen picture
 
+	/* getters and setters: */
+	void gammaPlus(float value);
+	void gammaMinus(float value);
+	float gamma()	{ return _gamma; }
+
 protected:
 	/* enum for indexing the texture attachments: */
 	enum texureBuffer {
@@ -84,6 +89,8 @@ protected:
 	sQuad		_debug4;
 
 	glm::vec2	_texelSize;
+
+	float		_gamma;
 };
 
 /* helper functions that may be useful for other classes too: */

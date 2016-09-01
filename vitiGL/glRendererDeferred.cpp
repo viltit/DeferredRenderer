@@ -18,7 +18,8 @@ glRendererDeferred::glRendererDeferred(const Window* window, Scene* scene, Camer
 		_debug3		{ QuadPos::belowMiddleRight },
 		_debug4		{ QuadPos::bottomRight },
 		_dshadow	{ *camera },
-		_framebuffer{ globals::window_w, globals::window_h }
+		_framebuffer{ globals::window_w, globals::window_h },
+		_gamma		{ 2.2f }
 {
 	if (_window == nullptr) throw initError("<glRendererDeferred::glRendererDeferred> Window is a nullptr");
 
@@ -64,6 +65,22 @@ void glRendererDeferred::draw() {
 	_framebuffer.off();
 
 	_framebuffer.draw();
+}
+
+void glRendererDeferred::gammaPlus(float value) {
+	_gamma += value;
+	Shader* s = _framebuffer.shader();
+	s->on();
+	glUniform1f(s->getUniform("gamma"), _gamma);
+	s->off();
+}
+
+void glRendererDeferred::gammaMinus(float value) {
+	_gamma -= value;
+	Shader* s = _framebuffer.shader();
+	s->on();
+	glUniform1f(s->getUniform("gamma"), _gamma);
+	s->off();
 }
 
 void glRendererDeferred::drawGeo() {

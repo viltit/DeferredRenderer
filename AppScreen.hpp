@@ -37,5 +37,6 @@ protected:
 	vitiGL::Timer		_timer;
 
 	CEGUI::PushButton*	_fpsInfo;
+	CEGUI::PushButton*	_gamma;
 };
 

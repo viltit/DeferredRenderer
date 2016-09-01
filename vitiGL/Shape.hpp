@@ -44,6 +44,9 @@ public:
 	virtual void setModelMatrix(const glm::mat4& P)		{ M = P; }
 	//virtual glm::mat4 modelMatrix()						{ return M; }
 
+	bool srgbOn()	{ sRGB = true; }
+	bool srgbOff()	{ sRGB = false; }
+
 protected:
 	virtual void initVertices(std::vector<Vertex>& vertices) = 0; //pure abstract function !!
 	virtual void uploadVertices(const std::vector<Vertex>& vertices);
@@ -58,7 +61,8 @@ protected:
 	std::vector<GLuint> tbo; //diffuse, specular and normal supported for now
 
 	int			numVertices;
-	bool		invert;
+	bool		invert;		//invert the normals
+	bool		sRGB;		//gamma-correct diffuse textures on loading
 };
 
 /*	---------------------- GEOMETRIC FORMS DERIVED FROM SHAPE ------------------------------- */

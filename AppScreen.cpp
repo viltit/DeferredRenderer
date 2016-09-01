@@ -64,6 +64,9 @@ void AppScreen::update() {
 	std::string fps = "FPS: " + std::to_string(_timer.fps());
 	_fpsInfo->setText(CEGUI::String(fps));
 
+	std::string gamma = "Gamma (keypad +/-): " + std::to_string(_drender.gamma());
+	_gamma->setText(CEGUI::String(gamma));
+
 	for (int i = -5; i < 4; i++) {
 		for (int j = 1; j < 5; j++) {
 			std::string parent = "Cube" + std::to_string(i) + "/" + std::to_string(j);
@@ -105,10 +108,11 @@ void AppScreen::initGUI() {
 	_gui.setFont("DejaVuSans-10");
 	_gui.setMouseCursor("AlfiskoSkin/MouseArrow");
 
-
 	/* FPS Info: */
 	_fpsInfo = static_cast<CEGUI::PushButton*>(
-		_gui.createWidget(glm::vec4{ 0.01f, 0.03f, 0.1f, 0.05f }, glm::vec4{}, "AlfiskoSkin/Button", "TestButton"));
+		_gui.createWidget(glm::vec4{ 0.01f, 0.03f, 0.2f, 0.05f }, glm::vec4{}, "AlfiskoSkin/Button", "FPS"));
+	_gamma = static_cast<CEGUI::PushButton*>(
+		_gui.createWidget(glm::vec4{ 0.01f, 0.1f, 0.2f, 0.05f }, glm::vec4{}, "AlfiskoSkin/Button", "Gamma"));
 }
 
 void AppScreen::updateInput() {
@@ -162,6 +166,12 @@ void AppScreen::updateInput() {
 				case SDLK_F9:
 				framebuffer.setKernel(Kernel::none);
 				break;*/
+			case SDLK_KP_PLUS:
+				_drender.gammaPlus(0.1f);
+				break;
+			case SDLK_KP_MINUS:
+				_drender.gammaMinus(0.1f);
+				break;
 			}
 			break;
 		case SDL_MOUSEMOTION:
