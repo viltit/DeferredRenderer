@@ -84,10 +84,15 @@ public:
 	//~pLight();
 
 	void setProperty(lightProps property, const glm::vec3& value, const Shader& shader);
+	void setProperty(lightProps property, const glm::vec3& value);
 	void setUniforms(const Shader& shader);
 	void draw(const Shader& shader, const glm::vec3& viewPos);
 
 	float radius() const { return _r; }
+	glm::vec3 pos() const { return _pos; }
+
+	//debug:
+	bool _front;
 
 private:
 	/* calculate the lights radius based on the attenuation constants: */

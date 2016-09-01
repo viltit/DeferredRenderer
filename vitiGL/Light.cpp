@@ -78,14 +78,15 @@ pLight::pLight	(const std::string & uniformName, const glm::vec3 & pos, const gl
 		_specular		{ specular },
 		_sphere			{ new Sphere{"xml/sphere.xml" } }
 {
-	_attenuation = Attenuation::r50;
+	_attenuation = Attenuation::r100;
 
 	calcRadius(); //the math here is correct
 
 	/* set the lights sphere original model matrix: */
+	/* something is very off with scaling! */
 	glm::mat4 S{};
 	S = glm::translate(S, pos);
-	S = glm::scale(S, glm::vec3{ 0.5*_r, 0.5*_r,  0.5*_r });
+	S = glm::scale(S, glm::vec3{0.2*_r, 0.2*_r, 0.2*_r });
 	_sphere->setModelMatrix(S);
 }
 
@@ -127,6 +128,32 @@ void pLight::setProperty(lightProps property, const glm::vec3 & value, const Sha
 	shader.off();
 }
 
+void pLight::setProperty(lightProps property, const glm::vec3 & value) {
+	switch (property) {
+	case lightProps::pos:
+		_pos = value;
+		break;
+	case lightProps::ambient:
+		_ambient = value;
+		break;
+	case lightProps::diffuse:
+		_diffuse = value;
+		break;
+	case lightProps::specular:
+		_specular = value;
+		break;
+	case lightProps::attenuation:
+		_attenuation = value;
+		//need new radius calculation and sphere scaling!
+		break;
+	default:
+#ifdef CONSOLE_LOG
+		std::cout << "<pLight::setProperty> Trying to set inexistant property.\n";
+#endif
+		break;
+	}
+}
+
 void pLight::setUniforms(const Shader & shader) {
 	//shader.on();
 	glUniform3f(shader.getUniform(_uniform + ".pos"), _pos.x, _pos.y, _pos.z);
@@ -142,14 +169,17 @@ void pLight::draw(const Shader & shader, const glm::vec3& viewPos) {
 	//glUniform3f(shader.getUniform("lightPos"), _pos.x, _pos.y, _pos.z);
 	setUniforms(shader);
 
-	/* determine if we are inside or outside the lights radius: */
-	/* SOMETHING IS WRONG HERE: 
+	/* determine if we are inside or outside the lights radius: */ 
 	float distance = glm::length(viewPos - _pos);
 	if (distance < _r) glCullFace(GL_FRONT);
 	else {
 		std::cout << "outside\n";
 		glCullFace(GL_BACK);
-	}*/
+	}
+
+	/*if (_front) glCullFace(GL_FRONT);
+	else glCullFace(GL_BACK);*/ 
+
 	_sphere->drawNaked(shader);
 }
 

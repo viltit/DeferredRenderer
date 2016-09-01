@@ -136,6 +136,13 @@ public:
 		return node;
 	}
 
+	//debug - switch front and back face for point light drawing:
+	void switchCull() {
+		for (auto& L : _plights) {
+			L.second->_front = (L.second->_front)? false : true;
+		}
+	}
+
 private:
 	void updateCullingList(Frustum& frustum, SceneNode* from);
 

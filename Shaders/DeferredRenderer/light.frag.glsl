@@ -121,10 +121,10 @@ Light updatePlight(vec3 worldPos, vec3 normal, vec2 uv) {
 	light.diffuse	= attenuation * diff * plight.diffuse;
 	light.specular	= attenuation * spec * plight.specular;
 
-	/* debug: */
+	/* debug: 
 	light.ambient = vec3(0.0f, 0.0f, 0.0f);
 	light.diffuse = attenuation * vec3(1.0, 0.0f, 0.0f);
-	light.specular = attenuation * vec3(1.0f, 0.0f, 0.0f);
+	light.specular = attenuation * vec3(1.0f, 0.0f, 0.0f);*/
 
 	return light;
 }
