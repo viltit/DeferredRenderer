@@ -27,11 +27,17 @@ private:
 	bool MenuScreen::onExitClicked(const CEGUI::EventArgs& e);
 	bool MenuScreen::onContinueClicked(const CEGUI::EventArgs& e);
 
+	bool onBloomSlider();
+	bool onGammaSlider();
+
 	//vitiGL::glRenderer  _renderer; no need for this?
 	vitiGL::GUI			_gui;
 	vitiGL::sQuad		_screenQuad;
 	vitiGL::Shader		_shader;
 	vitiGL::Timer		_timer;
+
+	CEGUI::Slider*		_bloomSlider;
+	CEGUI::Slider*		_gammaSlider;
 
 	//std::vector<CEGUI::PushButton*> _buttons;
 };

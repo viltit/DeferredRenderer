@@ -9,6 +9,8 @@ uniform sampler2D color;
 uniform sampler2D diffuse;
 uniform sampler2D specular;
 
+uniform float treshold = 1.0f;
+
 void main() {
 	/* diffuse and specular color coming from the object: */
 	vec4 allColor = texture(color, fUV);
@@ -26,7 +28,7 @@ void main() {
 
 	//extract bright colors for bloom:
 	float brightness = dot(fcolor.rgb, vec3(0.2126, 0.7152, 0.0722));
-	if (brightness > 1.0) { 
+	if (brightness > treshold) { 
 		brightColor = vec4(fcolor.rgb, 1.0f);
 	}
 	else {

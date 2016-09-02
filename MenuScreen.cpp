@@ -17,6 +17,33 @@ MenuScreen::MenuScreen(App* app, vitiGL::Window* window)
 
 	SDL_ShowCursor(0);
 
+
+	/* Gamma Slider: */
+	_gammaSlider = static_cast<CEGUI::Slider*>(
+		_gui.createWidget(glm::vec4{ 0.45f, 0.2f, 0.2f, 0.05f }, glm::vec4{}, "AlfiskoSkin/HorizontalSlider", "GammaSlider"));
+
+	_gammaSlider->setMaxValue(3.0f);
+	_gammaSlider->setClickStep(0.05f);
+	_gammaSlider->setCurrentValue(1.2f);
+	_gammaSlider->subscribeEvent(CEGUI::Slider::EventValueChanged, CEGUI::Event::Subscriber(&MenuScreen::onGammaSlider, this));
+
+	auto gammaText = static_cast<CEGUI::DefaultWindow*>(
+		_gui.createWidget(glm::vec4{ 0.4f, 0.17f, 0.2f, 0.05f }, glm::vec4{}, "AlfiskoSkin/Label", "Text2"));
+	gammaText->setText("Gamma correction:");
+
+	/* Bloom Slider: */
+	_bloomSlider = static_cast<CEGUI::Slider*>(
+		_gui.createWidget(glm::vec4{ 0.45f, 0.3f, 0.2f, 0.05f }, glm::vec4{}, "AlfiskoSkin/HorizontalSlider", "BloomSlider"));
+
+	_bloomSlider->setMaxValue(2.0f);
+	_bloomSlider->setClickStep(0.05f);
+	_bloomSlider->setCurrentValue(1.0f);
+	_bloomSlider->subscribeEvent(CEGUI::Slider::EventValueChanged, CEGUI::Event::Subscriber(&MenuScreen::onBloomSlider, this));
+
+	auto bloomText = static_cast<CEGUI::DefaultWindow*>(
+		_gui.createWidget(glm::vec4{ 0.4f, 0.27f, 0.2f, 0.05f }, glm::vec4{}, "AlfiskoSkin/Label", "Text"));
+	bloomText->setText("Bloom Treshold:");
+
 	/* Continue button: */
 	auto* cButton = static_cast<CEGUI::PushButton*>(
 		_gui.createWidget(glm::vec4{ 0.45f, 0.4f, 0.1f, 0.05f }, glm::vec4{}, "AlfiskoSkin/Button", "ContinueButton"));
@@ -85,4 +112,14 @@ bool MenuScreen::onExitClicked(const CEGUI::EventArgs & e) {
 bool MenuScreen::onContinueClicked(const CEGUI::EventArgs & e) {
 	_state = ScreenState::next;
 	return true;
+}
+
+bool MenuScreen::onBloomSlider() {
+	//_drender.setBloomTreshold(_bloomSlider->getCurrentValue());
+	return true;
+}
+
+bool MenuScreen::onGammaSlider()
+{
+	return false;
 }

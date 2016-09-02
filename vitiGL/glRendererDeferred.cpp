@@ -20,7 +20,9 @@ glRendererDeferred::glRendererDeferred(const Window* window, Scene* scene, Camer
 		_dshadow	{ *camera },
 		_framebuffer{ globals::window_w, globals::window_h, 
 					  "Shaders/DeferredRenderer/pp.vert.glsl", "Shaders/DeferredRenderer/pp.frag.glsl" },
-		_gamma		{ 1.2f }
+		_gamma		{ 1.2f },
+		_bloomTreshold{ 1.0f }
+
 {
 	if (_window == nullptr) throw initError("<glRendererDeferred::glRendererDeferred> Window is a nullptr");
 
@@ -60,13 +62,7 @@ void glRendererDeferred::draw() {
 
 	//the framebuffer will apply bloom and other pp-effects
 	_framebuffer.on();
-
 	_quad.draw(_dshader, _tbo[finalCol]);
-	_debug.draw(_dshader, _tbo[color]);
-	_debug2.draw(_dshader, _tbo[diffuse]);
-	_debug3.draw(_dshader, _tbo[specular]);
-	_debug4.draw(_dshader, _tbo[normal]);
-
 	_framebuffer.off();
 
 	Shader* s = _framebuffer.shader();
@@ -76,6 +72,11 @@ void glRendererDeferred::draw() {
 	glUniform1i(s->getUniform("bloom"), 2);
 
 	_framebuffer.draw();
+
+	_debug.draw(_dshader, _tbo[color]);
+	_debug2.draw(_dshader, _tbo[diffuse]);
+	_debug3.draw(_dshader, _tbo[specular]);
+	_debug4.draw(_dshader, _tbo[normal]);
 }
 
 void glRendererDeferred::gammaPlus(float value) {
@@ -92,6 +93,13 @@ void glRendererDeferred::gammaMinus(float value) {
 	s->on();
 	glUniform1f(s->getUniform("gamma"), _gamma);
 	s->off();
+}
+
+void glRendererDeferred::setBloomTreshold(float value) {
+	_fshader.on();
+	_bloomTreshold = value;
+	glUniform1f(_fshader.getUniform("treshold"), _bloomTreshold);
+	_fshader.off();
 }
 
 void glRendererDeferred::drawGeo() {

@@ -34,7 +34,10 @@ public:
 	/* getters and setters: */
 	void gammaPlus(float value);
 	void gammaMinus(float value);
-	float gamma()	{ return _gamma; }
+	float gamma()			{ return _gamma; }
+
+	void setBloomTreshold(float value);
+	float bloomTreshold()	{ return _bloomTreshold;  }
 
 protected:
 	/* enum for indexing the texture attachments: */
@@ -99,6 +102,7 @@ protected:
 	glm::vec2	_texelSize;
 
 	float		_gamma;
+	float		_bloomTreshold;
 };
 
 /* helper functions that may be useful for other classes too: */
