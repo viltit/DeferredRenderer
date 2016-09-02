@@ -2,7 +2,8 @@
 
 in vec2 fUV;
 
-out vec4 fcolor;
+layout(location = 0) out vec4 fcolor;
+layout(location = 1) out vec4 brightColor;
 
 uniform sampler2D color;
 uniform sampler2D diffuse;
@@ -22,4 +23,13 @@ void main() {
 	vec3 ambientColor = texture(color, fUV).rgb * 0.2f;
 
 	fcolor = vec4(ambientColor + (diffuseColor * diffuseLight) + (specularColor * specularLight), 1.0f);
+
+	//extract bright colors for bloom:
+	float brightness = dot(fcolor.rgb, vec3(0.2126, 0.7152, 0.0722));
+	if (brightness > 1.0) { 
+		brightColor = vec4(fcolor.rgb, 1.0f);
+	}
+	else {
+		brightColor = vec4(0.0f, 0.0f, 0.0f, 1.0f);
+	}
 }

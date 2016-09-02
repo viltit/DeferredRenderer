@@ -44,12 +44,16 @@ protected:
 		position,
 		depht,
 		diffuse,
-		specular
+		specular,
+		finalCol,
+		brightness,
+		bloom
 	};
 
 	/* initializing functions for the constructor: */
 	void		initGbuffer();
 	void		initLbuffer();
+	void		initFbuffer();
 
 	/* the three drawing stages: */
 	void		drawGeo();
@@ -63,11 +67,12 @@ protected:
 	Shader		_dshader; //debug
 
 	/* the texture buffers: */
-	GLuint		_tbo[6];
+	GLuint		_tbo[9];
 
 	/* ...and the framebuffers: */
 	GLuint		_gbuffer;
 	GLuint		_lbuffer;
+	GLuint		_fbuffer;
 
 	Framebuffer _framebuffer;
 
@@ -77,6 +82,9 @@ protected:
 	const Window*	_window;
 
 	DirShadowmap _dshadow;
+
+	/* Gaussian Blur for bloom: */
+	GaussBlur	_gauss;
 
 	/* cameras view-perspective frustum: */
 	Frustum		_frustum;

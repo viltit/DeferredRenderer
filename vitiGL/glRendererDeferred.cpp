@@ -28,6 +28,7 @@ glRendererDeferred::glRendererDeferred(const Window* window, Scene* scene, Camer
 
 	initGbuffer();
 	initLbuffer();
+	initFbuffer();
 }
 
 
@@ -54,10 +55,10 @@ void glRendererDeferred::draw() {
 	/* draw: */
 	drawGeo();
 	drawLight();
-
-	_framebuffer.on();
 	drawFinal();
 
+	_framebuffer.on();
+	_quad.draw(_dshader, _tbo[bloom]);
 	_debug.draw(_dshader, _tbo[color]);
 	_debug2.draw(_dshader, _tbo[diffuse]);
 	_debug3.draw(_dshader, _tbo[specular]);
@@ -168,6 +169,10 @@ void glRendererDeferred::drawLight() {
 }
 
 void glRendererDeferred::drawFinal() {
+	glBindFramebuffer(GL_FRAMEBUFFER, _fbuffer);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glDisable(GL_DEPTH_TEST);
+
 	_fshader.on();
 
 	glActiveTexture(GL_TEXTURE0);
@@ -181,10 +186,17 @@ void glRendererDeferred::drawFinal() {
 	glActiveTexture(GL_TEXTURE2);
 	glBindTexture(GL_TEXTURE_2D, _tbo[specular]);
 	glUniform1i(_fshader.getUniform("specular"), 2);
-
+	
 	_quad.drawNaked(_fshader);
 
 	_fshader.off();
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	/* we re-use the original diffuse color texture here: */
+	_tbo[bloom] = _gauss.blur(_tbo[brightness], 2);
+
+	glEnable(GL_DEPTH_TEST);
 }
 
 void glRendererDeferred::initGbuffer() {
@@ -240,6 +252,30 @@ void glRendererDeferred::initLbuffer() {
 	/* check if the geometry buffer is complete: */
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		throw initError("<Renderer::init_gbuffer>\t: Framebuffer not complete");
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void glRendererDeferred::initFbuffer() {
+	GLuint attachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
+
+	glGenFramebuffers(1, &_fbuffer);
+	glBindFramebuffer(GL_FRAMEBUFFER, _fbuffer);
+
+	int w = _window->width();
+	int h = _window->height();
+
+	_tbo[finalCol] = initTexture(textureType::float16, w, h);
+	_tbo[brightness] = initTexture(textureType::float16, w, h);
+
+	glFramebufferTexture2D(GL_FRAMEBUFFER, attachments[0], GL_TEXTURE_2D, _tbo[finalCol], 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, attachments[1], GL_TEXTURE_2D, _tbo[brightness], 0);
+
+	glDrawBuffers(2, attachments);
+
+	/* check if the geometry buffer is complete: */
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+		throw initError("<Renderer::init_fbuffer>\t: Framebuffer not complete");
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
