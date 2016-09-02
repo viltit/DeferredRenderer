@@ -9,7 +9,8 @@ uniform mat3 kernel;
 uniform float width;
 uniform float height;
 
-uniform float gamma = 1.2;
+uniform float gamma = 1.2f;
+uniform float exposure = 0.4f;
 
 void main() { 
 	float offset_x = 1.0f / width;
@@ -39,6 +40,9 @@ void main() {
 	}
 	color = vec4(col, 1.0);
 	
+	//exposure tone mapping:
+	color.rgb = vec3(1.0f) - exp(-color.rgb * exposure);
+
 	//gamma adjustment:
 	color.rgb = pow(color.rgb, vec3(1.0/gamma));
 }

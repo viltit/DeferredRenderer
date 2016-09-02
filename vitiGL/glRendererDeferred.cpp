@@ -229,8 +229,8 @@ void glRendererDeferred::initLbuffer() {
 
 	int w = _window->width();
 	int h = _window->height();
-	_tbo[diffuse] = initTexture(textureType::color, w, h);
-	_tbo[specular] = initTexture(textureType::color, w, h);
+	_tbo[diffuse] = initTexture(textureType::float16, w, h);	//float16 for hdr
+	_tbo[specular] = initTexture(textureType::float16, w, h);
 
 	glFramebufferTexture2D(GL_FRAMEBUFFER, attachments[0], GL_TEXTURE_2D, _tbo[diffuse], 0);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, attachments[1], GL_TEXTURE_2D, _tbo[specular], 0);
