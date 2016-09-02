@@ -1,6 +1,8 @@
 a simple, work-in-Progress Renderer for OpenGL
 
 To do next:
-- Make lights member of the scene -> lights inherit from shape
-- Add Point Lights
 - Add Point Shadows
+- IMPROVE PERFORMANCE! Ideas:
+    -> reduce number of Framebuffers by re-using framebuffers with several color-attachments
+    -> improve cascaded Shadow Map: Draw all cascades in one texture with offsets
+    -> do not update cascade view Frustum Matrix every frame, but only when the camera's fov changed
