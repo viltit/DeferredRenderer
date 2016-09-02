@@ -103,5 +103,11 @@
     <None Include="Shaders\DeferredRenderer\light.vert.glsl">
       <Filter>Resource Files\Deferred</Filter>
     </None>
+    <None Include="Shaders\DeferredRenderer\pp.frag.glsl">
+      <Filter>Resource Files\Deferred</Filter>
+    </None>
+    <None Include="Shaders\DeferredRenderer\pp.vert.glsl">
+      <Filter>Resource Files\Deferred</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -18,7 +18,8 @@ glRendererDeferred::glRendererDeferred(const Window* window, Scene* scene, Camer
 		_debug3		{ QuadPos::belowMiddleRight },
 		_debug4		{ QuadPos::bottomRight },
 		_dshadow	{ *camera },
-		_framebuffer{ globals::window_w, globals::window_h },
+		_framebuffer{ globals::window_w, globals::window_h, 
+					  "Shaders/DeferredRenderer/pp.vert.glsl", "Shaders/DeferredRenderer/pp.frag.glsl" },
 		_gamma		{ 1.2f }
 {
 	if (_window == nullptr) throw initError("<glRendererDeferred::glRendererDeferred> Window is a nullptr");
@@ -57,13 +58,22 @@ void glRendererDeferred::draw() {
 	drawLight();
 	drawFinal();
 
+	//the framebuffer will apply bloom and other pp-effects
 	_framebuffer.on();
-	_quad.draw(_dshader, _tbo[bloom]);
+
+	_quad.draw(_dshader, _tbo[finalCol]);
 	_debug.draw(_dshader, _tbo[color]);
 	_debug2.draw(_dshader, _tbo[diffuse]);
 	_debug3.draw(_dshader, _tbo[specular]);
 	_debug4.draw(_dshader, _tbo[normal]);
+
 	_framebuffer.off();
+
+	Shader* s = _framebuffer.shader();
+	s->on();
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, _tbo[bloom]);
+	glUniform1i(s->getUniform("bloom"), 2);
 
 	_framebuffer.draw();
 }
@@ -169,6 +179,8 @@ void glRendererDeferred::drawLight() {
 }
 
 void glRendererDeferred::drawFinal() {
+	/* this pass draws the image and a seperate blurred image for bloom: */
+
 	glBindFramebuffer(GL_FRAMEBUFFER, _fbuffer);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glDisable(GL_DEPTH_TEST);

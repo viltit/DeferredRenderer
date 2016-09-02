@@ -147,6 +147,8 @@
     <None Include="Shaders\DeferredRenderer\geo.vert.glsl" />
     <None Include="Shaders\DeferredRenderer\light.frag.glsl" />
     <None Include="Shaders\DeferredRenderer\light.vert.glsl" />
+    <None Include="Shaders\DeferredRenderer\pp.frag.glsl" />
+    <None Include="Shaders\DeferredRenderer\pp.vert.glsl" />
     <None Include="Shaders\fragment.glsl" />
     <None Include="Shaders\framebuffer.frag.glsl" />
     <None Include="Shaders\framebuffer.vert.glsl" />
