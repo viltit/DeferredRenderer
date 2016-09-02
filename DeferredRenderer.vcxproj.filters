@@ -73,12 +73,6 @@
     <None Include="Shaders\shadowmapFinal.vert.glsl">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="Shaders\final.frag.glsl">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="Shaders\final.vert.glsl">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="Shaders\gaussianBlur.frag.glsl">
       <Filter>Resource Files</Filter>
     </None>

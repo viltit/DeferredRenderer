@@ -147,6 +147,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Bloom.cpp" />
     <ClCompile Include="Cache.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Error.cpp" />
@@ -172,6 +173,7 @@
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Bloom.hpp" />
     <ClInclude Include="Cache.hpp" />
     <ClInclude Include="Camera.hpp" />
     <ClInclude Include="DataStructures.hpp" />
