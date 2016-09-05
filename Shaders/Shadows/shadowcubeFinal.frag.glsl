@@ -26,7 +26,7 @@ void main() {
 	float depth = texture(shadowMap, lightDir).r;
 
 	//debug:
-	color = vec4(depth, depth, depth, 1.0f);
+	//color = vec4(depth, depth, depth, 1.0f);
 
 	//bring depth from range [0, 1] back to its world length:
 	depth *= radius;
@@ -36,5 +36,5 @@ void main() {
 	float bias = 0.005;
 	float shadow = (current - bias > depth) ? 1.0f : 0.0f;
 
-	//color = vec4(shadow, shadow, shadow, 1.0f);
+	color = vec4(shadow, shadow, shadow, 1.0f);
 }

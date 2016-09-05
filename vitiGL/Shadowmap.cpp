@@ -353,6 +353,7 @@ void PointShadowmap::draw(const pLight* light, Scene * scene, const CamInfo& cam
 	
 	//calculate the View-Projection Matrix for each side of the cubemap:
 	glm::vec3 pos = light->pos();
+
 	glm::mat4 P = glm::perspective(glm::radians(90.0f), float(_w) / float(_h), 0.1f, light->radius());
 	_L[0] = (P * glm::lookAt(pos, glm::vec3{ 1.0f, 0.0f, 0.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f }));
 	_L[1] = (P * glm::lookAt(pos, glm::vec3{ -1.0f, 0.0f, 0.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f }));
@@ -387,9 +388,9 @@ void PointShadowmap::draw(const pLight* light, Scene * scene, const CamInfo& cam
 	glUniformMatrix4fv(_fshader.getUniform("VP"), 1, GL_FALSE, glm::value_ptr(VP));
 	glUniform1f(_fshader.getUniform("radius"), light->radius());
 
-	glActiveTexture(GL_TEXTURE0);
+	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, _tbo);
-	glUniform1i(_fshader.getUniform("shadowMap"), 0);
+	glUniform1i(_fshader.getUniform("shadowMap"), 1);
 
 	scene->drawAllNaked(_fshader);
 
@@ -425,8 +426,8 @@ void PointShadowmap::initFramebuffer() {
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL); //write the smallest depht into the buffer
+	//glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
+	//glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL); //write the smallest depht into the buffer
 
 	/* generate framebuffer and attach the texture: */
 	glGenFramebuffers(1, &_fbo);

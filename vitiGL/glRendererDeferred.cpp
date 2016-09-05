@@ -61,7 +61,7 @@ void glRendererDeferred::draw() {
 	}
 
 	/* point shadows: (only a test now) */
-	pLight* plight = _scene->findPLight("plight0");
+	pLight* plight = _scene->findPLight("plight");
 	if (plight == nullptr) std::cout << "Did not find plight";
 	else {
 		_pshadow.on();

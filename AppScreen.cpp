@@ -23,20 +23,28 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 			std::string childName = "Cuboid" + std::to_string(i) + "/" + std::to_string(j);
 			std::string child2Name = "SmallCuboid" + std::to_string(i) + "/" + std::to_string(j);
 			std::string lightName = "plight" + std::to_string(i);
+
 			_scene.addChild(new Octahedron{ "xml/cube.xml" }, glm::vec3{ prefix * i * 3.0, j * 3.0f, i * 3.0 }, sqrt(2.0f), parentName);
 			_scene.addChild(new Cuboid{ "xml/cubeSmall.xml" }, glm::vec3{ 2.0, 0.0f, 2.0 }, sqrt(1.0f), childName, parentName);
 			_scene.addChild(new Tetrahedron{ "xml/cubeTiny.xml" }, glm::vec3{ 0.0, prefix * 1.0f, 0.0 }, sqrt(1.0f), child2Name, childName);
-
+/*
 			pLight* plight = new pLight{ "plight" };
 			plight->setProperty(lightProps::pos, glm::vec3{ prefix * i * 3.0, j * 3.0f + 0.5f, i * 3.0 });
 			plight->setProperty(lightProps::diffuse, (i == 1) ? glm::vec3{ 5.0f, 0.0f, 0.0f } : glm::vec3{ 0.0f, 0.0f, 5.0f });
 			plight->setProperty(lightProps::specular, (i == 1) ? glm::vec3{ 10.0f, 0.0f, 0.0f } : glm::vec3{ 0.0f, 0.0f, 10.0f });
 
-			_scene.addPLight(plight, lightName);
+			_scene.addPLight(plight, lightName);*/
 		}
 	}
 	_scene.addChild(new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ -3.0f, -1.0f, -3.0f }, sqrt(1800.0f), "Floor");
 	_scene.addDLight(new dLight{ "dlight", glm::vec3{ 0.5f, -1.0f, 0.5f } }, "dlight");
+
+	pLight* plight = new pLight{ "plight" };
+	plight->setProperty(lightProps::pos, glm::vec3{ 0.0f, 20.0f, 0.0f });
+	plight->setProperty(lightProps::diffuse, glm::vec3{ 10.0f, 5.0f, 0.0f });
+	plight->setProperty(lightProps::specular, glm::vec3{ 20.0f, 10.0f, 0.0f });
+
+	_scene.addPLight(plight, "plight");
 
 	_cam.setPos(glm::vec3{ -4.0f, 8.0f, -5.0f });
 	_cam.setTarget(glm::vec3{ 0.0f, 0.0f, 0.0f });
