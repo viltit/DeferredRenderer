@@ -1,3 +1,8 @@
+/*	Shadowmap.hpp ---------------------------------------------------------------------
+	contains classes for directional shadows with cascades and for point light shadows
+--------------------------------------------------------------------------------------- */
+
+
 #include "Shadowmap.hpp"
 
 #include "vitiGlobals.hpp"
@@ -145,7 +150,7 @@ void DirShadowmap::initFramebuffer() {
 
 		/* check if the framebuffer is ready to use: */
 		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-			throw initError("<Shadowmap::Shadomap>\tCould not initialize Framebuffer.");
+			throw initError("<DirShadowmap::initFramebuffer>\tCould not initialize Framebuffer.");
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 }
@@ -309,6 +314,131 @@ glm::vec3 DirShadowmap::TransformTransposed(const glm::vec3 &point, const glm::m
 
 
 void DirShadowmap::debug() {
+}
+
+/*	POINT SHADOWS ----------------------------------------------------------------------------------------- */
+
+PointShadowmap::PointShadowmap(int width, int height)
+	:	_framebuffer	{ globals::window_w, globals::window_h },
+		_w				{ width },
+		_h				{ height },
+		_shader			{ "Shaders/Shadows/shadowcube.vert.glsl",  
+						  "Shaders/Shadows/shadowcube.frag.glsl",
+						  "Shaders/Shadows/shadowcube.geo.glsl" },
+		_fshader		{ "Shaders/Shadows/shadowcubeFinal.vert.glsl", "Shaders/Shadows/shadowcubeFinal.frag.glsl" }
+{
+	initFramebuffer();
+}
+
+PointShadowmap::~PointShadowmap() {
+	if (_fbo) glDeleteFramebuffers(1, &_fbo);
+	if (_tbo) glDeleteTextures(1, &_tbo);
+}
+
+void PointShadowmap::on() {
+	glBindFramebuffer(GL_FRAMEBUFFER, _fbo);
+	glViewport(0, 0, _w, _h);
+	glDepthMask(GL_TRUE);
+	glEnable(GL_DEPTH_TEST);
+	glCullFace(GL_FRONT);		//to fight shadow acne
+
+	glClear(GL_DEPTH_BUFFER_BIT);
+}
+
+void PointShadowmap::draw(const pLight* light, Scene * scene, const CamInfo& cam) {
+	/*	PART ONE: draw the scene form the lights point of view and store the depth
+		values in the cubemap */
+
+	if (!light || !scene) return;
+	
+	//calculate the View-Projection Matrix for each side of the cubemap:
+	glm::vec3 pos = light->pos();
+	glm::mat4 P = glm::perspective(glm::radians(90.0f), float(_w) / float(_h), 0.1f, light->radius());
+	_L[0] = (P * glm::lookAt(pos, glm::vec3{ 1.0f, 0.0f, 0.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f }));
+	_L[1] = (P * glm::lookAt(pos, glm::vec3{ -1.0f, 0.0f, 0.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f }));
+	_L[2] = (P * glm::lookAt(pos, glm::vec3{ 0.0f, 1.0f, 0.0f }, glm::vec3{ 0.0f, 0.0f, 1.0f }));
+	_L[3] = (P * glm::lookAt(pos, glm::vec3{ 0.0f, -1.0f, 0.0f }, glm::vec3{ 0.0f, 0.0f, -1.0f }));
+	_L[4] = (P * glm::lookAt(pos, glm::vec3{ 0.0f, 0.0f, 1.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f }));
+	_L[5] = (P * glm::lookAt(pos, glm::vec3{ 0.0f, 0.0f, -1.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f }));
+
+	//render the scene (TO DO: ONLY DRAW OBJECTS WITHIN THE LIGHTS RADIUS)
+	_shader.on();
+	for (size_t i = 0; i < 6; i++) {
+		glUniformMatrix4fv(_shader.getUniform("L[" + std::to_string(i) + "]"), 1, GL_FALSE, glm::value_ptr(_L[i]));
+	}
+	glUniform1f(_shader.getUniform("radius"), light->radius());
+	glUniform3f(_shader.getUniform("pos"), light->pos().x, light->pos().y, light->pos().z);
+	
+	scene->drawAllNaked(_shader);
+
+	_shader.off();
+
+
+	/* PART II: Draw the scene with shadows in a black-and-white texture: */
+	_framebuffer.on();
+	_fshader.on();
+
+	glCullFace(GL_BACK);
+
+	/* set all relevant uniforms: */
+	setUniforms(_fshader);
+	glUniform3f(_fshader.getUniform("lightPos"), light->pos().x, light->pos().y, light->pos().z);
+	glm::mat4 VP = cam.P * cam.V;
+	glUniformMatrix4fv(_fshader.getUniform("VP"), 1, GL_FALSE, glm::value_ptr(VP));
+	glUniform1f(_fshader.getUniform("radius"), light->radius());
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, _tbo);
+	glUniform1i(_fshader.getUniform("shadowMap"), 0);
+
+	scene->drawAllNaked(_fshader);
+
+	_fshader.off();
+	_framebuffer.off();
+
+	/* STEP 3: Blur the black-and-white picture with gaussian blur */
+	_finalImg = _gauss.blur(_framebuffer.texture(), 2);
+}
+
+void PointShadowmap::off() {
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glCullFace(GL_BACK);
+	glViewport(0, 0, globals::window_w, globals::window_h);
+}
+
+void PointShadowmap::setUniforms(const Shader & shader)
+{
+}
+
+void PointShadowmap::initFramebuffer() {
+	/* generate and configure cubemap texture: */
+	glGenTextures(1, &_tbo);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, _tbo);
+	for (int i = 0; i < 6; i++) {
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_DEPTH_COMPONENT, _w, _h,
+					 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
+	}
+
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL); //write the smallest depht into the buffer
+
+	/* generate framebuffer and attach the texture: */
+	glGenFramebuffers(1, &_fbo);
+	glBindFramebuffer(GL_FRAMEBUFFER, _fbo);
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, _tbo, 0);
+	glDrawBuffer(GL_NONE);
+	glReadBuffer(GL_NONE);
+
+	/* check if the framebuffer is ready to use: */
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+		throw initError("<PointShadowmap::initFramebuffer>\tCould not initialize Framebuffer.");
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 }

@@ -158,6 +158,11 @@
     <None Include="Shaders\shadowmap.vert.glsl" />
     <None Include="Shaders\shadowmapFinal.frag.glsl" />
     <None Include="Shaders\shadowmapFinal.vert.glsl" />
+    <None Include="Shaders\Shadows\shadowcube.frag.glsl" />
+    <None Include="Shaders\Shadows\shadowcube.geo.glsl" />
+    <None Include="Shaders\Shadows\shadowcube.vert.glsl" />
+    <None Include="Shaders\Shadows\shadowcubeFinal.frag.glsl" />
+    <None Include="Shaders\Shadows\shadowcubeFinal.vert.glsl" />
     <None Include="Shaders\simple.frag.glsl" />
     <None Include="Shaders\simple.vert.glsl" />
     <None Include="Shaders\vertex.glsl" />

@@ -16,6 +16,9 @@
     <Filter Include="Resource Files\Deferred">
       <UniqueIdentifier>{59305eb2-2856-4f87-aa98-efd73db429bb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Shadows">
+      <UniqueIdentifier>{6d7b907e-80b5-4921-9d4c-1cab5bdfa14b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Frame.hpp">
@@ -108,6 +111,21 @@
     </None>
     <None Include="Shaders\DeferredRenderer\pp.vert.glsl">
       <Filter>Resource Files\Deferred</Filter>
+    </None>
+    <None Include="Shaders\Shadows\shadowcube.frag.glsl">
+      <Filter>Resource Files\Shadows</Filter>
+    </None>
+    <None Include="Shaders\Shadows\shadowcube.vert.glsl">
+      <Filter>Resource Files\Shadows</Filter>
+    </None>
+    <None Include="Shaders\Shadows\shadowcubeFinal.frag.glsl">
+      <Filter>Resource Files\Shadows</Filter>
+    </None>
+    <None Include="Shaders\Shadows\shadowcubeFinal.vert.glsl">
+      <Filter>Resource Files\Shadows</Filter>
+    </None>
+    <None Include="Shaders\Shadows\shadowcube.geo.glsl">
+      <Filter>Resource Files\Shadows</Filter>
     </None>
   </ItemGroup>
 </Project>

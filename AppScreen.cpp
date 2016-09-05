@@ -9,7 +9,7 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	: IAppScreen{ app },
 	_cam{ float(window->width()) / float(window->height()) },
 	//_renderer	{ window, &_scene, &_cam },
-	_drender{ window, &_scene, &_cam },
+	_drender{ window, &_scene, &_cam, true },
 	_gui{ "GUI" }
 {
 	_index = SCREEN_INDEX_APP;

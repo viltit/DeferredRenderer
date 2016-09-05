@@ -53,13 +53,11 @@ void dLight::setProperty(lightProps property, const glm::vec3 & value, const Sha
 }
 
 void dLight::setUniforms(const Shader& shader) {
-	shader.on();
 	glUniform3f(shader.getUniform(_uniform + ".dir"), _dir.x, _dir.y, _dir.z);
 	//glUniform3f(shader.getUniform(_uniform + "Dir"), _dir.x, _dir.y, _dir.z); //wip
 	//glUniform3f(shader.getUniform(_uniform + ".ambient"), _ambient.r, _ambient.g, _ambient.b);
 	glUniform3f(shader.getUniform(_uniform + ".diffuse"), _diffuse.r, _diffuse.g, _diffuse.b);
 	glUniform3f(shader.getUniform(_uniform + ".specular"), _specular.r, _specular.g, _specular.b);
-	shader.off();
 }
 
 void dLight::draw(const Shader & shader) {

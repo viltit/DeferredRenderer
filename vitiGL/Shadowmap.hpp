@@ -66,4 +66,40 @@ protected:
 
 	const dLight* _light;
 };
+
+/*	POINT SHADOWS ----------------------------------------------------------------------------------------- */
+
+class PointShadowmap {
+public:
+	PointShadowmap	(int width = 1024, int height = 1024);
+	~PointShadowmap();
+
+	void on();
+	void draw(const pLight* light, Scene* scene, const CamInfo& cam);
+	void off();
+
+	void setUniforms(const Shader& shader);
+
+	GLuint		texture() const { return _finalImg; }
+
+protected:
+	void		initFramebuffer();
+
+	GLuint		_fbo;			// for the three cascades
+	GLuint		_tbo;
+	GLuint		_finalImg;		// final Shadow Image
+
+	glm::mat4	_L[6];			//Light Space matrices
+
+	Framebuffer _framebuffer;	//for a black'n'white image of the scene with shadows
+
+	int			_w;
+	int			_h;
+
+	Shader		_shader;	//first pass: draw scene from the lights view
+	Shader		_fshader;	//second pass: draw black and white scene
+
+	GaussBlur	_gauss;		//to blur the shadowmap
+};
+
 }

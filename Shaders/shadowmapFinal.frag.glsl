@@ -11,13 +11,13 @@ uniform float cascadeEnd[CASCADES];
 
 //Input: ---------------------------------------------------
 in VS_OUT{
-vec3 pos;
-vec3 normal;
-vec2 uv;
+	vec3 pos;
+	vec3 normal;
+	vec2 uv;
 
-vec4 lFragPos[CASCADES];	//fragment-pos in Light-Space
+	vec4 lFragPos[CASCADES];	//fragment-pos in Light-Space
 
-float clipZ;
+	float clipZ;
 } fsIn;
 
 //Output: --------------------------------------------------

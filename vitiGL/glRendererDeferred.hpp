@@ -23,7 +23,7 @@ enum class textureType {
 
 class glRendererDeferred {
 public:
-	glRendererDeferred(const Window* window, Scene* scene, Camera* camera);
+	glRendererDeferred(const Window* window, Scene* scene, Camera* camera, bool drawDshadow = true);
 	virtual ~glRendererDeferred();
 
 	virtual void update();
@@ -85,6 +85,7 @@ protected:
 	const Window*	_window;
 
 	DirShadowmap _dshadow;
+	PointShadowmap _pshadow;
 
 	/* Gaussian Blur for bloom: */
 	GaussBlur	_gauss;
@@ -103,6 +104,8 @@ protected:
 
 	float		_gamma;
 	float		_bloomTreshold;
+
+	bool		_drawDshadow;
 };
 
 /* helper functions that may be useful for other classes too: */

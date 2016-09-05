@@ -5,29 +5,35 @@
 
 namespace vitiGL {
 
-glRendererDeferred::glRendererDeferred(const Window* window, Scene* scene, Camera* camera)
-	:	_window		{ window },
-		_gshader	{ "Shaders/DeferredRenderer/geo.vert.glsl", "Shaders/DeferredRenderer/geo.frag.glsl" },
-		_lshader	{ "Shaders/DeferredRenderer/light.vert.glsl", "Shaders/DeferredRenderer/light.frag.glsl" },
-		_fshader	{ "Shaders/DeferredRenderer/final.vert.glsl", "Shaders/DeferredRenderer/final.frag.glsl" },
-		_dshader	{ "Shaders/simple.vert.glsl", "Shaders/simple.frag.glsl" },
-		_scene		{ scene },
-		_camera		{ camera },
-		_debug		{ QuadPos::topRight },
-		_debug2		{ QuadPos::aboveMiddleRight },
-		_debug3		{ QuadPos::belowMiddleRight },
-		_debug4		{ QuadPos::bottomRight },
-		_dshadow	{ *camera },
-		_framebuffer{ globals::window_w, globals::window_h, 
-					  "Shaders/DeferredRenderer/pp.vert.glsl", "Shaders/DeferredRenderer/pp.frag.glsl" },
-		_gamma		{ 1.2f },
-		_bloomTreshold{ 1.0f }
+	glRendererDeferred::glRendererDeferred(const Window* window, Scene* scene, Camera* camera, bool drawDshadow)
+		:	_window	{ window },
+			_gshader{ "Shaders/DeferredRenderer/geo.vert.glsl", "Shaders/DeferredRenderer/geo.frag.glsl" },
+			_lshader{ "Shaders/DeferredRenderer/light.vert.glsl", "Shaders/DeferredRenderer/light.frag.glsl" },
+			_fshader{ "Shaders/DeferredRenderer/final.vert.glsl", "Shaders/DeferredRenderer/final.frag.glsl" },
+			_dshader{ "Shaders/simple.vert.glsl", "Shaders/simple.frag.glsl" },
+			_scene{ scene },
+			_camera{ camera },
+			_debug{ QuadPos::topRight },
+			_debug2{ QuadPos::aboveMiddleRight },
+			_debug3{ QuadPos::belowMiddleRight },
+			_debug4{ QuadPos::bottomRight },
+			_dshadow{ *camera },
+			_framebuffer{ globals::window_w, globals::window_h,
+						  "Shaders/DeferredRenderer/pp.vert.glsl", "Shaders/DeferredRenderer/pp.frag.glsl" },
+			_gamma{ 1.2f },
+			_bloomTreshold{ 1.0f },
+			_drawDshadow{ drawDshadow }
 
 {
 	if (_window == nullptr) throw initError("<glRendererDeferred::glRendererDeferred> Window is a nullptr");
 
 	_texelSize.x = 1.0f / float(window->width());
 	_texelSize.y = 1.0f / float(window->height());
+
+	//set one-time-uniforms: (need adjustment on window-resize!):
+	_lshader.on();
+	glUniform2f(_lshader.getUniform("texelSize"), _texelSize.x, _texelSize.y); // to do: not needed every frame!
+	_lshader.off();
 
 	initGbuffer();
 	initLbuffer();
@@ -47,10 +53,22 @@ void glRendererDeferred::draw() {
 
 	_frustum.update(VP);
 
-	/* shadowmap: */
-	_dshadow.on();
-	_dshadow.draw(_camera->getMatrizes(), _scene, _frustum);
-	_dshadow.off();
+	/* dir shadowmap: */
+	if (_drawDshadow) { //also test if a dirlight is active!
+		_dshadow.on();
+		_dshadow.draw(_camera->getMatrizes(), _scene, _frustum);
+		_dshadow.off();
+	}
+
+	/* point shadows: (only a test now) */
+	pLight* plight = _scene->findPLight("plight0");
+	if (plight == nullptr) std::cout << "Did not find plight";
+	else {
+		_pshadow.on();
+		_pshadow.draw(plight, _scene, _camera->getMatrizes());
+		_pshadow.off();
+	}
+
 
 	glDepthMask(GL_TRUE);
 	glEnable(GL_DEPTH_TEST);
@@ -73,7 +91,7 @@ void glRendererDeferred::draw() {
 
 	_framebuffer.draw();
 
-	_debug.draw(_dshader, _tbo[color]);
+	_debug.draw(_dshader, _pshadow.texture());
 	_debug2.draw(_dshader, _tbo[diffuse]);
 	_debug3.draw(_dshader, _tbo[specular]);
 	_debug4.draw(_dshader, _tbo[normal]);
@@ -118,17 +136,6 @@ void glRendererDeferred::drawGeo() {
 }
 
 void glRendererDeferred::drawLight() {
-	auto dlight = _scene->findDLight("dlight"); //bad!! should not need name.
-
-	/*
-	glm::vec4 lightDir = { dlight->dir().x, dlight->dir().y, dlight->dir().z, 0.0f };
-	glm::mat4 R;
-	R = glm::rotate(R, 0.50f / 20.0f, glm::vec3{ 0.0f, 1.0f, 0.0f });
-	lightDir = R * lightDir;
-	dlight->setProperty(lightProps::dir, glm::vec3{ lightDir.x, lightDir.y, lightDir.z }, _lshader);*/
-
-	_dshadow.setLight(dlight);
-	dlight->setUniforms(_lshader); //not needed every frame!
 
 	glBindFramebuffer(GL_FRAMEBUFFER, _lbuffer);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -140,10 +147,6 @@ void glRendererDeferred::drawLight() {
 	_lshader.on();
 
 	/* set texture uniforms from geometry pass */
-	glActiveTexture(GL_TEXTURE3);
-	glBindTexture(GL_TEXTURE_2D, _dshadow.texture());
-	glUniform1i(_lshader.getUniform("shadowmap"), 3);
-
 	glActiveTexture(GL_TEXTURE4);
 	glBindTexture(GL_TEXTURE_2D, _tbo[normal]);
 	glUniform1i(_lshader.getUniform("normal"), 4);
@@ -154,19 +157,32 @@ void glRendererDeferred::drawLight() {
 
 	/* set view pos and texel size uniform: */
 	glUniform3f(_lshader.getUniform("viewPos"), _camera->pos().x, _camera->pos().y, _camera->pos().z);
-	glUniform2f(_lshader.getUniform("texelSize"), _texelSize.x, _texelSize.y); // to do: not needed every frame!
 
 	/* DIRECTIONAL LIGHT: */
-	/* set subroutine uniform: */
-	GLuint dlightPass = glGetSubroutineIndex(_lshader.program(), GL_FRAGMENT_SHADER, "updateDlight");
-	glUniformSubroutinesuiv(GL_FRAGMENT_SHADER, 1, &dlightPass);
-
-	/* set model and VP-Matrix uniform (which are both the identity matrix for directional lights) */
 	glm::mat4 M{};
-	glUniformMatrix4fv(_lshader.getUniform("M"), 1, GL_FALSE, glm::value_ptr(M));
-	glUniformMatrix4fv(_lshader.getUniform("VP"), 1, GL_FALSE, glm::value_ptr(M));
+	auto dlight = _scene->findDLight("dlight"); //bad!! should not need name.
 
-	dlight->draw(_lshader);
+	if (dlight) {
+		_dshadow.setLight(dlight);
+		dlight->setUniforms(_lshader); //not needed every frame!
+
+		_lshader.on();
+
+		/* set dshadow-texturemap: */
+		glActiveTexture(GL_TEXTURE3);
+		glBindTexture(GL_TEXTURE_2D, _dshadow.texture());
+		glUniform1i(_lshader.getUniform("shadowmap"), 3);
+
+		/* set subroutine uniform: */
+		GLuint dlightPass = glGetSubroutineIndex(_lshader.program(), GL_FRAGMENT_SHADER, "updateDlight");
+		glUniformSubroutinesuiv(GL_FRAGMENT_SHADER, 1, &dlightPass);
+
+		/* set model and VP-Matrix uniform (which are both the identity matrix for directional lights) */
+		glUniformMatrix4fv(_lshader.getUniform("M"), 1, GL_FALSE, glm::value_ptr(M));
+		glUniformMatrix4fv(_lshader.getUniform("VP"), 1, GL_FALSE, glm::value_ptr(M));
+
+		dlight->draw(_lshader);
+	}
 
 	/* POINT LIGHTS: */
 	/* override subroutine uniform: */
@@ -214,7 +230,7 @@ void glRendererDeferred::drawFinal() {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	/* we re-use the original diffuse color texture here: */
-	_tbo[bloom] = _gauss.blur(_tbo[brightness], 2);
+	_tbo[bloom] = _gauss.blur(_tbo[brightness], 4);
 
 	glEnable(GL_DEPTH_TEST);
 }
