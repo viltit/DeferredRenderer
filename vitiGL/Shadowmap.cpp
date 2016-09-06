@@ -15,11 +15,12 @@
 
 namespace vitiGL {
 
-DirShadowmap::DirShadowmap(const Camera& cam, int width, int height) 
+DirShadowmap::DirShadowmap(const Camera& cam, const dLight * light, int width, int height) 
 	:	_w		{ width },
 		_h		{ height },
 		_shader { "Shaders/shadowmap.vert.glsl", "Shaders/shadowmap.frag.glsl" },
 		_fshader{ "Shaders/shadowmapFinal.vert.glsl", "Shaders/shadowmapFinal.frag.glsl"},
+		_light	{ light },
 		_framebuffer { globals::window_w, globals::window_h }
 {
 #ifdef CONSOLE_LOG
@@ -35,6 +36,7 @@ DirShadowmap::DirShadowmap(const Camera& cam, int width, int height)
 
 	initFramebuffer();
 
+	_framebuffer.setKernel(Kernel::gaussianBlur);
 #ifdef CONSOLE_LOG
 	std::cout << "\tfinished.\n";
 #endif
@@ -56,11 +58,11 @@ void DirShadowmap::on() {
 	glClear(GL_DEPTH_BUFFER_BIT);
 }
 
-void DirShadowmap::draw(const dLight* light, Scene* scene, const CamInfo& camera, Frustum& frustum) {
-	if (!light || !scene) return;
+void DirShadowmap::draw(const CamInfo& camera, Scene* scene, Frustum& frustum) {
+	if (!_light || !scene) return;
 
 	/* STEP ONE: Render scene from the viewpoint of the light: */
-	updateMatrices2(light, camera);
+	updateMatrices2(camera);
 
 	_shader.on();
 
@@ -81,7 +83,7 @@ void DirShadowmap::draw(const dLight* light, Scene* scene, const CamInfo& camera
 	glCullFace(GL_BACK);
 
 	setUniforms(_fshader);
-	glUniform3f(_fshader.getUniform("dlightDir"), light->dir().x, light->dir().y, light->dir().z);
+	glUniform3f(_fshader.getUniform("dlightDir"), _light->dir().x, _light->dir().y, _light->dir().z);
 	glm::mat4 VP = camera.P * camera.V;
 	glUniformMatrix4fv(_fshader.getUniform("VP"), 1, GL_FALSE, glm::value_ptr(VP));
 	scene->drawAllNakedCulled(_fshader, frustum);
@@ -212,7 +214,7 @@ void DirShadowmap::updatMatrices(const CamInfo& camera) {
 	_L = _O * _V;*/
 }
 
-void DirShadowmap::updateMatrices2(const dLight* light, const CamInfo& camera) {
+void DirShadowmap::updateMatrices2(const CamInfo& camera) {
 	/*	calculate the frusta of all cascades 
 		see http://alextardif.com/ShadowMapping.html for some background */
 	
@@ -267,7 +269,7 @@ void DirShadowmap::updateMatrices2(const dLight* light, const CamInfo& camera) {
 		S = glm::scale(S, glm::vec3{ texelsPerUnit, texelsPerUnit, texelsPerUnit });
 
 		// create a temporary look-At Matrix:
-		glm::mat4 tempV = glm::lookAt(glm::vec3{ 0.0f, 0.0f, 0.0f }, -light->dir(), glm::vec3{ 0.0f, 1.0f, 0.0f });
+		glm::mat4 tempV = glm::lookAt(glm::vec3{ 0.0f, 0.0f, 0.0f }, -_light->dir(), glm::vec3{ 0.0f, 1.0f, 0.0f });
 		tempV = S * tempV;
 		glm::mat4 tempVinv = glm::inverse(tempV);
 
@@ -280,7 +282,7 @@ void DirShadowmap::updateMatrices2(const dLight* light, const CamInfo& camera) {
 		glm::vec3 center3 = { center.x, center.y, center.z };
 
 		// create the eye by moving in the opposite direction of the light:
-		glm::vec3 eye = center3 - light->dir() * 2.0f * radius;
+		glm::vec3 eye = center3 - _light->dir() * 2.0f * radius;
 
 		// we are now ready to create the lights view and ortho matrix:
 		_V[i] = glm::lookAt(eye, center3, glm::vec3{ 0.0f, 1.0f, 0.0f });
@@ -354,11 +356,11 @@ void PointShadowmap::draw(const pLight* light, Scene * scene, const CamInfo& cam
 
 	glm::mat4 P = glm::perspective(glm::radians(90.0f), float(_w) / float(_h), 0.1f, light->radius());
 	_L[0] = (P * glm::lookAt(pos, glm::vec3{ 1.0f, 0.0f, 0.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f }));
-	_L[1] = (P * glm::lookAt(pos, glm::vec3{ -1.0f, 0.0f, 0.0f }, glm::vec3{ 0.0f, 1.0f, 0.0f }));
+	_L[1] = (P * glm::lookAt(pos, glm::vec3{ -1.0f, 0.0f, 0.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f }));
 	_L[2] = (P * glm::lookAt(pos, glm::vec3{ 0.0f, 1.0f, 0.0f }, glm::vec3{ 0.0f, 0.0f, 1.0f }));
 	_L[3] = (P * glm::lookAt(pos, glm::vec3{ 0.0f, -1.0f, 0.0f }, glm::vec3{ 0.0f, 0.0f, -1.0f }));
 	_L[4] = (P * glm::lookAt(pos, glm::vec3{ 0.0f, 0.0f, 1.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f }));
-	_L[5] = (P * glm::lookAt(pos, glm::vec3{ 0.0f, 0.0f, -1.0f }, glm::vec3{ 0.0f, 1.0f, 0.0f }));
+	_L[5] = (P * glm::lookAt(pos, glm::vec3{ 0.0f, 0.0f, -1.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f }));
 
 	//render the scene (TO DO: ONLY DRAW OBJECTS WITHIN THE LIGHTS RADIUS)
 	_shader.on();

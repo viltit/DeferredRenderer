@@ -5,24 +5,24 @@
 
 namespace vitiGL {
 
-glRendererDeferred::glRendererDeferred(const Window* window, Scene* scene, Camera* camera, bool drawDshadow)
-	:	_window	{ window },
-		_gshader{ "Shaders/DeferredRenderer/geo.vert.glsl", "Shaders/DeferredRenderer/geo.frag.glsl" },
-		_lshader{ "Shaders/DeferredRenderer/light.vert.glsl", "Shaders/DeferredRenderer/light.frag.glsl" },
-		_fshader{ "Shaders/DeferredRenderer/final.vert.glsl", "Shaders/DeferredRenderer/final.frag.glsl" },
-		_dshader{ "Shaders/simple.vert.glsl", "Shaders/simple.frag.glsl" }, //debug
-		_scene{ scene },
-		_camera{ camera },
-		_debug{ QuadPos::topRight },
-		_debug2{ QuadPos::aboveMiddleRight },
-		_debug3{ QuadPos::belowMiddleRight },
-		_debug4{ QuadPos::bottomRight },
-		_dshadow{ *camera },
-		_framebuffer{ window->width(), window->height(),
-					  "Shaders/DeferredRenderer/pp.vert.glsl", "Shaders/DeferredRenderer/pp.frag.glsl" },
-		_gamma{ 1.2f },
-		_bloomTreshold{ 1.0f },
-		_drawDshadow{ drawDshadow }
+	glRendererDeferred::glRendererDeferred(const Window* window, Scene* scene, Camera* camera, bool drawDshadow)
+		:	_window	{ window },
+			_gshader{ "Shaders/DeferredRenderer/geo.vert.glsl", "Shaders/DeferredRenderer/geo.frag.glsl" },
+			_lshader{ "Shaders/DeferredRenderer/light.vert.glsl", "Shaders/DeferredRenderer/light.frag.glsl" },
+			_fshader{ "Shaders/DeferredRenderer/final.vert.glsl", "Shaders/DeferredRenderer/final.frag.glsl" },
+			_dshader{ "Shaders/simple.vert.glsl", "Shaders/simple.frag.glsl" },
+			_scene{ scene },
+			_camera{ camera },
+			_debug{ QuadPos::topRight },
+			_debug2{ QuadPos::aboveMiddleRight },
+			_debug3{ QuadPos::belowMiddleRight },
+			_debug4{ QuadPos::bottomRight },
+			_dshadow{ *camera },
+			_framebuffer{ globals::window_w, globals::window_h,
+						  "Shaders/DeferredRenderer/pp.vert.glsl", "Shaders/DeferredRenderer/pp.frag.glsl" },
+			_gamma{ 1.2f },
+			_bloomTreshold{ 1.0f },
+			_drawDshadow{ drawDshadow }
 
 {
 	if (_window == nullptr) throw initError("<glRendererDeferred::glRendererDeferred> Window is a nullptr");
@@ -32,7 +32,7 @@ glRendererDeferred::glRendererDeferred(const Window* window, Scene* scene, Camer
 
 	//set one-time-uniforms: (need adjustment on window-resize!):
 	_lshader.on();
-	glUniform2f(_lshader.getUniform("texelSize"), _texelSize.x, _texelSize.y);
+	glUniform2f(_lshader.getUniform("texelSize"), _texelSize.x, _texelSize.y); // to do: not needed every frame!
 	_lshader.off();
 
 	initBuffer();
@@ -40,7 +40,6 @@ glRendererDeferred::glRendererDeferred(const Window* window, Scene* scene, Camer
 
 
 glRendererDeferred::~glRendererDeferred() {
-	//TO DO: CLEANUP!!
 }
 
 void glRendererDeferred::update() {
@@ -52,22 +51,22 @@ void glRendererDeferred::draw() {
 
 	_frustum.update(VP);
 
-	/* TO DO: LET THE LIGHTS DRAW THEIR SHADOWS */
 	/* dir shadowmap: */
-	dLight* dlight = _scene->findDLight("dlight");
-	if (_drawDshadow && dlight) {
+	if (_drawDshadow) { //also test if a dirlight is active!
 		_dshadow.on();
-		_dshadow.draw(dlight, _scene, _camera->getMatrizes(), _frustum);
+		_dshadow.draw(_camera->getMatrizes(), _scene, _frustum);
 		_dshadow.off();
 	}
 
 	/* point shadows: (only a test now) */
 	pLight* plight = _scene->findPLight("plight");
-	if (plight) {
+	if (plight == nullptr) std::cout << "Did not find plight";
+	else {
 		_pshadow.on();
 		_pshadow.draw(plight, _scene, _camera->getMatrizes());
 		_pshadow.off();
 	}
+
 
 	glDepthMask(GL_TRUE);
 	glEnable(GL_DEPTH_TEST);
@@ -94,7 +93,7 @@ void glRendererDeferred::draw() {
 
 	_framebuffer.draw();
 
-	_debug.draw(_dshader, _tbo[bloom]);
+	_debug.draw(_dshader, _pshadow.texture());
 	_debug2.draw(_dshader, _tbo[diffuse]);
 	_debug3.draw(_dshader, _tbo[specular]);
 	_debug4.draw(_dshader, _tbo[normal]);
@@ -156,6 +155,7 @@ void glRendererDeferred::drawLight() {
 	auto dlight = _scene->findDLight("dlight"); //bad!! should not need name.
 
 	if (dlight) {
+		_dshadow.setLight(dlight);
 		dlight->setUniforms(_lshader); //not needed every frame!
 
 		_lshader.on();
