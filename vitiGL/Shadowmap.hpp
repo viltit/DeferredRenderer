@@ -16,14 +16,13 @@ namespace vitiGL {
 
 class DirShadowmap {
 public:
-	DirShadowmap	(const Camera& cam,
-					const dLight* light = nullptr,
-					int width = 1024, int height = 1024);
+	DirShadowmap	(const Camera& cam, 
+				     int width = 1024, int height = 1024);
 	~DirShadowmap	();
 
 	/* make sure depth test and face culling is enabled! -> do it in on() function? */
 	void on();
-	void draw(const CamInfo & camera, Scene * scene, Frustum & frustum);
+	void draw(const dLight* light, Scene * scene, const CamInfo & camera, Frustum & frustum);
 	void off();
 
 	void setUniforms(const Shader& shader); //sets all the uniforms relevant to lightning
@@ -33,7 +32,6 @@ public:
 	//void multidraw();
 
 	/* getters and setters are inline: */
-	void		setLight(const dLight* light)	{ _light = light; }
 	GLuint		texture() const { return _finalImg; }
 
 	glm::vec3 DirShadowmap::TransformTransposed(const glm::vec3 &point, const glm::mat4& matrix);
@@ -41,7 +39,7 @@ public:
 protected:
 	void		initFramebuffer();
 	void		updatMatrices(const CamInfo& camera);	//wip -> adjust lights ortho matrix to "embrace" camera's view frustum
-	void		updateMatrices2(const CamInfo& camera);	//TEST
+	void		updateMatrices2(const dLight* light, const CamInfo& camera);	//TEST
 
 
 	GLuint		_fbo[4];	// for the three cascades
@@ -63,8 +61,6 @@ protected:
 	Shader		_fshader;	//second pass: draw black and white scene
 
 	GaussBlur	_gauss;		//to blur the shadowmap
-
-	const dLight* _light;
 };
 
 /*	POINT SHADOWS ----------------------------------------------------------------------------------------- */
