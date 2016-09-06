@@ -37,7 +37,11 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 		}
 	}
 	_scene.addChild(new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ -3.0f, -1.0f, -3.0f }, sqrt(1800.0f), "Floor");
-	_scene.addDLight(new dLight{ "dlight", glm::vec3{ 0.5f, -1.0f, 0.5f } }, "dlight");
+	_scene.addChild(new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ 20.0f, 10.0f, -3.0f }, sqrt(1800.0f), "Wall");
+	SceneNode* wall = _scene.findByName("Wall");
+	wall->rotate(90.0f, glm::vec3{ 0.0f, 0.0f, 1.0f });
+
+	_scene.addDLight(new dLight{ "dlight", glm::vec3{ 0.5f, -1.0f, -0.5f } }, "dlight");
 
 	pLight* plight = new pLight{ "plight" };
 	plight->setProperty(lightProps::pos, glm::vec3{ 0.0f, 20.0f, 0.0f });

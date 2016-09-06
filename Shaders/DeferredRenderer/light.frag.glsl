@@ -47,6 +47,7 @@ layout (location = 1) out vec4 lspecular;
 uniform sampler2D normal;
 uniform sampler2D position;
 uniform sampler2D shadowmap;
+uniform sampler2D shadowcube;
 
 /* more uniforms we need: ------------------------------------------------ */
 uniform vec2 texelSize;
@@ -106,7 +107,7 @@ Light updatePlight(vec3 worldPos, vec3 normal, vec2 uv) {
 	float attenuation = 1.0f / (plight.attenuation.x + plight.attenuation.y * dist + plight.attenuation.z * dist * dist);
 
 	/* abort if fragment is outside the lights radius: */
-	//if (attenuation < 1.0f / 256.0f) discard;	//if-branch in fragment shader is suboptimal!
+	if (attenuation < 1.0f / 256.0f) discard;	//if-branch in fragment shader is suboptimal!
 
 	vec3 lightDir	= normalize(plight.pos - worldPos);
 	vec3 viewDir	= normalize(viewPos - worldPos);
@@ -115,11 +116,14 @@ Light updatePlight(vec3 worldPos, vec3 normal, vec2 uv) {
 	float diff		= clamp(dot(normal, lightDir), 0.0f, 1.0f);
 	float spec		= pow(clamp(dot(normal, halfway), 0.0f, 1.0f), 22.0f);	//TO DO: 22.0f needs to be a variable !
 
+	/* shadow: */
+	float shadow = texture(shadowcube, uv).r;
+
 	Light light;
 
 	light.ambient	= vec3(0.0f, 0.0f, 0.0f);
-	light.diffuse	= attenuation * diff * plight.diffuse;
-	light.specular	= attenuation * spec * plight.specular;
+	light.diffuse	= shadow * attenuation * diff * plight.diffuse;
+	light.specular	= shadow * attenuation * spec * plight.specular;
 
 	/* debug: 
 	light.ambient = vec3(0.0f, 0.0f, 0.0f);

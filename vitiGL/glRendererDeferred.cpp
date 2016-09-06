@@ -190,7 +190,12 @@ void glRendererDeferred::drawLight() {
 	glUniformSubroutinesuiv(GL_FRAGMENT_SHADER, 1, &plightPass);
 
 	/* set view-perspective matrix: */
-	_camera->setVPUniform(_gshader);
+	_camera->setVPUniform(_lshader);
+
+	/* set the shadowmap texture (wip): */
+	glActiveTexture(GL_TEXTURE3);
+	glBindTexture(GL_TEXTURE_2D, _pshadow.texture());
+	glUniform1i(_lshader.getUniform("shadowcube"), 3);
 
 	/* draw the point lights: (more happening in the plight::draw() function!) */
 	_scene->drawPlights(_lshader, _camera->pos());
