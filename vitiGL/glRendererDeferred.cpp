@@ -35,9 +35,7 @@ glRendererDeferred::glRendererDeferred(const Window* window, Scene* scene, Camer
 	glUniform2f(_lshader.getUniform("texelSize"), _texelSize.x, _texelSize.y);
 	_lshader.off();
 
-	initGbuffer();
-	initLbuffer();
-	initFbuffer();
+	initBuffer();
 }
 
 
@@ -75,9 +73,13 @@ void glRendererDeferred::draw() {
 	glEnable(GL_DEPTH_TEST);
 
 	/* draw: */
-	drawGeo();
-	drawLight();
-	drawFinal();
+	glBindFramebuffer(GL_FRAMEBUFFER, _buffer);
+		drawGeo();
+		glBindFramebuffer(GL_FRAMEBUFFER, _buffer);
+		drawLight();
+		glBindFramebuffer(GL_FRAMEBUFFER, _buffer);
+		drawFinal();
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	//the framebuffer will apply bloom and other pp-effects
 	_framebuffer.on();
@@ -122,25 +124,15 @@ void glRendererDeferred::setBloomTreshold(float value) {
 }
 
 void glRendererDeferred::drawGeo() {
-	glBindFramebuffer(GL_FRAMEBUFFER, _gbuffer);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	_gshader.on();
-
 	_camera->setVPUniform(_gshader);
-
 	_scene->drawCulled(_gshader, _frustum);
-
 	_gshader.off();
-
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void glRendererDeferred::drawLight() {
-
-	glBindFramebuffer(GL_FRAMEBUFFER, _lbuffer);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_ONE, GL_ONE);	 //additive blending so multiple lights get brighter
@@ -201,7 +193,6 @@ void glRendererDeferred::drawLight() {
 	_scene->drawPlights(_lshader, _camera->pos());
 
 	_lshader.off();
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	glCullFace(GL_BACK);
 	glDisable(GL_BLEND);
@@ -209,9 +200,6 @@ void glRendererDeferred::drawLight() {
 
 void glRendererDeferred::drawFinal() {
 	/* this pass draws the image and a seperate blurred image for bloom: */
-
-	glBindFramebuffer(GL_FRAMEBUFFER, _fbuffer);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glDisable(GL_DEPTH_TEST);
 
 	_fshader.on();
@@ -232,93 +220,75 @@ void glRendererDeferred::drawFinal() {
 
 	_fshader.off();
 
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
 	/* we re-use the original diffuse color texture here: */
 	_tbo[bloom] = _gauss.blur(_tbo[brightness], 4);
 
 	glEnable(GL_DEPTH_TEST);
 }
 
-void glRendererDeferred::initGbuffer() {
+void glRendererDeferred::initBuffer() {
 	/* define our three color attachments: */
-	GLuint attachments[3] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 , GL_COLOR_ATTACHMENT2 };
+	GLuint attachments[7] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 , GL_COLOR_ATTACHMENT2, //geometry pass
+							  GL_COLOR_ATTACHMENT3, GL_COLOR_ATTACHMENT4,						 //lightning pass
+							  GL_COLOR_ATTACHMENT5, GL_COLOR_ATTACHMENT6 };						 //final pass
 
 	/* generate and bind the framebuffer: */
-	glGenFramebuffers(1, &_gbuffer);
-	glBindFramebuffer(GL_FRAMEBUFFER, _gbuffer);
+	glGenFramebuffers(1, &_buffer);
+	glBindFramebuffer(GL_FRAMEBUFFER, _buffer);
 
-	/* generate textures for the geometry buffer: */
+	/* generate the textures for the different passes and attach them to the framebuffer: */
 	int w = _window->width();
 	int h = _window->height();
 
-	_tbo[normal] = initTexture(textureType::float16, w, h);
-	_tbo[position] = initTexture(textureType::float16, w, h);
-	_tbo[color] = initTexture(textureType::color, w, h);
-	_tbo[depht] = initTexture(textureType::depth, w, h);
+	initGeoPass(w, h);
+	initLightPass(w, h);
+	initFinalPass(w, h);
 
-	/* attach the textures to the geometry-buffer: */
-	glFramebufferTexture2D(GL_FRAMEBUFFER, attachments[0], GL_TEXTURE_2D, _tbo[position], 0);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, attachments[1], GL_TEXTURE_2D, _tbo[normal], 0);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, attachments[2], GL_TEXTURE_2D, _tbo[color], 0);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, _tbo[depht], 0);
-
-	/* tell openGL that we will draw into all 3 color attachments: */
-	glDrawBuffers(3, attachments);
-
-	/* check if the geometry buffer is complete: */
-	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-		throw initError("<Renderer::init_gbuffer>\t: Framebuffer not complete");
-
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-}
-
-void glRendererDeferred::initLbuffer() {
-	/* same procedure as above: */
-	GLuint attachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
-
-	glGenFramebuffers(1, &_lbuffer);
-	glBindFramebuffer(GL_FRAMEBUFFER, _lbuffer);
-
-	int w = _window->width();
-	int h = _window->height();
-	_tbo[diffuse] = initTexture(textureType::float16, w, h);	//float16 for hdr
-	_tbo[specular] = initTexture(textureType::float16, w, h);
-
-	glFramebufferTexture2D(GL_FRAMEBUFFER, attachments[0], GL_TEXTURE_2D, _tbo[diffuse], 0);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, attachments[1], GL_TEXTURE_2D, _tbo[specular], 0);
-
-	glDrawBuffers(2, attachments);
-
-	/* check if the geometry buffer is complete: */
-	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-		throw initError("<Renderer::init_gbuffer>\t: Framebuffer not complete");
-
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-}
-
-void glRendererDeferred::initFbuffer() {
-	GLuint attachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
-
-	glGenFramebuffers(1, &_fbuffer);
-	glBindFramebuffer(GL_FRAMEBUFFER, _fbuffer);
-
-	int w = _window->width();
-	int h = _window->height();
-
-	_tbo[finalCol] = initTexture(textureType::float16, w, h);
-	_tbo[brightness] = initTexture(textureType::float16, w, h);
-
-	glFramebufferTexture2D(GL_FRAMEBUFFER, attachments[0], GL_TEXTURE_2D, _tbo[finalCol], 0);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, attachments[1], GL_TEXTURE_2D, _tbo[brightness], 0);
-
-	glDrawBuffers(2, attachments);
+	/* tell OpenGL in what colorbuffers we draw: */
+	glDrawBuffers(7, attachments);
 
 	/* check if the geometry buffer is complete: */
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		throw initError("<Renderer::init_fbuffer>\t: Framebuffer not complete");
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	std::cout << glGetError() << std::endl;
+}
+
+void glRendererDeferred::initGeoPass(int w, int h) {
+	glBindFramebuffer(GL_FRAMEBUFFER, _buffer);
+	/* create and configure the textures: */
+	_tbo[normal] = initTexture(textureType::float16, w, h);
+	_tbo[position] = initTexture(textureType::float16, w, h);
+	_tbo[color] = initTexture(textureType::color, w, h);
+	_tbo[depht] = initTexture(textureType::depth, w, h);
+
+	/* attach the textures to the framebuffer: */
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _tbo[position], 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, _tbo[normal], 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, _tbo[color], 0);
+
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, _tbo[depht], 0);
+}
+
+void glRendererDeferred::initLightPass(int w, int h) {
+	glBindFramebuffer(GL_FRAMEBUFFER, _buffer);
+	/* same procedure as above: */
+	_tbo[diffuse] = initTexture(textureType::float16, w, h);	//float16 for hdr
+	_tbo[specular] = initTexture(textureType::float16, w, h);
+
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, _tbo[diffuse], 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT4, GL_TEXTURE_2D, _tbo[specular], 0);
+}
+
+void glRendererDeferred::initFinalPass(int w, int h) {
+	glBindFramebuffer(GL_FRAMEBUFFER, _buffer);
+	/* ... and the same again: */
+	_tbo[finalCol] = initTexture(textureType::float16, w, h);
+	_tbo[brightness] = initTexture(textureType::float16, w, h); //for bloom
+
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT5, GL_TEXTURE_2D, _tbo[finalCol], 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT6, GL_TEXTURE_2D, _tbo[brightness], 0);
 }
 
 
