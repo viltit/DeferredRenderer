@@ -30,6 +30,7 @@ void main() {
 
 	//compare the depth to the distance fragmentPos - lightPos:
 	float current = length(lightDir);
+
 	float bias = 0.005;
 	float shadow = (current - bias > depth) ? 0.0f : 1.0f;
 

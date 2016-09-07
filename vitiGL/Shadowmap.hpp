@@ -71,7 +71,7 @@ protected:
 
 class PointShadowmap {
 public:
-	PointShadowmap	(int width = 2048, int height = 2048);
+	PointShadowmap	(int width = 1024, int height = 1024);
 	~PointShadowmap();
 
 	void on();

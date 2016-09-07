@@ -36,15 +36,15 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 			_scene.addPLight(plight, lightName);*/
 		}
 	}
-	_scene.addChild(new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ -3.0f, -1.0f, -3.0f }, sqrt(1800.0f), "Floor");
-	_scene.addChild(new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ 20.0f, 10.0f, -3.0f }, sqrt(1800.0f), "Wall");
+	_scene.addChild(new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ -3.0f, -3.0f, -3.0f }, sqrt(1800.0f), "Floor");
+	_scene.addChild(new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ 20.0f, 7.0f, -3.0f }, sqrt(1800.0f), "Wall");
 	SceneNode* wall = _scene.findByName("Wall");
 	wall->rotate(90.0f, glm::vec3{ 0.0f, 0.0f, 1.0f });
 
 	_scene.addDLight(new dLight{ "dlight", glm::vec3{ 0.5f, -1.0f, -0.5f } }, "dlight");
 
 	pLight* plight = new pLight{ "plight" };
-	plight->setProperty(lightProps::pos, glm::vec3{ 0.0f, 20.0f, 0.0f });
+	plight->setProperty(lightProps::pos, glm::vec3{ 3.0f, 10.0f, 0.0f });
 	plight->setProperty(lightProps::diffuse, glm::vec3{ 10.0f, 5.0f, 0.0f });
 	plight->setProperty(lightProps::specular, glm::vec3{ 20.0f, 10.0f, 0.0f });
 
@@ -75,6 +75,7 @@ void AppScreen::onExit() {
 
 void AppScreen::update() {
 	Uint32 frameTime = _timer.frame_time();
+	Uint32 time = _timer.get_time();
 
 	std::string fps = "FPS: " + std::to_string(_timer.fps());
 	_fpsInfo->setText(CEGUI::String(fps));
@@ -98,6 +99,8 @@ void AppScreen::update() {
 			temp->rotate(float(frameTime) * j/ (5.0f * i  + 5), glm::vec3{ 0.0f, 1.0f, 0.0f });
 		}
 	}
+	//pLight* light = _scene.findPLight("plight");
+	//light->setProperty(lightProps::pos, glm::vec3{ 0.0f, 30.0f * sin(glm::radians(float(time / 50.0f))), 0.0f });
 
 	updateInput();
 	_scene.update(frameTime);
@@ -163,13 +166,21 @@ void AppScreen::updateInput() {
 				_scene.switchCull();
 				break;
 			break;
-				/*case SDLK_F3:
-				framebuffer.setKernel(Kernel::sharpen);
+				case SDLK_F3:
+				{
+					pLight* light = _scene.findPLight("plight");
+					glm::vec3 pos = light->pos();
+					light->setProperty(lightProps::pos, glm::vec3{ pos.x + 1.0f, pos.y + 1.0f, pos.z + 1.0f });
+				}
 				break;
 				case SDLK_F4:
-				framebuffer.setKernel(Kernel::hGradient);
+				{
+					pLight* light = _scene.findPLight("plight");
+					glm::vec3 pos = light->pos();
+					light->setProperty(lightProps::pos, glm::vec3{ pos.x - 1.0f, pos.y - 1.0f, pos.z -1.0f });
+				}
 				break;
-				case SDLK_F5:
+				/*case SDLK_F5:
 				framebuffer.setKernel(Kernel::vGradient);
 				break;
 				case SDLK_F6:

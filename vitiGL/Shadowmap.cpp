@@ -355,12 +355,12 @@ void PointShadowmap::draw(const pLight* light, Scene * scene, const CamInfo& cam
 	glm::vec3 pos = light->pos();
 
 	glm::mat4 P = glm::perspective(glm::radians(90.0f), float(_w) / float(_h), 0.1f, light->radius());
-	_L[0] = (P * glm::lookAt(pos, glm::vec3{ 1.0f, 0.0f, 0.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f }));
-	_L[1] = (P * glm::lookAt(pos, glm::vec3{ -1.0f, 0.0f, 0.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f }));
-	_L[2] = (P * glm::lookAt(pos, glm::vec3{ 0.0f, 1.0f, 0.0f }, glm::vec3{ 0.0f, 0.0f, 1.0f }));
-	_L[3] = (P * glm::lookAt(pos, glm::vec3{ 0.0f, -1.0f, 0.0f }, glm::vec3{ 0.0f, 0.0f, -1.0f }));
-	_L[4] = (P * glm::lookAt(pos, glm::vec3{ 0.0f, 0.0f, 1.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f }));
-	_L[5] = (P * glm::lookAt(pos, glm::vec3{ 0.0f, 0.0f, -1.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f }));
+	_L[0] = (P * glm::lookAt(pos, pos + glm::vec3{ 1.0f, 0.0f, 0.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f }));
+	_L[1] = (P * glm::lookAt(pos, pos + glm::vec3{ -1.0f, 0.0f, 0.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f }));
+	_L[2] = (P * glm::lookAt(pos, pos + glm::vec3{ 0.0f, 1.0f, 0.0f }, glm::vec3{ 0.0f, 0.0f, 1.0f }));
+	_L[3] = (P * glm::lookAt(pos, pos + glm::vec3{ 0.0f, -1.0f, 0.0f }, glm::vec3{ 0.0f, 0.0f, -1.0f }));
+	_L[4] = (P * glm::lookAt(pos, pos + glm::vec3{ 0.0f, 0.0f, 1.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f }));
+	_L[5] = (P * glm::lookAt(pos, pos + glm::vec3{ 0.0f, 0.0f, -1.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f }));
 
 	//render the scene (TO DO: ONLY DRAW OBJECTS WITHIN THE LIGHTS RADIUS)
 	_shader.on();
@@ -368,12 +368,11 @@ void PointShadowmap::draw(const pLight* light, Scene * scene, const CamInfo& cam
 		glUniformMatrix4fv(_shader.getUniform("L[" + std::to_string(i) + "]"), 1, GL_FALSE, glm::value_ptr(_L[i]));
 	}
 	glUniform1f(_shader.getUniform("radius"), light->radius());
-	glUniform3f(_shader.getUniform("pos"), light->pos().x, light->pos().y, light->pos().z);
-	
+	glUniform3f(_shader.getUniform("pos"), pos.x, pos.y, pos.z);
+
 	scene->drawAllNaked(_shader);
 
 	_shader.off();
-
 
 	/* PART II: Draw the scene with shadows in a black-and-white texture: */
 	_framebuffer.on();
@@ -420,13 +419,11 @@ void PointShadowmap::initFramebuffer() {
 					 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
 	}
 
-	float color[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-	glTexParameterfv(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_BORDER_COLOR, color);
 
 	/* generate framebuffer and attach the texture: */
 	glGenFramebuffers(1, &_fbo);

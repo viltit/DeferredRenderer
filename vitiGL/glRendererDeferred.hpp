@@ -53,11 +53,16 @@ protected:
 		bloom
 	};
 
+	enum frameBuffer {
+		geo,
+		light,
+		final
+	};
+
 	/* initializing functions for the constructor: */
-	void		initBuffer();
-	void		initGeoPass(int w, int h);
-	void		initLightPass(int w, int h);
-	void		initFinalPass(int w, int h);
+	void		initGeoBuffer();
+	void		initLightBuffer();
+	void		initFinalBuffer();
 
 	/* the three drawing stages: */
 	void		drawGeo();
@@ -74,7 +79,7 @@ protected:
 	GLuint		_tbo[9];
 
 	/* ...and the framebuffers: */
-	GLuint		_buffer;
+	GLuint		_buffer[3];
 
 	Framebuffer _framebuffer;
 

@@ -142,7 +142,7 @@ void pLight::setProperty(lightProps property, const glm::vec3 & value) {
 		break;
 	case lightProps::attenuation:
 		_attenuation = value;
-		//need new radius calculation and sphere scaling!
+		calcRadius();
 		break;
 	default:
 #ifdef CONSOLE_LOG
@@ -187,8 +187,9 @@ void pLight::calcRadius() {
 	-> we assume the lights radius ends with an attenuation value of 1/256
 	-> solve the quadratic equation
 
-	to improve: take light intensity into account (we assume its 1 now)
-	*/
+	to improve: take light intensity into account (we assume its 1 now) */
+
+
 	float c = _attenuation.x;
 	float l = _attenuation.y;
 	float q = _attenuation.z;

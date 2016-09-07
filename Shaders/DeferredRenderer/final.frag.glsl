@@ -2,8 +2,8 @@
 
 in vec2 fUV;
 
-layout(location = 5) out vec4 fcolor;
-layout(location = 6) out vec4 brightColor;
+layout(location = 0) out vec4 fcolor;
+layout(location = 1) out vec4 brightColor;
 
 uniform sampler2D color;
 uniform sampler2D diffuse;
