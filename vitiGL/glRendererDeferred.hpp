@@ -42,21 +42,22 @@ public:
 protected:
 	/* enum for indexing the texture attachments: */
 	enum texureBuffer {
+		position,
 		normal,
 		color,
-		position,
-		depht,
 		diffuse,
 		specular,
 		finalCol,
 		brightness,
+		depht,
 		bloom
 	};
 
 	/* initializing functions for the constructor: */
-	void		initGbuffer();
-	void		initLbuffer();
-	void		initFbuffer();
+	void		initBuffer();
+	void		initGeoPass(int w, int h);
+	void		initLightPass(int w, int h);
+	void		initFinalPass(int w, int h);
 
 	/* the three drawing stages: */
 	void		drawGeo();
@@ -73,9 +74,7 @@ protected:
 	GLuint		_tbo[9];
 
 	/* ...and the framebuffers: */
-	GLuint		_gbuffer;
-	GLuint		_lbuffer;
-	GLuint		_fbuffer;
+	GLuint		_buffer;
 
 	Framebuffer _framebuffer;
 

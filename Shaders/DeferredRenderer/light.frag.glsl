@@ -39,8 +39,8 @@ subroutine Light UpdateLight(vec3 worldPos, vec3 worldNorm, vec2 uv);
 subroutine uniform UpdateLight updateLight;
 
 /* texture output of this shader: ---------------------------------------- */
-layout (location = 0) out vec4 ldiffuse;
-layout (location = 1) out vec4 lspecular;
+layout (location = 3) out vec4 ldiffuse;
+layout (location = 4) out vec4 lspecular;
 
 /* texture input from geometry pass: ------------------------------------- */
 //uniform sampler2D depht;

@@ -15,7 +15,7 @@ glRenderer::glRenderer(const Window* window, Scene* scene, Camera* camera)
 		_framebuffer{ window->width(), window->height(), "Shaders/framebuffer.vert.glsl", "Shaders/framebuffer.frag.glsl" }, //dangerous!
 		_dlight		{ "dlight" }, //needs to be part of the scene
 		_plight		{ "plight" },
-		_dshadow	{ new DirShadowmap{ *camera }},
+		_dshadow	{ new DirShadowmap{ *camera, &_dlight }},
 		_debugQuad  { QuadPos::topRight }
 {
 	_dlight.setUniforms(_mainShader);
@@ -37,10 +37,9 @@ void glRenderer::draw() {
 	glm::mat4 VP = cam.P * cam.V;
 
 	/* draw dir light shadowmap: */
-	dLight* dlight = _scene->findDLight("dlight");
 	if (_dshadow) {
 		_dshadow->on();
-		_dshadow->draw(dlight, _scene, cam,_frustum);
+		_dshadow->draw(cam, _scene, _frustum);
 		_dshadow->off();
 	}
 
