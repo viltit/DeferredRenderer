@@ -7,7 +7,9 @@
 
 namespace vitiGL {
 
-Framebuffer::Framebuffer(int width, int height, const std::string& vertexShader, const std::string& fragmentShader)
+Framebuffer::Framebuffer(int width, int height, 
+						 const std::string& vertexShader, const std::string& fragmentShader,
+						 bool setUniforms)
 	:	_fbo	{ 0 },
 		_tbo	{ 0 },
 		_width	{ width },
@@ -27,11 +29,13 @@ Framebuffer::Framebuffer(int width, int height, const std::string& vertexShader,
 			kernel[i][j] = 0.0f;
 	kernel[1][1] = 1.0f;
 
-	_shader.on();
-	glUniformMatrix3fv(_shader.getUniform("kernel"), 1, GL_FALSE, glm::value_ptr(kernel));
-	glUniform1f(_shader.getUniform("width"), float(width));
-	glUniform1f(_shader.getUniform("height"), float(height));
-	_shader.off();
+	if (setUniforms) {
+		_shader.on();
+		glUniformMatrix3fv(_shader.getUniform("kernel"), 1, GL_FALSE, glm::value_ptr(kernel));
+		glUniform1f(_shader.getUniform("width"), float(width));
+		glUniform1f(_shader.getUniform("height"), float(height));
+		_shader.off();
+	}
 
 #ifdef CONSOLE_LOG
 	std::cout << "\t\tfinished\n";

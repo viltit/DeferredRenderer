@@ -21,7 +21,9 @@ DirShadowmap::DirShadowmap(const Camera& cam, const dLight * light, int width, i
 		_shader { "Shaders/shadowmap.vert.glsl", "Shaders/shadowmap.frag.glsl" },
 		_fshader{ "Shaders/shadowmapFinal.vert.glsl", "Shaders/shadowmapFinal.frag.glsl"},
 		_light	{ light },
-		_framebuffer { globals::window_w, globals::window_h }
+		_framebuffer { globals::window_w, globals::window_h, 
+					   "Shaders/simple.vert.glsl", "Shaders/simple.frag.glsl",
+						false }
 {
 #ifdef CONSOLE_LOG
 	std::cout << "Initializing directional Shadow Map...";
@@ -36,7 +38,6 @@ DirShadowmap::DirShadowmap(const Camera& cam, const dLight * light, int width, i
 
 	initFramebuffer();
 
-	_framebuffer.setKernel(Kernel::gaussianBlur);
 #ifdef CONSOLE_LOG
 	std::cout << "\tfinished.\n";
 #endif

@@ -88,7 +88,7 @@ void glRendererDeferred::draw() {
 	_framebuffer.draw();
 
 	_debug.draw(_dshader, _pshadow.texture());
-	_debug2.draw(_dshader, _tbo[diffuse]);
+	_debug2.draw(_dshader, _dshadow.texture());
 	_debug3.draw(_dshader, _tbo[specular]);
 	_debug4.draw(_dshader, _tbo[normal]);
 }

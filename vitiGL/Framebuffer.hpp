@@ -22,7 +22,8 @@ class Framebuffer {
 public:
 	Framebuffer	(int width, int height, 
 				const std::string& vertexShader = "Shaders/framebuffer.vert.glsl", 
-				const std::string& fragmentShader = "Shaders/framebuffer.frag.glsl");
+				const std::string& fragmentShader = "Shaders/framebuffer.frag.glsl",
+				bool setUniforms = true);
 	~Framebuffer();
 
 	void	on();
@@ -31,7 +32,7 @@ public:
 
 	void	setKernel(Kernel kernel);
 
-	GLuint	texture() const	{ return _tbo; } //texture will be blank after framebuffer clears
+	GLuint	texture() const	{ return _tbo; } //texture will be blank after framebuffer clears!
 	GLuint	copyTexture() const;			 //returns a new texture which has to be deleted manually
 
 	void	setTextureSize(int w, int h);
