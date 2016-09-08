@@ -295,8 +295,7 @@ void DirShadowmap::updateMatrices2(const CamInfo& camera) {
 	}
 }
 
-glm::vec3 DirShadowmap::TransformTransposed(const glm::vec3 &point, const glm::mat4& matrix)
-{
+glm::vec3 DirShadowmap::TransformTransposed(const glm::vec3 &point, const glm::mat4& matrix) {
 	glm::vec3 result;
 	glm::vec4 temp(point.x, point.y, point.z, 1.0f); //need a 4-part vector in order to multiply by a 4x4 matrix
 	glm::vec4 temp2;
