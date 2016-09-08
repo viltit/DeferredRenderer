@@ -180,13 +180,13 @@ void AppScreen::updateInput() {
 					light->setProperty(lightProps::pos, glm::vec3{ pos.x - 1.0f, pos.y - 1.0f, pos.z -1.0f });
 				}
 				break;
-				/*case SDLK_F5:
-				framebuffer.setKernel(Kernel::vGradient);
+				case SDLK_F5:
+					_drender.setBloomTreshold(_drender.bloomTreshold() + 0.1f);
 				break;
 				case SDLK_F6:
-				framebuffer.setKernel(Kernel::emboss);
+					_drender.setBloomTreshold(_drender.bloomTreshold() - 0.1f);
 				break;
-				case SDLK_F7:
+				/*case SDLK_F7:
 				framebuffer.setKernel(Kernel::edges);
 				break;
 				case SDLK_F9:

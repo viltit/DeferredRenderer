@@ -89,7 +89,7 @@ void glRendererDeferred::draw() {
 
 	_debug.draw(_dshader, _pshadow.texture());
 	_debug2.draw(_dshader, _dshadow.texture());
-	_debug3.draw(_dshader, _tbo[specular]);
+	_debug3.draw(_dshader, _tbo[brightness]);
 	_debug4.draw(_dshader, _tbo[normal]);
 }
 
@@ -223,8 +223,7 @@ void glRendererDeferred::drawFinal() {
 
 	_fshader.off();
 
-	/* we re-use the original diffuse color texture here: */
-	_tbo[bloom] = _gauss.blur(_tbo[brightness], 4);
+	_tbo[bloom] = _gauss.blur(_tbo[brightness], 10);
 
 	glEnable(GL_DEPTH_TEST);
 }
@@ -287,6 +286,7 @@ void glRendererDeferred::initLightBuffer() {
 }
 
 void glRendererDeferred::initFinalBuffer() {
+
 	GLuint attachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
 
 	glGenFramebuffers(1, &_buffer[final]);
@@ -300,13 +300,12 @@ void glRendererDeferred::initFinalBuffer() {
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _tbo[finalCol], 0);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, _tbo[brightness], 0);
 
-	glDrawBuffers(3, attachments);
+	glDrawBuffers(2, attachments);
 
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		throw initError("<Renderer::initFinalBuffer>\t: Framebuffer not complete");
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
 }
 
 
