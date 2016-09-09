@@ -6,12 +6,11 @@
 
 namespace vitiGL {
 
-SceneNode::SceneNode(IDrawable* d, glm::vec3 pos, float radius)
+/* CLASS SCENE NODE ------------------------------------------------------------- */
+
+SceneNode::SceneNode(IDrawable* d, glm::vec3 pos)
 	:	_parent		{ nullptr },
-		_drawable	{ d },
-		_scale		{ glm::vec3{ 1.0f, 1.0f, 1.0f } },
-		_radius		{ radius },
-		_distance	{ 0.0f }
+		_drawable	{ d }
 {
 	/* get the initial position in case the Shape already has one: */
 	setPos(pos);
@@ -41,18 +40,9 @@ void SceneNode::draw(const Shader & shader) const {
 	if (_drawable) _drawable->draw(shader);
 }
 
-void SceneNode::drawNaked(const Shader & shader) const {
-	if (_drawable) _drawable->drawNaked(shader);
-}
-
 void SceneNode::drawAll(const Shader & shader) const {
 	if (_drawable) _drawable->draw(shader);
 	for (auto& C : _children) C->drawAll(shader);
-}
-
-void SceneNode::drawAllNaked(const Shader & shader) const {
-	if (_drawable) _drawable->drawNaked(shader);
-	for (auto& C : _children) C->drawAllNaked(shader);
 }
 
 void SceneNode::addChild(SceneNode * s) {
@@ -60,8 +50,31 @@ void SceneNode::addChild(SceneNode * s) {
 	s->_parent = this;
 }
 
-/*	CLASS SCENE -------------------------------------------------------------------- */
+/*	CLASS SHAPE NODE ----------------------------------------------------------------- */
+ShapeNode::ShapeNode(Shape* shape, glm::vec3 pos, float radius = 1.0f) 
+	:	SceneNode(shape, pos),
+		_radius{ radius },
+		_distance{ 0.0f },
+		_shape { shape }
+{}
 
+ShapeNode::~ShapeNode() 
+{}
+
+void ShapeNode::drawNaked(const Shader & shader) const {
+	if (_shape) _shape->drawNaked(shader);
+}
+
+void ShapeNode::drawAllNaked(const Shader & shader) const {
+	if (_shape) _drawable->draw(shader);
+	for (auto& C : _children) C->drawAll(shader);
+}
+
+
+
+
+
+/* CLASS SCENE ----------------------------------------------------------------------- */
 Scene::Scene() 
 	: _counter{ 0 }
 {
@@ -74,42 +87,52 @@ Scene::~Scene() {
 	//needs cleanup
 }
 
-void Scene::addChild(Shape* s, glm::vec3 pos, float radius, const std::string& name /*= ""*/, const std::string & parentName /* = "root" */) {
+void Scene::addChild
+(
+	IDrawable* drawable, 
+	glm::vec3 pos, 
+	float radius, 
+	const std::string& name /*= ""*/, 
+	const std::string & parentName /* = "root" */
+)
+{
 	/* if no name is given, create a unique one: */
 	std::string nodeName = name;
 	if (name == "" ) nodeName = "Node[" + std::to_string(++_counter) + "]";
 
 #ifdef CONSOLE_LOG
-	//std::cout << "<Scene::addChild>Added a Scene Node with the name " << nodeName << " and the parent " << parentName << std::endl;
+	std::cout << "<Scene::addChild>Added a Scene Node with the name " << nodeName << " and the parent " << parentName << std::endl;
 #endif
 
 	/* create the scene node and search for parent: */
-	SceneNode* child = new SceneNode(s, pos, radius);
 	SceneNode* parent = findByName(parentName);
-
 	if (parent == nullptr) {
-		delete child;
 		throw initError(("<Scene::addChild> Could not find a parent with the name " + parentName).c_str());
 	}
+	SceneNode* child = new SceneNode(drawable, pos, radius);
 
-	/* add the child to its parent and also add it into our map:*/
+	/* link the child to its parent: */
 	parent->addChild(child);
+
+	/* put the child in the scene map: */
 	_scene.insert(std::make_pair(nodeName, child));
+
+	/* put the child in the appropriate vector:*/
+	switch (drawable->type()) {
+	case ObjType::shape:
+		_shapes.push_back(static_cast<Shape*>(drawable));
+		break;
+	case ObjType::dlight:
+		_dlights.push_back(static_cast<dLight*>(drawable));
+		break;
+	case ObjType::plight:
+		_plights.push_back(static_cast<pLight*>(drawable));
+		break;
+	default:
+		throw vitiError("<Scene::addChild>Unknown Object type.");
+	}
 }
 
-void Scene::addDLight(dLight * l, const std::string & name) {
-	std::string lightName = name;
-	if (name == "") lightName = "Light[" + std::to_string(++_counter) + "]";
-
-	_dlights.insert(std::make_pair(name, l));
-}
-
-void Scene::addPLight(pLight * p, const std::string & name) {
-	std::string lightName = name;
-	if (name == "") lightName = "Light[" + std::to_string(++_counter) + "]";
-
-	_plights.insert(std::make_pair(name, p));
-}
 
 SceneNode * Scene::findByName(const std::string & name) {
 	auto node = _scene.find(name);
@@ -117,17 +140,6 @@ SceneNode * Scene::findByName(const std::string & name) {
 	return node->second;
 }
 
-dLight * Scene::findDLight(const std::string & name) {
-	auto light = _dlights.find(name);
-	if (light == _dlights.end()) return nullptr;
-	return light->second;
-}
-
-pLight * Scene::findPLight(const std::string & name) {
-	auto light = _plights.find(name);
-	if (light == _plights.end()) return nullptr;
-	return light->second;
-}
 
 void Scene::update(const Uint32 & deltaTime) {
 	_root->update(deltaTime);
@@ -166,7 +178,6 @@ void Scene::drawPlights(const Shader & shader) const {
 		if (i->second) i->second->draw(shader);
 	}
 }
-
 
 void Scene::updateCullingList(Frustum & frustum, SceneNode* from) {
 	

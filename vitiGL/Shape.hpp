@@ -19,6 +19,13 @@ struct slData {
 	bool invert;
 };
 
+/* enum class for identifying IDrawable children: */
+enum class ObjType {
+	shape,
+	plight,
+	dlight
+};
+
 
 /*	ABSTRACT BASE CLASS IDRAWABLE --------------------------------------------------------------
 	
@@ -35,8 +42,11 @@ public:
 
 	virtual void setModelMatrix(const glm::mat4& P) { M = P; }
 
+	ObjType type() { return _type; }
+
 protected:
-	glm::mat4 M;
+	glm::mat4	M;
+	ObjType		_type;
 };
 
 /*	ABSTRACT BASE CLASS SHAPE -------------------------------------------------------------------
@@ -71,8 +81,6 @@ protected:
 
 	virtual void calcNormals(std::vector<Vertex>& vertices);	 //only works for triangle meshes!
 	virtual void calcTangents(std::vector<Vertex>& vertices, bool bitangents = true);
-
-	glm::mat4	M;			//model matrix, ie. holds the position in world space
 
 	GLuint		vao;
 	GLuint		vbo;

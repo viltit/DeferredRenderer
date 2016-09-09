@@ -15,7 +15,9 @@ Shape::Shape()
 		numVertices	{ 0 },
 		invert		{ false },
 		sRGB		{ true }
-{}
+{
+	_type = ObjType::shape;
+}
 
 
 Shape::~Shape() {

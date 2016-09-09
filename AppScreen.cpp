@@ -36,6 +36,7 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 			_scene.addPLight(plight, lightName);*/
 		}
 	}
+
 	_scene.addChild(new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ -3.0f, -3.0f, -3.0f }, sqrt(1800.0f), "Floor");
 	_scene.addChild(new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ 20.0f, 7.0f, -3.0f }, sqrt(1800.0f), "Wall");
 	SceneNode* wall = _scene.findByName("Wall");

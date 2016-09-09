@@ -20,7 +20,9 @@ dLight::dLight(const std::string& uniformName, const glm::vec3& dir,
 		_ambient	{ ambient },
 		_diffuse	{ diffuse },
 		_specular	{ specular }
-{}
+{
+	_type = ObjType::dlight;
+}
 
 dLight::~dLight() {
 }
@@ -82,6 +84,8 @@ pLight::pLight
 		_uniform		{ uniformName },
 		_sphere			{ new Sphere{"xml/sphere.xml" } }
 {
+	_type = ObjType::plight;
+
 	_attenuation = Attenuation::r100;
 
 	calcRadius(); //the math here is correct

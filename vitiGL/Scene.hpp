@@ -22,37 +22,54 @@ namespace vitiGL {
 
 class Frustum;
 
+/*	CLASS SceneNode ------------------------------------------------------------------------------ */
 class SceneNode {
 public:
-	SceneNode(IDrawable* drawable = nullptr, glm::vec3 pos = { 0.0f, 0.0f, 0.0f }, float radius = 1.0f);
+	SceneNode(IDrawable* drawable = nullptr, glm::vec3 pos = { 0.0f, 0.0f, 0.0f });
 	virtual ~SceneNode();
+	
+	virtual void update(const Uint32& deltaTime);
 
-	virtual void	update(const Uint32& deltaTime);
+	virtual void draw(const Shader& shader) const;
+	virtual void drawAll(const Shader& shader) const;
 
-	/* draws only this node: */
-	virtual void	draw(const Shader& shader) const;
-	virtual void	drawNaked(const Shader& shader) const;
+	virtual void addChild(SceneNode* s);
 
-	/* draws all children: */
-	virtual void	drawAll(const Shader& shader) const;
-	virtual void	drawAllNaked(const Shader& shader) const;
+	/*	getters and setters, all inline:
+	rotation, scaling, positioning will always affect the children too!		*/
+	void		move(const glm::vec3& pos) { _W = glm::translate(_W, pos); _M = glm::translate(_M, pos); }
+	void		setPos(const glm::vec3& pos) { _M[3][0] = pos.x; _M[3][1] = pos.y; _M[3][2] = pos.z; }
 
-	void addChild(SceneNode* s);
-
-	/*	getters and setters, all inline: 
-		rotation, scaling, positioning will always affect the children too!		*/
-	void		move(const glm::vec3& pos)		{ _W = glm::translate(_W, pos); _M = glm::translate(_M, pos); }
-	void		setPos(const glm::vec3& pos)	{ _M[3][0] = pos.x; _M[3][1] = pos.y; _M[3][2] = pos.z; }
-	glm::vec3	pos() const						{ return glm::vec3{ _W[3][0], _W[3][1], _W[3][2] }; }
-	glm::mat4	posMatrix() const				{ return _W; }
+	glm::vec3	pos() const { return glm::vec3{ _W[3][0], _W[3][1], _W[3][2] }; }
+	glm::mat4	posMatrix() const { return _W; }
 
 	void		rotate(float angle, const glm::vec3& axis) {
 		_M = glm::rotate(_M, glm::radians(angle), axis);
 	}
 
-	void		scale(const glm::vec3& scale)	{ _M = glm::scale(_M, scale); }
+	void		scale(const glm::vec3& scale) { _M = glm::scale(_M, scale); }
 
-	void		setDrawable(Shape* s)			{ _drawable = s; }
+protected:
+	IDrawable*	_drawable;
+
+	SceneNode*	_parent;
+	std::vector<SceneNode*> _children;
+
+	glm::mat4	_M;		//model position
+	glm::mat4	_W;		//world position
+
+};
+
+/*	CLASS ShapeNode ------------------------------------------------------------------------------ */
+class ShapeNode  {
+public:
+	ShapeNode(Shape* shape = nullptr, glm::vec3 pos = { 0.0f, 0.0f, 0.0f }, float radius = 1.0f);
+	virtual ~ShapeNode();
+
+	virtual void	drawNaked(const Shader& shader) const;
+	virtual void	drawAllNaked(const Shader& shader) const;
+
+	void			setShape(Shape* s)			{ _drawable = s; }
 
 	/* getters and setters for the bounding sphere: */
 	void		setRadius(float r)				{ _radius = r; }
@@ -65,24 +82,22 @@ public:
 	auto		childrenEnd() const				{ return _children.end(); }
 
 	/* static function to compare the distance to the camera between two nodes: */
-	static bool compareDistance(SceneNode* a, SceneNode* b) {
+	static bool compareDistance(ShapeNode* a, ShapeNode* b) {
 		return (a->_distance < b->_distance ? true : false);
 	}
 
 private:
-	SceneNode*	_parent;
-	std::vector<SceneNode*> _children;
-
-	IDrawable*	_drawable;
-
-	glm::mat4	_W;			/* world position */
-	glm::mat4	_M;			/* model position relative to its parent */
-	glm::vec3	_scale;
-
 	float		_distance;	/* distance to the camera */
 	float		_radius;	/* radius of the bounding sphere */
+	Shape*		_shape;
 };
 
+/*	CLASS LightNode ------------------------------------------------------------------------------ */
+class LightNode : public SceneNode {
+public:
+
+private:
+};
 
 /*	CLASS SCENE ------------------------------------------------------------------------------
 	Task:	Wrapper to identify Scene Nodes by name and adding childs to a parent by the
@@ -100,18 +115,12 @@ public:
 	Scene();
 	~Scene();
 
-	void addChild(Shape* s, glm::vec3 pos, float radius, 
+	void addChild(IDrawable* drawable, glm::vec3 pos, float radius, 
 				  const std::string& name = "", 
 				  const std::string& parentName = "root");
 
-	/* no parent-child relation for lights yet: */
-	void addDLight(dLight* l, const std::string& name = "");
-	void addPLight(pLight* p, const std::string& name = "");
-
 	/* access scene elements: */
 	SceneNode* findByName(const std::string& name);
-	dLight* findDLight(const std::string& name);
-	pLight* findPLight(const std::string& name);
 	
 	void update(const Uint32& deltaTime);
 
@@ -128,7 +137,6 @@ public:
 	void drawDLights(const Shader& shader) const;
 	void drawPlights(const Shader& shader) const;
 
-
 	/* allow indexing the scene: */
 	SceneNode* operator [] (const std::string& nodeName) {
 		SceneNode* node = findByName(nodeName);
@@ -139,7 +147,7 @@ public:
 	//debug - switch front and back face for point light drawing:
 	void switchCull() {
 		for (auto& L : _plights) {
-			L.second->_front = (L.second->_front)? false : true;
+			L->_front = (L->_front)? false : true;
 		}
 	}
 
@@ -152,10 +160,11 @@ private:
 
 	SceneNode* _root; //we store root so we dont need to search it
 
-	/* two seperate lists for shapes and for lights: */
+	/* seperate lists for drawing: */
 	std::map<std::string, SceneNode*> _scene;
-	std::map<std::string, dLight*> _dlights;
-	std::map<std::string, pLight*> _plights;
+	std::vector<Shape*>		_shapes;
+	std::vector<dLight*>	_dlights;
+	std::vector<pLight*>	_plights;
 };
 
 }
