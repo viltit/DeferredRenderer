@@ -1,5 +1,3 @@
-#include "Frame.hpp"
-
 #include "App.hpp"
 
 #include <conio.h>
@@ -13,16 +11,6 @@ int main(int argc, char** argv) {
 	catch (...) {
 
 	}
-/*
-	try {
-		vitiGL::start();
-		Frame frame;
-		vitiGL::stop();
-	}
-	catch (...) {
-
-	}*/
-
 	char c = _getch();
 	return 0;
 }

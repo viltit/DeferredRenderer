@@ -24,7 +24,7 @@ class Frustum;
 
 class SceneNode {
 public:
-	SceneNode(Shape* shape = nullptr, glm::vec3 pos = { 0.0f, 0.0f, 0.0f }, float radius = 1.0f);
+	SceneNode(IDrawable* drawable = nullptr, glm::vec3 pos = { 0.0f, 0.0f, 0.0f }, float radius = 1.0f);
 	virtual ~SceneNode();
 
 	virtual void	update(const Uint32& deltaTime);
@@ -52,7 +52,7 @@ public:
 
 	void		scale(const glm::vec3& scale)	{ _M = glm::scale(_M, scale); }
 
-	void		setShape(Shape* s)				{ _shape = s; }
+	void		setDrawable(Shape* s)			{ _drawable = s; }
 
 	/* getters and setters for the bounding sphere: */
 	void		setRadius(float r)				{ _radius = r; }
@@ -73,7 +73,7 @@ private:
 	SceneNode*	_parent;
 	std::vector<SceneNode*> _children;
 
-	Shape*		_shape;
+	IDrawable*	_drawable;
 
 	glm::mat4	_W;			/* world position */
 	glm::mat4	_M;			/* model position relative to its parent */
@@ -126,7 +126,7 @@ public:
 
 	/* draw lights (for second pass in deferred rendering) */
 	void drawDLights(const Shader& shader) const;
-	void drawPlights(const Shader& shader, const glm::vec3& camPos) const;
+	void drawPlights(const Shader& shader) const;
 
 
 	/* allow indexing the scene: */

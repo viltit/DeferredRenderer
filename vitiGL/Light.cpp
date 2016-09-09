@@ -31,7 +31,6 @@ void dLight::setProperty(lightProps property, const glm::vec3 & value, const Sha
 	case lightProps::dir:
 		_dir = glm::normalize(value);
 		glUniform3f(shader.getUniform(_uniform + ".dir"), _dir.x, _dir.y, _dir.z);
-		//glUniform3f(shader.getUniform(_uniform + "Dir"), _dir.x, _dir.y, _dir.z); //wip
 		break;
 	case lightProps::ambient:
 		_ambient = value;
@@ -52,28 +51,35 @@ void dLight::setProperty(lightProps property, const glm::vec3 & value, const Sha
 	shader.off();
 }
 
-void dLight::setUniforms(const Shader& shader) {
+void dLight::setUniforms(const Shader& shader) const {
 	glUniform3f(shader.getUniform(_uniform + ".dir"), _dir.x, _dir.y, _dir.z);
-	//glUniform3f(shader.getUniform(_uniform + "Dir"), _dir.x, _dir.y, _dir.z); //wip
-	//glUniform3f(shader.getUniform(_uniform + ".ambient"), _ambient.r, _ambient.g, _ambient.b);
 	glUniform3f(shader.getUniform(_uniform + ".diffuse"), _diffuse.r, _diffuse.g, _diffuse.b);
 	glUniform3f(shader.getUniform(_uniform + ".specular"), _specular.r, _specular.g, _specular.b);
 }
 
-void dLight::draw(const Shader & shader) {
+void dLight::draw(const Shader & shader) const {
 	_quad.drawNaked(shader);
 }
 
 /* ----------------------------------------------------------------------------------------------------------- */
 
-pLight::pLight	(const std::string & uniformName, const glm::vec3 & pos, const glm::vec3 & ambient, 
-				 const glm::vec3 & diffuse, const glm::vec3 & specular, const glm::vec3 & attenuation)
-	:	_uniform		{ uniformName },
+pLight::pLight	
+(
+	const Camera* camera,
+	const glm::vec3 & pos, 
+	const glm::vec3 & ambient, 
+	const glm::vec3 & diffuse, 
+	const glm::vec3 & specular, 
+	const glm::vec3 & attenuation,
+	const std::string & uniformName
+)
+	:	_cam			{ camera },
 		_attenuation	{ attenuation },
 		_pos			{ pos },
 		_ambient		{ ambient },
 		_diffuse		{ diffuse },
 		_specular		{ specular },
+		_uniform		{ uniformName },
 		_sphere			{ new Sphere{"xml/sphere.xml" } }
 {
 	_attenuation = Attenuation::r100;
@@ -152,7 +158,7 @@ void pLight::setProperty(lightProps property, const glm::vec3 & value) {
 	}
 }
 
-void pLight::setUniforms(const Shader & shader) {
+void pLight::setUniforms(const Shader & shader) const {
 	//shader.on();
 	glUniform3f(shader.getUniform(_uniform + ".pos"), _pos.x, _pos.y, _pos.z);
 	//glUniform3f(shader.getUniform(_uniform + "Pos"), _pos.x, _pos.y, _pos.z);
@@ -163,12 +169,12 @@ void pLight::setUniforms(const Shader & shader) {
 	//shader.off();
 }
 
-void pLight::draw(const Shader & shader, const glm::vec3& viewPos) {
+void pLight::draw(const Shader & shader) const {
 	//glUniform3f(shader.getUniform("lightPos"), _pos.x, _pos.y, _pos.z);
 	setUniforms(shader);
 
 	/* determine if we are inside or outside the lights radius: */ 
-	float distance = glm::length(viewPos - _pos);
+	float distance = glm::length(_cam->pos() - _pos);
 	if (distance < _r) glCullFace(GL_FRONT);
 	else {
 		std::cout << "outside\n";

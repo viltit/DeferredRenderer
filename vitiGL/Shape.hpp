@@ -20,9 +20,28 @@ struct slData {
 };
 
 
-/*	ABSTRACT CLASS SHAPE -----------------------------------------------------------------------
+/*	ABSTRACT BASE CLASS IDRAWABLE --------------------------------------------------------------
+	
+	Task:	Deliver an interface for all drawable object that we can use in the Scene Manager
+
+	------------------------------------------------------------------------------------------ */
+class IDrawable {
+public:
+	IDrawable() {};
+	virtual ~IDrawable() {};
+
+	virtual void draw(const Shader& shader) const = 0;
+	virtual void drawNaked(const Shader& shader) const { draw(shader); }
+
+	virtual void setModelMatrix(const glm::mat4& P) { M = P; }
+
+protected:
+	glm::mat4 M;
+};
+
+/*	ABSTRACT BASE CLASS SHAPE -------------------------------------------------------------------
 	 
-	Task:	Keep all variables and methods needed for drawing the Shape with openGL
+	Task:	Keep all variables and methods needed for drawing textured Meshes with openGL
 			Things like scaling, moving, ... should happen in the class that holds the Shape.
 
 	Caveats:	The shader has to be delivered AND activated from within the class that calls 
@@ -31,18 +50,17 @@ struct slData {
 	to do:	Implement glInstancedDraw
 			Implement element buffers and element drawing
 	------------------------------------------------------------------------------------------ */
-
-class Shape {
+class Shape : public IDrawable {
 public:
 	Shape();
 	virtual ~Shape();
 
-	virtual void draw(const Shader& shader) const;
-	virtual void drawNaked(const Shader& shader) const;
+	virtual void draw(const Shader& shader) const override;
+	virtual void drawNaked(const Shader& shader) const override;
 	//virtual void multidraw(const Shader& shader) = 0;
 
-	virtual void setModelMatrix(const glm::mat4& P)		{ M = P; }
-	//virtual glm::mat4 modelMatrix()						{ return M; }
+	virtual void setModelMatrix(const glm::mat4& P)	override	{ M = P; }
+	//virtual glm::mat4 modelMatrix()							{ return M; }
 
 	bool srgbOn()	{ sRGB = true; }
 	bool srgbOff()	{ sRGB = false; }

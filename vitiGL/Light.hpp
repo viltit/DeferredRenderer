@@ -3,6 +3,8 @@
 	Task:	Hold all relevant information and methods for point lights and dir lights. 
 			Also give a draw function for deferred rendering.
 
+	Caveats: Light inherits from IDrawable
+
 	To Do:	Add rim lights?
 -------------------------------------------------------------------------------------------- */
 
@@ -34,13 +36,15 @@ namespace Attenuation {
 	extern glm::vec3 r200;
 }
 
-class Light  {
+class Camera;
+
+class Light : public IDrawable {
 public:
 	Light() {}
 	virtual ~Light() {}
 
 	virtual void setProperty(lightProps property, const glm::vec3& value, const Shader& shader) = 0;
-	virtual void setUniforms(const Shader& shader) = 0;
+	virtual void setUniforms(const Shader& shader) const = 0;
 
 protected:
 };
@@ -56,8 +60,10 @@ public:
 	~dLight();
 
 	void setProperty(lightProps property, const glm::vec3& value, const Shader& shader);
-	void setUniforms(const Shader& shader);
-	void draw(const Shader& shader);
+	void setUniforms(const Shader& shader) const override;
+
+	/* inherited from IDrawable: */
+	void draw(const Shader& shader) const override;
 
 	/* getters and setters: */
 	glm::vec3 dir() const	{ return _dir; }
@@ -74,19 +80,22 @@ private:
 /* Point Light ----------------------------------------------------------------------------------- */
 class pLight : public Light {
 public:
-	pLight	(const std::string& uniformName,
-			 const glm::vec3& pos =		{ 0.0f, 1.0f, 0.0f }, 
-			 const glm::vec3& ambient = { 0.1f, 0.1f, 0.1f },
-			 const glm::vec3& diffuse = { 0.6f, 0.6f, 0.6f }, 
-			 const glm::vec3& specular = { 1.0f, 1.0f, 1.0f },
-			 const glm::vec3& attenuation = { 1.0f, 0.09f, 0.032 });
+	pLight	(const Camera* camera,
+			const glm::vec3& pos = { 0.0f, 1.0f, 0.0f },
+			const glm::vec3& ambient = { 0.1f, 0.1f, 0.1f },
+			const glm::vec3& diffuse = { 0.6f, 0.6f, 0.6f },
+			const glm::vec3& specular = { 1.0f, 1.0f, 1.0f },
+			const glm::vec3& attenuation = { 1.0f, 0.09f, 0.032 },
+			const std::string& uniformName = "plight");
 
 	//~pLight();
 
 	void setProperty(lightProps property, const glm::vec3& value, const Shader& shader);
 	void setProperty(lightProps property, const glm::vec3& value);
-	void setUniforms(const Shader& shader);
-	void draw(const Shader& shader, const glm::vec3& viewPos);
+	void setUniforms(const Shader& shader) const override;
+
+	//inherited from IDrawable
+	void draw(const Shader& shader) const override;
 
 	float radius() const { return _r; }
 	glm::vec3 pos() const { return _pos; }
@@ -107,6 +116,8 @@ private:
 
 	Sphere*			_sphere;
 	float			_r;
+
+	const Camera*	_cam;
 };
 
 }

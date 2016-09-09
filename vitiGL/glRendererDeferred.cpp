@@ -191,7 +191,7 @@ void glRendererDeferred::drawLight() {
 	glUniform1i(_lshader.getUniform("shadowcube"), 3);
 
 	/* draw the point lights: (more happening in the plight::draw() function!) */
-	_scene->drawPlights(_lshader, _camera->pos());
+	_scene->drawPlights(_lshader);
 
 	_lshader.off();
 

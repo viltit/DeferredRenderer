@@ -14,7 +14,6 @@ glRenderer::glRenderer(const Window* window, Scene* scene, Camera* camera)
 		_dShader	{ "Shaders/simple.vert.glsl", "Shaders/simple.frag.glsl" },
 		_framebuffer{ window->width(), window->height(), "Shaders/framebuffer.vert.glsl", "Shaders/framebuffer.frag.glsl" }, //dangerous!
 		_dlight		{ "dlight" }, //needs to be part of the scene
-		_plight		{ "plight" },
 		_dshadow	{ new DirShadowmap{ *camera, &_dlight }},
 		_debugQuad  { QuadPos::topRight }
 {

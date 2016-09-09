@@ -131,12 +131,10 @@
     <ClInclude Include="App.hpp" />
     <ClInclude Include="AppScreen.hpp" />
     <ClInclude Include="MenuScreen.hpp" />
-    <ClInclude Include="Frame.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp" />
     <ClCompile Include="AppScreen.cpp" />
-    <ClCompile Include="Frame.cpp" />
     <ClCompile Include="MenuScreen.cpp" />
     <ClCompile Include="Source.cpp" />
   </ItemGroup>

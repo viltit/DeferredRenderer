@@ -154,7 +154,6 @@
     <ClCompile Include="Frustum.cpp" />
     <ClCompile Include="GaussBlur.cpp" />
     <ClCompile Include="Geometry.cpp" />
-    <ClCompile Include="glRenderer.cpp" />
     <ClCompile Include="glRendererDeferred.cpp" />
     <ClCompile Include="GUI.cpp" />
     <ClCompile Include="iApp.cpp" />
@@ -180,7 +179,6 @@
     <ClInclude Include="Frustum.hpp" />
     <ClInclude Include="GaussBlur.hpp" />
     <ClInclude Include="Geometry.hpp" />
-    <ClInclude Include="glRenderer.hpp" />
     <ClInclude Include="glRendererDeferred.hpp" />
     <ClInclude Include="GUI.hpp" />
     <ClInclude Include="IApp.hpp" />

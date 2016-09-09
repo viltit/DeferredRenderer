@@ -6,9 +6,9 @@
 
 namespace vitiGL {
 
-SceneNode::SceneNode(Shape* s, glm::vec3 pos, float radius)
+SceneNode::SceneNode(IDrawable* d, glm::vec3 pos, float radius)
 	:	_parent		{ nullptr },
-		_shape		{ s },
+		_drawable	{ d },
 		_scale		{ glm::vec3{ 1.0f, 1.0f, 1.0f } },
 		_radius		{ radius },
 		_distance	{ 0.0f }
@@ -18,8 +18,8 @@ SceneNode::SceneNode(Shape* s, glm::vec3 pos, float radius)
 }
 
 SceneNode::~SceneNode(){
-	if (_shape) delete _shape;
-	_shape = nullptr;
+	if (_drawable) delete _drawable;
+	_drawable = nullptr;
 
 	for (auto& C : _children)
 		if (C != nullptr) delete C;
@@ -31,27 +31,27 @@ void SceneNode::update(const Uint32 & deltaTime) {
 	else _W = _M;
 	
 	/* give world position to the shape for drawing: */
-	if (_shape) _shape->setModelMatrix(_W);
+	if (_drawable) _drawable->setModelMatrix(_W);
 
 	/* update all children: */
 	for (auto& C : _children) C->update(deltaTime);
 }
 
 void SceneNode::draw(const Shader & shader) const {
-	if (_shape) _shape->draw(shader);
+	if (_drawable) _drawable->draw(shader);
 }
 
 void SceneNode::drawNaked(const Shader & shader) const {
-	if (_shape) _shape->drawNaked(shader);
+	if (_drawable) _drawable->drawNaked(shader);
 }
 
 void SceneNode::drawAll(const Shader & shader) const {
-	if (_shape) _shape->draw(shader);
+	if (_drawable) _drawable->draw(shader);
 	for (auto& C : _children) C->drawAll(shader);
 }
 
 void SceneNode::drawAllNaked(const Shader & shader) const {
-	if (_shape) _shape->drawNaked(shader);
+	if (_drawable) _drawable->drawNaked(shader);
 	for (auto& C : _children) C->drawAllNaked(shader);
 }
 
@@ -161,9 +161,9 @@ void Scene::drawDLights(const Shader & shader) const {
 	}
 }
 
-void Scene::drawPlights(const Shader & shader, const glm::vec3& camPos) const {
+void Scene::drawPlights(const Shader & shader) const {
 	for (auto i = _plights.begin(); i != _plights.end(); i++) {
-		if (i->second) i->second->draw(shader, camPos);
+		if (i->second) i->second->draw(shader);
 	}
 }
 

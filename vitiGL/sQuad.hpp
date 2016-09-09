@@ -34,7 +34,7 @@ public:
 				const std::vector<std::string> textureNames);
 
 	/* shader needs to be on for this one! (as opposed to the above functions) */
-	void drawNaked(const Shader& shader);
+	void drawNaked(const Shader& shader) const;
 
 private:
 	void initVertices();
