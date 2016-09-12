@@ -87,7 +87,7 @@ void DirShadowmap::draw(const CamInfo& camera, Scene* scene, Frustum& frustum) {
 	glUniform3f(_fshader.getUniform("dlightDir"), _light->dir().x, _light->dir().y, _light->dir().z);
 	glm::mat4 VP = camera.P * camera.V;
 	glUniformMatrix4fv(_fshader.getUniform("VP"), 1, GL_FALSE, glm::value_ptr(VP));
-	scene->drawShapes(_fshader, frustum);
+	scene->drawShapesNaked(_fshader, frustum);
 	
 	_fshader.off();
 	_framebuffer.off();
