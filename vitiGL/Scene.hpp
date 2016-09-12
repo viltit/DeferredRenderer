@@ -25,13 +25,14 @@ class Frustum;
 /*	CLASS SceneNode ------------------------------------------------------------------------------ */
 class SceneNode {
 public:
-	SceneNode(IDrawable* drawable = nullptr, glm::vec3 pos = { 0.0f, 0.0f, 0.0f });
+	SceneNode(IGameObject* object = nullptr, glm::vec3 pos = { 0.0f, 0.0f, 0.0f }, float radius = 1.0f);
 	virtual ~SceneNode();
 	
 	virtual void update(const Uint32& deltaTime);
 
 	virtual void draw(const Shader& shader) const;
-	virtual void drawAll(const Shader& shader) const;
+	virtual void drawNaked(const Shader& shader) const;
+	virtual void drawChilds(const Shader& shader) const;
 
 	virtual void addChild(SceneNode* s);
 
@@ -49,8 +50,17 @@ public:
 
 	void		scale(const glm::vec3& scale) { _M = glm::scale(_M, scale); }
 
+	float		radius() const { return _radius; }
+
+	ObjType		type() { return _obj->type(); }
+	IGameObject* obj() { return _obj; }
+
+	/* get an iterator to the childrens vector: */
+	auto		childrenBegin() { return _children.begin(); }
+	auto		childrenEnd()	{ return _children.end(); }
+
 protected:
-	IDrawable*	_drawable;
+	IGameObject* _obj;
 
 	SceneNode*	_parent;
 	std::vector<SceneNode*> _children;
@@ -58,45 +68,7 @@ protected:
 	glm::mat4	_M;		//model position
 	glm::mat4	_W;		//world position
 
-};
-
-/*	CLASS ShapeNode ------------------------------------------------------------------------------ */
-class ShapeNode  {
-public:
-	ShapeNode(Shape* shape = nullptr, glm::vec3 pos = { 0.0f, 0.0f, 0.0f }, float radius = 1.0f);
-	virtual ~ShapeNode();
-
-	virtual void	drawNaked(const Shader& shader) const;
-	virtual void	drawAllNaked(const Shader& shader) const;
-
-	void			setShape(Shape* s)			{ _drawable = s; }
-
-	/* getters and setters for the bounding sphere: */
-	void		setRadius(float r)				{ _radius = r; }
-	float		radius() const					{ return _radius; }
-	void		setDistance(float d)			{ _distance = d; }
-	float		distance() const				{ return _distance; }
-
-	/* get an iterator for the nodes children: */
-	auto		childrenBegin()	const			{ return _children.begin(); }
-	auto		childrenEnd() const				{ return _children.end(); }
-
-	/* static function to compare the distance to the camera between two nodes: */
-	static bool compareDistance(ShapeNode* a, ShapeNode* b) {
-		return (a->_distance < b->_distance ? true : false);
-	}
-
-private:
-	float		_distance;	/* distance to the camera */
-	float		_radius;	/* radius of the bounding sphere */
-	Shape*		_shape;
-};
-
-/*	CLASS LightNode ------------------------------------------------------------------------------ */
-class LightNode : public SceneNode {
-public:
-
-private:
+	float		_radius;
 };
 
 /*	CLASS SCENE ------------------------------------------------------------------------------
@@ -115,23 +87,29 @@ public:
 	Scene();
 	~Scene();
 
-	void addChild(IDrawable* drawable, glm::vec3 pos, float radius, 
+	void addChild(IGameObject* object, 
+				  glm::vec3 pos = {},
+				  float radius =  1.0f, 
 				  const std::string& name = "", 
 				  const std::string& parentName = "root");
+
+	void addChild(IGameObject* object,
+				  const std::string& name = "",
+				  const std::string parentName = "root");
 
 	/* access scene elements: */
 	SceneNode* findByName(const std::string& name);
 	
 	void update(const Uint32& deltaTime);
 
-	/* draw everything in the scene: */
-	void draw(const Shader& shader);
-	/* draw the scene with view-frustum culling: */
-	void drawCulled(const Shader& shader, Frustum& frustum);
+	/* draw every Shape in the scene: */
+	void drawShapes(const Shader& shader);
+	/* draw every Shape in the scene with view-frustum culling: */
+	void drawShapes(const Shader& shader, Frustum& frustum);
 
 	/* draw everything, but without textures (->for the shadowmap) */
-	void drawAllNaked(const Shader& shader) const;
-	void drawAllNakedCulled(const Shader& shader, Frustum& frustum);
+	void drawShapesNaked(const Shader& shader) const;
+	void drawShapesNaked(const Shader& shader, Frustum& frustum);
 
 	/* draw lights (for second pass in deferred rendering) */
 	void drawDLights(const Shader& shader) const;
@@ -144,6 +122,8 @@ public:
 		return node;
 	}
 
+
+
 	//debug - switch front and back face for point light drawing:
 	void switchCull() {
 		for (auto& L : _plights) {
@@ -151,17 +131,20 @@ public:
 		}
 	}
 
+	//temporary function, needs another solution:
+	dLight* findDLight(const std::string& name);
+	pLight* findPLight(const std::string& name);
+
 private:
 	void updateCullingList(Frustum& frustum, SceneNode* from);
 
 	int _counter;
 
-	std::vector<SceneNode*> _cullingList;
-
 	SceneNode* _root; //we store root so we dont need to search it
 
 	/* seperate lists for drawing: */
 	std::map<std::string, SceneNode*> _scene;
+	std::vector<SceneNode*>	_cullingList;
 	std::vector<Shape*>		_shapes;
 	std::vector<dLight*>	_dlights;
 	std::vector<pLight*>	_plights;

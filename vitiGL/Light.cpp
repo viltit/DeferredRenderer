@@ -15,14 +15,13 @@ namespace Attenuation {
 
 dLight::dLight(const std::string& uniformName, const glm::vec3& dir, 
 			   const glm::vec3& ambient, const glm::vec3& diffuse, const glm::vec3& specular)
-	:	_uniform	{ uniformName },
+	:	Light		{ ObjType::dlight },
+		_uniform	{ uniformName },
 		_dir		{ glm::normalize(dir) },
 		_ambient	{ ambient },
 		_diffuse	{ diffuse },
 		_specular	{ specular }
-{
-	_type = ObjType::dlight;
-}
+{}
 
 dLight::~dLight() {
 }
@@ -75,7 +74,8 @@ pLight::pLight
 	const glm::vec3 & attenuation,
 	const std::string & uniformName
 )
-	:	_cam			{ camera },
+	:	Light			{ ObjType::plight },
+		_cam			{ camera },
 		_attenuation	{ attenuation },
 		_pos			{ pos },
 		_ambient		{ ambient },
@@ -84,8 +84,6 @@ pLight::pLight
 		_uniform		{ uniformName },
 		_sphere			{ new Sphere{"xml/sphere.xml" } }
 {
-	_type = ObjType::plight;
-
 	_attenuation = Attenuation::r100;
 
 	calcRadius(); //the math here is correct

@@ -8,17 +8,20 @@ namespace vitiGL {
 
 /* CLASS SCENE NODE ------------------------------------------------------------- */
 
-SceneNode::SceneNode(IDrawable* d, glm::vec3 pos)
+SceneNode::SceneNode(IGameObject* object, glm::vec3 pos, float radius)
 	:	_parent		{ nullptr },
-		_drawable	{ d }
+		_obj		{ object },
+		_radius		{ radius }
 {
 	/* get the initial position in case the Shape already has one: */
 	setPos(pos);
 }
 
 SceneNode::~SceneNode(){
-	if (_drawable) delete _drawable;
-	_drawable = nullptr;
+	if (_obj) {
+		delete _obj;
+		_obj = nullptr;
+	}
 
 	for (auto& C : _children)
 		if (C != nullptr) delete C;
@@ -30,48 +33,29 @@ void SceneNode::update(const Uint32 & deltaTime) {
 	else _W = _M;
 	
 	/* give world position to the shape for drawing: */
-	if (_drawable) _drawable->setModelMatrix(_W);
+	if (_obj) _obj->setModelMatrix(_W);
 
 	/* update all children: */
 	for (auto& C : _children) C->update(deltaTime);
 }
 
 void SceneNode::draw(const Shader & shader) const {
-	if (_drawable) _drawable->draw(shader);
+	if (_obj) _obj->draw(shader);
 }
 
-void SceneNode::drawAll(const Shader & shader) const {
-	if (_drawable) _drawable->draw(shader);
-	for (auto& C : _children) C->drawAll(shader);
+void SceneNode::drawNaked(const Shader & shader) const {
+	if (_obj) _obj->drawNaked(shader);
+}
+
+void SceneNode::drawChilds(const Shader & shader) const {
+	if (_obj) _obj->draw(shader);
+	for (auto& C : _children) C->drawChilds(shader);
 }
 
 void SceneNode::addChild(SceneNode * s) {
 	_children.push_back(s);
 	s->_parent = this;
 }
-
-/*	CLASS SHAPE NODE ----------------------------------------------------------------- */
-ShapeNode::ShapeNode(Shape* shape, glm::vec3 pos, float radius = 1.0f) 
-	:	SceneNode(shape, pos),
-		_radius{ radius },
-		_distance{ 0.0f },
-		_shape { shape }
-{}
-
-ShapeNode::~ShapeNode() 
-{}
-
-void ShapeNode::drawNaked(const Shader & shader) const {
-	if (_shape) _shape->drawNaked(shader);
-}
-
-void ShapeNode::drawAllNaked(const Shader & shader) const {
-	if (_shape) _drawable->draw(shader);
-	for (auto& C : _children) C->drawAll(shader);
-}
-
-
-
 
 
 /* CLASS SCENE ----------------------------------------------------------------------- */
@@ -89,9 +73,9 @@ Scene::~Scene() {
 
 void Scene::addChild
 (
-	IDrawable* drawable, 
+	IGameObject* object, 
 	glm::vec3 pos, 
-	float radius, 
+	float radius /* = 1.0f */, 
 	const std::string& name /*= ""*/, 
 	const std::string & parentName /* = "root" */
 )
@@ -109,7 +93,7 @@ void Scene::addChild
 	if (parent == nullptr) {
 		throw initError(("<Scene::addChild> Could not find a parent with the name " + parentName).c_str());
 	}
-	SceneNode* child = new SceneNode(drawable, pos, radius);
+	SceneNode* child = new SceneNode(object, pos, radius);
 
 	/* link the child to its parent: */
 	parent->addChild(child);
@@ -118,19 +102,23 @@ void Scene::addChild
 	_scene.insert(std::make_pair(nodeName, child));
 
 	/* put the child in the appropriate vector:*/
-	switch (drawable->type()) {
+	switch (object->type()) {
 	case ObjType::shape:
-		_shapes.push_back(static_cast<Shape*>(drawable));
+		_shapes.push_back(static_cast<Shape*>(object));
 		break;
 	case ObjType::dlight:
-		_dlights.push_back(static_cast<dLight*>(drawable));
+		_dlights.push_back(static_cast<dLight*>(object));
 		break;
 	case ObjType::plight:
-		_plights.push_back(static_cast<pLight*>(drawable));
+		_plights.push_back(static_cast<pLight*>(object));
 		break;
 	default:
 		throw vitiError("<Scene::addChild>Unknown Object type.");
 	}
+}
+
+void Scene::addChild(IGameObject * object, const std::string & name, const std::string parentName) {
+	addChild(object, glm::vec3{}, 1.0f, name, parentName);
 }
 
 
@@ -145,22 +133,22 @@ void Scene::update(const Uint32 & deltaTime) {
 	_root->update(deltaTime);
 }
 
-void Scene::draw(const Shader & shader) {
-	_root->drawAll(shader);
+void Scene::drawShapes(const Shader & shader) {
+	for (const auto& S : _shapes) S->draw(shader);
 }
 
-void Scene::drawCulled(const Shader & shader, Frustum& frustum) {
+void Scene::drawShapes(const Shader & shader, Frustum& frustum) {
 	_cullingList.clear();
 	updateCullingList(frustum, _root);
 
 	for (auto& N : _cullingList) N->draw(shader); 
 }
 
-void Scene::drawAllNaked(const Shader & shader) const {
-	_root->drawAllNaked(shader);
+void Scene::drawShapesNaked(const Shader & shader) const {
+	for (const auto& S : _shapes) S->drawNaked(shader);
 }
 
-void Scene::drawAllNakedCulled(const Shader & shader, Frustum& frustum) {
+void Scene::drawShapesNaked(const Shader & shader, Frustum& frustum) {
 	_cullingList.clear();
 	updateCullingList(frustum, _root);
 
@@ -168,20 +156,30 @@ void Scene::drawAllNakedCulled(const Shader & shader, Frustum& frustum) {
 }
 
 void Scene::drawDLights(const Shader & shader) const {
-	for (auto i = _dlights.begin(); i != _dlights.end(); i++) {
-		if (i->second) i->second->draw(shader);
-	}
+	for (const auto& L : _dlights) L->draw(shader);
 }
 
 void Scene::drawPlights(const Shader & shader) const {
-	for (auto i = _plights.begin(); i != _plights.end(); i++) {
-		if (i->second) i->second->draw(shader);
-	}
+	for (const auto& L : _plights) L->draw(shader);
+}
+
+dLight * Scene::findDLight(const std::string & name) {
+	SceneNode* node = findByName(name);
+	if (!node) return nullptr;
+	return static_cast<dLight*>(node->obj());
+}
+
+pLight * Scene::findPLight(const std::string & name) {
+	SceneNode* node = findByName(name);
+	if (!node) return nullptr;
+	return static_cast<pLight*>(node->obj());
 }
 
 void Scene::updateCullingList(Frustum & frustum, SceneNode* from) {
-	
-	if (frustum.isInside(*from)) _cullingList.push_back(from);
+	if ((from->obj()) && from->type() == ObjType::shape) {
+		if (frustum.isInside(*from)) _cullingList.push_back(from);
+	}
+
 
 	/* visit all childs by recursion: */
 	for (auto i = from->childrenBegin(); i < from->childrenEnd(); i++) updateCullingList(frustum, *i);

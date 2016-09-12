@@ -72,7 +72,7 @@ void DirShadowmap::draw(const CamInfo& camera, Scene* scene, Frustum& frustum) {
 		glBindFramebuffer(GL_FRAMEBUFFER, _fbo[i]);
 		glClear(GL_DEPTH_BUFFER_BIT);
 		glUniformMatrix4fv(_shader.getUniform("T"), 1, GL_FALSE, glm::value_ptr(_O[i] * _V[i]));
-		scene->drawAllNaked(_shader);
+		scene->drawShapesNaked(_shader);
 	}
 
 	_shader.off();
@@ -87,7 +87,7 @@ void DirShadowmap::draw(const CamInfo& camera, Scene* scene, Frustum& frustum) {
 	glUniform3f(_fshader.getUniform("dlightDir"), _light->dir().x, _light->dir().y, _light->dir().z);
 	glm::mat4 VP = camera.P * camera.V;
 	glUniformMatrix4fv(_fshader.getUniform("VP"), 1, GL_FALSE, glm::value_ptr(VP));
-	scene->drawAllNakedCulled(_fshader, frustum);
+	scene->drawShapes(_fshader, frustum);
 	
 	_fshader.off();
 	_framebuffer.off();
@@ -370,7 +370,7 @@ void PointShadowmap::draw(const pLight* light, Scene * scene, const CamInfo& cam
 	glUniform1f(_shader.getUniform("radius"), light->radius());
 	glUniform3f(_shader.getUniform("pos"), pos.x, pos.y, pos.z);
 
-	scene->drawAllNaked(_shader);
+	scene->drawShapesNaked(_shader);
 
 	_shader.off();
 
@@ -391,7 +391,7 @@ void PointShadowmap::draw(const pLight* light, Scene * scene, const CamInfo& cam
 	glBindTexture(GL_TEXTURE_CUBE_MAP, _tbo);
 	glUniform1i(_fshader.getUniform("shadowMap"), 1);
 
-	scene->drawAllNaked(_fshader);
+	scene->drawShapesNaked(_fshader);
 
 	_fshader.off();
 	_framebuffer.off();

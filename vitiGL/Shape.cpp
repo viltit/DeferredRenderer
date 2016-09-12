@@ -10,14 +10,13 @@
 namespace vitiGL {
 
 Shape::Shape() 
-	:	vao			{ 0 },
+	:	IGameObject { ObjType::shape },
+		vao			{ 0 },
 		vbo			{ 0 },
 		numVertices	{ 0 },
 		invert		{ false },
 		sRGB		{ true }
-{
-	_type = ObjType::shape;
-}
+{}
 
 
 Shape::~Shape() {
@@ -27,7 +26,7 @@ Shape::~Shape() {
 
 void Shape::draw(const Shader& shader) const {
 	//give the model matrix to the shader:
-	glUniformMatrix4fv(shader.getUniform("M"), 1, GL_FALSE, glm::value_ptr(M));
+	glUniformMatrix4fv(shader.getUniform("M"), 1, GL_FALSE, glm::value_ptr(_M));
 
 	//glUniform1f(shader.getUniform("material.shiny"), 22.0f);
 
@@ -52,7 +51,7 @@ void Shape::draw(const Shader& shader) const {
 }
 
 void Shape::drawNaked(const Shader & shader) const {
-	glUniformMatrix4fv(shader.getUniform("M"), 1, GL_FALSE, glm::value_ptr(M));
+	glUniformMatrix4fv(shader.getUniform("M"), 1, GL_FALSE, glm::value_ptr(_M));
 
 	glBindVertexArray(vao);
 	glDrawArrays(GL_TRIANGLES, 0, numVertices);
@@ -191,7 +190,7 @@ Cuboid::Cuboid(const std::string& configFile, const glm::vec3& position)
 		numVertices = vdata.numVertices;
 	}
 
-	M = glm::translate(M, position);
+	_M = glm::translate(_M, position);
 }
 
 Cuboid::~Cuboid() {
@@ -283,7 +282,7 @@ Tetrahedron::Tetrahedron(const std::string & configFile, const glm::vec3& positi
 		numVertices = vdata.numVertices;
 	}
 
-	M = glm::translate(M, position);
+	_M = glm::translate(_M, position);
 }
 
 Tetrahedron::~Tetrahedron() {
@@ -350,7 +349,7 @@ Octahedron::Octahedron(const std::string& configFile, const glm::vec3& position)
 		numVertices = vdata.numVertices;
 	}
 
-	M = glm::translate(M, position);
+	_M = glm::translate(_M, position);
 }
 
 Octahedron::~Octahedron() {
@@ -446,7 +445,7 @@ Icosahedron::Icosahedron(const std::string & configFile, const glm::vec3& positi
 		numVertices = vdata.numVertices;
 	}
 
-	M = glm::translate(M, position);
+	_M = glm::translate(_M, position);
 }
 
 Icosahedron::~Icosahedron() {

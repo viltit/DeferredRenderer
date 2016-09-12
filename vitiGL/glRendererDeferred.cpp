@@ -125,7 +125,7 @@ void glRendererDeferred::drawGeo() {
 
 	_gshader.on();
 	_camera->setVPUniform(_gshader);
-	_scene->drawCulled(_gshader, _frustum);
+	_scene->drawShapes(_gshader, _frustum);
 	_gshader.off();
 }
 

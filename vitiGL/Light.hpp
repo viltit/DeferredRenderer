@@ -38,9 +38,11 @@ namespace Attenuation {
 
 class Camera;
 
-class Light : public IDrawable {
+class Light : public IGameObject {
 public:
-	Light() {}
+	Light(ObjType type) 
+		:	IGameObject{ type }
+	{}
 	virtual ~Light() {}
 
 	virtual void setProperty(lightProps property, const glm::vec3& value, const Shader& shader) = 0;

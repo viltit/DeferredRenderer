@@ -183,6 +183,7 @@
     <ClInclude Include="GUI.hpp" />
     <ClInclude Include="IApp.hpp" />
     <ClInclude Include="IAppScreen.hpp" />
+    <ClInclude Include="IGameObject.hpp" />
     <ClInclude Include="Keytable.hpp" />
     <ClInclude Include="Light.hpp" />
     <ClInclude Include="Scene.hpp" />

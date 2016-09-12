@@ -167,5 +167,8 @@
     <ClInclude Include="glRendererDeferred.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="IGameObject.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

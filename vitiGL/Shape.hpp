@@ -7,6 +7,7 @@
 #include "Shader.hpp"
 #include "vitiTypes.hpp"
 #include "ShapeLoader.hpp"
+#include "IGameObject.hpp"
 
 
 namespace vitiGL {
@@ -17,36 +18,6 @@ struct slData {
 	glm::vec2 uv;
 	std::vector<std::string> textures;
 	bool invert;
-};
-
-/* enum class for identifying IDrawable children: */
-enum class ObjType {
-	shape,
-	plight,
-	dlight
-};
-
-
-/*	ABSTRACT BASE CLASS IDRAWABLE --------------------------------------------------------------
-	
-	Task:	Deliver an interface for all drawable object that we can use in the Scene Manager
-
-	------------------------------------------------------------------------------------------ */
-class IDrawable {
-public:
-	IDrawable() {};
-	virtual ~IDrawable() {};
-
-	virtual void draw(const Shader& shader) const = 0;
-	virtual void drawNaked(const Shader& shader) const { draw(shader); }
-
-	virtual void setModelMatrix(const glm::mat4& P) { M = P; }
-
-	ObjType type() { return _type; }
-
-protected:
-	glm::mat4	M;
-	ObjType		_type;
 };
 
 /*	ABSTRACT BASE CLASS SHAPE -------------------------------------------------------------------
@@ -60,7 +31,7 @@ protected:
 	to do:	Implement glInstancedDraw
 			Implement element buffers and element drawing
 	------------------------------------------------------------------------------------------ */
-class Shape : public IDrawable {
+class Shape : public IGameObject {
 public:
 	Shape();
 	virtual ~Shape();
@@ -68,9 +39,6 @@ public:
 	virtual void draw(const Shader& shader) const override;
 	virtual void drawNaked(const Shader& shader) const override;
 	//virtual void multidraw(const Shader& shader) = 0;
-
-	virtual void setModelMatrix(const glm::mat4& P)	override	{ M = P; }
-	//virtual glm::mat4 modelMatrix()							{ return M; }
 
 	bool srgbOn()	{ sRGB = true; }
 	bool srgbOff()	{ sRGB = false; }
