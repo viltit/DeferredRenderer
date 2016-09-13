@@ -1,6 +1,7 @@
 #include "Scene.hpp"
 #include "Frustum.hpp"
 #include "vitiGlobals.hpp"
+#include "Shadowmap.hpp"
 
 #include <iostream>
 
@@ -85,7 +86,7 @@ void Scene::addChild
 	if (name == "" ) nodeName = "Node[" + std::to_string(++_counter) + "]";
 
 #ifdef CONSOLE_LOG
-	std::cout << "<Scene::addChild>Added a Scene Node with the name " << nodeName << " and the parent " << parentName << std::endl;
+	//std::cout << "<Scene::addChild>Added a Scene Node with the name " << nodeName << " and the parent " << parentName << std::endl;
 #endif
 
 	/* create the scene node and search for parent: */
@@ -104,13 +105,13 @@ void Scene::addChild
 	/* put the child in the appropriate vector:*/
 	switch (object->type()) {
 	case ObjType::shape:
-		_shapes.push_back(static_cast<Shape*>(object));
+		_shapes.insert(std::make_pair(nodeName, static_cast<Shape*>(object)));
 		break;
 	case ObjType::dlight:
-		_dlights.push_back(static_cast<dLight*>(object));
+		_dlights.insert(std::make_pair(nodeName, static_cast<dLight*>(object)));
 		break;
 	case ObjType::plight:
-		_plights.push_back(static_cast<pLight*>(object));
+		_plights.insert(std::make_pair(nodeName, static_cast<pLight*>(object)));
 		break;
 	default:
 		throw vitiError("<Scene::addChild>Unknown Object type.");
@@ -134,7 +135,7 @@ void Scene::update(const Uint32 & deltaTime) {
 }
 
 void Scene::drawShapes(const Shader & shader) {
-	for (const auto& S : _shapes) S->draw(shader);
+	for (const auto& S : _shapes) S.second->draw(shader);
 }
 
 void Scene::drawShapes(const Shader & shader, Frustum& frustum) {
@@ -145,7 +146,7 @@ void Scene::drawShapes(const Shader & shader, Frustum& frustum) {
 }
 
 void Scene::drawShapesNaked(const Shader & shader) const {
-	for (const auto& S : _shapes) S->drawNaked(shader);
+	for (const auto& S : _shapes) S.second->drawNaked(shader);
 }
 
 void Scene::drawShapesNaked(const Shader & shader, Frustum& frustum) {
@@ -156,11 +157,11 @@ void Scene::drawShapesNaked(const Shader & shader, Frustum& frustum) {
 }
 
 void Scene::drawDLights(const Shader & shader) const {
-	for (const auto& L : _dlights) L->draw(shader);
+	for (const auto& L : _dlights) L.second->draw(shader);
 }
 
 void Scene::drawPlights(const Shader & shader) const {
-	for (const auto& L : _plights) L->draw(shader);
+	for (const auto& L : _plights) L.second->draw(shader);
 }
 
 dLight * Scene::findDLight(const std::string & name) {

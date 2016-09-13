@@ -18,6 +18,7 @@
 #include "Error.hpp"
 #include "Light.hpp"
 
+
 namespace vitiGL {
 
 class Frustum;
@@ -127,7 +128,7 @@ public:
 	//debug - switch front and back face for point light drawing:
 	void switchCull() {
 		for (auto& L : _plights) {
-			L->_front = (L->_front)? false : true;
+			L.second->_front = (L.second->_front)? false : true;
 		}
 	}
 
@@ -145,9 +146,9 @@ private:
 	/* seperate lists for drawing: */
 	std::map<std::string, SceneNode*> _scene;
 	std::vector<SceneNode*>	_cullingList;
-	std::vector<Shape*>		_shapes;
-	std::vector<dLight*>	_dlights;
-	std::vector<pLight*>	_plights;
+	std::map<std::string, Shape*>	_shapes;
+	std::map<std::string, dLight*>	_dlights;
+	std::map<std::string, pLight*>	_plights;
 };
 
 }
