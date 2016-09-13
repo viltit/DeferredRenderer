@@ -3,6 +3,8 @@
 #include <iostream>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "vitiTypes.hpp"
+
 namespace vitiGL {
 
 Camera::Camera(float aspect) 

@@ -7,6 +7,8 @@
 
 namespace vitiGL {
 
+class Shader;
+
 enum class Kernel {
 	none,
 	blur,

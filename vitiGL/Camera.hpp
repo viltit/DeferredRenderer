@@ -6,11 +6,11 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "vitiTypes.hpp"
 #include "Shader.hpp"
 
 namespace vitiGL {
 
+enum class Move;
 
 struct CamInfo{
 CamInfo	(const glm::mat4& P, const glm::mat4& V, 
