@@ -1,10 +1,10 @@
 #pragma once
 
 #include "Geometry.hpp"
-#include "Scene.hpp"
-
 
 namespace vitiGL {
+
+class SceneNode;
 
 class Frustum {
 public:

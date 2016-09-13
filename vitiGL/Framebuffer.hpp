@@ -2,12 +2,11 @@
 
 #include <GL/glew.h>
 #include <string>
+
 #include "Shader.hpp"
 #include "sQuad.hpp"
 
 namespace vitiGL {
-
-class Shader;
 
 enum class Kernel {
 	none,
@@ -39,7 +38,7 @@ public:
 
 	void	setTextureSize(int w, int h);
 
-	Shader*	shader() { return &_shader;  }
+	Shader*	shader() { return &_shader; }
 
 protected:
 	virtual void init();

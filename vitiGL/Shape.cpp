@@ -6,6 +6,7 @@
 #include <iostream>
 
 #include "Cache.hpp"
+#include "Shader.hpp"
 
 namespace vitiGL {
 

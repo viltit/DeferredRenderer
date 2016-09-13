@@ -4,6 +4,7 @@
 #include "vitiGlobals.hpp"
 
 #include <iostream>
+#include <string>
 
 namespace vitiGL {
 

@@ -1,6 +1,8 @@
 #include "sQuad.hpp"
 
 #include "vitiGlobals.hpp"
+#include "Shader.hpp"
+
 #include <glm/glm.hpp>
 
 

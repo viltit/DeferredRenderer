@@ -6,13 +6,15 @@
 #include <string>
 
 #include "Light.hpp"
-#include "Camera.hpp"
-#include "Scene.hpp"
 #include "sQuad.hpp"
 #include "Framebuffer.hpp"
 #include "GaussBlur.hpp"
+#include "Scene.hpp"
 
 namespace vitiGL {
+
+class Camera;
+struct CamInfo;
 
 class DirShadowmap {
 public:

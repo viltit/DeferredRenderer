@@ -1,8 +1,6 @@
 #include "Framebuffer.hpp"
 #include "Error.hpp"
 #include "vitiGlobals.hpp"
-#include "Shader.hpp"
-#include "sQuad.hpp"
 
 #include <iostream>
 #include <glm/gtc/type_ptr.hpp>

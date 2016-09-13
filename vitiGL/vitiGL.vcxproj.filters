@@ -149,9 +149,6 @@
     <ClInclude Include="Timer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="vitiGL.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="vitiGL.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>

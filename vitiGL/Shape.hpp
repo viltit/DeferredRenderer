@@ -4,13 +4,13 @@
 #include <GL\glew.h>
 #include <vector>
 
-#include "Shader.hpp"
 #include "vitiTypes.hpp"
-#include "ShapeLoader.hpp"
 #include "IGameObject.hpp"
 
 
 namespace vitiGL {
+
+class Shader;
 
 /* struct for getting data from the ShapeLoader Class: */
 struct slData {

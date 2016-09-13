@@ -3,6 +3,11 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 
+#include "Scene.hpp"
+#include "Camera.hpp"
+#include "Window.hpp"
+#include "Light.hpp"
+
 namespace vitiGL {
 
 glRendererDeferred::glRendererDeferred(const Window* window, Scene* scene, Camera* camera, bool drawDshadow)

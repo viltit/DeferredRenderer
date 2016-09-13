@@ -1,11 +1,7 @@
 #pragma once
 
-#include "Scene.hpp"
-#include "Window.hpp"
-#include "Camera.hpp"
 #include "Frustum.hpp"
 #include "sQuad.hpp"
-#include "Light.hpp"
 #include "Shadowmap.hpp"
 
 /*	Deferred Renderer
@@ -14,6 +10,10 @@
 */
 
 namespace vitiGL {
+
+class Scene;
+class Camera;
+class Window;
 
 enum class textureType {
 	color,

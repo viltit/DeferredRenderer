@@ -5,6 +5,7 @@
 #include "Error.hpp"
 
 #include "Shape.hpp"
+#include "ShapeLoader.hpp"
 
 namespace vitiGL {
 

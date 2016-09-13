@@ -1,4 +1,5 @@
 #include "Frustum.hpp"
+#include "Scene.hpp"
 
 namespace vitiGL {
 

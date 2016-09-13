@@ -3,12 +3,13 @@
 /* simple quad to use as drawing area for framebuffers */
 
 #include <GL/glew.h>
-#include "Shader.hpp"
 
 #include <vector>
 #include <string>
 
 namespace vitiGL {
+
+class Shader;
 
 enum class QuadPos {
 	fullscreen,

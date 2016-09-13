@@ -194,7 +194,6 @@
     <ClInclude Include="ShapeLoader.hpp" />
     <ClInclude Include="sQuad.hpp" />
     <ClInclude Include="Timer.hpp" />
-    <ClInclude Include="vitiGL.h" />
     <ClInclude Include="vitiGL.hpp" />
     <ClInclude Include="vitiGlobals.hpp" />
     <ClInclude Include="vitiTypes.hpp" />

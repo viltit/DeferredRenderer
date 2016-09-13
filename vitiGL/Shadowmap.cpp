@@ -8,7 +8,9 @@
 #include "vitiGlobals.hpp"
 #include "Cache.hpp"
 #include "Error.hpp"
+#include "Camera.hpp"
 
+#include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <algorithm>
 #include <iostream>
