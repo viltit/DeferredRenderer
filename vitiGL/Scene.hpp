@@ -17,7 +17,7 @@
 #include "Shape.hpp"
 #include "Error.hpp"
 #include "Light.hpp"
-
+#include "Shadowmap.hpp"
 
 namespace vitiGL {
 
@@ -122,7 +122,6 @@ public:
 		if (node == nullptr) throw vitiError{ ("Invalid index in scene[" + nodeName + "]").c_str() };
 		return node;
 	}
-
 
 
 	//debug - switch front and back face for point light drawing:

@@ -9,6 +9,8 @@
 #include "Cache.hpp"
 #include "Error.hpp"
 #include "Camera.hpp"
+#include "Scene.hpp"
+#include "Frustum.hpp"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -351,7 +353,20 @@ void PointShadowmap::draw(const pLight* light, Scene * scene, const CamInfo& cam
 	/*	PART ONE: draw the scene form the lights point of view and store the depth
 		values in the cubemap */
 
+	if (!scene) return;
+
 	if (!light || !scene) return;
+
+	for (auto& L : _lights) {
+		pLight* light = L.second;
+
+		/*	draw shadowmap for each light
+			enable GL_BLEND for the black-and-white pic and draw shadowed areas in white 
+			
+			Upside: No need for a shadowimage for each light; no gauss filter for each ...
+			Downside: Shadow from one light source can not be "overwritten" by another light */
+
+	}
 	
 	//calculate the View-Projection Matrix for each side of the cubemap:
 	glm::vec3 pos = light->pos();
@@ -407,6 +422,19 @@ void PointShadowmap::off() {
 	glCullFace(GL_BACK);
 	glViewport(0, 0, globals::window_w, globals::window_h);
 }
+
+void PointShadowmap::addLight(const std::string& name, pLight * light) {
+	if (_lights.find("name") != _lights.end())
+		throw vitiError(("<PointShadowmap::addLight>Trying to add an already existing light named " + name).c_str());
+	_lights.insert(std::make_pair(name, light));
+}
+
+void PointShadowmap::removeLight(const std::string & name) {
+	auto i = _lights.find(name);
+	if (i == _lights.end()) return;
+	_lights.erase(i);
+}
+
 
 void PointShadowmap::setUniforms(const Shader & shader)
 {

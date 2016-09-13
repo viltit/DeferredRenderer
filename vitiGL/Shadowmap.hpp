@@ -4,16 +4,18 @@
 
 #include <GL/glew.h>
 #include <string>
+#include <map>
 
 #include "Light.hpp"
 #include "sQuad.hpp"
 #include "Framebuffer.hpp"
 #include "GaussBlur.hpp"
-#include "Scene.hpp"
 
 namespace vitiGL {
 
 class Camera;
+class Scene;
+class Frustum;
 struct CamInfo;
 
 class DirShadowmap {
@@ -80,6 +82,9 @@ public:
 	void draw(const pLight* light, Scene* scene, const CamInfo& cam);
 	void off();
 
+	void addLight(const std::string& name, pLight* light);
+	void removeLight(const std::string& name);
+
 	void setUniforms(const Shader& shader);
 
 	GLuint		texture() const { return _finalImg; }
@@ -102,6 +107,8 @@ protected:
 	Shader		_fshader;	//second pass: draw black and white scene
 
 	GaussBlur	_gauss;		//to blur the shadowmap
+
+	std::map<std::string, pLight*> _lights;
 };
 
 }

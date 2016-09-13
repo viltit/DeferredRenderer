@@ -1,7 +1,6 @@
 #include "Scene.hpp"
 #include "Frustum.hpp"
 #include "vitiGlobals.hpp"
-#include "Shadowmap.hpp"
 
 #include <iostream>
 
