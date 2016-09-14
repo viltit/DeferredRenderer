@@ -8,10 +8,11 @@ namespace vitiGL {
 
 /* CLASS SCENE NODE ------------------------------------------------------------- */
 
-SceneNode::SceneNode(IGameObject* object, glm::vec3 pos, float radius)
+SceneNode::SceneNode(const std::string& name, IGameObject* object, glm::vec3 pos, float radius)
 	:	_parent		{ nullptr },
 		_obj		{ object },
-		_radius		{ radius }
+		_radius		{ radius },
+		_name		{ name }
 {
 	/* get the initial position in case the Shape already has one: */
 	setPos(pos);
@@ -62,8 +63,8 @@ void SceneNode::addChild(SceneNode * s) {
 Scene::Scene() 
 	: _counter{ 0 }
 {
-	_root = new SceneNode{};
 	std::string name = "root";
+	_root = new SceneNode{name};
 	_scene.insert(std::make_pair(name, _root));
 }
 
@@ -93,7 +94,7 @@ void Scene::addChild
 	if (parent == nullptr) {
 		throw initError(("<Scene::addChild> Could not find a parent with the name " + parentName).c_str());
 	}
-	SceneNode* child = new SceneNode(object, pos, radius);
+	SceneNode* child = new SceneNode(nodeName, object, pos, radius);
 
 	/* link the child to its parent: */
 	parent->addChild(child);
@@ -123,6 +124,22 @@ void Scene::addChild
 
 void Scene::addChild(IGameObject * object, const std::string & name, const std::string parentName) {
 	addChild(object, glm::vec3{}, 1.0f, name, parentName);
+}
+
+
+/* wip */
+void Scene::remove(const std::string & name) {
+	SceneNode* node = findByName(name);
+	if (!node) 
+		throw vitiError(("<Scene::remove>Trying to remove an inexisting scene node with the name " + name).c_str());
+	
+
+	for (auto i = node->childrenBegin(); i != node->childrenEnd(); i++) {
+		delete *i;
+	}
+
+	_scene.erase(name);
+	_shapes.erase(name);
 }
 
 

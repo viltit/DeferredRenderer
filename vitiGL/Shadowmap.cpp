@@ -352,12 +352,9 @@ void PointShadowmap::on() {
 void PointShadowmap::draw(Scene * scene, const CamInfo& cam) {
 	if (!scene) return;
 
-	//clear the framebuffer with white:
-	/*
-	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+	//clear the framebuffer:
 	_framebuffer.on();
 	_framebuffer.off();
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);*/
 
 	for (auto& L : _lights) {
 		/*	PART ONE: draw the scene form the lights point of view and store the depth
@@ -368,7 +365,7 @@ void PointShadowmap::draw(Scene * scene, const CamInfo& cam) {
 		//calculate the View-Projection Matrix for each side of the cubemap:
 		glm::vec3 pos = light->pos();
 
-		glm::mat4 P = glm::perspective(glm::radians(90.0f), float(_w) / float(_h), 0.1f, light->radius());
+		glm::mat4 P = glm::perspective(glm::radians(90.0f), float(_w) / float(_h), 0.0f, light->radius());
 		_L[0] = (P * glm::lookAt(pos, pos + glm::vec3{ 1.0f, 0.0f, 0.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f }));
 		_L[1] = (P * glm::lookAt(pos, pos + glm::vec3{ -1.0f, 0.0f, 0.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f }));
 		_L[2] = (P * glm::lookAt(pos, pos + glm::vec3{ 0.0f, 1.0f, 0.0f }, glm::vec3{ 0.0f, 0.0f, 1.0f }));
@@ -387,19 +384,15 @@ void PointShadowmap::draw(Scene * scene, const CamInfo& cam) {
 		scene->drawShapesNaked(_shader);
 
 		_shader.off();
-		off();
+
 
 		/* PART II: Draw the scene with shadows in a black-and-white texture: */
-		_framebuffer.on();  //do NOT clear the framebuffer
+		_framebuffer.on(false);  //do NOT clear the framebuffer
 		_fshader.on();
-
-		glCullFace(GL_BACK);
-		//glEnable(GL_BLEND);
-		//glBlendFunc(GL_ONE, GL_ONE);
-
+		
 		/* set all relevant uniforms: */
 		setUniforms(_fshader);
-		glUniform3f(_fshader.getUniform("lightPos"), light->pos().x, light->pos().y, light->pos().z);
+		glUniform3fv(_fshader.getUniform("lightPos"), 1, glm::value_ptr(light->pos()));
 		glm::mat4 VP = cam.P * cam.V;
 		glUniformMatrix4fv(_fshader.getUniform("VP"), 1, GL_FALSE, glm::value_ptr(VP));
 		glUniform1f(_fshader.getUniform("radius"), light->radius());
@@ -407,6 +400,10 @@ void PointShadowmap::draw(Scene * scene, const CamInfo& cam) {
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, _tbo);
 		glUniform1i(_fshader.getUniform("shadowMap"), 1);
+
+		glCullFace(GL_BACK);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_ONE, GL_ONE);
 
 		scene->drawShapesNaked(_fshader);
 
@@ -418,6 +415,7 @@ void PointShadowmap::draw(Scene * scene, const CamInfo& cam) {
 
 	/* STEP 3: Blur the black-and-white picture with gaussian blur */
 	_finalImg = _gauss.blur(_framebuffer.texture(), 2);
+	off();
 }
 
 void PointShadowmap::off() {

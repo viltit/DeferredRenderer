@@ -34,5 +34,5 @@ void main() {
 	float bias = 0.005;
 	float shadow = (current - bias > depth) ? 0.0f : 1.0f;
 
-	color = vec4(shadow, shadow, shadow, 1.0f);
+	color = vec4(1.0f - shadow, 1.0f - shadow, 1.0f - shadow, 1.0f);
 }

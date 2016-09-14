@@ -26,7 +26,11 @@ class Frustum;
 /*	CLASS SceneNode ------------------------------------------------------------------------------ */
 class SceneNode {
 public:
-	SceneNode(IGameObject* object = nullptr, glm::vec3 pos = { 0.0f, 0.0f, 0.0f }, float radius = 1.0f);
+	SceneNode(const std::string& name, 
+			  IGameObject* object = nullptr, 
+			  glm::vec3 pos = { 0.0f, 0.0f, 0.0f }, 
+			  float radius = 1.0f);
+
 	virtual ~SceneNode();
 	
 	virtual void update(const Uint32& deltaTime);
@@ -53,6 +57,8 @@ public:
 
 	float		radius() const { return _radius; }
 
+	std::string name() { return _name; }
+
 	ObjType		type() { return _obj->type(); }
 	IGameObject* obj() { return _obj; }
 
@@ -70,6 +76,8 @@ protected:
 	glm::mat4	_W;		//world position
 
 	float		_radius;
+
+	std::string _name;
 };
 
 /*	CLASS SCENE ------------------------------------------------------------------------------
@@ -97,6 +105,9 @@ public:
 	void addChild(IGameObject* object,
 				  const std::string& name = "",
 				  const std::string parentName = "root");
+
+	/* removes node and all its children: */
+	void remove(const std::string& name);
 
 	/* access scene elements: */
 	SceneNode* findByName(const std::string& name);
