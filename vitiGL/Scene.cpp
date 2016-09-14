@@ -110,7 +110,11 @@ void Scene::addChild
 		_dlights.insert(std::make_pair(nodeName, static_cast<dLight*>(object)));
 		break;
 	case ObjType::plight:
-		_plights.insert(std::make_pair(nodeName, static_cast<pLight*>(object)));
+	{
+		pLight* light = static_cast<pLight*>(object);
+		if (light->shadow()) _pShadow.addLight(nodeName, light);
+		_plights.insert(std::make_pair(nodeName, light));
+	}
 		break;
 	default:
 		throw vitiError("<Scene::addChild>Unknown Object type.");
@@ -161,6 +165,10 @@ void Scene::drawDLights(const Shader & shader) const {
 
 void Scene::drawPlights(const Shader & shader) const {
 	for (const auto& L : _plights) L.second->draw(shader);
+}
+
+void Scene::drawPShadows(const CamInfo & cam) {
+	_pShadow.draw(this, cam);
 }
 
 dLight * Scene::findDLight(const std::string & name) {

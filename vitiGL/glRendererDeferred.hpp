@@ -89,7 +89,6 @@ protected:
 	const Window*	_window;
 
 	DirShadowmap _dshadow;
-	PointShadowmap _pshadow;
 
 	/* Gaussian Blur for bloom: */
 	GaussBlur	_gauss;

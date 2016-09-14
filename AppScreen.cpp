@@ -44,7 +44,7 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 
 	_scene.addChild(new dLight{ "dlight", glm::vec3{ 0.5f, -1.0f, -0.5f } }, "dlight");
 
-	pLight* plight = new pLight{ &_cam };
+	pLight* plight = new pLight{ &_cam, true };
 	plight->setProperty(lightProps::pos, glm::vec3{ 3.0f, 10.0f, 0.0f });
 	plight->setProperty(lightProps::diffuse, glm::vec3{ 10.0f, 5.0f, 0.0f });
 	plight->setProperty(lightProps::specular, glm::vec3{ 20.0f, 10.0f, 0.0f });

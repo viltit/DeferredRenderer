@@ -66,13 +66,7 @@ void glRendererDeferred::draw() {
 	}
 
 	/* point shadows: (only a test now) */
-	pLight* plight = _scene->findPLight("plight");
-	if (plight == nullptr) std::cout << "Did not find plight";
-	else {
-		_pshadow.on();
-		_pshadow.draw(plight, _scene, _camera->getMatrizes());
-		_pshadow.off();
-	}
+	_scene->drawPShadows(cam);
 
 	/* draw: */
 	drawGeo();
@@ -92,7 +86,7 @@ void glRendererDeferred::draw() {
 
 	_framebuffer.draw();
 
-	_debug.draw(_dshader, _pshadow.texture());
+	_debug.draw(_dshader, _scene->pShadowTex());
 	_debug2.draw(_dshader, _dshadow.texture());
 	_debug3.draw(_dshader, _tbo[brightness]);
 	_debug4.draw(_dshader, _tbo[normal]);
@@ -192,7 +186,7 @@ void glRendererDeferred::drawLight() {
 
 	/* set the shadowmap texture (wip): */
 	glActiveTexture(GL_TEXTURE3);
-	glBindTexture(GL_TEXTURE_2D, _pshadow.texture());
+	glBindTexture(GL_TEXTURE_2D, _scene->pShadowTex());
 	glUniform1i(_lshader.getUniform("shadowcube"), 3);
 
 	/* draw the point lights: (more happening in the plight::draw() function!) */

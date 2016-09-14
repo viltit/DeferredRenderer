@@ -1,6 +1,7 @@
 #pragma once
 
 #include <GL/glew.h>
+#include <glm/glm.hpp>
 #include <string>
 
 #include "Shader.hpp"
@@ -27,7 +28,7 @@ public:
 				bool setUniforms = true);
 	~Framebuffer();
 
-	void	on();
+	void	on(bool clear = true);
 	void	off();
 	void	draw();
 

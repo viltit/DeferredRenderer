@@ -82,7 +82,8 @@ private:
 /* Point Light ----------------------------------------------------------------------------------- */
 class pLight : public Light {
 public:
-	pLight	(const Camera* camera,
+	pLight(const Camera* camera,
+			bool shadow = false,
 			const glm::vec3& pos = { 0.0f, 1.0f, 0.0f },
 			const glm::vec3& ambient = { 0.1f, 0.1f, 0.1f },
 			const glm::vec3& diffuse = { 0.6f, 0.6f, 0.6f },
@@ -99,8 +100,11 @@ public:
 	//inherited from IDrawable
 	void draw(const Shader& shader) const override;
 
+	/* getters and setters: */
 	float radius() const { return _r; }
 	glm::vec3 pos() const { return _pos; }
+	
+	bool shadow() { return _shadow; }
 
 	//debug:
 	bool _front;
@@ -118,6 +122,8 @@ private:
 
 	Sphere*			_sphere;
 	float			_r;
+
+	bool			_shadow;
 
 	const Camera*	_cam;
 };

@@ -79,7 +79,7 @@ public:
 	~PointShadowmap();
 
 	void on();
-	void draw(const pLight* light, Scene* scene, const CamInfo& cam);
+	void draw(Scene* scene, const CamInfo& cam);
 	void off();
 
 	void addLight(const std::string& name, pLight* light);

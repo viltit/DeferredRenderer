@@ -116,6 +116,12 @@ public:
 	void drawDLights(const Shader& shader) const;
 	void drawPlights(const Shader& shader) const;
 
+	/* draw shadowmaps: */
+	void drawPShadows(const CamInfo& cam);
+
+	/* get the shadowmaps: */
+	GLuint pShadowTex() { return _pShadow.texture(); }
+
 	/* allow indexing the scene: */
 	SceneNode* operator [] (const std::string& nodeName) {
 		SceneNode* node = findByName(nodeName);
@@ -148,6 +154,8 @@ private:
 	std::map<std::string, Shape*>	_shapes;
 	std::map<std::string, dLight*>	_dlights;
 	std::map<std::string, pLight*>	_plights;
+
+	PointShadowmap _pShadow;
 };
 
 }

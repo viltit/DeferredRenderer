@@ -349,69 +349,72 @@ void PointShadowmap::on() {
 	glClear(GL_DEPTH_BUFFER_BIT);
 }
 
-void PointShadowmap::draw(const pLight* light, Scene * scene, const CamInfo& cam) {
-	/*	PART ONE: draw the scene form the lights point of view and store the depth
-		values in the cubemap */
-
+void PointShadowmap::draw(Scene * scene, const CamInfo& cam) {
 	if (!scene) return;
 
-	if (!light || !scene) return;
+	//clear the framebuffer with white:
+	/*
+	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+	_framebuffer.on();
+	_framebuffer.off();
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);*/
 
 	for (auto& L : _lights) {
+		/*	PART ONE: draw the scene form the lights point of view and store the depth
+			values in the cubemap */
 		pLight* light = L.second;
+		on();
 
-		/*	draw shadowmap for each light
-			enable GL_BLEND for the black-and-white pic and draw shadowed areas in white 
-			
-			Upside: No need for a shadowimage for each light; no gauss filter for each ...
-			Downside: Shadow from one light source can not be "overwritten" by another light */
+		//calculate the View-Projection Matrix for each side of the cubemap:
+		glm::vec3 pos = light->pos();
 
+		glm::mat4 P = glm::perspective(glm::radians(90.0f), float(_w) / float(_h), 0.1f, light->radius());
+		_L[0] = (P * glm::lookAt(pos, pos + glm::vec3{ 1.0f, 0.0f, 0.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f }));
+		_L[1] = (P * glm::lookAt(pos, pos + glm::vec3{ -1.0f, 0.0f, 0.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f }));
+		_L[2] = (P * glm::lookAt(pos, pos + glm::vec3{ 0.0f, 1.0f, 0.0f }, glm::vec3{ 0.0f, 0.0f, 1.0f }));
+		_L[3] = (P * glm::lookAt(pos, pos + glm::vec3{ 0.0f, -1.0f, 0.0f }, glm::vec3{ 0.0f, 0.0f, -1.0f }));
+		_L[4] = (P * glm::lookAt(pos, pos + glm::vec3{ 0.0f, 0.0f, 1.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f }));
+		_L[5] = (P * glm::lookAt(pos, pos + glm::vec3{ 0.0f, 0.0f, -1.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f }));
+
+		//render the scene (TO DO: ONLY DRAW OBJECTS WITHIN THE LIGHTS RADIUS)
+		_shader.on();
+		for (size_t i = 0; i < 6; i++) {
+			glUniformMatrix4fv(_shader.getUniform("L[" + std::to_string(i) + "]"), 1, GL_FALSE, glm::value_ptr(_L[i]));
+		}
+		glUniform1f(_shader.getUniform("radius"), light->radius());
+		glUniform3f(_shader.getUniform("pos"), pos.x, pos.y, pos.z);
+
+		scene->drawShapesNaked(_shader);
+
+		_shader.off();
+		off();
+
+		/* PART II: Draw the scene with shadows in a black-and-white texture: */
+		_framebuffer.on();  //do NOT clear the framebuffer
+		_fshader.on();
+
+		glCullFace(GL_BACK);
+		//glEnable(GL_BLEND);
+		//glBlendFunc(GL_ONE, GL_ONE);
+
+		/* set all relevant uniforms: */
+		setUniforms(_fshader);
+		glUniform3f(_fshader.getUniform("lightPos"), light->pos().x, light->pos().y, light->pos().z);
+		glm::mat4 VP = cam.P * cam.V;
+		glUniformMatrix4fv(_fshader.getUniform("VP"), 1, GL_FALSE, glm::value_ptr(VP));
+		glUniform1f(_fshader.getUniform("radius"), light->radius());
+
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, _tbo);
+		glUniform1i(_fshader.getUniform("shadowMap"), 1);
+
+		scene->drawShapesNaked(_fshader);
+
+		_fshader.off();
+		_framebuffer.off();
+
+		glDisable(GL_BLEND);
 	}
-	
-	//calculate the View-Projection Matrix for each side of the cubemap:
-	glm::vec3 pos = light->pos();
-
-	glm::mat4 P = glm::perspective(glm::radians(90.0f), float(_w) / float(_h), 0.1f, light->radius());
-	_L[0] = (P * glm::lookAt(pos, pos + glm::vec3{ 1.0f, 0.0f, 0.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f }));
-	_L[1] = (P * glm::lookAt(pos, pos + glm::vec3{ -1.0f, 0.0f, 0.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f }));
-	_L[2] = (P * glm::lookAt(pos, pos + glm::vec3{ 0.0f, 1.0f, 0.0f }, glm::vec3{ 0.0f, 0.0f, 1.0f }));
-	_L[3] = (P * glm::lookAt(pos, pos + glm::vec3{ 0.0f, -1.0f, 0.0f }, glm::vec3{ 0.0f, 0.0f, -1.0f }));
-	_L[4] = (P * glm::lookAt(pos, pos + glm::vec3{ 0.0f, 0.0f, 1.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f }));
-	_L[5] = (P * glm::lookAt(pos, pos + glm::vec3{ 0.0f, 0.0f, -1.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f }));
-
-	//render the scene (TO DO: ONLY DRAW OBJECTS WITHIN THE LIGHTS RADIUS)
-	_shader.on();
-	for (size_t i = 0; i < 6; i++) {
-		glUniformMatrix4fv(_shader.getUniform("L[" + std::to_string(i) + "]"), 1, GL_FALSE, glm::value_ptr(_L[i]));
-	}
-	glUniform1f(_shader.getUniform("radius"), light->radius());
-	glUniform3f(_shader.getUniform("pos"), pos.x, pos.y, pos.z);
-
-	scene->drawShapesNaked(_shader);
-
-	_shader.off();
-
-	/* PART II: Draw the scene with shadows in a black-and-white texture: */
-	_framebuffer.on();
-	_fshader.on();
-
-	glCullFace(GL_BACK);
-
-	/* set all relevant uniforms: */
-	setUniforms(_fshader);
-	glUniform3f(_fshader.getUniform("lightPos"), light->pos().x, light->pos().y, light->pos().z);
-	glm::mat4 VP = cam.P * cam.V;
-	glUniformMatrix4fv(_fshader.getUniform("VP"), 1, GL_FALSE, glm::value_ptr(VP));
-	glUniform1f(_fshader.getUniform("radius"), light->radius());
-
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, _tbo);
-	glUniform1i(_fshader.getUniform("shadowMap"), 1);
-
-	scene->drawShapesNaked(_fshader);
-
-	_fshader.off();
-	_framebuffer.off();
 
 	/* STEP 3: Blur the black-and-white picture with gaussian blur */
 	_finalImg = _gauss.blur(_framebuffer.texture(), 2);

@@ -67,6 +67,7 @@ void dLight::draw(const Shader & shader) const {
 pLight::pLight	
 (
 	const Camera* camera,
+	bool shadow,
 	const glm::vec3 & pos, 
 	const glm::vec3 & ambient, 
 	const glm::vec3 & diffuse, 
@@ -82,7 +83,8 @@ pLight::pLight
 		_diffuse		{ diffuse },
 		_specular		{ specular },
 		_uniform		{ uniformName },
-		_sphere			{ new Sphere{"xml/sphere.xml" } }
+		_sphere			{ new Sphere{"xml/sphere.xml" } },
+		_shadow			{ shadow }
 {
 	_attenuation = Attenuation::r100;
 
