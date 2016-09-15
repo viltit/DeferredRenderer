@@ -1,16 +1,14 @@
 #version 410 core
 
 /* layout qualifiers to put the values in the right color attachment: */
-layout(location = 0) out vec3 g_pos;
-layout(location = 1) out vec3 g_norm;
-layout(location = 2) out vec4 g_albedo;
+layout(location = 0) out vec3 g_norm;
+layout(location = 1) out vec4 g_albedo;
 
 in VS_OUT{
 	vec3	norm;		/* all in world space */
 	vec3	tangent;
 	vec3	bitangent;
 	vec2	uv;
-	vec3	pos;
 } fs_in;
 
 uniform sampler2D diffuse;
@@ -27,5 +25,4 @@ void main() {
 
 	g_albedo.rgb	= texture(diffuse, fs_in.uv).rgb;
 	g_albedo.a		= texture(specular, fs_in.uv).r;
-	g_pos			= fs_in.pos;
 }

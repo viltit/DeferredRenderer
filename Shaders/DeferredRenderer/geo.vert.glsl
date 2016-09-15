@@ -16,7 +16,6 @@ out VS_OUT{
 	vec3	tangent;
 	vec3	bitangent;
 	vec2	uv;
-	vec3	pos;
 } vs_out;
 
 uniform mat4 M;		/* model matrix */
@@ -33,7 +32,6 @@ void main() {
 	vs_out.norm		= mat3(transpose(inverse(M))) * norm;
 	vs_out.tangent	= normalize(vec3(M * vec4(tangent, 0.0f)));
 	vs_out.bitangent = normalize(vec3(M * vec4(bitangent, 0.0f)));
-	vs_out.pos = world_pos;
 
 	/* Gram-Schmidt process: re-orthogonalize
 	vs_out.tangent		= normalize(vs_out.tangent - dot(vs_out.tangent,vs_out.norm) * vs_out.norm);

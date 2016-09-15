@@ -42,7 +42,6 @@ public:
 protected:
 	/* enum for indexing the texture attachments: */
 	enum texureBuffer {
-		position,
 		normal,
 		color,
 		diffuse,
@@ -76,7 +75,7 @@ protected:
 	Shader		_dshader; //debug
 
 	/* the texture buffers: */
-	GLuint		_tbo[9];
+	GLuint		_tbo[8];
 
 	/* ...and the framebuffers: */
 	GLuint		_buffer[3];

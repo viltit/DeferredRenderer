@@ -229,7 +229,7 @@ void glRendererDeferred::drawFinal() {
 
 void glRendererDeferred::initGeoBuffer() {
 	/* define our three color attachments: */
-	GLuint attachments[3] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 , GL_COLOR_ATTACHMENT2 };
+	GLuint attachments[3] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
 
 	/* generate and bind the framebuffer: */
 	glGenFramebuffers(1, &_buffer[geo]);
@@ -240,19 +240,17 @@ void glRendererDeferred::initGeoBuffer() {
 	int h = _window->height();
 
 	_tbo[normal] = initTexture(textureType::float16, w, h);
-	_tbo[position] = initTexture(textureType::float16, w, h);
 	_tbo[color] = initTexture(textureType::color, w, h);
 	_tbo[depht] = initTexture(textureType::depth, w, h);
 
 	/* attach the textures to the framebuffer: */
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _tbo[position], 0);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, _tbo[normal], 0);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, _tbo[color], 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _tbo[normal], 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, _tbo[color], 0);
 
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, _tbo[depht], 0);
 
 	/* tell OpenGL in what colorbuffers we draw: */
-	glDrawBuffers(3, attachments);
+	glDrawBuffers(2, attachments);
 
 	/* check if the geometry buffer is complete: */
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
