@@ -113,6 +113,7 @@ void Scene::addChild
 	case ObjType::plight:
 	{
 		pLight* light = static_cast<pLight*>(object);
+		child->setPos(light->pos());
 		if (light->shadow()) _pShadow.addLight(nodeName, light);
 		_plights.insert(std::make_pair(nodeName, light));
 	}

@@ -106,6 +106,11 @@ public:
 	
 	bool shadow() { return _shadow; }
 
+	//override IGameObject-Method:
+	virtual void setModelMatrix(const glm::mat4& M) override {
+		_pos = { M[3][0], M[3][1], M[3][2] };
+	}
+
 	//debug:
 	bool _front;
 

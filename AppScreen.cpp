@@ -58,8 +58,6 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 
 	initGUI();
 	_timer.on();
-
-	_scene.remove("Octahedron");
 }
 
 

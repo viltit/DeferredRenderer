@@ -51,6 +51,7 @@ void Framebuffer::on(bool clear) {
 	glViewport(0, 0, _width, _height);
 	glEnable(GL_DEPTH_TEST);
 	if (clear) glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	else glClear(GL_DEPTH_BUFFER_BIT);
 }
 
 void Framebuffer::off() {
@@ -194,9 +195,11 @@ void Framebuffer::init() {
 	glGenTextures(1, &_tbo);
 	glBindTexture(GL_TEXTURE_2D, _tbo);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, _width, _height, 0, GL_RGB, GL_FLOAT, nullptr);
-	
+
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	//attach the texture to the framebuffer:
