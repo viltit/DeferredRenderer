@@ -6,9 +6,11 @@ uniform mat4 M;
 uniform mat4 VP;
 
 out vec3 lightPos;
+out mat4 inverseVP;
 
 void main() {
-	/* only makes sence for point lights: */
-	lightPos = vec3(M * vec4(0.0f, 0.0f, 0.0f, 1.0f));
 	gl_Position = VP * M * vec4(pos, 1.0f);
+
+	/* for reconstruction of the fragments position: */
+	inverseVP = inverse(VP);
 }

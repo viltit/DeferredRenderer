@@ -144,8 +144,8 @@ void glRendererDeferred::drawLight() {
 	glUniform1i(_lshader.getUniform("normal"), 4);
 
 	glActiveTexture(GL_TEXTURE5);
-	glBindTexture(GL_TEXTURE_2D, _tbo[position]);
-	glUniform1i(_lshader.getUniform("position"), 5);
+	glBindTexture(GL_TEXTURE_2D, _tbo[depht]);
+	glUniform1i(_lshader.getUniform("depth"), 5);
 
 	/* set view pos and texel size uniform: */
 	glUniform3f(_lshader.getUniform("viewPos"), _camera->pos().x, _camera->pos().y, _camera->pos().z);

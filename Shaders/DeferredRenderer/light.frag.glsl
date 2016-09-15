@@ -45,7 +45,7 @@ layout (location = 1) out vec4 lspecular;
 /* texture input from geometry pass: ------------------------------------- */
 //uniform sampler2D depht;
 uniform sampler2D normal;
-uniform sampler2D position;
+uniform sampler2D depth;
 uniform sampler2D shadowmap;
 uniform sampler2D shadowcube;
 
@@ -56,17 +56,23 @@ uniform vec3 viewPos;
 uniform DLight dlight;
 uniform	PLight	plight;
 
+/* shaders input and output variables: ----------------------------------- */
+in mat4 inverseVP;
 out vec4 color;
 
-/* Function prototypes: -------------------------------------------------- */
-vec2 getUV();
 
 /* Shaders entry point: -------------------------------------------------- */
 void main() {
 	/* get uv coordinates, fragments world position and the normal: */
-	vec2 uv = getUV();
-	vec3 worldPos	= texture(position, uv).xyz;
+	vec2 uv = vec2(gl_FragCoord.x * texelSize.x, gl_FragCoord.y * texelSize.y);
 	vec3 normal		= normalize(texture(normal, uv).xyz);
+
+	/* reconstruct fragments world position: */
+	vec3 pos = vec3(uv, texture(depth, uv).r);
+	vec4 clip = inverseVP * vec4(pos * 2.0f - 1.0f, 1.0f);
+
+	vec3 worldPos = clip.xyz / clip.w;
+
 
 	Light light = updateLight(worldPos, normal, uv);
 
@@ -75,10 +81,6 @@ void main() {
 }
 
 /* Functions ------------------------------------------------------------- */
-vec2 getUV() {
-	return vec2(gl_FragCoord.x * texelSize.x, gl_FragCoord.y * texelSize.y);
-}
-
 subroutine (UpdateLight)
 Light updateDlight(vec3 worldPos, vec3 normal, vec2 uv) {
 	vec3 ldir		= normalize(-dlight.dir);
