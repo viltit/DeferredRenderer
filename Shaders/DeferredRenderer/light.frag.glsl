@@ -5,10 +5,6 @@ Shader for lightning pass in deferred rendering
 ->	works with a subroutine uniform so our app does not need to switch between
 	Shaders for dir and point lights
 
-ToDo:	
-->	!Read the shadowmap in this shader! 
-->	Read the shinyness value from the alpha-channel of the specular texture
-
 --------------------------------------------------------------------------- */
 
 #version 400 core

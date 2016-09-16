@@ -133,7 +133,7 @@ void DirShadowmap::initFramebuffer() {
 	for (int i = 0; i < 4; i++) {
 		glGenTextures(1, &_tbo[i]);
 		glBindTexture(GL_TEXTURE_2D, _tbo[i]);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, _w, _h, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, nullptr);
+		glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH_COMPONENT32, _w, _h);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
@@ -402,7 +402,7 @@ void PointShadowmap::draw(Scene * scene, const CamInfo& cam) {
 		glUniform1i(_fshader.getUniform("shadowMap"), 1);
 
 		glCullFace(GL_BACK);
-		glEnable(GL_BLEND);
+		//glEnable(GL_BLEND);
 		glBlendFunc(GL_ONE, GL_ONE);
 
 		scene->drawShapesNaked(_fshader);
@@ -445,10 +445,8 @@ void PointShadowmap::initFramebuffer() {
 	/* generate and configure cubemap texture: */
 	glGenTextures(1, &_tbo);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, _tbo);
-	for (int i = 0; i < 6; i++) {
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_DEPTH_COMPONENT, _w, _h,
-					 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
-	}
+
+	glTexStorage2D(GL_TEXTURE_CUBE_MAP, 1, GL_DEPTH_COMPONENT16, _w, _h);
 
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);

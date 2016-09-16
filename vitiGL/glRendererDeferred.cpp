@@ -318,28 +318,19 @@ GLuint initTexture(textureType type, int w, int h) {
 
 	switch (type) {
 	case textureType::color:
-		glTexImage2D(GL_TEXTURE_2D, 0,
-					 GL_RGBA,
-					 w, h, 0,
-					 GL_RGBA,
-					 GL_UNSIGNED_BYTE,
-					nullptr);
+		glTexStorage2D	(GL_TEXTURE_2D, 1,
+						GL_RGBA8,
+						w, h);
 		break;
 	case textureType::float16:
-		glTexImage2D(GL_TEXTURE_2D, 0,
-					 GL_RGB16F,
-					 w, h, 0,
-					 GL_RGB,
-					 GL_FLOAT,
-					 nullptr);
+		glTexStorage2D	(GL_TEXTURE_2D, 1,
+						 GL_RGB16F,
+						 w, h);
 		break;
 	case textureType::depth:
-		glTexImage2D(GL_TEXTURE_2D, 0,
-					 GL_DEPTH_COMPONENT24,
-					 w, h, 0,
-					 GL_DEPTH_COMPONENT,
-					 GL_UNSIGNED_BYTE,
-					 nullptr);
+		glTexStorage2D	(GL_TEXTURE_2D, 1,
+						GL_DEPTH_COMPONENT32,
+						w, h);
 		break;
 	default:
 		throw vitiError("<InitTexture>: Invalid textureType");
