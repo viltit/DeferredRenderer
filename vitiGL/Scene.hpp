@@ -128,6 +128,7 @@ public:
 	void drawPlights(const Shader& shader) const;
 
 	/* draw shadowmaps: */
+	void setShadowcaster(const std::string& name);
 	void drawPShadows(const CamInfo& cam);
 
 	/* get the shadowmaps: */
@@ -166,6 +167,7 @@ private:
 	std::map<std::string, dLight*>	_dlights;
 	std::map<std::string, pLight*>	_plights;
 
+	pLight*		   _shadowcaster;
 	PointShadowmap _pShadow;
 };
 

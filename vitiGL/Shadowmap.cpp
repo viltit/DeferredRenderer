@@ -349,91 +349,65 @@ void PointShadowmap::on() {
 	glClear(GL_DEPTH_BUFFER_BIT);
 }
 
-void PointShadowmap::draw(Scene * scene, const CamInfo& cam) {
-	if (!scene) return;
+void PointShadowmap::draw(pLight* light, Scene * scene, const CamInfo& cam) {
+	if (!scene || !light) return;
 
-	//clear the framebuffer:
-	_framebuffer.on();
-	_framebuffer.off();
+	/*	PART ONE: draw the scene form the lights point of view and store the depth
+		values in the cubemap */
 
-	for (auto& L : _lights) {
-		/*	PART ONE: draw the scene form the lights point of view and store the depth
-			values in the cubemap */
-		pLight* light = L.second;
-		on();
+	//calculate the View-Projection Matrix for each side of the cubemap:
+	glm::vec3 pos = light->pos();
 
-		//calculate the View-Projection Matrix for each side of the cubemap:
-		glm::vec3 pos = light->pos();
+	glm::mat4 P = glm::perspective(glm::radians(90.0f), float(_w) / float(_h), 0.0f, light->radius());
+	_L[0] = (P * glm::lookAt(pos, pos + glm::vec3{ 1.0f, 0.0f, 0.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f }));
+	_L[1] = (P * glm::lookAt(pos, pos + glm::vec3{ -1.0f, 0.0f, 0.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f }));
+	_L[2] = (P * glm::lookAt(pos, pos + glm::vec3{ 0.0f, 1.0f, 0.0f }, glm::vec3{ 0.0f, 0.0f, 1.0f }));
+	_L[3] = (P * glm::lookAt(pos, pos + glm::vec3{ 0.0f, -1.0f, 0.0f }, glm::vec3{ 0.0f, 0.0f, -1.0f }));
+	_L[4] = (P * glm::lookAt(pos, pos + glm::vec3{ 0.0f, 0.0f, 1.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f }));
+	_L[5] = (P * glm::lookAt(pos, pos + glm::vec3{ 0.0f, 0.0f, -1.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f }));
 
-		glm::mat4 P = glm::perspective(glm::radians(90.0f), float(_w) / float(_h), 0.0f, light->radius());
-		_L[0] = (P * glm::lookAt(pos, pos + glm::vec3{ 1.0f, 0.0f, 0.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f }));
-		_L[1] = (P * glm::lookAt(pos, pos + glm::vec3{ -1.0f, 0.0f, 0.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f }));
-		_L[2] = (P * glm::lookAt(pos, pos + glm::vec3{ 0.0f, 1.0f, 0.0f }, glm::vec3{ 0.0f, 0.0f, 1.0f }));
-		_L[3] = (P * glm::lookAt(pos, pos + glm::vec3{ 0.0f, -1.0f, 0.0f }, glm::vec3{ 0.0f, 0.0f, -1.0f }));
-		_L[4] = (P * glm::lookAt(pos, pos + glm::vec3{ 0.0f, 0.0f, 1.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f }));
-		_L[5] = (P * glm::lookAt(pos, pos + glm::vec3{ 0.0f, 0.0f, -1.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f }));
-
-		//render the scene (TO DO: ONLY DRAW OBJECTS WITHIN THE LIGHTS RADIUS)
-		_shader.on();
-		for (size_t i = 0; i < 6; i++) {
-			glUniformMatrix4fv(_shader.getUniform("L[" + std::to_string(i) + "]"), 1, GL_FALSE, glm::value_ptr(_L[i]));
-		}
-		glUniform1f(_shader.getUniform("radius"), light->radius());
-		glUniform3f(_shader.getUniform("pos"), pos.x, pos.y, pos.z);
-
-		scene->drawShapesNaked(_shader);
-
-		_shader.off();
-
-
-		/* PART II: Draw the scene with shadows in a black-and-white texture: */
-		_framebuffer.on(false);  //do NOT clear the framebuffer
-		_fshader.on();
-		
-		/* set all relevant uniforms: */
-		setUniforms(_fshader);
-		glUniform3fv(_fshader.getUniform("lightPos"), 1, glm::value_ptr(light->pos()));
-		glm::mat4 VP = cam.P * cam.V;
-		glUniformMatrix4fv(_fshader.getUniform("VP"), 1, GL_FALSE, glm::value_ptr(VP));
-		glUniform1f(_fshader.getUniform("radius"), light->radius());
-
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, _tbo);
-		glUniform1i(_fshader.getUniform("shadowMap"), 1);
-
-		glCullFace(GL_BACK);
-		//glEnable(GL_BLEND);
-		glBlendFunc(GL_ONE, GL_ONE);
-
-		scene->drawShapesNaked(_fshader);
-
-		_fshader.off();
-		_framebuffer.off();
-
-		glDisable(GL_BLEND);
+	//render the scene (TO DO: ONLY DRAW OBJECTS WITHIN THE LIGHTS RADIUS)
+	_shader.on();
+	for (size_t i = 0; i < 6; i++) {
+		glUniformMatrix4fv(_shader.getUniform("L[" + std::to_string(i) + "]"), 1, GL_FALSE, glm::value_ptr(_L[i]));
 	}
+	glUniform1f(_shader.getUniform("radius"), light->radius());
+	glUniform3f(_shader.getUniform("pos"), pos.x, pos.y, pos.z);
+
+	scene->drawShapesNaked(_shader);
+
+	_shader.off();
+
+	/* PART II: Draw the scene with shadows in a black-and-white texture: */
+	_framebuffer.on();  //do NOT clear the framebuffer
+	_fshader.on();
+		
+	/* set all relevant uniforms: */
+	setUniforms(_fshader);
+	glUniform3fv(_fshader.getUniform("lightPos"), 1, glm::value_ptr(light->pos()));
+	glm::mat4 VP = cam.P * cam.V;
+	glUniformMatrix4fv(_fshader.getUniform("VP"), 1, GL_FALSE, glm::value_ptr(VP));
+	glUniform1f(_fshader.getUniform("radius"), light->radius());
+
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, _tbo);
+	glUniform1i(_fshader.getUniform("shadowMap"), 1);
+
+	glCullFace(GL_BACK);
+
+	scene->drawShapesNaked(_fshader);
+
+	_fshader.off();
+	_framebuffer.off();
 
 	/* STEP 3: Blur the black-and-white picture with gaussian blur */
 	_finalImg = _gauss.blur(_framebuffer.texture(), 2);
-	off();
 }
 
 void PointShadowmap::off() {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glCullFace(GL_BACK);
 	glViewport(0, 0, globals::window_w, globals::window_h);
-}
-
-void PointShadowmap::addLight(const std::string& name, pLight * light) {
-	if (_lights.find("name") != _lights.end())
-		throw vitiError(("<PointShadowmap::addLight>Trying to add an already existing light named " + name).c_str());
-	_lights.insert(std::make_pair(name, light));
-}
-
-void PointShadowmap::removeLight(const std::string & name) {
-	auto i = _lights.find(name);
-	if (i == _lights.end()) return;
-	_lights.erase(i);
 }
 
 

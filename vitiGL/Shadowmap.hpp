@@ -79,11 +79,8 @@ public:
 	~PointShadowmap();
 
 	void on();
-	void draw(Scene* scene, const CamInfo& cam);
+	void draw(pLight* light, Scene* scene, const CamInfo& cam);
 	void off();
-
-	void addLight(const std::string& name, pLight* light);
-	void removeLight(const std::string& name);
 
 	void setUniforms(const Shader& shader);
 
@@ -107,8 +104,6 @@ protected:
 	Shader		_fshader;	//second pass: draw black and white scene
 
 	GaussBlur	_gauss;		//to blur the shadowmap
-
-	std::map<std::string, pLight*> _lights;
 };
 
 }

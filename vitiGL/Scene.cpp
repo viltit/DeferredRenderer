@@ -114,7 +114,6 @@ void Scene::addChild
 	{
 		pLight* light = static_cast<pLight*>(object);
 		child->setPos(light->pos());
-		if (light->shadow()) _pShadow.addLight(nodeName, light);
 		_plights.insert(std::make_pair(nodeName, light));
 	}
 		break;
@@ -185,8 +184,16 @@ void Scene::drawPlights(const Shader & shader) const {
 	for (const auto& L : _plights) L.second->draw(shader);
 }
 
+void Scene::setShadowcaster(const std::string& name) {
+	SceneNode* node = findByName(name);
+	if (node == nullptr) throw vitiError(("<Scene::setShadowcatser>Trying to add an inexisting pLight named" + name).c_str());
+	if (node->type() == ObjType::plight) _shadowcaster = static_cast<pLight*>(node->obj());
+}
+
 void Scene::drawPShadows(const CamInfo & cam) {
-	_pShadow.draw(this, cam);
+	_pShadow.on();
+	_pShadow.draw(_shadowcaster, this, cam);
+	_pShadow.off();
 }
 
 dLight * Scene::findDLight(const std::string & name) {
