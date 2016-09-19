@@ -87,7 +87,6 @@ protected:
 	Camera*		_camera;
 	const Window*	_window;
 
-	DirShadowmap _dshadow;
 
 	/* Gaussian Blur for bloom: */
 	GaussBlur	_gauss;

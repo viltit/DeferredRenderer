@@ -176,8 +176,11 @@ void Scene::drawShapesNaked(const Shader & shader, Frustum& frustum) {
 	for (auto& N : _cullingList) N->drawNaked(shader);
 }
 
-void Scene::drawDLights(const Shader & shader) const {
-	for (const auto& L : _dlights) L.second->draw(shader);
+void Scene::drawDlights(const Shader & shader) const {
+	for (const auto& L : _dlights) {
+		L.second->setUniforms(shader);
+		L.second->draw(shader);
+	}
 }
 
 void Scene::drawPlights(const Shader & shader) const {
@@ -187,13 +190,29 @@ void Scene::drawPlights(const Shader & shader) const {
 void Scene::setShadowcaster(const std::string& name) {
 	SceneNode* node = findByName(name);
 	if (node == nullptr) throw vitiError(("<Scene::setShadowcatser>Trying to add an inexisting pLight named" + name).c_str());
-	if (node->type() == ObjType::plight) _shadowcaster = static_cast<pLight*>(node->obj());
+
+	switch (node->type()) {
+	case ObjType::plight:
+		_pshadowcaster = static_cast<pLight*>(node->obj());
+		break;
+	case ObjType::dlight:
+		_dshadowcaster = static_cast<dLight*>(node->obj());
+		break;
+	default:
+		throw vitiError(("<Scene::setShadowcatser>Invalid type. Object with name " + name + " can not be a shadowcatser").c_str());
+	}
 }
 
 void Scene::drawPShadows(const CamInfo & cam) {
 	_pShadow.on();
-	_pShadow.draw(_shadowcaster, this, cam);
+	_pShadow.draw(_pshadowcaster, this, cam);
 	_pShadow.off();
+}
+
+void Scene::drawDShadows(const CamInfo & cam, Frustum& frustum) {
+	_dShadow.on();
+	_dShadow.draw(_dshadowcaster, this, cam, frustum);
+	_dShadow.off();
 }
 
 dLight * Scene::findDLight(const std::string & name) {

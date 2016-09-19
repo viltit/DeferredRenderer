@@ -19,26 +19,19 @@
 
 namespace vitiGL {
 
-DirShadowmap::DirShadowmap(const Camera& cam, const dLight * light, int width, int height) 
+DirShadowmap::DirShadowmap(int width, int height) 
 	:	_w		{ width },
 		_h		{ height },
 		_shader { "Shaders/shadowmap.vert.glsl", "Shaders/shadowmap.frag.glsl" },
 		_fshader{ "Shaders/shadowmapFinal.vert.glsl", "Shaders/shadowmapFinal.frag.glsl"},
-		_light	{ light },
 		_framebuffer { globals::window_w, globals::window_h, 
 					   "Shaders/simple.vert.glsl", "Shaders/simple.frag.glsl",
-						false }
+						false },
+		_updateCascade { true }
 {
 #ifdef CONSOLE_LOG
 	std::cout << "Initializing directional Shadow Map...";
 #endif
-
-	/* calculate the cascades: */
-	_cascadeEnd[0] = cam.nearPlane();
-	_cascadeEnd[1] = 7.0f;  //cam.near() + (cam.far() - cam.near()) / 5.0f;
-	_cascadeEnd[2] = 20.0f;  //cam.near() + (cam.far() - cam.near()) / 5.0f;
-	_cascadeEnd[3] = 40.0f; //cam.near() + (cam.far() - cam.near()) / 2.0f;
-	_cascadeEnd[4] = cam.farPlane();
 
 	initFramebuffer();
 
@@ -63,11 +56,12 @@ void DirShadowmap::on() {
 	glClear(GL_DEPTH_BUFFER_BIT);
 }
 
-void DirShadowmap::draw(const CamInfo& camera, Scene* scene, Frustum& frustum) {
-	if (!_light || !scene) return;
+void DirShadowmap::draw(const dLight* light, Scene* scene, const CamInfo& camera, Frustum& frustum) {
+	if (!light || !scene) return;
+	if (_updateCascade) updateCascades(camera);
 
 	/* STEP ONE: Render scene from the viewpoint of the light: */
-	updateMatrices2(camera);
+	updateMatrices2(light, camera);
 
 	_shader.on();
 
@@ -88,7 +82,7 @@ void DirShadowmap::draw(const CamInfo& camera, Scene* scene, Frustum& frustum) {
 	glCullFace(GL_BACK);
 
 	setUniforms(_fshader);
-	glUniform3f(_fshader.getUniform("dlightDir"), _light->dir().x, _light->dir().y, _light->dir().z);
+	glUniform3f(_fshader.getUniform("dlightDir"), light->dir().x, light->dir().y, light->dir().z);
 	glm::mat4 VP = camera.P * camera.V;
 	glUniformMatrix4fv(_fshader.getUniform("VP"), 1, GL_FALSE, glm::value_ptr(VP));
 	scene->drawShapesNaked(_fshader, frustum);
@@ -160,6 +154,15 @@ void DirShadowmap::initFramebuffer() {
 	}
 }
 
+void DirShadowmap::updateCascades(const CamInfo & camera) {
+	_cascadeEnd[0] = camera.near;
+	_cascadeEnd[1] = 7.0f;  //cam.near() + (cam.far() - cam.near()) / 5.0f;
+	_cascadeEnd[2] = 20.0f;  //cam.near() + (cam.far() - cam.near()) / 5.0f;
+	_cascadeEnd[3] = 40.0f; //cam.near() + (cam.far() - cam.near()) / 2.0f;
+	_cascadeEnd[4] = camera.far;
+	_updateCascade = false;
+}
+
 
 /* this function needs some serious improvments 
 	-> calculation of camera frustum in world space is wrong
@@ -219,7 +222,7 @@ void DirShadowmap::updatMatrices(const CamInfo& camera) {
 	_L = _O * _V;*/
 }
 
-void DirShadowmap::updateMatrices2(const CamInfo& camera) {
+void DirShadowmap::updateMatrices2(const dLight* light, const CamInfo& camera) {
 	/*	calculate the frusta of all cascades 
 		see http://alextardif.com/ShadowMapping.html for some background */
 	
@@ -274,7 +277,7 @@ void DirShadowmap::updateMatrices2(const CamInfo& camera) {
 		S = glm::scale(S, glm::vec3{ texelsPerUnit, texelsPerUnit, texelsPerUnit });
 
 		// create a temporary look-At Matrix:
-		glm::mat4 tempV = glm::lookAt(glm::vec3{ 0.0f, 0.0f, 0.0f }, -_light->dir(), glm::vec3{ 0.0f, 1.0f, 0.0f });
+		glm::mat4 tempV = glm::lookAt(glm::vec3{ 0.0f, 0.0f, 0.0f }, -light->dir(), glm::vec3{ 0.0f, 1.0f, 0.0f });
 		tempV = S * tempV;
 		glm::mat4 tempVinv = glm::inverse(tempV);
 
@@ -287,7 +290,7 @@ void DirShadowmap::updateMatrices2(const CamInfo& camera) {
 		glm::vec3 center3 = { center.x, center.y, center.z };
 
 		// create the eye by moving in the opposite direction of the light:
-		glm::vec3 eye = center3 - _light->dir() * 2.0f * radius;
+		glm::vec3 eye = center3 - light->dir() * 2.0f * radius;
 
 		// we are now ready to create the lights view and ortho matrix:
 		_V[i] = glm::lookAt(eye, center3, glm::vec3{ 0.0f, 1.0f, 0.0f });

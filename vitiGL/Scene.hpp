@@ -124,15 +124,17 @@ public:
 	void drawShapesNaked(const Shader& shader, Frustum& frustum);
 
 	/* draw lights (for second pass in deferred rendering) */
-	void drawDLights(const Shader& shader) const;
+	void drawDlights(const Shader& shader) const;
 	void drawPlights(const Shader& shader) const;
 
 	/* draw shadowmaps: */
 	void setShadowcaster(const std::string& name);
 	void drawPShadows(const CamInfo& cam);
+	void drawDShadows(const CamInfo& cam, Frustum& frustum);
 
 	/* get the shadowmaps: */
 	GLuint pShadowTex() { return _pShadow.texture(); }
+	GLuint dShadowTex() { return _dShadow.texture(); }
 
 	/* allow indexing the scene: */
 	SceneNode* operator [] (const std::string& nodeName) {
@@ -167,8 +169,10 @@ private:
 	std::map<std::string, dLight*>	_dlights;
 	std::map<std::string, pLight*>	_plights;
 
-	pLight*		   _shadowcaster;
+	pLight*		   _pshadowcaster;
+	dLight*		   _dshadowcaster;
 	PointShadowmap _pShadow;
+	DirShadowmap   _dShadow;
 };
 
 }

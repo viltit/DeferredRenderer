@@ -22,7 +22,6 @@ glRendererDeferred::glRendererDeferred(const Window* window, Scene* scene, Camer
 		_debug2{ QuadPos::aboveMiddleRight },
 		_debug3{ QuadPos::belowMiddleRight },
 		_debug4{ QuadPos::bottomRight },
-		_dshadow{ *camera },
 		_framebuffer{ globals::window_w, globals::window_h,
 						"Shaders/DeferredRenderer/pp.vert.glsl", "Shaders/DeferredRenderer/pp.frag.glsl" },
 		_gamma{ 1.2f },
@@ -59,12 +58,7 @@ void glRendererDeferred::draw() {
 	_frustum.update(VP);
 
 	/* dir shadowmap: */
-	if (_drawDshadow) { //also test if a dirlight is active!
-		_dshadow.on();
-		_dshadow.draw(_camera->getMatrizes(), _scene, _frustum);
-		_dshadow.off();
-	}
-
+	_scene->drawDShadows(cam, _frustum);
 	/* point shadows: (only a test now) */
 	_scene->drawPShadows(cam);
 
@@ -87,7 +81,7 @@ void glRendererDeferred::draw() {
 	_framebuffer.draw();
 
 	_debug.draw(_dshader, _scene->pShadowTex());
-	_debug2.draw(_dshader, _dshadow.texture());
+	_debug2.draw(_dshader, _scene->dShadowTex());
 	_debug3.draw(_dshader, _tbo[brightness]);
 	_debug4.draw(_dshader, _tbo[normal]);
 }
@@ -152,29 +146,23 @@ void glRendererDeferred::drawLight() {
 
 	/* DIRECTIONAL LIGHT: */
 	glm::mat4 M{};
-	auto dlight = _scene->findDLight("dlight"); //bad!! should not need name.
 
-	if (dlight) {
-		_dshadow.setLight(dlight);
-		dlight->setUniforms(_lshader); //not needed every frame!
+	_lshader.on();
 
-		_lshader.on();
+	/* set dshadow-texturemap: */
+	glActiveTexture(GL_TEXTURE3);
+	glBindTexture(GL_TEXTURE_2D, _scene->dShadowTex());
+	glUniform1i(_lshader.getUniform("shadowmap"), 3);
 
-		/* set dshadow-texturemap: */
-		glActiveTexture(GL_TEXTURE3);
-		glBindTexture(GL_TEXTURE_2D, _dshadow.texture());
-		glUniform1i(_lshader.getUniform("shadowmap"), 3);
+	/* set subroutine uniform: */
+	GLuint dlightPass = glGetSubroutineIndex(_lshader.program(), GL_FRAGMENT_SHADER, "updateDlight");
+	glUniformSubroutinesuiv(GL_FRAGMENT_SHADER, 1, &dlightPass);
 
-		/* set subroutine uniform: */
-		GLuint dlightPass = glGetSubroutineIndex(_lshader.program(), GL_FRAGMENT_SHADER, "updateDlight");
-		glUniformSubroutinesuiv(GL_FRAGMENT_SHADER, 1, &dlightPass);
+	/* set model and VP-Matrix uniform (which are both the identity matrix for directional lights) */
+	glUniformMatrix4fv(_lshader.getUniform("M"), 1, GL_FALSE, glm::value_ptr(M));
+	glUniformMatrix4fv(_lshader.getUniform("VP"), 1, GL_FALSE, glm::value_ptr(M));
 
-		/* set model and VP-Matrix uniform (which are both the identity matrix for directional lights) */
-		glUniformMatrix4fv(_lshader.getUniform("M"), 1, GL_FALSE, glm::value_ptr(M));
-		glUniformMatrix4fv(_lshader.getUniform("VP"), 1, GL_FALSE, glm::value_ptr(M));
-
-		dlight->draw(_lshader);
-	}
+	_scene->drawDlights(_lshader);
 
 	/* POINT LIGHTS: */
 	/* override subroutine uniform: */
@@ -184,7 +172,7 @@ void glRendererDeferred::drawLight() {
 	/* set view-perspective matrix: */
 	_camera->setVPUniform(_lshader);
 
-	/* set the shadowmap texture (wip): */
+	/* set the shadowmap texture: */
 	glActiveTexture(GL_TEXTURE3);
 	glBindTexture(GL_TEXTURE_2D, _scene->pShadowTex());
 	glUniform1i(_lshader.getUniform("shadowcube"), 3);
