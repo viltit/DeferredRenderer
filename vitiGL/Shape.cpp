@@ -21,8 +21,8 @@ Shape::Shape()
 
 
 Shape::~Shape() {
-	if (vao) glDeleteVertexArrays(1, &vao);
-	if (vbo) glDeleteBuffers(1, &vbo);
+	//if (vao) glDeleteVertexArrays(1, &vao);
+	//if (vbo) glDeleteBuffers(1, &vbo);
 }
 
 void Shape::draw(const Shader& shader) const {
@@ -195,8 +195,8 @@ Cuboid::Cuboid(const std::string& configFile, const glm::vec3& position)
 }
 
 Cuboid::~Cuboid() {
-	if (vao) glDeleteVertexArrays(1, &vao);
-	if (vbo) glDeleteBuffers(1, &vbo);
+	//if (vao) glDeleteVertexArrays(1, &vao);
+	//if (vbo) glDeleteBuffers(1, &vbo);
 }
 
 void Cuboid::initVertices(std::vector<Vertex>& vertices) {
@@ -287,8 +287,8 @@ Tetrahedron::Tetrahedron(const std::string & configFile, const glm::vec3& positi
 }
 
 Tetrahedron::~Tetrahedron() {
-	if (vao) glDeleteVertexArrays(1, &vao);
-	if (vbo) glDeleteBuffers(1, &vbo);
+	//if (vao) glDeleteVertexArrays(1, &vao);
+	//if (vbo) glDeleteBuffers(1, &vbo);
 }
 
 void Tetrahedron::initVertices(std::vector<Vertex>& vertices) {
@@ -354,8 +354,8 @@ Octahedron::Octahedron(const std::string& configFile, const glm::vec3& position)
 }
 
 Octahedron::~Octahedron() {
-	if (vao) glDeleteVertexArrays(1, &vao);
-	if (vbo) glDeleteBuffers(1, &vbo);
+	//if (vao) glDeleteVertexArrays(1, &vao);
+	//if (vbo) glDeleteBuffers(1, &vbo);
 }
 
 void Octahedron::initVertices(std::vector<Vertex>& vertices) {
@@ -450,8 +450,8 @@ Icosahedron::Icosahedron(const std::string & configFile, const glm::vec3& positi
 }
 
 Icosahedron::~Icosahedron() {
-	if (vao) glDeleteVertexArrays(1, &vao);
-	if (vbo) glDeleteBuffers(1, &vbo);
+	//if (vao) glDeleteVertexArrays(1, &vao);
+	//if (vbo) glDeleteBuffers(1, &vbo);
 }
 
 void Icosahedron::initVertices(std::vector<Vertex>& vertices) {
@@ -612,8 +612,8 @@ Sphere::Sphere(const std::string & configFile) : Icosahedron() {
 }
 
 Sphere::~Sphere() {
-	if (vao) glDeleteVertexArrays(1, &vao);
-	if (vbo) glDeleteBuffers(1, &vbo);
+	//if (vao) glDeleteVertexArrays(1, &vao);
+	//if (vbo) glDeleteBuffers(1, &vbo);
 }
 
 void Sphere::subdivide(std::vector<Vertex>& vertices, float size) {

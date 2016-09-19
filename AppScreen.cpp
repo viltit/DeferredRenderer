@@ -14,7 +14,7 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 {
 	_index = SCREEN_INDEX_APP;
 
-	/* Create the scene elements: */
+	/* Create the scene elements: 
 	int prefix = 1;
 	for (int i = -5; i < 4; i++) {
 		prefix = (prefix == 1) ? -1 : 1;
@@ -28,9 +28,12 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 			_scene.addChild(new Cuboid{ "xml/cubeSmall.xml" }, glm::vec3{ 2.0, 0.0f, 2.0 }, sqrt(1.0f), childName, parentName);
 			_scene.addChild(new Tetrahedron{ "xml/cubeTiny.xml" }, glm::vec3{ 0.0, prefix * 1.0f, 0.0 }, sqrt(1.0f), child2Name, childName);
 		}
-	}
+	}*/
 
-	//_scene.addChild(new Octahedron{ "xml/cube.xml" }, glm::vec3{ 3.0, 3.0f, 3.0 }, sqrt(2.0f), "Octahedron");
+	_scene.addChild(new Octahedron{ "xml/cube.xml" }, glm::vec3{ 3.0, 3.0f, 3.0 }, sqrt(2.0f), "Octahedron1");
+
+	_scene.addChild(new Octahedron{ "xml/cube.xml" }, glm::vec3{ 3.0, 3.0f, 3.0 }, sqrt(2.0f), "Octahedron");
+	_scene.remove("Octahedron");
 
 	_scene.addChild(new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ -3.0f, -3.0f, -3.0f }, sqrt(1800.0f), "Floor");
 	_scene.addChild(new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ 20.0f, 7.0f, -3.0f }, sqrt(1800.0f), "Wall");
@@ -88,7 +91,7 @@ void AppScreen::update() {
 	std::string gamma = "Gamma (keypad +/-): " + std::to_string(_drender.gamma());
 	_gamma->setText(CEGUI::String(gamma));
 
-
+	/*
 	for (int i = -5; i < 4; i++) {
 		for (int j = 1; j < 5; j++) {
 			std::string parent = "Cube" + std::to_string(i) + "/" + std::to_string(j);
@@ -104,7 +107,7 @@ void AppScreen::update() {
 			temp = _scene[child2];
 			temp->rotate(float(frameTime) * j/ (5.0f * i  + 5), glm::vec3{ 0.0f, 1.0f, 0.0f });
 		}
-	}
+	}*/
 
 	//auto temp = _scene["Octahedron"];
 	//temp->rotate(float(frameTime) / (20.0f), glm::vec3{ 0.0f, 1.0f, 0.0f });

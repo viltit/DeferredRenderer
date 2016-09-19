@@ -87,7 +87,7 @@ Light updateDlight(vec3 worldPos, vec3 normal, vec2 uv) {
 	float spec		= pow(clamp(dot(normal, halfway), 0.0f, 1.0f), 22.0f);	//TO DO: 22.0f needs to be a variable !
 
 	/* shadow: */
-	float shadow = texture(shadowmap, uv).r;
+	float shadow = 1.0f - texture(shadowmap, uv).r;
 
 	Light light;
 

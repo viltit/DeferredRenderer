@@ -58,10 +58,26 @@ void SceneNode::addChild(SceneNode * s) {
 	s->_parent = this;
 }
 
+void SceneNode::remove() {
+	/* tell the parent that the child is dead: */
+	for (auto i = _parent->childrenBegin(); i != _parent->childrenEnd(); i++) {
+		if (*i == this) {
+			_parent->_children.erase(i);
+
+#ifdef CONSOLE_LOG
+			std::cout << "Deleting a child named " << _name << " from parent " << _parent->name() << std::endl;
+#endif
+			break;
+		}
+	}
+}
+
 
 /* CLASS SCENE ----------------------------------------------------------------------- */
 Scene::Scene() 
-	: _counter{ 0 }
+	: _counter{ 0 },
+	  _pshadowcaster { nullptr },
+	  _dshadowcaster { nullptr }
 {
 	std::string name = "root";
 	_root = new SceneNode{name};
@@ -138,8 +154,16 @@ void Scene::remove(const std::string & name) {
 		delete *i;
 	}
 
+	/* take the node out of its respective lists: */
 	_scene.erase(name);
-	_shapes.erase(name);
+	_shapes.erase(name); //WIP
+
+	/* tell the nodes parent it died: */
+	node->remove();
+
+	/* delete the node itself: */
+	delete node;
+	node = nullptr;
 }
 
 

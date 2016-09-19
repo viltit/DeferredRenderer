@@ -41,6 +41,8 @@ public:
 
 	virtual void addChild(SceneNode* s);
 
+	virtual void remove();
+
 	/*	getters and setters, all inline:
 	rotation, scaling, positioning will always affect the children too!		*/
 	void		move(const glm::vec3& pos) { _W = glm::translate(_W, pos); _M = glm::translate(_M, pos); }

@@ -37,7 +37,7 @@ void main() {
 		}
 	}
 
-	color = vec4(shadow, shadow, shadow, 1.0f);
+	color = vec4(1.0f - shadow, 1.0f - shadow, 1.0f - shadow, 1.0f);
 }
 
 float updateDirShadow(int c) {
