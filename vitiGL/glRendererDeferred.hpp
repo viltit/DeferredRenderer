@@ -9,6 +9,8 @@
 	naming convention: g- for geometry, l- for lightning, f- for finalizing 
 */
 
+#include "IRenderer.hpp"
+
 namespace vitiGL {
 
 class Scene;
@@ -21,13 +23,14 @@ enum class textureType {
 	depth
 };
 
-class glRendererDeferred {
+class glRendererDeferred : public IRenderer {
 public:
-	glRendererDeferred(const Window* window, Scene* scene, Camera* camera, bool drawDshadow = true);
+	glRendererDeferred(Window* window, Scene* scene, Camera* camera);
 	virtual ~glRendererDeferred();
 
-	virtual void update();
-	virtual void draw();
+	//inherited from IRenderer
+	virtual void update() override;
+	virtual void draw() override;
 
 	GLuint texture() const { return _framebuffer.copyTexture(); } //to get the latest on-screen picture
 
@@ -82,12 +85,6 @@ protected:
 
 	Framebuffer _framebuffer;
 
-	/* Scene and Camera: */
-	Scene*		_scene;
-	Camera*		_camera;
-	const Window*	_window;
-
-
 	/* Gaussian Blur for bloom: */
 	GaussBlur	_gauss;
 
@@ -105,8 +102,6 @@ protected:
 
 	float		_gamma;
 	float		_bloomTreshold;
-
-	bool		_drawDshadow;
 };
 
 /* helper functions that may be useful for other classes too: */

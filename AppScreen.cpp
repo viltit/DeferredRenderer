@@ -8,8 +8,8 @@ using namespace vitiGL;
 AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	: IAppScreen{ app },
 	_cam{ float(window->width()) / float(window->height()) },
-	//_renderer	{ window, &_scene, &_cam },
-	_drender{ window, &_scene, &_cam, true },
+	_renderer	{ window, &_scene, &_cam },
+	_drender{ window, &_scene, &_cam},
 	_gui{ "GUI" }
 {
 	_index = SCREEN_INDEX_APP;
@@ -43,6 +43,7 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	_scene.addChild(new dLight{ "dlight", glm::vec3{ 0.5f, -1.0f, -0.5f } }, "dlight");
 	_scene.setShadowcaster("dlight");
 
+	/**/
 	pLight* plight = new pLight{ &_cam };
 	plight->setProperty(lightProps::pos, glm::vec3{ 3.0f, 10.0f, 0.0f });
 	plight->setProperty(lightProps::diffuse, glm::vec3{ 10.0f, 5.0f, 0.0f });
@@ -119,7 +120,7 @@ void AppScreen::update() {
 }
 
 void AppScreen::draw() {
-	_drender.draw();
+	_renderer.draw();
 	_gui.draw();
 }
 

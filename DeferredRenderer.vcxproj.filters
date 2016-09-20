@@ -19,6 +19,9 @@
     <Filter Include="Resource Files\Shadows">
       <UniqueIdentifier>{6d7b907e-80b5-4921-9d4c-1cab5bdfa14b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Renderer">
+      <UniqueIdentifier>{dff3658c-80a4-4c7c-b434-1c8a835b345c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.hpp">
@@ -35,23 +38,17 @@
     <ClCompile Include="App.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AppScreen.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="MenuScreen.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="AppScreen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\fragment.glsl">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="Shaders\vertex.glsl">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="Shaders\framebuffer.frag.glsl">
       <Filter>Resource Files</Filter>
     </None>
@@ -120,6 +117,18 @@
     </None>
     <None Include="Shaders\Shadows\shadowcube.geo.glsl">
       <Filter>Resource Files\Shadows</Filter>
+    </None>
+    <None Include="Shaders\Renderer\final.frag.glsl">
+      <Filter>Resource Files\Renderer</Filter>
+    </None>
+    <None Include="Shaders\Renderer\final.vert.glsl">
+      <Filter>Resource Files\Renderer</Filter>
+    </None>
+    <None Include="Shaders\Renderer\vertex.glsl">
+      <Filter>Resource Files\Renderer</Filter>
+    </None>
+    <None Include="Shaders\Renderer\fragment.glsl">
+      <Filter>Resource Files\Renderer</Filter>
     </None>
   </ItemGroup>
 </Project>

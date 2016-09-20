@@ -14,6 +14,7 @@
 #include "Shadowmap.hpp"
 #include "GUI.hpp"
 #include "glRendererDeferred.hpp"
+#include "glRenderer.hpp"
 
 
 namespace vitiGL {

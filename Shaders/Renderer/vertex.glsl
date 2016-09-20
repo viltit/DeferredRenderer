@@ -6,22 +6,41 @@ layout (location = 2) in vec3 tangent;
 layout (location = 3) in vec3 bitangent;
 layout (location = 4) in vec2 uv; 
 
+/* structures for lights: */
+struct DLight {
+	vec3 dir;
+	vec3 ambient;
+	vec3 diffuse;
+	vec3 specular;
+};
+
+//Point Light
+struct PLight {
+	vec3 pos;
+	vec3 ambient;
+	vec3 diffuse;
+	vec3 specular;
+	vec3 attenuation; //components constant, linear and quadratic
+};
+
 out VS_OUT {
 	vec3 pos;
 	vec3 normal;
 	vec2 uv;
 
-	vec3 tLightPos;	//tangent-space vectors
-	vec3 tLightDir;
 	vec3 tViewPos;
 	vec3 tFragPos;
+
+	PLight plight;
+	DLight dlight;
 } vsOut;
 
 uniform mat4 VP;				//view-perspective matrix
 uniform mat4 M;					//model matrix
 
-uniform vec3 plightPos;
-uniform vec3 dlightDir;
+uniform PLight plight;
+uniform DLight dlight;
+
 uniform vec3 viewPos;
 
 void main() {
@@ -41,8 +60,12 @@ void main() {
 	vsOut.uv = uv;
 	vsOut.normal = mat3(transpose(inverse(M))) * normal;
 
-	vsOut.tLightPos = TBN * plightPos;
-	vsOut.tLightDir = TBN * dlightDir;
 	vsOut.tViewPos = TBN * viewPos;
 	vsOut.tFragPos = TBN * vec3(M * vec4(pos, 1.0f));
+
+	//Lights:
+	vsOut.plight = plight;
+	vsOut.dlight = dlight;
+	vsOut.plight.pos = TBN * plight.pos;
+	vsOut.dlight.dir = TBN * dlight.dir;
 }

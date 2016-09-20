@@ -211,6 +211,11 @@ void Scene::drawPlights(const Shader & shader) const {
 	for (const auto& L : _plights) L.second->draw(shader);
 }
 
+void Scene::setLightningUniforms(const Shader & shader) const {
+	for (const auto& L : _dlights) L.second->setUniforms(shader);
+	for (const auto& L : _plights) L.second->setUniforms(shader);
+}
+
 void Scene::setShadowcaster(const std::string& name) {
 	SceneNode* node = findByName(name);
 	if (node == nullptr) throw vitiError(("<Scene::setShadowcatser>Trying to add an inexisting pLight named" + name).c_str());

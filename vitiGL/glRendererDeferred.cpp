@@ -10,24 +10,20 @@
 
 namespace vitiGL {
 
-glRendererDeferred::glRendererDeferred(const Window* window, Scene* scene, Camera* camera, bool drawDshadow)
-	:	_window	{ window },
-		_gshader{ "Shaders/DeferredRenderer/geo.vert.glsl", "Shaders/DeferredRenderer/geo.frag.glsl" },
-		_lshader{ "Shaders/DeferredRenderer/light.vert.glsl", "Shaders/DeferredRenderer/light.frag.glsl" },
-		_fshader{ "Shaders/DeferredRenderer/final.vert.glsl", "Shaders/DeferredRenderer/final.frag.glsl" },
-		_dshader{ "Shaders/simple.vert.glsl", "Shaders/simple.frag.glsl" },
-		_scene{ scene },
-		_camera{ camera },
-		_debug{ QuadPos::topRight },
-		_debug2{ QuadPos::aboveMiddleRight },
-		_debug3{ QuadPos::belowMiddleRight },
-		_debug4{ QuadPos::bottomRight },
+glRendererDeferred::glRendererDeferred(Window* window, Scene* scene, Camera* camera)
+	:	IRenderer	{ window, scene, camera },
+		_gshader	{ "Shaders/DeferredRenderer/geo.vert.glsl", "Shaders/DeferredRenderer/geo.frag.glsl" },
+		_lshader	{ "Shaders/DeferredRenderer/light.vert.glsl", "Shaders/DeferredRenderer/light.frag.glsl" },
+		_fshader	{ "Shaders/DeferredRenderer/final.vert.glsl", "Shaders/DeferredRenderer/final.frag.glsl" },
+		_dshader	{ "Shaders/simple.vert.glsl", "Shaders/simple.frag.glsl" },
+		_debug		{ QuadPos::topRight },
+		_debug2		{ QuadPos::aboveMiddleRight },
+		_debug3		{ QuadPos::belowMiddleRight },
+		_debug4		{ QuadPos::bottomRight },
 		_framebuffer{ globals::window_w, globals::window_h,
 						"Shaders/DeferredRenderer/pp.vert.glsl", "Shaders/DeferredRenderer/pp.frag.glsl" },
-		_gamma{ 1.2f },
-		_bloomTreshold{ 1.0f },
-		_drawDshadow{ drawDshadow }
-
+		_gamma		{ 1.2f },
+		_bloomTreshold{ 1.0f }
 {
 	if (_window == nullptr) throw initError("<glRendererDeferred::glRendererDeferred> Window is a nullptr");
 
@@ -57,9 +53,8 @@ void glRendererDeferred::draw() {
 
 	_frustum.update(VP);
 
-	/* dir shadowmap: */
+	/* draw shadowmaps: */
 	_scene->drawDShadows(cam, _frustum);
-	/* point shadows: (only a test now) */
 	_scene->drawPShadows(cam);
 
 	/* draw: */

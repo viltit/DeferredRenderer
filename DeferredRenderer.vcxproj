@@ -147,11 +147,14 @@
     <None Include="Shaders\DeferredRenderer\light.vert.glsl" />
     <None Include="Shaders\DeferredRenderer\pp.frag.glsl" />
     <None Include="Shaders\DeferredRenderer\pp.vert.glsl" />
-    <None Include="Shaders\fragment.glsl" />
     <None Include="Shaders\framebuffer.frag.glsl" />
     <None Include="Shaders\framebuffer.vert.glsl" />
     <None Include="Shaders\gaussianBlur.frag.glsl" />
     <None Include="Shaders\gaussianBlur.vert.glsl" />
+    <None Include="Shaders\Renderer\final.frag.glsl" />
+    <None Include="Shaders\Renderer\final.vert.glsl" />
+    <None Include="Shaders\Renderer\fragment.glsl" />
+    <None Include="Shaders\Renderer\vertex.glsl" />
     <None Include="Shaders\shadowmap.frag.glsl" />
     <None Include="Shaders\shadowmap.vert.glsl" />
     <None Include="Shaders\shadowmapFinal.frag.glsl" />
@@ -163,7 +166,6 @@
     <None Include="Shaders\Shadows\shadowcubeFinal.vert.glsl" />
     <None Include="Shaders\simple.frag.glsl" />
     <None Include="Shaders\simple.vert.glsl" />
-    <None Include="Shaders\vertex.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

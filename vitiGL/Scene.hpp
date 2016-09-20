@@ -86,11 +86,6 @@ protected:
 	Task:	Wrapper to identify Scene Nodes by name and adding childs to a parent by the
 			parent name. Scene also holds all lights.
 
-	Problems:	Ideally, the lights would be SceneNodes too (ie a light can circle around a 
-				parent). But right now, dir- and pointLights are both held in a seperate list
-
-				Merging the list would require the lights to inherit from Shape, which in turn
-				would add not-needed methods to them
 --------------------------------------------------------------------------------------------- */
 
 class Scene {
@@ -128,6 +123,9 @@ public:
 	/* draw lights (for second pass in deferred rendering) */
 	void drawDlights(const Shader& shader) const;
 	void drawPlights(const Shader& shader) const;
+
+	/* set lightning uniforms (only needed for forward rendering): */
+	void setLightningUniforms(const Shader& shader) const;
 
 	/* draw shadowmaps: */
 	void setShadowcaster(const std::string& name);
