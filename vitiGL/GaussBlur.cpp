@@ -23,6 +23,8 @@ GaussBlur::~GaussBlur() {
 }
 
 GLuint GaussBlur::blur(GLuint texture, int iterations) {
+	glViewport(0, 0, _w, _h);
+
 	bool horizontal = true;
 	bool firstIteration = true;
 
@@ -39,6 +41,8 @@ GLuint GaussBlur::blur(GLuint texture, int iterations) {
 		_shader.off();
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	glViewport(0, 0, globals::window_w, globals::window_h);
 
 	return _tbo[!horizontal];
 }
