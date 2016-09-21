@@ -75,6 +75,7 @@ void glRendererDeferred::draw() {
 
 	_framebuffer.draw();
 
+
 	_debug.draw(_dshader, _scene->pShadowTex());
 	_debug2.draw(_dshader, _scene->dShadowTex());
 	_debug3.draw(_dshader, _tbo[brightness]);
@@ -205,7 +206,10 @@ void glRendererDeferred::drawFinal() {
 
 	_fshader.off();
 
-	_tbo[bloom] = _gauss.blur(_tbo[brightness], 10);
+	/* downsample the brightness texture before bluring: */
+
+
+	//_tbo[bloom] = _gauss.blur(_tbo[brightness], 0);
 
 	glEnable(GL_DEPTH_TEST);
 }
