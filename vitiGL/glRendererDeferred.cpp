@@ -206,7 +206,7 @@ void glRendererDeferred::drawFinal() {
 
 	_fshader.off();
 
-	_tbo[bloom] = _gauss.blurDS(_buffer[final], glm::ivec2{_window->width(), _window->height()}, 5, 1);
+	_tbo[bloom] = _gauss.blurDS(_buffer[final], glm::ivec2{_window->width(), _window->height()}, 4, 1);
 
 	glEnable(GL_DEPTH_TEST);
 }

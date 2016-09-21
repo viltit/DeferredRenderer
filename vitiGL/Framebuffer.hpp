@@ -37,7 +37,8 @@ public:
 	GLuint	texture() const	{ return _tbo; } //texture will be blank after framebuffer clears!
 	GLuint	copyTexture() const;			 //returns a new texture which has to be deleted manually
 
-	Shader*	shader() { return &_shader; }
+	Shader*	shader()	{ return &_shader; }
+	GLuint	id()		{ return _fbo; }
 
 protected:
 	virtual void init();
