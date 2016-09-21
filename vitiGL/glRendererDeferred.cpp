@@ -39,7 +39,6 @@ glRendererDeferred::glRendererDeferred(Window* window, Scene* scene, Camera* cam
 	initGeoBuffer();
 	initLightBuffer();
 	initFinalBuffer();
-	initPPBuffer();
 }
 
 
@@ -72,14 +71,14 @@ void glRendererDeferred::draw() {
 	Shader* s = _framebuffer.shader();
 	s->on();
 	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_2D, _tbo[bloom2]);
+	glBindTexture(GL_TEXTURE_2D, _tbo[bloom]);
 	glUniform1i(s->getUniform("bloom"), 2);
 
 	_framebuffer.draw();
 
 	_debug.draw(_dshader, _scene->pShadowTex());
 	_debug2.draw(_dshader, _scene->dShadowTex());
-	_debug3.draw(_dshader, _tbo[bloom2]);
+	_debug3.draw(_dshader, _tbo[bloom]);
 	_debug4.draw(_dshader, _tbo[normal]);
 }
 
@@ -207,18 +206,7 @@ void glRendererDeferred::drawFinal() {
 
 	_fshader.off();
 
-	/* downsample the brighntess texture before gauss blur: */
-	glReadBuffer(GL_COLOR_ATTACHMENT1);
-	glBindFramebuffer(GL_FRAMEBUFFER, _buffer[pp]);
-	glDrawBuffer(GL_COLOR_ATTACHMENT0);
-	glBindFramebuffer(GL_READ_FRAMEBUFFER, _buffer[final]);
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _buffer[pp]);
-	glBlitFramebuffer	(0, 0, _window->width(), _window->height(),
-						0, 0, _window->width() / 4, _window->height() / 4,
-						GL_COLOR_BUFFER_BIT,
-						GL_LINEAR);
-
-	_tbo[bloom2] = _gauss.blur(_tbo[bloom], 5);
+	_tbo[bloom] = _gauss.blurDS(_buffer[final], glm::ivec2{_window->width(), _window->height()}, 5, 1);
 
 	glEnable(GL_DEPTH_TEST);
 }
@@ -295,23 +283,6 @@ void glRendererDeferred::initFinalBuffer() {
 
 	glDrawBuffers(2, attachments);
 
-	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-		throw initError("<Renderer::initFinalBuffer>\t: Framebuffer not complete");
-
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-}
-
-void glRendererDeferred::initPPBuffer() {
-	glGenFramebuffers(1, &_buffer[pp]);
-	glBindFramebuffer(GL_FRAMEBUFFER, _buffer[pp]);
-
-	int w = _window->width() / 4;
-	int h = _window->height() / 4;
-
-	_tbo[bloom] = initTexture(textureType::float16, w, h);
-	_tbo[bloom2] = initTexture(textureType::float16, w, h);
-
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _tbo[bloom], 0);
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		throw initError("<Renderer::initFinalBuffer>\t: Framebuffer not complete");
 

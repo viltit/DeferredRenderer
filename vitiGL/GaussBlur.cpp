@@ -47,11 +47,24 @@ GLuint GaussBlur::blur(GLuint texture, int iterations) {
 	return _tbo[!horizontal];
 }
 
-void GaussBlur::initFramebuffer() {
-	glGenFramebuffers(2, _fbo);
-	glGenTextures(2, _tbo);
 
-	for (int i = 0; i < 2; i++) {
+GLuint GaussBlur::blurDS(GLuint framebuffer, const glm::ivec2& originSize, int iterations, int colorAttachment) {
+	/* we downsample to the size of the GaussBlur Framebuffers: */
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, framebuffer);
+	glReadBuffer(GL_COLOR_ATTACHMENT0 + colorAttachment);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _fbo[2]);
+	glDrawBuffer(GL_COLOR_ATTACHMENT0);
+	glBlitFramebuffer(0, 0, originSize.x, originSize.y, 0, 0, _w, _h, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+
+	return blur(_tbo[2], iterations);
+}
+
+
+void GaussBlur::initFramebuffer() {
+	glGenFramebuffers(3, _fbo);
+	glGenTextures(3, _tbo);
+
+	for (int i = 0; i < 3; i++) {
 		glBindFramebuffer(GL_FRAMEBUFFER, _fbo[i]);
 		glBindTexture(GL_TEXTURE_2D, _tbo[i]);
 		

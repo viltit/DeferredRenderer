@@ -52,23 +52,19 @@ protected:
 		finalCol,
 		brightness,
 		depht,
-		bloom,
-		bloom2
+		bloom
 	};
 
 	enum frameBuffer {
 		geo,
 		light,
-		final,
-		pp
+		final
 	};
 
 	/* initializing functions for the constructor: */
 	void		initGeoBuffer();
 	void		initLightBuffer();
 	void		initFinalBuffer();
-
-	void		initPPBuffer();
 
 	/* the three drawing stages: */
 	void		drawGeo();
@@ -82,10 +78,10 @@ protected:
 	Shader		_dshader; //debug
 
 	/* the texture buffers: */
-	GLuint		_tbo[9];
+	GLuint		_tbo[8];
 
 	/* ...and the framebuffers: */
-	GLuint		_buffer[4];
+	GLuint		_buffer[3];
 
 	Framebuffer _framebuffer;
 

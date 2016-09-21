@@ -18,11 +18,15 @@ public:
 
 	GLuint blur(GLuint texture, int iterations = 5);
 
+	/* first downsample with Framebuffer Blitting, then blur: */
+	GLuint blurDS(GLuint framebuffer, const glm::ivec2& originSize, 
+				  int iterations = 5, int colorAttachment = 0);
+
 private:
 	void initFramebuffer();
 
-	GLuint	_fbo[2];	//ping-pong-framebuffer
-	GLuint	_tbo[2];	//and the corresponding texture attachments
+	GLuint	_fbo[3];	//[0, 1]: ping-pong-framebuffer; [2]: For downsampling
+	GLuint	_tbo[3];	//and the corresponding texture attachments
 
 	Shader	_shader;
 
