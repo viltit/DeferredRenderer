@@ -7,6 +7,7 @@
 #include "sQuad.hpp"
 #include "Shader.hpp"
 
+
 /*	class to blur a texture with a two pass gaussian blur (ie., first we blur horizontal, then we blur vertical)  */
 
 namespace vitiGL {

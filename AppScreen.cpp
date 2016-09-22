@@ -1,6 +1,7 @@
 #include "AppScreen.hpp"
 #include "vitiGL.hpp"
 
+
 #include "App.hpp"
 
 using namespace vitiGL;
@@ -65,6 +66,8 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 
 	initGUI();
 	_timer.on();
+
+	Mesh mesh{ "Models/Shark/shark.obj" };
 }
 
 
