@@ -13,10 +13,11 @@ public:
 	~Mesh();
 
 private:
-	void initVertices();
-
 	// Inherited via Shape
 	virtual void initVertices(std::vector<Vertex>& vertices) override;
+
+	glm::vec3 size;
+	glm::vec2 uv;
 };
 
 }
