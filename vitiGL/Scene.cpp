@@ -41,7 +41,11 @@ void SceneNode::update(const Uint32 & deltaTime) {
 }
 
 void SceneNode::draw(const Shader & shader) const {
+	std::cout << "Trying to draw SceneNode named " << _name << std::endl;
 	if (_obj) _obj->draw(shader);
+	else {
+		std::cout << "SceneNode named " << _name << " has no drawable object attached\n";
+	}
 }
 
 void SceneNode::drawNaked(const Shader & shader) const {
@@ -102,7 +106,7 @@ void Scene::addChild
 	if (name == "" ) nodeName = "Node[" + std::to_string(++_counter) + "]";
 
 #ifdef CONSOLE_LOG
-	//std::cout << "<Scene::addChild>Added a Scene Node with the name " << nodeName << " and the parent " << parentName << std::endl;
+	std::cout << "<Scene::addChild>Added a Scene Node with the name " << nodeName << " and the parent " << parentName << std::endl;
 #endif
 
 	/* create the scene node and search for parent: */
@@ -121,6 +125,7 @@ void Scene::addChild
 	/* put the child in the appropriate vector:*/
 	switch (object->type()) {
 	case ObjType::shape:
+	case ObjType::model:
 		_shapes.insert(std::make_pair(nodeName, static_cast<Shape*>(object)));
 		break;
 	case ObjType::dlight:
@@ -257,7 +262,7 @@ pLight * Scene::findPLight(const std::string & name) {
 }
 
 void Scene::updateCullingList(Frustum & frustum, SceneNode* from) {
-	if ((from->obj()) && from->type() == ObjType::shape) {
+	if ((from->obj()) && (from->type() == ObjType::shape || from->type() == ObjType::model)) {
 		if (frustum.isInside(*from)) _cullingList.push_back(from);
 	}
 

@@ -11,7 +11,8 @@ class Shader;
 enum class ObjType {
 	shape,
 	plight,
-	dlight
+	dlight,
+	model
 };
 
 class IGameObject {

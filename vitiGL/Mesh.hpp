@@ -3,17 +3,19 @@
 #pragma once
 
 #include <string>
+
 #include "Shape.hpp"
 
 namespace vitiGL {
 
 class Mesh : public Shape {
 public:
-	Mesh(const std::string& filePath);
+	Mesh(std::vector<Vertex>& vertices, std::vector<GLuint>& textures);
 	~Mesh();
 
+
 private:
-	// Inherited via Shape
+	// Inherited via Shape (obsolete in this case...)
 	virtual void initVertices(std::vector<Vertex>& vertices) override;
 
 	glm::vec3 size;

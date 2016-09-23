@@ -6,7 +6,7 @@
 #include "Camera.hpp"
 #include "Error.hpp"
 #include "Shape.hpp"
-#include "Mesh.hpp"
+#include "Model.hpp"
 #include "Light.hpp"
 #include "Framebuffer.hpp"
 #include "Scene.hpp"

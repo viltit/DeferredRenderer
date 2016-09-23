@@ -160,6 +160,7 @@
     <ClCompile Include="iApp.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="Model.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="ScreenList.cpp" />
     <ClCompile Include="Shader.cpp" />
@@ -191,6 +192,7 @@
     <ClInclude Include="Keytable.hpp" />
     <ClInclude Include="Light.hpp" />
     <ClInclude Include="Mesh.hpp" />
+    <ClInclude Include="Model.hpp" />
     <ClInclude Include="Scene.hpp" />
     <ClInclude Include="ScreenList.hpp" />
     <ClInclude Include="Shader.hpp" />
