@@ -41,11 +41,12 @@ void SceneNode::update(const Uint32 & deltaTime) {
 }
 
 void SceneNode::draw(const Shader & shader) const {
-	std::cout << "Trying to draw SceneNode named " << _name << std::endl;
 	if (_obj) _obj->draw(shader);
+#ifdef CONSOLE_LOG
 	else {
-		std::cout << "SceneNode named " << _name << " has no drawable object attached\n";
+		std::cout << "<SceneNode::Draw>SceneNode named " << _name << " has no drawable object attached\n";
 	}
+#endif
 }
 
 void SceneNode::drawNaked(const Shader & shader) const {

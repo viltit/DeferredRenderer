@@ -8,8 +8,8 @@ Ks 0.100000 0.100000 0.100000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd Texture/greatwhiteshark.png
-map_Bump Texture/greatwhiteshark_n.png
+map_Kd Models/Shark/Texture/greatwhiteshark.png
+map_bump Models/Shark/Texture/greatwhiteshark_n.png
 
 
 newmtl greatwhiteshark_eye
@@ -20,8 +20,8 @@ Ks 0.100000 0.100000 0.100000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd Texture/greatwhiteshark_Eye.png
-map_Bump Texture/greatwhiteshark_Eye_n.png
+map_Kd Models/Shark/Texture/greatwhiteshark_Eye.png
+map_bump Models/Shark/Texture/greatwhiteshark_Eye_n.png
 
 
 newmtl greatwhiteshark_teet
@@ -32,7 +32,7 @@ Ks 0.100000 0.100000 0.100000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd Texture/greatwhiteshark_teeth.png
-map_Bump Texture/greatwhiteshark_teeth_n.png
+map_Kd Models/Shark/Texture/greatwhiteshark_teeth.png
+map_bump Models/Shark/Texture/greatwhiteshark_teeth_n.png
 
 
