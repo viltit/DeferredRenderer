@@ -12,7 +12,7 @@ Mesh::Mesh(std::vector<Vertex>& vertices, std::vector<GLuint>& textures) {
 
 	numVertices = vertices.size();
 
-	calcNormals(vertices);
+	//calcNormals(vertices);
 	calcTangents(vertices);
 	uploadVertices(vertices);
 
