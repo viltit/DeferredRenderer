@@ -56,7 +56,7 @@ Model::Model(const std::string& filePath, bool textureFolder)
 		for (const auto& index : shape.mesh.indices) {
 			indices.push_back(3.0 * index.vertex_index);
 		}
-		for (const auto& vert : attribs.vertices) {
+		for (const auto& index : shape.mesh.indices) {
 			Vertex vertex;
 			vertex.pos = {
 				attribs.vertices[3 * index.vertex_index + 0],
