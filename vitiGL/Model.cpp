@@ -25,6 +25,8 @@ namespace vitiGL {
 Model::Model(const std::string& filePath, bool textureFolder) 
 	: IGameObject{ ObjType::model }
 {
+	std::cout << "\nSTART PROCESSING OBJ FILE " << filePath << std::endl;
+
 	std::string basePath = filePath.substr(0, filePath.find_last_of("/"));
 	basePath += "/";
 
@@ -44,6 +46,7 @@ Model::Model(const std::string& filePath, bool textureFolder)
 
 	/* create a mesh for each tinyobj::shape: */
 	for (const auto& shape : shapes) {
+		std::cout << "Processing a shape named " << shape.name << std::endl;
 		std::vector<Vertex> vertices;
 		std::vector<GLuint> textures;
 		for (const auto& index : shape.mesh.indices) {
@@ -88,39 +91,42 @@ Model::Model(const std::string& filePath, bool textureFolder)
 		int matIndex = shape.mesh.material_ids[0];
 
 		//if specular texture is not found, use diffuse:
-		if (materials[matIndex].specular_texname == "")
-			materials[matIndex].specular_texname = materials[matIndex].diffuse_texname;
+		if (matIndex > 0) {
+			if (materials[matIndex].specular_texname == "")
+				materials[matIndex].specular_texname = materials[matIndex].diffuse_texname;
+		
+			//diffuse tex
+			try {
+				std::cout << "Trying to open texture file " << basePath + materials[matIndex].diffuse_texname << std::endl;
+				textures.push_back(Cache::getTexture(basePath + materials[matIndex].diffuse_texname));
+			}
+			catch (fileError) {
+				textures.push_back(Cache::getTexture("Textures/MetalFloorsBare_Diffuse.png"));
+			}
 
-		//diffuse tex
-		try {
-			std::cout << "trying to open texture " << basePath + materials[matIndex].diffuse_texname << std::endl;
-			textures.push_back(Cache::getTexture(basePath + materials[matIndex].diffuse_texname));
-		}
-		catch (fileError) {
-			textures.push_back(Cache::getTexture("Textures/MetalFloorsBare_Diffuse.png"));
-		}
+			//specular tex
+			try {
+				std::cout << "Trying to open texture file " << basePath + materials[matIndex].specular_texname << std::endl;
+				textures.push_back(Cache::getTexture(basePath + materials[matIndex].specular_texname));
+			}
+			catch (fileError) {
+				textures.push_back(Cache::getTexture("Textures/MetalFloorsBare_Diffuse.png"));
+			}
 
-		//specular tex
-		try {
-			std::cout << "trying to open texture " << basePath + materials[matIndex].specular_texname  << std::endl;
-			textures.push_back(Cache::getTexture(basePath + materials[matIndex].specular_texname));
-		}
-		catch (fileError) {
-			textures.push_back(Cache::getTexture(basePath + materials[matIndex].diffuse_texname));
-		}
-
-		//normal tex
-		try {
-			std::cout << "trying to open texture " << basePath + materials[matIndex].bump_texname << std::endl;
-			textures.push_back(Cache::getTexture(basePath + materials[matIndex].bump_texname));
-		}
-		catch (fileError) {
-			textures.push_back(Cache::getTexture(basePath + materials[matIndex].bump_texname));
+			//normal tex
+			try {
+				std::cout << "Trying to open texture file " << basePath + materials[matIndex].bump_texname << std::endl;
+				textures.push_back(Cache::getTexture(basePath + materials[matIndex].bump_texname));
+			}
+			catch (fileError) {
+				textures.push_back(Cache::getTexture("Textures/MetalFloorsBare_Diffuse.png"));
+			}
 		}
 
 		Mesh mesh(vertices, textures);
 		_mesh.push_back(mesh);
 	}
+	std::cout << "END PROCESSING OBJ FILE " << filePath << std::endl << std::endl;
 }
 
 
