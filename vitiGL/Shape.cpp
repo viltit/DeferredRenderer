@@ -160,6 +160,164 @@ void Shape::calcTangents(std::vector<Vertex>& vertices, bool bitangents) {
 	}
 }
 
+
+/*	-----------------------------------------------------------------------------------------------------
+CLASS SHAPEI FOR INDEXED DRAWING
+----------------------------------------------------------------------------------------------------- */
+
+ShapeI::ShapeI() 
+	:	IGameObject	{ ObjType::shape },
+		vao			{ 0 },
+		vbo			{ 0 },
+		numVertices	{ 0 }
+{}
+
+ShapeI::~ShapeI() {
+}
+
+void ShapeI::draw(const Shader & shader) const {
+	//give the model matrix to the shader:
+	glUniformMatrix4fv(shader.getUniform("M"), 1, GL_FALSE, glm::value_ptr(_M));
+
+	//glUniform1f(shader.getUniform("material.shiny"), 22.0f);
+
+	//give the textures to the shader:
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, tbo[0]);
+	glUniform1i(shader.getUniform("material.diffuse"), 0);
+
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, tbo[1]);
+	glUniform1i(shader.getUniform("material.specular"), 1);
+
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, tbo[2]);
+	glUniform1i(shader.getUniform("material.normal"), 2);
+
+	//draw:
+	glBindVertexArray(vao);
+	glDrawElements(GL_TRIANGLES, numVertices, GL_UNSIGNED_INT, 0);
+	glBindVertexArray(0);
+}
+
+void ShapeI::drawNaked(const Shader & shader) const {
+	glUniformMatrix4fv(shader.getUniform("M"), 1, GL_FALSE, glm::value_ptr(_M));
+
+	glBindVertexArray(vao);
+	glDrawElements(GL_TRIANGLES, numVertices, GL_UNSIGNED_INT, 0);
+	glBindVertexArray(0);
+}
+
+void ShapeI::uploadVertices(const std::vector<Vertex>& vertices, const std::vector<int>& indices) {
+	glGenVertexArrays(1, &vao);
+	glGenBuffers(1, &vbo);
+	glGenBuffers(1, &ebo);
+
+	glBindVertexArray(vao);
+
+	/* upload vertex data: */
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
+
+	/* upload index data: */
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(int), indices.data(), GL_STATIC_DRAW);
+
+	/* tell openGL how to interpret the vertex data: */
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), nullptr);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, tangent));
+	glEnableVertexAttribArray(3);
+	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, bitangent));
+	glEnableVertexAttribArray(4);
+	glVertexAttribPointer(4, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, uv));
+
+	glBindVertexArray(0);
+}
+
+void ShapeI::calcNormals(std::vector<Vertex>& vertices, std::vector<int>& indices) {
+	for (size_t i = 0; i < indices.size();) {
+		Vertex& v0 = vertices[indices[i++]];
+		Vertex& v1 = vertices[indices[i++]];
+		Vertex& v2 = vertices[indices[i++]];
+
+		//Calculate two edges of the triangle:
+		glm::vec3 e1 = v1.pos - v0.pos;
+		glm::vec3 e2 = v2.pos - v1.pos;
+
+		//get the normal with the cross product:
+		glm::vec3 normal = glm::normalize(glm::cross(e1, e2));
+
+		v0.normal += normal;
+		v1.normal += normal;
+		v2.normal += normal;
+	}
+
+	//normalize the normals (we ALWAYS get flat shading this way)
+	for (size_t i = 0; i < vertices.size(); i++) {
+		vertices[i].normal = glm::normalize(vertices[i].normal);
+	}
+}
+
+void ShapeI::calcTangents(std::vector<Vertex>& vertices, std::vector<int>& indices, bool bitangents) {
+	/* see http://ogldev.atspace.co.uk/www/tutorial26/tutorial26.html for the math behind this function */
+
+	for (int i = 0; i < vertices.size();) {
+
+		/* get the next triangle: */
+		Vertex& v0 = vertices[indices[i++]];
+		Vertex& v1 = vertices[indices[i++]];
+		Vertex& v2 = vertices[indices[i++]];
+
+		/* calculate two edges in the triangle: */
+		glm::vec3 e1 = v1.pos - v0.pos;
+		glm::vec3 e2 = v2.pos - v0.pos;
+
+		/* calculate the uv-distances: */
+		float delta_u1 = v1.uv.x - v0.uv.x;
+		float delta_v1 = v1.uv.y - v0.uv.y;
+		float delta_u2 = v2.uv.x - v0.uv.x;
+		float delta_v2 = v2.uv.y - v0.uv.y;
+
+		float f = 1.0f / (delta_u1 * delta_v2 - delta_u2 * delta_v1);
+
+		glm::vec3 tangent;
+		glm::vec3 bitangent;
+
+		/* calculate tangent: */
+		tangent.x = f * (delta_v2 * e1.x - delta_v1 * e2.x);
+		tangent.y = f * (delta_v2 * e1.y - delta_v1 * e2.y);
+		tangent.z = f * (delta_v2 * e1.z - delta_v1 * e2.z);
+
+		v0.tangent += tangent;
+		v1.tangent += tangent;
+		v2.tangent += tangent;
+
+		/* calculate bitangent if wanted: */
+		if (bitangents) {
+			bitangent.x = f * (-delta_u2 * e1.x - delta_u1 * e2.x);
+			bitangent.y = f * (-delta_u2 * e1.y - delta_u1 * e2.y);
+			bitangent.z = f * (-delta_u2 * e1.z - delta_u1 * e2.z);
+
+			v0.bitangent += bitangent;
+			v1.bitangent += bitangent;
+			v2.bitangent += bitangent;
+		}
+	}
+
+	/* normalize the tangents (together with the += above, we get an average): */
+	for (int i = 0; i < vertices.size(); i++) {
+		vertices[i].tangent = glm::normalize(vertices[i].tangent);
+		/* same for the bitangent, if wanted: */
+		if (bitangents) {
+			vertices[i].bitangent = glm::normalize(vertices[i].bitangent);
+		}
+	}
+}
+
 /*	-----------------------------------------------------------------------------------------------------
 	GEOMETRIC FORMS DERIVED FROM SHAPE
 	----------------------------------------------------------------------------------------------------- */

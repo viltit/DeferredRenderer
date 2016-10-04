@@ -44,12 +44,19 @@ Model::Model(const std::string& filePath, bool textureFolder)
 	if (!error.empty()) std::cout << error << std::endl;
 	if (!ret) throw vitiError(("<Mesh::Mesh>TinyObjLoader failed to load object " + filePath).c_str());
 
-	/* create a mesh for each tinyobj::shape: */
+	/*	create a mesh for each tinyobj::shape: 
+		! We assume that the indices for position and normals are identical !
+	*/
+
 	for (const auto& shape : shapes) {
 		std::cout << "Processing a shape named " << shape.name << std::endl;
 		std::vector<Vertex> vertices;
+		std::vector<int> indices;
 		std::vector<GLuint> textures;
 		for (const auto& index : shape.mesh.indices) {
+			indices.push_back(3.0 * index.vertex_index);
+		}
+		for (const auto& vert : attribs.vertices) {
 			Vertex vertex;
 			vertex.pos = {
 				attribs.vertices[3 * index.vertex_index + 0],

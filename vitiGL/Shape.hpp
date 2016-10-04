@@ -25,11 +25,14 @@ struct slData {
 	Task:	Keep all variables and methods needed for drawing textured Meshes with openGL
 			Things like scaling, moving, ... should happen in the class that holds the Shape.
 
+
 	Caveats:	The shader has to be delivered AND activated from within the class that calls 
 				the draw command.
 
+				For indexed drawing, use class ShapeI
+
 	to do:	Implement glInstancedDraw
-			Implement element buffers and element drawing
+
 	------------------------------------------------------------------------------------------ */
 class Shape : public IGameObject {
 public:
@@ -59,6 +62,38 @@ protected:
 	bool		sRGB;		//gamma-correct diffuse textures on loading
 };
 
+
+/*	------------------------ CLASS SHAPEI for indexed drawing ------------------------------- */
+class ShapeI : public IGameObject {
+public:
+	ShapeI();
+	virtual ~ShapeI();
+
+	virtual void draw(const Shader& shader) const override;
+	virtual void drawNaked(const Shader& shader) const override;
+
+protected:
+	virtual void initVertices(std::vector<Vertex>& vertices) = 0; //pure abstract function !!
+
+	virtual void uploadVertices(const std::vector<Vertex>& vertices, 
+								const std::vector<int>& indices);
+
+	virtual void calcNormals	(std::vector<Vertex>& vertices, 
+								std::vector<int>& indices);	 //only works for triangle meshes!
+	virtual void calcTangents	(std::vector<Vertex>& vertices, 
+								std::vector<int>& indices, 
+								bool bitangents = true);
+
+	GLuint		vao;
+	GLuint		vbo;
+	GLuint		ebo;
+
+	std::vector<GLuint> tbo; //diffuse, specular and normal supported for now
+
+	int			numVertices;
+};
+
+
 /*	---------------------- GEOMETRIC FORMS DERIVED FROM SHAPE ------------------------------- */
 
 class Cuboid : public Shape {
@@ -67,7 +102,7 @@ public:
 	~Cuboid();
 
 protected:
-	virtual void initVertices(std::vector<Vertex>& vertices);
+	virtual void initVertices(std::vector<Vertex>& vertices, );
 
 	glm::vec3	size;
 	glm::vec2	uv;
