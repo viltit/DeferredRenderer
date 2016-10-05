@@ -32,17 +32,19 @@ void Shape::draw(const Shader& shader) const {
 	//glUniform1f(shader.getUniform("material.shiny"), 22.0f);
 
 	//give the textures to the shader:
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, tbo[0]);
-	glUniform1i(shader.getUniform("material.diffuse"), 0);
+	if (tbo.size() != 0) {
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, tbo[0]);
+		glUniform1i(shader.getUniform("material.diffuse"), 0);
 
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, tbo[1]);
-	glUniform1i(shader.getUniform("material.specular"), 1);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, tbo[1]);
+		glUniform1i(shader.getUniform("material.specular"), 1);
 
-	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_2D, tbo[2]);
-	glUniform1i(shader.getUniform("material.normal"), 2);
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, tbo[2]);
+		glUniform1i(shader.getUniform("material.normal"), 2);
+	}
 
 	//draw:
 	glBindVertexArray(vao);

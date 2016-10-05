@@ -8,11 +8,12 @@
 
 namespace vitiGL {
 
-Mesh::Mesh(std::vector<Vertex>& vertices, std::vector<GLuint>& textures) {
+Mesh::Mesh(std::vector<Vertex>& vertices, std::vector<GLuint>& textures)
+{
 
 	numVertices = vertices.size();
 
-	calcNormals(vertices);
+	//calcNormals(vertices);
 	calcTangents(vertices);
 	uploadVertices(vertices);
 
@@ -22,8 +23,11 @@ Mesh::Mesh(std::vector<Vertex>& vertices, std::vector<GLuint>& textures) {
 
 
 Mesh::~Mesh() {
+	//if (vao) glDeleteVertexArrays(1, &vao);
+	//if (vbo) glDeleteBuffers(1, &vbo);
 }
 
 void Mesh::initVertices(std::vector<Vertex>& vertices) {
 }
+
 }

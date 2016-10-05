@@ -102,7 +102,7 @@ public:
 	~Cuboid();
 
 protected:
-	virtual void initVertices(std::vector<Vertex>& vertices, );
+	virtual void initVertices(std::vector<Vertex>& vertices);
 
 	glm::vec3	size;
 	glm::vec2	uv;
