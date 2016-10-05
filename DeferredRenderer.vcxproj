@@ -147,6 +147,9 @@
     <None Include="Shaders\DeferredRenderer\light.vert.glsl" />
     <None Include="Shaders\DeferredRenderer\pp.frag.glsl" />
     <None Include="Shaders\DeferredRenderer\pp.vert.glsl" />
+    <None Include="Shaders\Effects\normal.frag.glsl" />
+    <None Include="Shaders\Effects\normal.geo.glsl" />
+    <None Include="Shaders\Effects\normal.vert.glsl" />
     <None Include="Shaders\framebuffer.frag.glsl" />
     <None Include="Shaders\framebuffer.vert.glsl" />
     <None Include="Shaders\gaussianBlur.frag.glsl" />

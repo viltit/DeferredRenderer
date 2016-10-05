@@ -24,7 +24,8 @@ glRendererDeferred::glRendererDeferred(Window* window, Scene* scene, Camera* cam
 						"Shaders/DeferredRenderer/pp.vert.glsl", "Shaders/DeferredRenderer/pp.frag.glsl" },
 		_gamma		{ 1.2f },
 		_bloomTreshold{ 1.0f },
-		_gauss		{ _window->width() / 4, _window->height() / 4 }
+		_gauss		{ _window->width() / 4, _window->height() / 4 },
+		_normals	{ camera, scene }
 {
 	if (_window == nullptr) throw initError("<glRendererDeferred::glRendererDeferred> Window is a nullptr");
 
@@ -116,6 +117,7 @@ void glRendererDeferred::drawGeo() {
 	_camera->setVPUniform(_gshader);
 	_scene->drawShapes(_gshader, _frustum);
 	_gshader.off();
+	_normals.draw();
 }
 
 void glRendererDeferred::drawLight() {

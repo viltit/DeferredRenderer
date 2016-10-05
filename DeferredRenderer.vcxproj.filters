@@ -22,6 +22,9 @@
     <Filter Include="Resource Files\Renderer">
       <UniqueIdentifier>{dff3658c-80a4-4c7c-b434-1c8a835b345c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Normals">
+      <UniqueIdentifier>{1b9dc591-32ec-4ef9-b5d1-adbe28295ebb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.hpp">
@@ -129,6 +132,15 @@
     </None>
     <None Include="Shaders\Renderer\fragment.glsl">
       <Filter>Resource Files\Renderer</Filter>
+    </None>
+    <None Include="Shaders\Effects\normal.frag.glsl">
+      <Filter>Resource Files\Normals</Filter>
+    </None>
+    <None Include="Shaders\Effects\normal.geo.glsl">
+      <Filter>Resource Files\Normals</Filter>
+    </None>
+    <None Include="Shaders\Effects\normal.vert.glsl">
+      <Filter>Resource Files\Normals</Filter>
     </None>
   </ItemGroup>
 </Project>

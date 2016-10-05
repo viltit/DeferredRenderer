@@ -149,6 +149,7 @@
   <ItemGroup>
     <ClCompile Include="Cache.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="DrawNormals.cpp" />
     <ClCompile Include="Error.cpp" />
     <ClCompile Include="Framebuffer.cpp" />
     <ClCompile Include="Frustum.cpp" />
@@ -177,6 +178,7 @@
     <ClInclude Include="Cache.hpp" />
     <ClInclude Include="Camera.hpp" />
     <ClInclude Include="DataStructures.hpp" />
+    <ClInclude Include="DrawNormals.hpp" />
     <ClInclude Include="Error.hpp" />
     <ClInclude Include="Framebuffer.hpp" />
     <ClInclude Include="Frustum.hpp" />

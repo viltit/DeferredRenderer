@@ -30,15 +30,12 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 			_scene.addChild(new Tetrahedron{ "xml/cubeTiny.xml" }, glm::vec3{ 0.0, prefix * 1.0f, 0.0 }, sqrt(1.0f), child2Name, childName);
 		}
 	}*/
-
-	
-	_scene.addChild(new Octahedron{ "xml/cube.xml" }, glm::vec3{ 0.0, 10.0f, 0.0 }, sqrt(2.0f), "Octahedron1");
 /*
 	_scene.addChild(new Octahedron{ "xml/cube.xml" }, glm::vec3{ 3.0, 3.0f, 3.0 }, sqrt(2.0f), "Octahedron");
 	_scene.remove("Octahedron");*/
 
-	_scene.addChild(new Model{ "Models/Old House/Old House 2 3D Models.obj", false }, glm::vec3{ 0.0f, 0.0f, 0.0f }, sqrt(20.0f), "Shark");
-	_scene["Shark"]->scale(glm::vec3{ 0.1f, 0.1f, 0.1f });
+	_scene.addChild(new Model{ "Models/nanosuit/nanosuit.obj" }, glm::vec3{ 0.0f, 0.0f, 0.0f }, sqrt(20.0f), "Shark");
+	_scene["Shark"]->scale(glm::vec3{ 0.7f, 0.7f, 0.7f });
 
 	_scene.addChild(new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ -3.0f, -3.0f, -3.0f }, sqrt(1800.0f), "Floor");
 	_scene.addChild(new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ 20.0f, 7.0f, -3.0f }, sqrt(1800.0f), "Wall");

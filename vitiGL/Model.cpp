@@ -98,7 +98,7 @@ Model::Model(const std::string& filePath, bool textureFolder)
 		int matIndex = shape.mesh.material_ids[0];
 
 		//if specular texture is not found, use diffuse:
-		if (matIndex > 0) {
+		if (matIndex >= 0) {
 			if (materials[matIndex].specular_texname == "")
 				materials[matIndex].specular_texname = materials[matIndex].diffuse_texname;
 		
@@ -126,7 +126,7 @@ Model::Model(const std::string& filePath, bool textureFolder)
 				textures.push_back(Cache::getTexture(basePath + materials[matIndex].bump_texname));
 			}
 			catch (fileError) {
-				textures.push_back(Cache::getTexture("Textures/MetalFloorsBare_Diffuse.png"));
+				textures.push_back(Cache::getTexture("Textures/MetalFloorsBare_Normal.png"));
 			}
 		}
 

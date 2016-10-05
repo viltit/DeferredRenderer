@@ -12,7 +12,7 @@ class Mesh;
 
 class Model : public IGameObject {
 public:
-	Model(const std::string& filePath);
+	Model(const std::string& filePath, bool textureFolder = true);
 	~Model();
 
 	// Inherited via IGameObject

@@ -16,6 +16,7 @@
 #include "GUI.hpp"
 #include "glRendererDeferred.hpp"
 #include "glRenderer.hpp"
+#include "DrawNormals.hpp"
 
 
 namespace vitiGL {

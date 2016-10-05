@@ -3,6 +3,7 @@
 #include "Frustum.hpp"
 #include "sQuad.hpp"
 #include "Shadowmap.hpp"
+#include "DrawNormals.hpp"
 
 /*	Deferred Renderer
 
@@ -84,6 +85,8 @@ protected:
 	GLuint		_buffer[3];
 
 	Framebuffer _framebuffer;
+
+	DrawNormals _normals;
 
 	/* Gaussian Blur for bloom: */
 	GaussBlur	_gauss;
