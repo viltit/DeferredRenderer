@@ -46,7 +46,7 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	_scene.addChild(new dLight{ "dlight", glm::vec3{ 0.5f, -1.0f, -0.5f } }, "dlight");
 	_scene.setShadowcaster("dlight");
 
-	/**/
+	/*
 	pLight* plight = new pLight{ &_cam };
 	plight->setProperty(lightProps::pos, glm::vec3{ 3.0f, 30.0f, 0.0f });
 	plight->setProperty(lightProps::diffuse, glm::vec3{ 10.0f, 5.0f, 0.0f });
@@ -55,12 +55,12 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	_scene.addChild(plight, "plight");
 
 	pLight* plight2 = new pLight{ &_cam };
-	plight2->setProperty(lightProps::pos, glm::vec3{ 15.0f, 20.0f, 2.0f });
+	plight2->setProperty(lightProps::pos, glm::vec3{ 0.0f, 20.0f, 20.0f });
 	plight2->setProperty(lightProps::diffuse, glm::vec3{ 10.0f, 5.0f, 0.0f });
 	plight2->setProperty(lightProps::specular, glm::vec3{ 20.0f, 10.0f, 0.0f });
 
 	_scene.addChild(plight2, "plight2");
-	_scene.setShadowcaster("plight2");
+	_scene.setShadowcaster("plight2");*/
 
 	_cam.setPos(glm::vec3{ -4.0f, 8.0f, -5.0f });
 	_cam.setTarget(glm::vec3{ 0.0f, 0.0f, 0.0f });
@@ -89,11 +89,16 @@ void AppScreen::update() {
 	Uint32 frameTime = _timer.frame_time();
 	Uint32 time = _timer.get_time();
 
+	/* Infobox update: */
+	_infoBox->deactivate();
 	std::string fps = "FPS: " + std::to_string(_timer.fps());
-	_fpsInfo->setText(CEGUI::String(fps));
-
-	std::string gamma = "Gamma (keypad +/-): " + std::to_string(_drender.gamma());
+	_fps->setText(CEGUI::String(fps));
+	std::string gamma = "Gamma (keypad + and -): " + std::to_string(_drender.gamma());
 	_gamma->setText(CEGUI::String(gamma));
+	std::string exposure = "HDR-Exposure (keypad / and *): " + std::to_string(_drender.exposure());
+	_hdr->setText(CEGUI::String(exposure));
+	_infoBox->activate();
+
 
 	/*
 	for (int i = -5; i < 4; i++) {
@@ -140,15 +145,24 @@ int AppScreen::previous() const {
 }
 
 void AppScreen::initGUI() {
-	_gui.setScheme("AlfiskoSkin.scheme");
+	_gui.setScheme("TaharezLook.scheme");
 	_gui.setFont("DejaVuSans-10");
 	_gui.setMouseCursor("AlfiskoSkin/MouseArrow");
 
-	/* FPS Info: */
-	_fpsInfo = static_cast<CEGUI::PushButton*>(
-		_gui.createWidget(glm::vec4{ 0.01f, 0.03f, 0.2f, 0.05f }, glm::vec4{}, "AlfiskoSkin/Button", "FPS"));
-	_gamma = static_cast<CEGUI::PushButton*>(
-		_gui.createWidget(glm::vec4{ 0.01f, 0.1f, 0.2f, 0.05f }, glm::vec4{}, "AlfiskoSkin/Button", "Gamma"));
+	/* Info Box: */
+	_infoBox = static_cast<CEGUI::Listbox*>(
+		_gui.createWidget(glm::vec4{ 0.01f, 0.1f, 0.25f, 0.2f }, glm::vec4{}, "TaharezLook/Listbox", "Infobox")
+		);
+
+	/* Info Box elements: */
+	_fps = new CEGUI::ListboxTextItem("");
+	_gamma = new CEGUI::ListboxTextItem("");
+	_hdr = new CEGUI::ListboxTextItem("");
+
+	/* attach elements: */
+	_infoBox->addItem(_fps);
+	_infoBox->addItem(_gamma);
+	_infoBox->addItem(_hdr);
 }
 
 void AppScreen::updateInput() {
@@ -215,6 +229,12 @@ void AppScreen::updateInput() {
 				break;
 			case SDLK_KP_MINUS:
 				_drender.gammaMinus(0.1f);
+				break;
+			case SDLK_KP_MULTIPLY:
+				_drender.setExposure(_drender.exposure() + 0.1);
+				break;
+			case SDLK_KP_DIVIDE:
+				_drender.setExposure(_drender.exposure() - 0.1);
 				break;
 			case SDLK_r:
 				_rotate = (_rotate) ? false : true;

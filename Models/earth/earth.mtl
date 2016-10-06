@@ -14,6 +14,7 @@ newmtl 01___Default
 	Ke 0.0000 0.0000 0.0000
 	map_Ka Models/earth/4096_earth.jpg
 	map_Kd Models/earth/4096_earth.jpg
+	map_Ks Models/earth/4096_specular.jpg
 	map_Ke Models/earth/4096_night_lights.jpg
 	map_bump Models/earth/4096_normal.jpg
 	bump Models/earth/4096_normal.jpg

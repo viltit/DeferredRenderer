@@ -36,8 +36,10 @@ protected:
 
 	vitiGL::Timer		_timer;
 
-	CEGUI::PushButton*	_fpsInfo;
-	CEGUI::PushButton*	_gamma;
+	CEGUI::Listbox*		_infoBox;
+	CEGUI::ListboxTextItem* _fps;
+	CEGUI::ListboxTextItem* _gamma;
+	CEGUI::ListboxTextItem* _hdr;
 
 	bool				_rotate;
 };

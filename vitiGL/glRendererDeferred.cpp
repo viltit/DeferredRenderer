@@ -24,6 +24,7 @@ glRendererDeferred::glRendererDeferred(Window* window, Scene* scene, Camera* cam
 						"Shaders/DeferredRenderer/pp.vert.glsl", "Shaders/DeferredRenderer/pp.frag.glsl" },
 		_gamma		{ 1.2f },
 		_bloomTreshold{ 1.0f },
+		_exposure	{ 0.4f },
 		_gauss		{ _window->width() / 4, _window->height() / 4 },
 		_normals	{ camera, scene }
 {
@@ -104,6 +105,14 @@ void glRendererDeferred::setBloomTreshold(float value) {
 	_bloomTreshold = value;
 	glUniform1f(_fshader.getUniform("treshold"), _bloomTreshold);
 	_fshader.off();
+}
+
+void glRendererDeferred::setExposure(float value) {
+	_exposure = value;
+	Shader* s = _framebuffer.shader();
+	s->on();
+	glUniform1f(s->getUniform("exposure"), _exposure);
+	s->off();
 }
 
 void glRendererDeferred::drawGeo() {

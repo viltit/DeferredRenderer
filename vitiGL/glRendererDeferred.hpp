@@ -40,8 +40,11 @@ public:
 	void gammaMinus(float value);
 	float gamma()			{ return _gamma; }
 
-	void setBloomTreshold(float value);
+	void setBloomTreshold (float value);
 	float bloomTreshold()	{ return _bloomTreshold;  }
+
+	void setExposure(float value);
+	float exposure() { return _exposure; }
 
 protected:
 	/* enum for indexing the texture attachments: */
@@ -105,6 +108,7 @@ protected:
 
 	float		_gamma;
 	float		_bloomTreshold;
+	float		_exposure;
 };
 
 /* helper functions that may be useful for other classes too: */
