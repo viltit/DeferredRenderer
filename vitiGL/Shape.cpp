@@ -240,6 +240,10 @@ void ShapeI::uploadVertices(const std::vector<Vertex>& vertices, const std::vect
 }
 
 void ShapeI::calcNormals(std::vector<Vertex>& vertices, std::vector<GLuint>& indices) {
+	/* get all unique positions: */
+	std::vector<GLuint> uniqueInd;
+	std::vector<glm::vec3> uniquePos;
+
 	for (size_t i = 0; i < indices.size();) {
 		Vertex& v0 = vertices[indices[i++]];
 		Vertex& v1 = vertices[indices[i++]];
@@ -257,7 +261,7 @@ void ShapeI::calcNormals(std::vector<Vertex>& vertices, std::vector<GLuint>& ind
 		v2.normal += normal;
 	}
 
-	//normalize the normals (we ALWAYS get flat shading this way)
+	//normalize the normals (we should get flat shading this way)
 	for (size_t i = 0; i < vertices.size(); i++) {
 		vertices[i].normal = glm::normalize(vertices[i].normal);
 	}

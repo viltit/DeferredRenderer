@@ -34,8 +34,9 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	_scene.addChild(new Octahedron{ "xml/cube.xml" }, glm::vec3{ 3.0, 3.0f, 3.0 }, sqrt(2.0f), "Octahedron");
 	_scene.remove("Octahedron");*/
 
-	_scene.addChild(new Model{ "Models/nanosuit/nanosuit.obj" }, glm::vec3{ 0.0f, 0.0f, 0.0f }, sqrt(20.0f), "Shark");
-	_scene["Shark"]->scale(glm::vec3{ 0.7f, 0.7f, 0.7f });
+	_scene.addChild(new Model{ "Models/earth/earth.obj", false }, glm::vec3{ 0.0f, 0.0f, 0.0f }, sqrt(20.0f), "Shark");
+	_scene["Shark"]->scale(glm::vec3{ 0.03f, 0.03f, 0.03f });
+	_scene["Shark"]->setPos(glm::vec3{ 0.0f, 5.0f, 0.0f });
 
 	_scene.addChild(new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ -3.0f, -3.0f, -3.0f }, sqrt(1800.0f), "Floor");
 	_scene.addChild(new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ 20.0f, 7.0f, -3.0f }, sqrt(1800.0f), "Wall");
@@ -54,7 +55,7 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	_scene.addChild(plight, "plight");
 
 	pLight* plight2 = new pLight{ &_cam };
-	plight2->setProperty(lightProps::pos, glm::vec3{ -3.0f, 30.0f, 2.0f });
+	plight2->setProperty(lightProps::pos, glm::vec3{ 15.0f, 20.0f, 2.0f });
 	plight2->setProperty(lightProps::diffuse, glm::vec3{ 10.0f, 5.0f, 0.0f });
 	plight2->setProperty(lightProps::specular, glm::vec3{ 20.0f, 10.0f, 0.0f });
 
@@ -116,7 +117,7 @@ void AppScreen::update() {
 	//temp->rotate(float(frameTime) / (20.0f), glm::vec3{ 0.0f, 1.0f, 0.0f });
 	if (_rotate) {
 		auto temp = _scene["Shark"];
-		temp->rotate(float(frameTime) / (5.0f), glm::vec3{ 0.0f, 1.0f, 0.0f });
+		temp->rotate(float(frameTime) / (20.0f), glm::vec3{ 0.0f, 1.0f, 0.0f });
 	}
 
 	updateInput();
