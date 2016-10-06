@@ -5,11 +5,13 @@
 #include "Mesh.hpp"
 #include "Error.hpp"
 #include "Cache.hpp"
+#include "vitiTypes.hpp"
 
 #define TINYOBJLOADER_IMPLEMENTATION
 #include "tiny_obj_loader.h"
 
 #include <iostream>
+#include <unordered_map>
 
 namespace vitiGL {
 
@@ -51,11 +53,10 @@ Model::Model(const std::string& filePath, bool textureFolder)
 	for (const auto& shape : shapes) {
 		std::cout << "Processing a shape named " << shape.name << std::endl;
 		std::vector<Vertex> vertices;
-		std::vector<int> indices;
+		std::vector<GLuint> indices;
 		std::vector<GLuint> textures;
-		for (const auto& index : shape.mesh.indices) {
-			indices.push_back(3.0 * index.vertex_index);
-		}
+		std::unordered_map<Vertex, int> uniqueVertices;
+
 		for (const auto& index : shape.mesh.indices) {
 			Vertex vertex;
 			vertex.pos = {
@@ -75,7 +76,12 @@ Model::Model(const std::string& filePath, bool textureFolder)
 				attribs.normals[3 * index.normal_index + 2],
 			};
 
-			vertices.push_back(vertex);
+			if (uniqueVertices.count(vertex) == 0) {
+				uniqueVertices[vertex] = vertices.size();
+				vertices.push_back(vertex);
+			}
+
+			indices.push_back(GLuint(uniqueVertices[vertex]));
 		}
 
 		/* get the textures: 
@@ -130,7 +136,7 @@ Model::Model(const std::string& filePath, bool textureFolder)
 			}
 		}
 
-		Mesh mesh(vertices, textures);
+		Mesh mesh(vertices, indices, textures);
 		_mesh.push_back(mesh);
 	}
 	std::cout << "END PROCESSING OBJ FILE " << filePath << std::endl << std::endl;

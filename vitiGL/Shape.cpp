@@ -169,6 +169,7 @@ ShapeI::ShapeI()
 	:	IGameObject	{ ObjType::shape },
 		vao			{ 0 },
 		vbo			{ 0 },
+		ebo			{ 0 },
 		numVertices	{ 0 }
 {}
 
@@ -208,7 +209,7 @@ void ShapeI::drawNaked(const Shader & shader) const {
 	glBindVertexArray(0);
 }
 
-void ShapeI::uploadVertices(const std::vector<Vertex>& vertices, const std::vector<int>& indices) {
+void ShapeI::uploadVertices(const std::vector<Vertex>& vertices, const std::vector<GLuint>& indices) {
 	glGenVertexArrays(1, &vao);
 	glGenBuffers(1, &vbo);
 	glGenBuffers(1, &ebo);
@@ -238,7 +239,7 @@ void ShapeI::uploadVertices(const std::vector<Vertex>& vertices, const std::vect
 	glBindVertexArray(0);
 }
 
-void ShapeI::calcNormals(std::vector<Vertex>& vertices, std::vector<int>& indices) {
+void ShapeI::calcNormals(std::vector<Vertex>& vertices, std::vector<GLuint>& indices) {
 	for (size_t i = 0; i < indices.size();) {
 		Vertex& v0 = vertices[indices[i++]];
 		Vertex& v1 = vertices[indices[i++]];
@@ -262,10 +263,10 @@ void ShapeI::calcNormals(std::vector<Vertex>& vertices, std::vector<int>& indice
 	}
 }
 
-void ShapeI::calcTangents(std::vector<Vertex>& vertices, std::vector<int>& indices, bool bitangents) {
+void ShapeI::calcTangents(std::vector<Vertex>& vertices, std::vector<GLuint>& indices, bool bitangents) {
 	/* see http://ogldev.atspace.co.uk/www/tutorial26/tutorial26.html for the math behind this function */
 
-	for (int i = 0; i < vertices.size();) {
+	for (size_t i = 0; i < indices.size();) {
 
 		/* get the next triangle: */
 		Vertex& v0 = vertices[indices[i++]];

@@ -29,14 +29,15 @@ void main() {
 	vs_out.uv			= uv;
 
 	/* convert our data into world coordinates: */
-	vs_out.norm		= mat3(transpose(inverse(M))) * norm;
-	vs_out.tangent	= normalize(vec3(M * vec4(tangent, 0.0f)));
-	vs_out.bitangent = normalize(vec3(M * vec4(bitangent, 0.0f)));
+	mat3 normalMat = mat3(transpose(inverse(M)));
+
+	vs_out.norm		= normalMat * norm;
+	vs_out.tangent	= normalMat * tangent;
+	vs_out.bitangent = normalMat * bitangent;
 
 	/* Gram-Schmidt process: re-orthogonalize */
 	vs_out.tangent		= normalize(vs_out.tangent - dot(vs_out.tangent,vs_out.norm) * vs_out.norm);
 	vs_out.bitangent	= normalize(cross(vs_out.tangent, vs_out.norm));
-
 
 	gl_Position			= VP * vec4(world_pos, 1.0f);
 }

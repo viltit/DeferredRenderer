@@ -76,12 +76,12 @@ protected:
 	virtual void initVertices(std::vector<Vertex>& vertices) = 0; //pure abstract function !!
 
 	virtual void uploadVertices(const std::vector<Vertex>& vertices, 
-								const std::vector<int>& indices);
+								const std::vector<GLuint>& indices);
 
 	virtual void calcNormals	(std::vector<Vertex>& vertices, 
-								std::vector<int>& indices);	 //only works for triangle meshes!
+								std::vector<GLuint>& indices);	 //only works for triangle meshes!
 	virtual void calcTangents	(std::vector<Vertex>& vertices, 
-								std::vector<int>& indices, 
+								std::vector<GLuint>& indices, 
 								bool bitangents = true);
 
 	GLuint		vao;

@@ -79,7 +79,7 @@ void glRendererDeferred::draw() {
 
 	_debug.draw(_dshader, _scene->pShadowTex());
 	_debug2.draw(_dshader, _scene->dShadowTex());
-	_debug3.draw(_dshader, _tbo[bloom]);
+	_debug3.draw(_dshader, _tbo[color]);
 	_debug4.draw(_dshader, _tbo[normal]);
 }
 

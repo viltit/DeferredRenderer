@@ -114,7 +114,10 @@ void AppScreen::update() {
 
 	//auto temp = _scene["Octahedron"];
 	//temp->rotate(float(frameTime) / (20.0f), glm::vec3{ 0.0f, 1.0f, 0.0f });
-	auto temp = _scene["Shark"];
+	if (_rotate) {
+		auto temp = _scene["Shark"];
+		temp->rotate(float(frameTime) / (5.0f), glm::vec3{ 0.0f, 1.0f, 0.0f });
+	}
 
 	updateInput();
 	_scene.update(frameTime);
@@ -211,6 +214,9 @@ void AppScreen::updateInput() {
 				break;
 			case SDLK_KP_MINUS:
 				_drender.gammaMinus(0.1f);
+				break;
+			case SDLK_r:
+				_rotate = (_rotate) ? false : true;
 				break;
 			}
 			break;

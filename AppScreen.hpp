@@ -38,5 +38,7 @@ protected:
 
 	CEGUI::PushButton*	_fpsInfo;
 	CEGUI::PushButton*	_gamma;
+
+	bool				_rotate;
 };
 
