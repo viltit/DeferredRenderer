@@ -69,12 +69,12 @@ Model::Model(const std::string& filePath, bool textureFolder)
 				1.0f - attribs.texcoords[2 * index.texcoord_index + 1]
 			};
 
-			/* TO DO: Check if normals are delivered
+			/* TO DO: Check if normals are delivered*/
 			vertex.normal = {
 				attribs.normals[3 * index.normal_index + 0],
 				attribs.normals[3 * index.normal_index + 1],
 				attribs.normals[3 * index.normal_index + 2],
-			};*/
+			};
 
 			if (uniqueVertices.count(vertex) == 0) {
 				uniqueVertices[vertex] = vertices.size();
