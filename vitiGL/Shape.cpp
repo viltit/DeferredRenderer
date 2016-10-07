@@ -2,8 +2,10 @@
 
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/hash.hpp>
 
 #include <iostream>
+#include <unordered_map>
 
 #include "Cache.hpp"
 #include "Shader.hpp"
@@ -240,10 +242,6 @@ void ShapeI::uploadVertices(const std::vector<Vertex>& vertices, const std::vect
 }
 
 void ShapeI::calcNormals(std::vector<Vertex>& vertices, std::vector<GLuint>& indices) {
-	/* get all unique positions: */
-	std::vector<GLuint> uniqueInd;
-	std::vector<glm::vec3> uniquePos;
-
 	for (size_t i = 0; i < indices.size();) {
 		Vertex& v0 = vertices[indices[i++]];
 		Vertex& v1 = vertices[indices[i++]];
@@ -319,6 +317,36 @@ void ShapeI::calcTangents(std::vector<Vertex>& vertices, std::vector<GLuint>& in
 		/* same for the bitangent, if wanted: */
 		if (bitangents) {
 			vertices[i].bitangent = glm::normalize(vertices[i].bitangent);
+		}
+	}
+}
+
+void ShapeI::normalizeSeam(std::vector<Vertex>& vertices, std::vector<GLuint>& indices) {
+	/*	we still have a problem with vertices at the object's seam
+	(they share the same position but not the same uv coordiants and still have different normals,
+	which leads to a visible edge on the seam)
+
+	SO, heres a hacky solution for that:
+	*/
+	std::vector<std::pair<GLuint, GLuint>> sharedInd;
+	std::unordered_map<glm::vec3, GLuint> uniquePos;
+
+	for (size_t i = 0; i < indices.size(); i++) {
+		glm::vec3 pos = vertices[indices[i]].pos;
+
+		if (uniquePos.count(pos) == 0) {	//no other vertex shares the same position yet
+			uniquePos[pos] = indices[i];
+		}
+		else {								//we have two vertices sharing the same pos
+			Vertex& v0 = vertices[indices[i]];
+			Vertex& v1 = vertices[uniquePos[pos]];
+
+			if (indices[i] != uniquePos[pos]) {
+				glm::vec3 normal = glm::normalize(v0.normal + v1.normal);
+				v0.normal = normal;
+				v1.normal = normal;
+				glm::vec3 tangent = glm::normalize(v0.tangent + v1.tangent);
+			}
 		}
 	}
 }

@@ -21,6 +21,7 @@ out VS_OUT{
 uniform mat4 M;		/* model matrix */
 uniform mat4 VP;	/* view-perspective matrix */
 
+uniform int gramm = 0;
 
 /* ---------------------------- SHADERS ENTRY POINT ---------------------------- */
 
@@ -38,10 +39,13 @@ void main() {
 
 	vs_out.norm = normalize(vec3(M * vec4(norm, 0.0f)));
 	vs_out.tangent = normalize(vec3(M * vec4(tangent, 0.0f)));
+	vs_out.bitangent = normalize(vec3(M* vec4(bitangent, 0.0f)));
 
 	/* Gram-Schmidt process: re-orthogonalize */
-	vs_out.tangent		= normalize(vs_out.tangent - dot(vs_out.tangent,vs_out.norm) * vs_out.norm);
-	vs_out.bitangent	= normalize(cross(vs_out.tangent, vs_out.norm));
+	if (gramm == 1) {
+		vs_out.tangent		= normalize(vs_out.tangent - dot(vs_out.tangent,vs_out.norm) * vs_out.norm);
+		vs_out.bitangent	= normalize(cross(vs_out.tangent, vs_out.norm));
+	}
 
 	gl_Position			= VP * vec4(world_pos, 1.0f);
 }

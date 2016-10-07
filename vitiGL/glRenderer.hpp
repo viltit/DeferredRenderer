@@ -34,7 +34,11 @@ protected:
 	Shader			_dShader;	  //for a debugging window
 
 	sQuad			_quad;
-	sQuad			_debugQuad;
+
+	sQuad			_debug;
+	sQuad			_debug2;
+	sQuad			_debug3;
+	sQuad			_debug4;
 
 	bool			_drawDShadows;
 };

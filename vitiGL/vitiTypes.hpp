@@ -4,6 +4,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/hash.hpp>
 
+#include <iostream>
+
 /* Structures and enums for commonly used types like Colors */
 
 namespace vitiGL {
@@ -47,8 +49,11 @@ struct Vertex {
 		return pos == vertex.pos && uv == vertex.uv;
 	}
 };
-}
 
+//overload << operator for vec3's - for console output:
+std::ostream& operator << (std::ostream& os, const glm::vec3& v);
+
+}
 //insert a hash function for the vertex struct in namespace std::
 namespace std {
 	using namespace vitiGL;

@@ -84,6 +84,9 @@ protected:
 								std::vector<GLuint>& indices, 
 								bool bitangents = true);
 
+	virtual void normalizeSeam	(std::vector<Vertex>& vertices,
+								 std::vector<GLuint>& indices);
+
 	GLuint		vao;
 	GLuint		vbo;
 	GLuint		ebo;

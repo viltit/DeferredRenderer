@@ -34,8 +34,8 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	_scene.addChild(new Octahedron{ "xml/cube.xml" }, glm::vec3{ 3.0, 3.0f, 3.0 }, sqrt(2.0f), "Octahedron");
 	_scene.remove("Octahedron");*/
 
-	_scene.addChild(new Model{ "Models/nanosuit/nanosuit.obj" }, glm::vec3{ 0.0f, 0.0f, 0.0f }, sqrt(20.0f), "Shark");
-	_scene["Shark"]->scale(glm::vec3{ 0.5f, 0.5f, 0.5f });
+	_scene.addChild(new Model{ "Models/earth/earth.obj", false }, glm::vec3{ 0.0f, 0.0f, 0.0f }, sqrt(20.0f), "Shark");
+	_scene["Shark"]->scale(glm::vec3{ 0.05f, 0.05f, 0.05f });
 	_scene["Shark"]->setPos(glm::vec3{ 0.0f, 5.0f, 0.0f });
 
 	_scene.addChild(new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ -3.0f, -3.0f, -3.0f }, sqrt(1800.0f), "Floor");
@@ -196,6 +196,9 @@ void AppScreen::updateInput() {
 			//debug:
 			case SDLK_F2:
 				_scene.switchCull();
+				break;
+			case SDLK_g:
+				_drender.gramSchmidt();
 				break;
 			break;
 				case SDLK_F3:

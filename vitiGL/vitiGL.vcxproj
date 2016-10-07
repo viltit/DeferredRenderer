@@ -172,6 +172,7 @@
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="vitiGL.cpp" />
     <ClCompile Include="vitiGlobals.cpp" />
+    <ClCompile Include="vitiTypes.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>

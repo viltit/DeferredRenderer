@@ -114,6 +114,9 @@
     <ClCompile Include="DrawNormals.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="vitiTypes.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DataStructures.hpp">

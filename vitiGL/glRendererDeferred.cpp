@@ -115,6 +115,13 @@ void glRendererDeferred::setExposure(float value) {
 	s->off();
 }
 
+void glRendererDeferred::gramSchmidt() {
+	_gramm = (_gramm)? false : true;
+	_gshader.on();
+	glUniform1i(_gshader.getUniform("gramm"), _gramm);
+	_gshader.off();
+}
+
 void glRendererDeferred::drawGeo() {
 	glBindFramebuffer(GL_FRAMEBUFFER, _buffer[geo]);
 

@@ -16,7 +16,10 @@ glRenderer::glRenderer(Window* window, Scene* scene, Camera* camera)
 		_quadShader { "Shaders/Renderer/final.vert.glsl", "Shaders/Renderer/final.frag.glsl" },
 		_dShader	{ "Shaders/simple.vert.glsl", "Shaders/simple.frag.glsl" },
 		_framebuffer{ window->width(), window->height(), "Shaders/framebuffer.vert.glsl", "Shaders/framebuffer.frag.glsl" }, //dangerous!
-		_debugQuad  { QuadPos::topRight }
+		_debug		{ QuadPos::topRight },
+		_debug2		{ QuadPos::aboveMiddleRight },
+		_debug3		{ QuadPos::belowMiddleRight },
+		_debug4		{ QuadPos::bottomRight }
 {}
 
 
@@ -63,5 +66,9 @@ void glRenderer::draw() {
 
 	/* final on-screen image: */
 	_quad.draw(_quadShader, textures, names);
+
+	/* debug screens: */
+	_debug.draw(_dShader, _scene->dShadowTex());
+	_debug2.draw(_dShader, _scene->pShadowTex());
 }
 }

@@ -46,6 +46,9 @@ public:
 	void setExposure(float value);
 	float exposure() { return _exposure; }
 
+	//debug:
+	void gramSchmidt();
+
 protected:
 	/* enum for indexing the texture attachments: */
 	enum texureBuffer {
@@ -109,6 +112,8 @@ protected:
 	float		_gamma;
 	float		_bloomTreshold;
 	float		_exposure;
+
+	bool		_gramm;
 };
 
 /* helper functions that may be useful for other classes too: */

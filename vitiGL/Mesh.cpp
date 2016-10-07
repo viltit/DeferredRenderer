@@ -14,6 +14,7 @@ Mesh::Mesh(std::vector<Vertex>& vertices, std::vector<GLuint> indices, std::vect
 
 	calcNormals(vertices, indices);
 	calcTangents(vertices, indices);
+	normalizeSeam(vertices, indices);
 	uploadVertices(vertices, indices);
 
 	tbo.resize(3);
