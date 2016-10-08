@@ -10,13 +10,17 @@ namespace vitiGL {
 Material::Material() 
 	: _shiny	{ 22.0f },
 	  _transp	{ 0.0f }
-{}
+{
+	_tbo.resize(3);
+}
 
 Material::Material(std::vector<GLuint> textures, float shiny, float transparency)
-	:	_tbo	{ textures },
+	:	_tbo		{ textures },
 		_shiny		{ shiny },
 		_transp		{ transparency }
-{}
+{
+	_tbo.resize(3);
+}
 
 
 Material::~Material() {
@@ -30,6 +34,18 @@ void Material::setUniforms(const Shader & shader) const {
 		glActiveTexture(GL_TEXTURE0 + i);
 		glBindTexture(GL_TEXTURE_2D, _tbo[i]);
 		glUniform1i(shader.getUniform("material." + texNames[i]), i);
+	}
+
+	//set subroutine for normal calculation:
+	//TO DO: SORT OBJECTS IN RENDERER OR SCENE TO AVOID SETTING UNIFORM FOR EACH OBJECT
+
+	if (_tbo[2] == 0) {
+		GLuint normalCalc = glGetSubroutineIndex(shader.program(), GL_FRAGMENT_SHADER, "getNormalFromVertex");
+		glUniformSubroutinesuiv(GL_FRAGMENT_SHADER, 1, &normalCalc);
+	}
+	else {
+		GLuint normalCalc = glGetSubroutineIndex(shader.program(), GL_FRAGMENT_SHADER, "getNormalFromTexture");
+		glUniformSubroutinesuiv(GL_FRAGMENT_SHADER, 1, &normalCalc);
 	}
 }
 

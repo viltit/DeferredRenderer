@@ -26,14 +26,15 @@ public:
 
 	//shader has to be on before calling the function
 	void setUniforms(const Shader& shader) const;
+
 	void setTexture(int type, GLuint texture);
 
 	/* getters and setters: */
 	void setShiny(float val)	{ _shiny = val; }
-	float shiny()				{ return _shiny; }
+	float shiny() const			{ return _shiny; }
 
 	void setTransparency(float val) { _transp = val; }
-	float transparency()			{ return _transp; }
+	float transparency() const		{ return _transp; }
 
 	Material& operator = (const Material mat);
 
