@@ -160,6 +160,7 @@
     <ClCompile Include="GUI.cpp" />
     <ClCompile Include="iApp.cpp" />
     <ClCompile Include="Light.cpp" />
+    <ClCompile Include="material.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="Scene.cpp" />
@@ -194,6 +195,7 @@
     <ClInclude Include="IRenderer.hpp" />
     <ClInclude Include="Keytable.hpp" />
     <ClInclude Include="Light.hpp" />
+    <ClInclude Include="Material.hpp" />
     <ClInclude Include="Mesh.hpp" />
     <ClInclude Include="Model.hpp" />
     <ClInclude Include="Scene.hpp" />

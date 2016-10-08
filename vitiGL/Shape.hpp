@@ -6,6 +6,7 @@
 
 #include "vitiTypes.hpp"
 #include "IGameObject.hpp"
+#include "Material.hpp"
 
 
 namespace vitiGL {
@@ -55,7 +56,7 @@ protected:
 
 	GLuint		vao;
 	GLuint		vbo;
-	std::vector<GLuint> tbo; //diffuse, specular and normal supported for now
+	Material	material;
 
 	int			numVertices;
 	bool		invert;		//invert the normals
@@ -91,7 +92,7 @@ protected:
 	GLuint		vbo;
 	GLuint		ebo;
 
-	std::vector<GLuint> tbo; //diffuse, specular and normal supported for now
+	Material	material;
 
 	int			numVertices;
 };

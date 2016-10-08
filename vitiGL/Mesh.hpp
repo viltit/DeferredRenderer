@@ -18,7 +18,9 @@ namespace vitiGL {
 
 class Mesh : public ShapeI {
 public:
-	Mesh(std::vector<Vertex>& vertices, std::vector<GLuint> indices, std::vector<GLuint>& textures);
+	Mesh	(std::vector<Vertex>& vertices, 
+			 std::vector<GLuint> indices, 
+			 std::vector<std::pair<int, GLuint>>& textures);
 
 	/* copy constructor: */
 	Mesh(const Mesh& m);

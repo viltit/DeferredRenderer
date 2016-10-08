@@ -28,6 +28,7 @@ Model::Model(const std::string& filePath, bool textureFolder)
 	: IGameObject{ ObjType::model }
 {
 	std::cout << "\nSTART PROCESSING OBJ FILE " << filePath << std::endl;
+	std::cout << "------------------------------------------------------\n";
 
 	std::string basePath = filePath.substr(0, filePath.find_last_of("/"));
 	basePath += "/";
@@ -54,7 +55,7 @@ Model::Model(const std::string& filePath, bool textureFolder)
 		std::cout << "Processing a shape named " << shape.name << std::endl;
 		std::vector<Vertex> vertices;
 		std::vector<GLuint> indices;
-		std::vector<GLuint> textures;
+		std::vector<std::pair<int, GLuint>> textures;
 		std::unordered_map<Vertex, int> uniqueVertices;
 
 		for (const auto& index : shape.mesh.indices) {
@@ -80,7 +81,6 @@ Model::Model(const std::string& filePath, bool textureFolder)
 				uniqueVertices[vertex] = vertices.size();
 				vertices.push_back(vertex);
 			}
-
 			indices.push_back(GLuint(uniqueVertices[vertex]));
 		}
 
@@ -105,34 +105,35 @@ Model::Model(const std::string& filePath, bool textureFolder)
 
 		//if specular texture is not found, use diffuse:
 		if (matIndex >= 0) {
-			if (materials[matIndex].specular_texname == "")
-				materials[matIndex].specular_texname = materials[matIndex].diffuse_texname;
-		
 			//diffuse tex
 			try {
 				std::cout << "Trying to open texture file " << basePath + materials[matIndex].diffuse_texname << std::endl;
-				textures.push_back(Cache::getTexture(basePath + materials[matIndex].diffuse_texname));
+				textures.push_back(std::make_pair(
+						TEXTURE_DIFFUSE,
+						Cache::getTexture(basePath + materials[matIndex].diffuse_texname))
+				);
 			}
 			catch (fileError) {
-				textures.push_back(Cache::getTexture("Textures/MetalFloorsBare_Diffuse.png"));
 			}
-
-			//specular tex
+			//specular tex:
 			try {
 				std::cout << "Trying to open texture file " << basePath + materials[matIndex].specular_texname << std::endl;
-				textures.push_back(Cache::getTexture(basePath + materials[matIndex].specular_texname));
+				textures.push_back(std::make_pair(
+					TEXTURE_SPECULAR,
+					Cache::getTexture(basePath + materials[matIndex].specular_texname))
+				);	
 			}
 			catch (fileError) {
-				textures.push_back(Cache::getTexture("Textures/MetalFloorsBare_Diffuse.png"));
 			}
-
-			//normal tex
+			//normal tex:
 			try {
 				std::cout << "Trying to open texture file " << basePath + materials[matIndex].bump_texname << std::endl;
-				textures.push_back(Cache::getTexture(basePath + materials[matIndex].bump_texname));
+				textures.push_back(std::make_pair(
+					TEXTURE_NORMAL,
+					Cache::getTexture(basePath + materials[matIndex].bump_texname))
+				);
 			}
 			catch (fileError) {
-				textures.push_back(Cache::getTexture("Textures/MetalFloorsBare_Normal.png"));
 			}
 		}
 

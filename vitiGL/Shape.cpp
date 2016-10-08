@@ -31,22 +31,8 @@ void Shape::draw(const Shader& shader) const {
 	//give the model matrix to the shader:
 	glUniformMatrix4fv(shader.getUniform("M"), 1, GL_FALSE, glm::value_ptr(_M));
 
-	//glUniform1f(shader.getUniform("material.shiny"), 22.0f);
-
 	//give the textures to the shader:
-	if (tbo.size() != 0) {
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, tbo[0]);
-		glUniform1i(shader.getUniform("material.diffuse"), 0);
-
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, tbo[1]);
-		glUniform1i(shader.getUniform("material.specular"), 1);
-
-		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D, tbo[2]);
-		glUniform1i(shader.getUniform("material.normal"), 2);
-	}
+	material.setUniforms(shader);
 
 	//draw:
 	glBindVertexArray(vao);
@@ -185,17 +171,7 @@ void ShapeI::draw(const Shader & shader) const {
 	//glUniform1f(shader.getUniform("material.shiny"), 22.0f);
 
 	//give the textures to the shader:
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, tbo[0]);
-	glUniform1i(shader.getUniform("material.diffuse"), 0);
-
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, tbo[1]);
-	glUniform1i(shader.getUniform("material.specular"), 1);
-
-	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_2D, tbo[2]);
-	glUniform1i(shader.getUniform("material.normal"), 2);
+	material.setUniforms(shader);
 
 	//draw:
 	glBindVertexArray(vao);
@@ -364,9 +340,9 @@ Cuboid::Cuboid(const std::string& configFile, const glm::vec3& position)
 	size = sdata.size;
 	uv = sdata.uv;
 
-	tbo.push_back(Cache::getTexture(sdata.textures[0], sRGB));
-	tbo.push_back(Cache::getTexture(sdata.textures[1]));
-	tbo.push_back(Cache::getTexture(sdata.textures[2]));
+	material.setTexture(TEXTURE_DIFFUSE, Cache::getTexture(sdata.textures[0], sRGB));
+	material.setTexture(TEXTURE_SPECULAR, Cache::getTexture(sdata.textures[1]));
+	material.setTexture(TEXTURE_NORMAL, Cache::getTexture(sdata.textures[2]));
 
 	if (!Cache::isVertexLoaded(configFile)) {
 		std::vector<Vertex> vertices;
@@ -456,9 +432,9 @@ Tetrahedron::Tetrahedron(const std::string & configFile, const glm::vec3& positi
 	size = sdata.size;
 	uv = sdata.uv;
 
-	tbo.push_back(Cache::getTexture(sdata.textures[0], sRGB));
-	tbo.push_back(Cache::getTexture(sdata.textures[1]));
-	tbo.push_back(Cache::getTexture(sdata.textures[2]));
+	material.setTexture(TEXTURE_DIFFUSE, Cache::getTexture(sdata.textures[0], sRGB));
+	material.setTexture(TEXTURE_SPECULAR, Cache::getTexture(sdata.textures[1]));
+	material.setTexture(TEXTURE_NORMAL, Cache::getTexture(sdata.textures[2]));
 
 	if (!Cache::isVertexLoaded(configFile)) {
 		std::vector<Vertex> vertices;
@@ -523,9 +499,9 @@ Octahedron::Octahedron(const std::string& configFile, const glm::vec3& position)
 	size = sdata.size;
 	uv = sdata.uv;
 
-	tbo.push_back(Cache::getTexture(sdata.textures[0], sRGB));
-	tbo.push_back(Cache::getTexture(sdata.textures[1]));
-	tbo.push_back(Cache::getTexture(sdata.textures[2]));
+	material.setTexture(TEXTURE_DIFFUSE, Cache::getTexture(sdata.textures[0], sRGB));
+	material.setTexture(TEXTURE_SPECULAR, Cache::getTexture(sdata.textures[1]));
+	material.setTexture(TEXTURE_NORMAL, Cache::getTexture(sdata.textures[2]));
 
 	if (!Cache::isVertexLoaded(configFile)) {
 		std::vector<Vertex> vertices;
@@ -619,9 +595,9 @@ Icosahedron::Icosahedron(const std::string & configFile, const glm::vec3& positi
 	size = sdata.size;
 	uv = sdata.uv;
 
-	tbo.push_back(Cache::getTexture(sdata.textures[0], sRGB));
-	tbo.push_back(Cache::getTexture(sdata.textures[1]));
-	tbo.push_back(Cache::getTexture(sdata.textures[2]));
+	material.setTexture(TEXTURE_DIFFUSE, Cache::getTexture(sdata.textures[0], sRGB));
+	material.setTexture(TEXTURE_SPECULAR, Cache::getTexture(sdata.textures[1]));
+	material.setTexture(TEXTURE_NORMAL, Cache::getTexture(sdata.textures[2]));
 
 	if (!Cache::isVertexLoaded(configFile)) {
 		std::vector<Vertex> vertices;
@@ -778,9 +754,9 @@ Sphere::Sphere(const std::string & configFile) : Icosahedron() {
 	size = sdata.size;
 	uv = sdata.uv;
 
-	tbo.push_back(Cache::getTexture(sdata.textures[0], sRGB));
-	tbo.push_back(Cache::getTexture(sdata.textures[1]));
-	tbo.push_back(Cache::getTexture(sdata.textures[2]));
+	material.setTexture(TEXTURE_DIFFUSE, Cache::getTexture(sdata.textures[0], sRGB));
+	material.setTexture(TEXTURE_SPECULAR, Cache::getTexture(sdata.textures[1]));
+	material.setTexture(TEXTURE_NORMAL, Cache::getTexture(sdata.textures[2]));
 
 	if (!Cache::isVertexLoaded(configFile)) {
 		std::vector<Vertex> vertices;
