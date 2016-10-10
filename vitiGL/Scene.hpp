@@ -46,7 +46,9 @@ public:
 	/*	getters and setters, all inline:
 	rotation, scaling, positioning will always affect the children too!		*/
 	void		move(const glm::vec3& pos) { _W = glm::translate(_W, pos); _M = glm::translate(_M, pos); }
-	void		setPos(const glm::vec3& pos) { _M[3][0] = pos.x; _M[3][1] = pos.y; _M[3][2] = pos.z; }
+	void		setPos(const glm::vec3& pos) { 
+		_M[3][0] = pos.x; _M[3][1] = pos.y; _M[3][2] = pos.z; 
+	}
 
 	glm::vec3	pos() const { return glm::vec3{ _W[3][0], _W[3][1], _W[3][2] }; }
 	glm::mat4	posMatrix() const { return _W; }

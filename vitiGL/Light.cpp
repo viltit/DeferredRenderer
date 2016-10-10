@@ -2,6 +2,8 @@
 #include "vitiGL.hpp"
 #include "vitiGlobals.hpp"
 
+#include <glm/gtc/type_ptr.hpp>
+
 namespace vitiGL {
 
 namespace Attenuation {
@@ -66,7 +68,7 @@ void dLight::draw(const Shader & shader) const {
 
 pLight::pLight	
 (
-	const Camera* camera,
+	Camera* camera,
 	const glm::vec3 & pos, 
 	const glm::vec3 & ambient, 
 	const glm::vec3 & diffuse, 
@@ -89,11 +91,10 @@ pLight::pLight
 	calcRadius(); //the math here is correct
 
 	/* set the lights sphere original model matrix: */
-	/* something is very off with scaling! */
-	glm::mat4 S{};
-	S = glm::translate(S, pos);
-	S = glm::scale(S, glm::vec3{0.2*_r, 0.2*_r, 0.2*_r });
-	_sphere->setModelMatrix(S);
+	_M = glm::translate(_M, pos);
+	_M = glm::scale(_M, glm::vec3{ _r,  _r,  _r });
+
+	_sphere->setModelMatrix(_M);
 }
 
 /*
@@ -138,6 +139,8 @@ void pLight::setProperty(lightProps property, const glm::vec3 & value) {
 	switch (property) {
 	case lightProps::pos:
 		_pos = value;
+		_M[3][0] = _pos.x; _M[3][1] = _pos.y; _M[3][2] = _pos.z;
+		_sphere->setModelMatrix(_M);
 		break;
 	case lightProps::ambient:
 		_ambient = value;
@@ -165,6 +168,15 @@ void pLight::setUniforms(const Shader & shader) const {
 	glUniform3f(shader.getUniform(_uniform + ".diffuse"), _diffuse.r, _diffuse.g, _diffuse.b);
 	glUniform3f(shader.getUniform(_uniform + ".specular"), _specular.r, _specular.g, _specular.b);
 	glUniform3f(shader.getUniform(_uniform + ".attenuation"), _attenuation.x, _attenuation.y, _attenuation.z);
+
+	//we need to adjust the view matrix so the light sphere does not get cut off by the camera's far plane:
+	float distance = glm::length(_cam->pos() - _pos);
+	float farPlane = distance + _r;
+	CamInfo cam = _cam->getMatrizes();
+
+
+	//glm::mat4 P = glm::perspective(glm::radians(_cam->fov()), _cam->aspect(), _cam->nearPlane(), farPlane);
+	//glUniformMatrix4fv(shader.getUniform("VP"), 1, GL_FALSE, glm::value_ptr(P * cam.V));
 }
 
 void pLight::draw(const Shader & shader) const {
@@ -173,16 +185,26 @@ void pLight::draw(const Shader & shader) const {
 
 	/* determine if we are inside or outside the lights radius: */ 
 	float distance = glm::length(_cam->pos() - _pos);
-	if (distance < _r) glCullFace(GL_FRONT);
+	if (distance < _r) {
+		glCullFace(GL_FRONT);
+	}
 	else {
-		std::cout << "outside\n";
 		glCullFace(GL_BACK);
 	}
 
-	/*if (_front) glCullFace(GL_FRONT);
-	else glCullFace(GL_BACK);*/ 
+	/*
+	if (_front) glCullFace(GL_FRONT);
+	else glCullFace(GL_BACK);*/
 
 	_sphere->drawNaked(shader);
+}
+
+void pLight::debugDraw(const Shader & shader) const {
+	glDisable(GL_CULL_FACE);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	_sphere->draw(shader);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	glEnable(GL_CULL_FACE);
 }
 
 void pLight::calcRadius() {
@@ -202,9 +224,9 @@ void pLight::calcRadius() {
 	_r = -l / (2.0 * q) + sqrtf(det);
 
 #ifdef CONSOLE_LOG
-	//std::cout << "Point light sphere calculation:\n";
-	//std::cout << c << "/" << l << "/" << q << std::endl;
-	//std::cout << "Radius " << _r << std::endl;
+	std::cout << "Point light sphere calculation:\n";
+	std::cout << c << "/" << l << "/" << q << std::endl;
+	std::cout << "Radius " << _r << std::endl;
 #endif
 }
 

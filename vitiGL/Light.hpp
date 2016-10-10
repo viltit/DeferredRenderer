@@ -80,9 +80,15 @@ private:
 };
 
 /* Point Light ----------------------------------------------------------------------------------- */
+
+/*	One PROBLEM here which stems from a bad design: Since plight inherits from IGameObject, it has
+	a member _M. PLight also has a member sphere, which also inherits from IGameObject, and has
+	its own _M. We always need to set boths _Ms in plights implementation.
+*/
+
 class pLight : public Light {
 public:
-	pLight(const Camera* camera,
+	pLight( Camera* camera,
 			const glm::vec3& pos = { 0.0f, 1.0f, 0.0f },
 			const glm::vec3& ambient = { 0.1f, 0.1f, 0.1f },
 			const glm::vec3& diffuse = { 0.6f, 0.6f, 0.6f },
@@ -99,13 +105,18 @@ public:
 	//inherited from IDrawable
 	void draw(const Shader& shader) const override;
 
+	void debugDraw(const Shader& shader) const;
+
 	/* getters and setters: */
 	float radius() const { return _r; }
 	glm::vec3 pos() const { return _pos; }
 
 	//override IGameObject-Method:
 	virtual void setModelMatrix(const glm::mat4& M) override {
+		//we only set the position part!
 		_pos = { M[3][0], M[3][1], M[3][2] };
+		_M[3][0] = M[3][0]; _M[3][1] = _M[3][1]; _M[3][2] = M[3][2];
+		_sphere->setModelMatrix(_M);
 	}
 
 	//debug:
@@ -125,7 +136,7 @@ private:
 	Sphere*			_sphere;
 	float			_r;
 
-	const Camera*	_cam;
+	Camera*			_cam;
 };
 
 }

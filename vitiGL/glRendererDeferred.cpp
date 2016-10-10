@@ -132,6 +132,11 @@ void glRendererDeferred::drawGeo() {
 	_gshader.on();
 	_camera->setVPUniform(_gshader);
 	_scene->drawShapes(_gshader, _frustum);
+	
+	//debug:
+	pLight* temp = _scene->findPLight("plight");
+	temp->debugDraw(_gshader);
+		
 	_gshader.off();
 	_normals.draw();
 }
@@ -158,7 +163,7 @@ void glRendererDeferred::drawLight() {
 	/* set view pos and texel size uniform: */
 	glUniform3f(_lshader.getUniform("viewPos"), _camera->pos().x, _camera->pos().y, _camera->pos().z);
 
-	/* DIRECTIONAL LIGHT: */
+	/* DIRECTIONAL LIGHT: ------------------------------ */
 	glm::mat4 M{};
 
 	_lshader.on();
@@ -178,7 +183,7 @@ void glRendererDeferred::drawLight() {
 
 	_scene->drawDlights(_lshader);
 
-	/* POINT LIGHTS: */
+	/* POINT LIGHTS: ------------------------------------- */
 	/* override subroutine uniform: */
 	GLuint plightPass = glGetSubroutineIndex(_lshader.program(), GL_FRAGMENT_SHADER, "updatePlight");
 	glUniformSubroutinesuiv(GL_FRAGMENT_SHADER, 1, &plightPass);

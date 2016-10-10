@@ -105,7 +105,7 @@ Light updatePlight(vec3 worldPos, vec3 normal, vec2 uv) {
 	float attenuation = 1.0f / (plight.attenuation.x + plight.attenuation.y * dist + plight.attenuation.z * dist * dist);
 
 	/* abort if fragment is outside the lights radius: */
-	if (attenuation < 1.0f / 256.0f) discard;	//if-branch in fragment shader is suboptimal!
+	//if (attenuation < 1.0f / 256.0f) discard;	//if-branch in fragment shader is suboptimal!
 
 	vec3 lightDir	= normalize(plight.pos - worldPos);
 	vec3 viewDir	= normalize(viewPos - worldPos);

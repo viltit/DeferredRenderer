@@ -40,6 +40,7 @@ protected:
 	CEGUI::ListboxTextItem* _fps;
 	CEGUI::ListboxTextItem* _gamma;
 	CEGUI::ListboxTextItem* _hdr;
+	CEGUI::ListboxTextItem* _glError;
 
 	bool				_rotate;
 };

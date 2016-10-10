@@ -20,6 +20,11 @@ SceneNode::SceneNode(const std::string& name, IGameObject* object, glm::vec3 pos
 
 SceneNode::~SceneNode(){
 	if (_obj) {
+
+#ifdef CONSOLE_LOG
+		std::cout << "<SceneNode>Deleting an object with the name " << _name << std::endl;
+#endif
+
 		delete _obj;
 		_obj = nullptr;
 	}
