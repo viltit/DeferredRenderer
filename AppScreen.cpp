@@ -66,7 +66,6 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 
 	_cam.setPos(glm::vec3{ -4.0f, 8.0f, -5.0f });
 	_cam.setTarget(glm::vec3{ 0.0f, 0.0f, 0.0f });
-	_cam.setClipping(0.1f, 1000.0f);
 
 	initGUI();
 	_timer.on();

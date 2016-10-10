@@ -60,7 +60,7 @@ out vec4 color;
 /* Shaders entry point: -------------------------------------------------- */
 void main() {
 	/* get uv coordinates, fragments world position and the normal: */
-	vec2 uv = vec2(gl_FragCoord.x * texelSize.x, gl_FragCoord.y * texelSize.y);
+	vec2 uv			= vec2(gl_FragCoord.x * texelSize.x, gl_FragCoord.y * texelSize.y);
 	vec3 normal		= normalize(texture(normal, uv).xyz);
 
 	/* reconstruct fragments world position: */

@@ -169,14 +169,14 @@ void pLight::setUniforms(const Shader & shader) const {
 	glUniform3f(shader.getUniform(_uniform + ".specular"), _specular.r, _specular.g, _specular.b);
 	glUniform3f(shader.getUniform(_uniform + ".attenuation"), _attenuation.x, _attenuation.y, _attenuation.z);
 
-	//we need to adjust the view matrix so the light sphere does not get cut off by the camera's far plane:
+	/*	we need to adjust the view matrix so the light sphere does not get cut off by the camera's far plane !
+		(took me weeks to find this particular bug... ) */
 	float distance = glm::length(_cam->pos() - _pos);
 	float farPlane = distance + _r;
 	CamInfo cam = _cam->getMatrizes();
 
-
-	//glm::mat4 P = glm::perspective(glm::radians(_cam->fov()), _cam->aspect(), _cam->nearPlane(), farPlane);
-	//glUniformMatrix4fv(shader.getUniform("VP"), 1, GL_FALSE, glm::value_ptr(P * cam.V));
+	glm::mat4 P = glm::perspective(glm::radians(_cam->fov()), _cam->aspect(), _cam->nearPlane(), farPlane);
+	glUniformMatrix4fv(shader.getUniform("VPl"), 1, GL_FALSE, glm::value_ptr(P * cam.V));
 }
 
 void pLight::draw(const Shader & shader) const {

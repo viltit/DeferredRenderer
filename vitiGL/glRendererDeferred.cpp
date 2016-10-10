@@ -180,6 +180,7 @@ void glRendererDeferred::drawLight() {
 	/* set model and VP-Matrix uniform (which are both the identity matrix for directional lights) */
 	glUniformMatrix4fv(_lshader.getUniform("M"), 1, GL_FALSE, glm::value_ptr(M));
 	glUniformMatrix4fv(_lshader.getUniform("VP"), 1, GL_FALSE, glm::value_ptr(M));
+	glUniformMatrix4fv(_lshader.getUniform("VPl"), 1, GL_FALSE, glm::value_ptr(M));
 
 	_scene->drawDlights(_lshader);
 
