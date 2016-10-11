@@ -132,10 +132,6 @@ void glRendererDeferred::drawGeo() {
 	_gshader.on();
 	_camera->setVPUniform(_gshader);
 	_scene->drawShapes(_gshader, _frustum);
-	
-	//debug:
-	pLight* temp = _scene->findPLight("plight");
-	temp->debugDraw(_gshader);
 		
 	_gshader.off();
 	_normals.draw();
