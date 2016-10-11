@@ -9,9 +9,10 @@ using namespace vitiGL;
 AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	: IAppScreen{ app },
 	_cam{ float(window->width()) / float(window->height()) },
-	_renderer	{ window, &_scene, &_cam },
-	_drender{ window, &_scene, &_cam},
-	_gui{ "GUI" }
+	_renderer{ window, &_scene, &_cam },
+	_drender{ window, &_scene, &_cam },
+	_gui{ "GUI", "TaharezLook.scheme" },
+	_console{ &_gui, "layouts/console.layout"}
 {
 	_index = SCREEN_INDEX_APP;
 

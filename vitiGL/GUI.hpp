@@ -10,7 +10,7 @@ namespace vitiGL {
 
 class GUI {
 public:
-	 GUI		(const std::string& resourceDirectory);
+	 GUI		(const std::string& resourceDirectory, const std::string& schemePath);
 	~GUI		();
 
 	void		update(unsigned int deltaTime);
@@ -28,6 +28,8 @@ public:
 	CEGUI::Window* createWidget(const glm::vec4& destRectPercent, const glm::vec4& destRectPixel,
 								const std::string& scheme, const std::string& name = "");
 
+	CEGUI::Window* createConsole(const std::string& layoutFile);
+
 	void setWidgetDestRect(CEGUI::Window* widget, const glm::vec4& destRectPercent, const glm::vec4& destRectPixel);
 
 	static CEGUI::OpenGL3Renderer* renderer()	{ return _renderer; }
@@ -37,5 +39,7 @@ private:
 	static CEGUI::OpenGL3Renderer* _renderer;	//we only want one renderer
 	CEGUI::GUIContext*	_context;
 	CEGUI::Window*		_root;					//every widget is a child of root
+
+	std::string			_resourceDir;
 };
 }

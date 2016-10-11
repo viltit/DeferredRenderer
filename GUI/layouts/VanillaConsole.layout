@@ -9,16 +9,6 @@
         <Property name="Text" value="Console" />
         <Property name="CloseButtonEnabled" value="False" />
 
-        <Window name="Submit" type="Vanilla/Button">
-            <Property name="ID" value="1" />
-            <Property name="VerticalAlignment" value="Bottom" />
-            <Property name="HorizontalAlignment" value="Right" />
-            <Property name="MaxSize" value="{{1,0},{1,0}}" />
-            <Property name="Position" value="{{0,-7},{0,-7}}" />
-            <Property name="Size" value="{{0.25,0},{0,30}}" />
-            <Property name="Text" value="Submit" />
-        </Window>
-
         <Window name="Editbox" type="Vanilla/Editbox">
             <Property name="ID" value="2" />
             <Property name="VerticalAlignment" value="Bottom" />

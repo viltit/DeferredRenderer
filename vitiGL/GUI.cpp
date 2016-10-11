@@ -5,9 +5,10 @@ namespace vitiGL {
 
 CEGUI::OpenGL3Renderer* GUI::_renderer = nullptr;
 
-GUI::GUI(const std::string& resourceDirectory) 
+GUI::GUI(const std::string& resourceDirectory, const std::string& schemePath)
 	:	_context	{ nullptr },
-		_root		{ nullptr }
+		_root		{ nullptr },
+		_resourceDir{ resourceDirectory }
 {
 	/* only initialize CEGUI once: */
 	if (_renderer == nullptr) {
@@ -34,6 +35,8 @@ GUI::GUI(const std::string& resourceDirectory)
 	_context = &CEGUI::System::getSingleton().createGUIContext(_renderer->getDefaultRenderTarget());
 	_root = CEGUI::WindowManager::getSingleton().createWindow("DefaultWindow", "root");
 	_context->setRootWindow(_root);
+
+	setScheme(schemePath);
 }
 
 GUI::~GUI(){
@@ -50,6 +53,12 @@ void GUI::draw() {
 	_context->draw();
 	_renderer->endRendering();
 	glEnable(GL_DEPTH_TEST);
+}
+
+CEGUI::Window* GUI::createConsole(const std::string & layoutFile) {
+	CEGUI::Window* window = CEGUI::WindowManager::getSingleton().loadLayoutFromFile(_resourceDir + "/" + layoutFile, "console");
+	_root->addChild(window);
+	return window;
 }
 
 void GUI::onSDLEvent(SDL_Event & event) {
