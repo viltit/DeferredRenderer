@@ -86,7 +86,7 @@ pLight::pLight
 		_uniform		{ uniformName },
 		_sphere			{ new Sphere{"xml/sphere.xml" } }
 {
-	_attenuation = Attenuation::r100;
+	_attenuation = Attenuation::r50;
 
 	calcRadius(); //the math here is correct
 
