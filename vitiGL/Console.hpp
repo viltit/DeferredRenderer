@@ -13,11 +13,15 @@ public:
 	Console		(GUI* gui, const std::string& layoutFile);
 	~Console	();
 
-	void	setVisible(bool visible) { _visible = visible; }
+	void	setText(const std::string& text);
+	void	setVisible(bool visible);
+
+	bool	isVisible() { return _window->isVisible(); }
 
 private:
 	void	processText(const CEGUI::EventArgs& e);
 	void	parseText(CEGUI::String& msg);
+	void	writeText(CEGUI::String& msg, CEGUI::Colour = { 0xFFFFFFFF });
 
 	GUI*			_gui;
 	CEGUI::Window*	_window;

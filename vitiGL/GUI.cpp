@@ -1,6 +1,8 @@
 #include "GUI.hpp"
 #include "Keytable.hpp"
 
+#include <iostream>
+
 namespace vitiGL {
 
 CEGUI::OpenGL3Renderer* GUI::_renderer = nullptr;

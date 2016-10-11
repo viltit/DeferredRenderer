@@ -92,7 +92,7 @@ void AppScreen::update() {
 	Uint32 frameTime = _timer.frame_time();
 	Uint32 time = _timer.get_time();
 
-	/* Infobox update: */
+	/* Infobox update: 
 	_infoBox->deactivate();
 	std::string fps = "FPS: " + std::to_string(_timer.fps());
 	_fps->setText(CEGUI::String(fps));
@@ -102,7 +102,11 @@ void AppScreen::update() {
 	_hdr->setText(CEGUI::String(exposure));
 	std::string glError = "GL-Error: " + std::to_string(glGetError());
 	_glError->setText(CEGUI::String(glError));
-	_infoBox->activate();
+	_infoBox->activate();*/
+
+	std::string fps = "FPS: " + std::to_string(_timer.fps());
+	_console.setText(fps);
+	_gui.update(frameTime);
 
 	/*
 	for (int i = -5; i < 4; i++) {
@@ -149,26 +153,9 @@ int AppScreen::previous() const {
 }
 
 void AppScreen::initGUI() {
-	_gui.setScheme("TaharezLook.scheme");
+	//_gui.setScheme("TaharezLook.scheme");
 	_gui.setFont("DejaVuSans-10");
 	_gui.setMouseCursor("AlfiskoSkin/MouseArrow");
-
-	/* Info Box: */
-	_infoBox = static_cast<CEGUI::Listbox*>(
-		_gui.createWidget(glm::vec4{ 0.01f, 0.1f, 0.25f, 0.2f }, glm::vec4{}, "TaharezLook/Listbox", "Infobox")
-		);
-
-	/* Info Box elements: */
-	_fps = new CEGUI::ListboxTextItem("");
-	_gamma = new CEGUI::ListboxTextItem("");
-	_hdr = new CEGUI::ListboxTextItem("");
-	_glError = new CEGUI::ListboxTextItem("");
-
-	/* attach elements: */
-	_infoBox->addItem(_fps);
-	_infoBox->addItem(_gamma);
-	_infoBox->addItem(_hdr);
-	_infoBox->addItem(_glError);
 }
 
 void AppScreen::updateInput() {
@@ -197,7 +184,7 @@ void AppScreen::updateInput() {
 				_cam.move(Move::right);
 				break;
 			case SDLK_F1:
-				_scene["Cube0/1"]->scale(glm::vec3{ 1.0f, 1.5f, 1.0f });
+				_console.setVisible(_console.isVisible()? false : true);
 				break;	
 			//debug:
 			case SDLK_F2:

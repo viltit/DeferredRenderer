@@ -38,12 +38,6 @@ protected:
 
 	vitiGL::Timer		_timer;
 
-	CEGUI::Listbox*		_infoBox;
-	CEGUI::ListboxTextItem* _fps;
-	CEGUI::ListboxTextItem* _gamma;
-	CEGUI::ListboxTextItem* _hdr;
-	CEGUI::ListboxTextItem* _glError;
-
 	bool				_rotate;
 };
 
