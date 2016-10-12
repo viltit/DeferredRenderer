@@ -58,6 +58,11 @@ void Console::parseText(CEGUI::String & msg) {
 		setVisible(false);
 		output = "Hiding console.";
 	}
+	else if (input == "clear") {
+		static_cast<CEGUI::Listbox*>(_window->getChild("History"))->resetList();
+		_history.clear();
+		output = " ";
+	}
 
 	else output = _appscreen->command(input);
 	
@@ -87,6 +92,10 @@ void Console::writeText(CEGUI::String & msg, CEGUI::Colour color) {
 		end->setAutoDeleted(true);
 		outputWindow->removeItem(end);
 	}
+
+	/* also, always scroll down to the last entry after writing text: */
+	CEGUI::Scrollbar* bar = outputWindow->getVertScrollbar();
+	bar->scrollForwardsByStep();
 }
 
 
