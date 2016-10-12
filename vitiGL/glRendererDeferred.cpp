@@ -26,7 +26,9 @@ glRendererDeferred::glRendererDeferred(Window* window, Scene* scene, Camera* cam
 		_bloomTreshold{ 1.0f },
 		_exposure	{ 0.4f },
 		_gauss		{ _window->width() / 4, _window->height() / 4 },
-		_normals	{ camera, scene }
+		_normals	{ camera, scene },
+		_glDrawMode { GL_FILL },
+		_drawNormals { false }
 {
 	if (_window == nullptr) throw initError("<glRendererDeferred::glRendererDeferred> Window is a nullptr");
 
@@ -100,6 +102,14 @@ void glRendererDeferred::gammaMinus(float value) {
 	s->off();
 }
 
+void glRendererDeferred::setGamma(float value) {
+	_gamma = value;
+	Shader* s = _framebuffer.shader();
+	s->on();
+	glUniform1f(s->getUniform("gamma"), _gamma);
+	s->off();
+}
+
 void glRendererDeferred::setBloomTreshold(float value) {
 	_fshader.on();
 	_bloomTreshold = value;
@@ -125,6 +135,8 @@ void glRendererDeferred::gramSchmidt() {
 void glRendererDeferred::drawGeo() {
 	glBindFramebuffer(GL_FRAMEBUFFER, _buffer[geo]);
 
+	glPolygonMode(GL_FRONT_AND_BACK, _glDrawMode);
+
 	glDepthMask(GL_TRUE);
 	glEnable(GL_DEPTH_TEST);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -132,9 +144,12 @@ void glRendererDeferred::drawGeo() {
 	_gshader.on();
 	_camera->setVPUniform(_gshader);
 	_scene->drawShapes(_gshader, _frustum);
+
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		
 	_gshader.off();
-	_normals.draw();
+
+	if (_drawNormals) _normals.draw();
 }
 
 void glRendererDeferred::drawLight() {

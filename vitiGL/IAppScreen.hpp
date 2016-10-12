@@ -3,6 +3,7 @@
 #pragma once
 
 #include <vector>
+#include <string>
 
 namespace vitiGL {
 
@@ -38,6 +39,8 @@ public:
 
 	virtual int next() const = 0;
 	virtual int previous() const = 0;
+
+	virtual std::string command(const std::string& command) = 0; //works with console class
 
 	/* getters ans setters: */
 	int index()	const			{ return _index; }

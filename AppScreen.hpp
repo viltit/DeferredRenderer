@@ -3,6 +3,8 @@
 #include "IAppScreen.hpp"
 #include "vitiGL.hpp"
 
+#include <string>
+
 class App;
 class vitiGL::Window;
 
@@ -20,6 +22,8 @@ public:
 
 	virtual int next() const override;
 	virtual int previous() const override;
+
+	virtual std::string command(const std::string& command) override;
 
 	//get the latest screen content:
 	GLuint	texture() const { return _drender.texture(); }

@@ -38,6 +38,7 @@ public:
 	/* getters and setters: */
 	void gammaPlus(float value);
 	void gammaMinus(float value);
+	void setGamma(float value);
 	float gamma()			{ return _gamma; }
 
 	void setBloomTreshold (float value);
@@ -45,6 +46,10 @@ public:
 
 	void setExposure(float value);
 	float exposure() { return _exposure; }
+
+	void setDrawMode() { _glDrawMode = (_glDrawMode == GL_FILL)? GL_LINE : GL_FILL; }
+
+	void drawNormals(bool draw) { _drawNormals = draw;  }
 
 	//debug:
 	void gramSchmidt();
@@ -114,6 +119,9 @@ protected:
 	float		_exposure;
 
 	bool		_gramm;
+	bool		_drawNormals;
+
+	int			_glDrawMode;
 };
 
 /* helper functions that may be useful for other classes too: */

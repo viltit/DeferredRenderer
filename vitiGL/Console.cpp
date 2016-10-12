@@ -3,11 +3,16 @@
 #include "GUI.hpp"
 #include "Error.hpp"
 
+#include "IAppScreen.hpp"
+
+
 namespace vitiGL {
 
-Console::Console(GUI* gui, const std::string& layoutFile)
+Console::Console(IAppScreen* appscreen, GUI* gui, const std::string& layoutFile)
 	:	_gui		{ gui },
-		_visible	{ true }
+		_appscreen	{ appscreen },
+		_visible	{ true },
+		_historyLength{ 10 }
 { 
 	if (!gui) throw vitiError("<Console::Console> Tried to initialize a console with a nullpointer GUI");
 
@@ -46,14 +51,22 @@ void Console::parseText(CEGUI::String & msg) {
 
 	if (input.length() == 0) return;
 
+	/* check for console commands: */
 	std::string output{};
-	if (input == "hide") setVisible(false);
+
+	if (input == "hide") {
+		setVisible(false);
+		output = "Hiding console.";
+	}
+
+	else output = _appscreen->command(input);
 	
-	//process more commands! (callbacks?)
-
-	else output = "<" + input + "> is an invalid command.";
-
-	writeText(CEGUI::String(output), CEGUI::Colour(1.0f, 0.0f, 0.0f));
+	/* error message if no valid command was given: */
+	if (output == "") {
+		output = "<" + input + "> is an invalid command.";
+		writeText(CEGUI::String(output), CEGUI::Colour(1.0f, 0.0f, 0.0f));
+	}
+	else writeText(CEGUI::String(output));
 }
 
 void Console::writeText(CEGUI::String & msg, CEGUI::Colour color) {
@@ -65,6 +78,15 @@ void Console::writeText(CEGUI::String & msg, CEGUI::Colour color) {
 
 	/* finally, add the text to our box: */
 	outputWindow->addItem(newLine);
+
+	/* ... and store it in our history array ...*/
+	_history.push_front(newLine);
+	if (_history.size() > _historyLength) {
+		CEGUI::ListboxTextItem* end = _history[_history.size() - 1];
+		_history.pop_back();
+		end->setAutoDeleted(true);
+		outputWindow->removeItem(end);
+	}
 }
 
 
