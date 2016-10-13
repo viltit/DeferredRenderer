@@ -4,6 +4,7 @@
 #include "sQuad.hpp"
 #include "Shadowmap.hpp"
 #include "DrawNormals.hpp"
+#include "Skybox.hpp"
 
 /*	Deferred Renderer
 
@@ -81,12 +82,16 @@ protected:
 	/* the three drawing stages: */
 	void		drawGeo();
 	void		drawLight();
+	void		drawSkybox();
 	void		drawFinal();
 
-	/* The shaders for the three drawing stages: */
-	Shader		_gshader;
+	/*	The shaders for the three drawing stages: 
+		TO DO: Put them into a vector 
+	*/
+	Shader		_gshader; 
 	Shader		_lshader;
 	Shader		_fshader;
+	Shader		_sbshader;
 	Shader		_dshader; //debug
 
 	/* the texture buffers: */

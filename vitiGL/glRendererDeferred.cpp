@@ -10,12 +10,13 @@
 
 namespace vitiGL {
 
-glRendererDeferred::glRendererDeferred(Window* window, Scene* scene, Camera* camera)
-	:	IRenderer	{ window, scene, camera },
+	glRendererDeferred::glRendererDeferred(Window* window, Scene* scene, Camera* camera)
+		: IRenderer{ window, scene, camera },
 		_gshader	{ "Shaders/DeferredRenderer/geo.vert.glsl", "Shaders/DeferredRenderer/geo.frag.glsl" },
 		_lshader	{ "Shaders/DeferredRenderer/light.vert.glsl", "Shaders/DeferredRenderer/light.frag.glsl" },
 		_fshader	{ "Shaders/DeferredRenderer/final.vert.glsl", "Shaders/DeferredRenderer/final.frag.glsl" },
 		_dshader	{ "Shaders/simple.vert.glsl", "Shaders/simple.frag.glsl" },
+		_sbshader	{ "Shaders/Skybox/Skybox.vert.glsl", "Shaders/Skybox/skybox.frag.glsl" },
 		_debug		{ QuadPos::topRight },
 		_debug2		{ QuadPos::aboveMiddleRight },
 		_debug3		{ QuadPos::belowMiddleRight },
@@ -70,6 +71,9 @@ void glRendererDeferred::draw() {
 	//the framebuffer will apply bloom and other pp-effects
 	_framebuffer.on();
 	_quad.draw(_dshader, _tbo[finalCol]);
+
+	drawSkybox();
+
 	_framebuffer.off();
 
 	Shader* s = _framebuffer.shader();
@@ -215,6 +219,25 @@ void glRendererDeferred::drawLight() {
 
 	glCullFace(GL_BACK);
 	glDisable(GL_BLEND);
+}
+
+void glRendererDeferred::drawSkybox() {
+	CamInfo cam = _camera->getMatrizes();
+
+	/* we need the depht information from the geometry buffer: */
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, _buffer[geo]);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _framebuffer.id());
+	glBlitFramebuffer(0, 0, _window->width(), _window->height(), 0, 0, _window->width(), _window->height(),
+		GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+	
+	_sbshader.on();
+	glm::mat4 V = glm::mat4(glm::mat3(cam.V));
+	glUniformMatrix4fv(_sbshader.getUniform("V"), 1, GL_FALSE, glm::value_ptr(V));
+	glUniformMatrix4fv(_sbshader.getUniform("P"), 1, GL_FALSE, glm::value_ptr(cam.P));
+
+	_scene->drawSkybox(_sbshader);
+
+	_sbshader.off();
 }
 
 void glRendererDeferred::drawFinal() {

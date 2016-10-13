@@ -22,6 +22,7 @@
 namespace vitiGL {
 
 class Frustum;
+class Skybox;
 
 /*	CLASS SceneNode ------------------------------------------------------------------------------ */
 class SceneNode {
@@ -126,6 +127,9 @@ public:
 	void drawDlights(const Shader& shader) const;
 	void drawPlights(const Shader& shader) const;
 
+	/* draw Skybox (blit a depth buffer before using!): */
+	void drawSkybox(const Shader& shader) const;
+
 	/* set lightning uniforms (only needed for forward rendering): */
 	void setLightningUniforms(const Shader& shader) const;
 
@@ -171,10 +175,12 @@ private:
 	std::map<std::string, dLight*>	_dlights;
 	std::map<std::string, pLight*>	_plights;
 
-	pLight*		   _pshadowcaster;
-	dLight*		   _dshadowcaster;
-	PointShadowmap _pShadow;
-	DirShadowmap   _dShadow;
+	Skybox*			_skybox;
+
+	pLight*			_pshadowcaster;
+	dLight*			_dshadowcaster;
+	PointShadowmap	_pShadow;
+	DirShadowmap	_dShadow;
 };
 
 }

@@ -17,6 +17,7 @@
 #include "glRendererDeferred.hpp"
 #include "glRenderer.hpp"
 #include "DrawNormals.hpp"
+#include "Skybox.hpp"
 #include "Console.hpp"
 
 

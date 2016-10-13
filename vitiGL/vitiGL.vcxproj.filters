@@ -123,6 +123,9 @@
     <ClCompile Include="Console.cpp">
       <Filter>Source Files\GUI</Filter>
     </ClCompile>
+    <ClCompile Include="Skybox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DataStructures.hpp">
@@ -229,6 +232,9 @@
     </ClInclude>
     <ClInclude Include="Console.hpp">
       <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Skybox.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

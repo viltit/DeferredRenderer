@@ -16,7 +16,7 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 {
 	_index = SCREEN_INDEX_APP;
 
-	/* Create the scene elements:
+	/* Create the scene elements: 
 	int prefix = 1;
 	for (int i = -5; i < 4; i++) {
 		prefix = (prefix == 1) ? -1 : 1;
@@ -30,12 +30,12 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 			_scene.addChild(new Cuboid{ "xml/cubeSmall.xml" }, glm::vec3{ 2.0, 0.0f, 2.0 }, sqrt(1.0f), childName, parentName);
 			_scene.addChild(new Tetrahedron{ "xml/cubeTiny.xml" }, glm::vec3{ 0.0, prefix * 1.0f, 0.0 }, sqrt(1.0f), child2Name, childName);
 		}
-	} */
+	}*/
 /*
 	_scene.addChild(new Octahedron{ "xml/cube.xml" }, glm::vec3{ 3.0, 3.0f, 3.0 }, sqrt(2.0f), "Octahedron");
 	_scene.remove("Octahedron");*/
 
-	_scene.addChild(new Model{ "Models/Old House/Old House 2 3D Models.obj", false }, glm::vec3{ 0.0f, 0.0f, 0.0f }, sqrt(20.0f), "Shark");
+	/**/_scene.addChild(new Model{ "Models/Old House/Old House 2 3D Models.obj", false }, glm::vec3{ 0.0f, 0.0f, 0.0f }, sqrt(20.0f), "Shark");
 	_scene["Shark"]->scale(glm::vec3{ 0.05f, 0.05f, 0.05f });
 	_scene["Shark"]->setPos(glm::vec3{ 0.0f, 5.0f, 0.0f });
 
@@ -54,6 +54,18 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 
 	_scene.addChild(plight, "plight");
 	_scene.setShadowcaster("plight");
+
+	/* Skybox: */
+	std::vector<std::string> faces;
+	faces.push_back("Textures/Skybox/right.jpg");
+	faces.push_back("Textures/Skybox/left.jpg");
+	faces.push_back("Textures/Skybox/top.jpg");
+	faces.push_back("Textures/Skybox/bottom.jpg");
+	faces.push_back("Textures/Skybox/back.jpg");
+	faces.push_back("Textures/Skybox/front.jpg");
+	Skybox* skybox = new Skybox(faces);
+	_scene.addChild(skybox, "Skybox");
+
 
 	//_scene["plight"]->setPos(glm::vec3{ 0.0f, 30.0f, 0.0f }); //BUGGED
 

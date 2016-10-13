@@ -1,6 +1,7 @@
 #include "Scene.hpp"
 #include "Frustum.hpp"
 #include "vitiGlobals.hpp"
+#include "Skybox.hpp"
 
 #include <iostream>
 
@@ -87,7 +88,8 @@ void SceneNode::remove() {
 Scene::Scene() 
 	: _counter{ 0 },
 	  _pshadowcaster { nullptr },
-	  _dshadowcaster { nullptr }
+	  _dshadowcaster { nullptr },
+	  _skybox		 { nullptr }
 {
 	std::string name = "root";
 	_root = new SceneNode{name};
@@ -143,6 +145,10 @@ void Scene::addChild
 		child->setPos(light->pos());
 		_plights.insert(std::make_pair(nodeName, light));
 	}
+		break;
+	case ObjType::skybox:
+		//TO DO: need to check for an existing skybox!
+		_skybox = static_cast<Skybox*>(object);
 		break;
 	default:
 		throw vitiError("<Scene::addChild>Unknown Object type.");
@@ -220,6 +226,10 @@ void Scene::drawDlights(const Shader & shader) const {
 
 void Scene::drawPlights(const Shader & shader) const {
 	for (const auto& L : _plights) L.second->draw(shader);
+}
+
+void Scene::drawSkybox(const Shader & shader) const {
+	if (_skybox) _skybox->draw(shader);
 }
 
 void Scene::setLightningUniforms(const Shader & shader) const {
