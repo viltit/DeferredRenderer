@@ -87,7 +87,6 @@ Model::Model(const std::string& filePath, bool textureFolder)
 		/* get the textures: 
 		std::cout << "Material properties:\n";
 		std::cout << "--------------------\n";
-		std::cout << "Alpha texture: " << materials[i].alpha_texname << std::endl;
 		std::cout << "Ambient texture: " << materials[i].ambient_texname << std::endl;
 		std::cout << "Bump texture: " << materials[i].bump_texname << std::endl;
 		std::cout << "Diffuse texture: " << materials[i].diffuse_texname << std::endl;
@@ -104,6 +103,9 @@ Model::Model(const std::string& filePath, bool textureFolder)
 		int matIndex = shape.mesh.material_ids[0];
 
 		//if specular texture is not found, use diffuse:
+
+		std::cout << "Alpha texture: " << materials[matIndex].alpha_texname << std::endl;
+
 		if (matIndex >= 0) {
 			//diffuse tex
 			try {
@@ -135,6 +137,17 @@ Model::Model(const std::string& filePath, bool textureFolder)
 			}
 			catch (fileError) {
 			}
+			/*alpha mask texture:
+			try {
+				std::cout << "Trying to open texture file " << basePath + materials[matIndex].alpha_texname << std::endl;
+				textures.push_back(std::make_pair(
+					TEXTURE_ALPHA,
+					Cache::getTexture(basePath + materials[matIndex].alpha_texname))
+				);
+			}
+			catch (fileError) {
+			}*/
+
 		}
 
 		Mesh mesh(vertices, indices, textures);

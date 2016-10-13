@@ -28,7 +28,7 @@ Material::~Material() {
 
 void Material::setUniforms(const Shader & shader) const {
 
-	assert(_tbo.size() < 5, "<Material>: more than 4 textures defined");
+	assert(_tbo.size() < 4 , "<Material>: more than 4 textures defined");
 
 	for (size_t i = 0; i < _tbo.size(); i++) {
 		glActiveTexture(GL_TEXTURE0 + i);
@@ -39,7 +39,7 @@ void Material::setUniforms(const Shader & shader) const {
 	//set subroutine for normal calculation:
 	//TO DO: SORT OBJECTS IN RENDERER OR SCENE TO AVOID SETTING UNIFORM FOR EACH OBJECT
 
-	if (_tbo[2] == 0) {
+	if (_tbo[TEXTURE_NORMAL] == 0) {
 		GLuint normalCalc = glGetSubroutineIndex(shader.program(), GL_FRAGMENT_SHADER, "getNormalFromVertex");
 		glUniformSubroutinesuiv(GL_FRAGMENT_SHADER, 1, &normalCalc);
 	}

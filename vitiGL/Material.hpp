@@ -10,6 +10,7 @@
 #define TEXTURE_SPECULAR 1
 #define TEXTURE_NORMAL 2
 #define TEXTURE_BUMP 3
+#define TEXTURE_ALPHA 4
 
 namespace vitiGL {
 
@@ -43,11 +44,12 @@ private:
 	float _shiny;
 	float _transp;
 
-	const std::string texNames[4] = {
+	const std::string texNames[5] = {
 		"diffuse",
 		"specular",
 		"normal",
-		"bump"
+		"bump",
+		"alpha"
 	};
 };
 }
