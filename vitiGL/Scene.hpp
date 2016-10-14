@@ -63,6 +63,7 @@ public:
 
 	float		radius() const { return _radius; }
 
+	void setName(const std::string& name) { _name = name; }
 	std::string name() { return _name; }
 
 	ObjType		type() { return _obj->type(); }
@@ -97,15 +98,17 @@ public:
 	Scene();
 	~Scene();
 
-	void addChild(IGameObject* object, 
-				  glm::vec3 pos = {},
-				  float radius =  1.0f, 
-				  const std::string& name = "", 
-				  const std::string& parentName = "root");
+	void addChild	(IGameObject* object, 
+					glm::vec3 pos = {},
+					float radius =  1.0f, 
+					const std::string& name = "", 
+					const std::string& parentName = "root");
 
-	void addChild(IGameObject* object,
-				  const std::string& name = "",
-				  const std::string parentName = "root");
+	void addChild	(IGameObject* object,
+					const std::string& name = "",
+					const std::string& parentName = "root");
+
+	void addChild	(SceneNode* node, const std::string& parentName);
 
 	/* removes node and all its children: */
 	void remove(const std::string& name);
@@ -167,6 +170,7 @@ public:
 
 private:
 	void updateCullingList(Frustum& frustum, SceneNode* from);
+	void addToList(SceneNode* node);
 
 	int _counter;
 

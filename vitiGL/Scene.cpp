@@ -7,6 +7,7 @@
 #include "Model.hpp"
 
 #include <iostream>
+#include <assert.h>
 
 namespace vitiGL {
 
@@ -133,54 +134,92 @@ void Scene::addChild
 	/* put the child in the scene map: */
 	_scene.insert(std::make_pair(nodeName, child));
 
-	/* put the child in the appropriate vector:*/
-	switch (object->type()) {
-	case ObjType::shape:
-	case ObjType::model:
-	{
-		Shape* s = static_cast<Shape*>(object);
-		if (s->isTransparent()) {
-			_transparent.insert(std::make_pair(nodeName, object));
-		}
-		else;
-			_shapes.insert(std::make_pair(nodeName, object));
-	}
-		break;
-	/*
-	case ObjType::model:
-	{
-		Model* model = static_cast<Model*>(object);
-		for (auto& M : model->_mesh) {
-			if (M.isTransparent())
-				_transparent.insert(std::make_pair(nodeName, &M));
-			else;
-				_shapes.insert(std::make_pair(nodeName, &M));
-		} 
-	}
-		break;*/
-	case ObjType::dlight:
-		_dlights.insert(std::make_pair(nodeName, static_cast<dLight*>(object)));
-		break;
-	case ObjType::plight:
-	{
-		pLight* light = static_cast<pLight*>(object);
-		child->setPos(light->pos());
-		_plights.insert(std::make_pair(nodeName, light));
-	}
-		break;
-	case ObjType::skybox:
-		//TO DO: need to check for an existing skybox!
-		_skybox = static_cast<Skybox*>(object);
-		break;
-	default:
-		throw vitiError("<Scene::addChild>Unknown Object type.");
-	}
+	/* we can insert a null-object: */
+	addToList(child);
 }
 
-void Scene::addChild(IGameObject * object, const std::string & name, const std::string parentName) {
+void Scene::addChild(IGameObject * object, const std::string & name, const std::string& parentName) {
 	addChild(object, glm::vec3{}, 1.0f, name, parentName);
 }
 
+void Scene::addChild(SceneNode * node, const std::string & parentName) {
+	assert(node != nullptr);
+	std::string nodeName;
+	if (node->name() == "") {
+		nodeName = "Node[" + std::to_string(++_counter) + "]";
+		node->setName(nodeName);
+	}
+
+#ifdef CONSOLE_LOG
+	std::cout << "<Scene::addChild>Added a Scene Node with the name " << nodeName << " and the parent " << parentName << std::endl;
+#endif
+
+	/* Search for the parent: */
+	SceneNode* parent = findByName(parentName);
+	if (parent == nullptr) {
+		throw initError(("<Scene::addChild> Could not find a parent with the name " + parentName).c_str());
+	}
+
+	/* link the child to its parent: */
+	parent->addChild(node);
+
+	/*	Now we linked the node and its children to the node-net, we need to put it 
+		and all children in the appropriate scene lists: */
+	addToList(node);
+}
+
+
+void Scene::addToList(SceneNode* node) {
+	assert(node != nullptr);
+
+	/* put the child in the appropriate vector:*/
+	if (node->obj() != nullptr) {
+		IGameObject* object = node->obj();
+		std::string nodeName = node->name();
+
+		switch (node->type()) {
+		case ObjType::shape:
+		case ObjType::model:
+		{
+			Shape* s = static_cast<Shape*>(object);
+			if (s->isTransparent()) {
+				_transparent.insert(std::make_pair(nodeName, object));
+			}
+			else;
+			_shapes.insert(std::make_pair(nodeName, object));
+		}
+		break;
+		/*
+		case ObjType::model:
+		{
+		Model* model = static_cast<Model*>(object);
+		for (auto& M : model->_mesh) {
+		if (M.isTransparent())
+		_transparent.insert(std::make_pair(nodeName, &M));
+		else;
+		_shapes.insert(std::make_pair(nodeName, &M));
+		}
+		}
+		break;*/
+		case ObjType::dlight:
+			_dlights.insert(std::make_pair(nodeName, static_cast<dLight*>(object)));
+			break;
+		case ObjType::plight:
+		{
+			pLight* light = static_cast<pLight*>(object);
+			node->setPos(light->pos());
+			_plights.insert(std::make_pair(nodeName, light));
+		}
+		break;
+		case ObjType::skybox:
+			//TO DO: need to check for an existing skybox!
+			_skybox = static_cast<Skybox*>(object);
+			break;
+		default:
+			throw vitiError("<Scene::addChild>Unknown Object type.");
+		}
+	}
+}
 
 /* wip */
 void Scene::remove(const std::string & name) {
