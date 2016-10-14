@@ -59,10 +59,7 @@ public:
 		_M = glm::rotate(_M, glm::radians(angle), axis);
 	}
 
-	void		scale(const glm::vec3& scale) { 
-		_M = glm::scale(_M, scale); 
-		for (auto C : _children) C->scale(scale);
-	}
+	void		scale(const glm::vec3& scale) { _M = glm::scale(_M, scale); }
 
 	float		radius() const { return _radius; }
 

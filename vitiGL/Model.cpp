@@ -147,7 +147,8 @@ Model::Model(const std::string& filePath, bool textureFolder)
 		if (meshName == "") meshName = "Mesh_" + std::to_string(++id);
 
 		SceneNode* child = new SceneNode{ meshName, mesh, glm::vec3{}, 30.0f }; //TO DO: Calculate radius!
-		_children.push_back(child);
+		
+		addChild(child);
 	}
 	std::cout << "END PROCESSING OBJ FILE " << filePath << std::endl << std::endl;
 }

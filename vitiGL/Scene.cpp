@@ -187,8 +187,8 @@ void Scene::addToList(SceneNode* node) {
 			if (s->isTransparent()) {
 				_transparent.insert(std::make_pair(nodeName, object));
 			}
-			else;
-			_shapes.insert(std::make_pair(nodeName, object));
+			else
+				_shapes.insert(std::make_pair(nodeName, object));
 		}
 		break;
 		case ObjType::dlight:

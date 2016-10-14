@@ -31,9 +31,11 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 			_scene.addChild(new Tetrahedron{ "xml/cubeTiny.xml" }, glm::vec3{ 0.0, prefix * 1.0f, 0.0 }, sqrt(1.0f), child2Name, childName);
 		}
 	}*/
-/*
-	_scene.addChild(new Octahedron{ "xml/cube.xml" }, glm::vec3{ 3.0, 3.0f, 3.0 }, sqrt(2.0f), "Octahedron");
-	_scene.remove("Octahedron");*/
+
+	_scene.addChild(new Octahedron{ "xml/cube.xml" }, glm::vec3{ 3.0, 3.0f, 15.0 }, sqrt(2.0f), "Octahedron");
+	_scene.addChild(new Cuboid{ "xml/cubeSmall.xml" }, glm::vec3{ 2.0, 0.0f, 2.0 }, sqrt(1.0f), "Child", "Octahedron");
+	_scene.addChild(new Cuboid{ "xml/cubeSmall.xml" }, glm::vec3{ 2.0, 0.0f, 2.0 }, sqrt(1.0f), "Child2", "Child");
+	/*_scene.remove("Octahedron");*/
 
 	/**/_scene.addChild(new Model{ "Models/Old House/Old House 2 3D Models.obj", false }, "Shark");
 	_scene["Shark"]->scale(glm::vec3{ 0.05f, 0.05f, 0.05f });
@@ -139,12 +141,12 @@ void AppScreen::update() {
 		}
 	}*/
 
-	//auto temp = _scene["Octahedron"];
-	//temp->rotate(float(frameTime) / (20.0f), glm::vec3{ 0.0f, 1.0f, 0.0f });
-	//if (_rotate) {
-	//	auto temp = _scene["Shark"];
-	//	temp->rotate(float(frameTime) / (20.0f), glm::vec3{ 0.0f, 1.0f, 0.0f });
-	//}
+	if (_rotate) {
+		auto temp = _scene["Shark"];
+		temp->rotate(float(frameTime) / (20.0f), glm::vec3{ 0.0f, 1.0f, 0.0f });
+		temp = _scene["Octahedron"];
+		temp->rotate(float(frameTime) / (20.0f), glm::vec3{ 0.0f, 1.0f, 0.0f });
+	}
 
 	updateInput();
 	_scene.update(frameTime);
