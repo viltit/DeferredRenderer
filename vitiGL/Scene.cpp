@@ -3,6 +3,8 @@
 #include "vitiGlobals.hpp"
 #include "Skybox.hpp"
 #include "Camera.hpp"
+#include "Mesh.hpp"
+#include "Model.hpp"
 
 #include <iostream>
 
@@ -140,10 +142,22 @@ void Scene::addChild
 		if (s->isTransparent()) {
 			_transparent.insert(std::make_pair(nodeName, object));
 		}
-		else
+		else;
 			_shapes.insert(std::make_pair(nodeName, object));
 	}
 		break;
+	/*
+	case ObjType::model:
+	{
+		Model* model = static_cast<Model*>(object);
+		for (auto& M : model->_mesh) {
+			if (M.isTransparent())
+				_transparent.insert(std::make_pair(nodeName, &M));
+			else;
+				_shapes.insert(std::make_pair(nodeName, &M));
+		} 
+	}
+		break;*/
 	case ObjType::dlight:
 		_dlights.insert(std::make_pair(nodeName, static_cast<dLight*>(object)));
 		break;

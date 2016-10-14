@@ -21,7 +21,6 @@ public:
 	virtual void draw(const Shader & shader) const override;
 	virtual void drawNaked(const Shader& shader) const override;
 
-private:
 	std::vector<Mesh> _mesh;
 };
 
