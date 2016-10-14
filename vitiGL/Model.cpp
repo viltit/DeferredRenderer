@@ -15,21 +15,15 @@
 
 namespace vitiGL {
 
-/* TO DO: 
-	
-	- check if normals are provided and only calculate them if not
-	- check if textures are inside the same folder as the .obj file (ie: Cache::getTexture(basePath + ...))
-	- provide standard normal map AND OR allow no-normal-map in shape.draw()
-	- find out what is off with the glasses when loading "nanosuit.obj"
-
-*/
+int Model::id = 0;
 
 Model::Model(const std::string& filePath, bool textureFolder) 
-	: IGameObject{ ObjType::model }
 {
+#ifdef CONSOLE_LOG
 	std::cout << "\nSTART PROCESSING OBJ FILE " << filePath << std::endl;
 	std::cout << "------------------------------------------------------\n";
-
+#endif
+	/* get models base path: */
 	std::string basePath = filePath.substr(0, filePath.find_last_of("/"));
 	basePath += "/";
 
@@ -42,15 +36,13 @@ Model::Model(const std::string& filePath, bool textureFolder)
 	bool ret = tinyobj::LoadObj(&attribs, &shapes, &materials, &error, filePath.c_str(), basePath.c_str());
 
 	//reset base path if textures are in the same folder as the obj file:
+	//TO DO: THIS IS BUGGED IN SOME SITUATIONS
 	if (!textureFolder) basePath = "";
 
 	if (!error.empty()) std::cout << error << std::endl;
 	if (!ret) throw vitiError(("<Mesh::Mesh>TinyObjLoader failed to load object " + filePath).c_str());
 
-	/*	create a mesh for each tinyobj::shape: 
-		! We assume that the indices for position and normals are identical !
-	*/
-
+	/*	create a vitiGL::Mesh for each tinyobj::shape: */
 	for (const auto& shape : shapes) {
 		std::cout << "Processing a shape named " << shape.name << std::endl;
 		std::vector<Vertex> vertices;
@@ -103,7 +95,6 @@ Model::Model(const std::string& filePath, bool textureFolder)
 		int matIndex = shape.mesh.material_ids[0];
 
 		//if specular texture is not found, use diffuse:
-
 		std::cout << "Alpha texture: " << materials[matIndex].alpha_texname << std::endl;
 
 		if (matIndex >= 0) {
@@ -150,8 +141,13 @@ Model::Model(const std::string& filePath, bool textureFolder)
 
 		}
 
-		Mesh mesh(vertices, indices, textures);
-		_mesh.push_back(mesh);
+		/* make another scene node with a vitiGL::Mesh as its object: */
+		Mesh* mesh = new Mesh{ vertices, indices, textures };
+		std::string meshName = shape.name;
+		if (meshName == "") meshName = "Mesh_" + std::to_string(++id);
+
+		SceneNode* child = new SceneNode{ meshName, mesh, glm::vec3{}, 30.0f }; //TO DO: Calculate radius!
+		_children.push_back(child);
 	}
 	std::cout << "END PROCESSING OBJ FILE " << filePath << std::endl << std::endl;
 }
@@ -159,22 +155,4 @@ Model::Model(const std::string& filePath, bool textureFolder)
 
 Model::~Model() {
 }
-
-void Model::setModelMatrix(const glm::mat4 & M) {
-	 _M = M;
-	 for (auto& mesh : _mesh) mesh.setModelMatrix(M);
-}
-
-void Model::draw(const Shader & shader) const {
-	for (const auto& mesh : _mesh) {
-		mesh.draw(shader);
-	}
-}
-
-void Model::drawNaked(const Shader & shader) const {
-	for (const auto& mesh : _mesh) {
-		mesh.drawNaked(shader);
-	}
-}
-
 }

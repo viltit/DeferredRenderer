@@ -1,27 +1,26 @@
-/* Class for representing 3D-Models loaded from an obj File */
+/*	Class for representing 3D-Models loaded from an obj File 
+
+	Model inherits from Scene Node and expands it by loading meshes and textures 
+	as Child-Nodes from its constructor. It has no other tasks.					*/
 
 #pragma once
 
 #include <string>
-#include <vector>
-#include "IGameObject.hpp"
+
+#include "Scene.hpp"
 
 namespace vitiGL {
 
 class Mesh;
 
-class Model : public IGameObject {
+class Model : public SceneNode {
 public:
-	Model(const std::string& filePath, bool textureFolder = true);
+	Model	(const std::string& filePath, 
+			 bool textureFolder = true);
 	~Model();
 
-	// Inherited via IGameObject
-	virtual void setModelMatrix(const glm::mat4& M) override;
-
-	virtual void draw(const Shader & shader) const override;
-	virtual void drawNaked(const Shader& shader) const override;
-
-	std::vector<Mesh> _mesh;
+private:
+	static int id;
 };
 
 }

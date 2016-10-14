@@ -12,7 +12,6 @@ enum class ObjType {
 	shape,
 	plight,
 	dlight,
-	model,
 	skybox
 };
 

@@ -35,7 +35,7 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	_scene.addChild(new Octahedron{ "xml/cube.xml" }, glm::vec3{ 3.0, 3.0f, 3.0 }, sqrt(2.0f), "Octahedron");
 	_scene.remove("Octahedron");*/
 
-	/**/_scene.addChild(new Model{ "Models/Old House/Old House 2 3D Models.obj", false }, glm::vec3{ 0.0f, 0.0f, 0.0f }, sqrt(20.0f), "Shark");
+	/**/_scene.addChild(new Model{ "Models/Old House/Old House 2 3D Models.obj", false }, "Shark");
 	_scene["Shark"]->scale(glm::vec3{ 0.05f, 0.05f, 0.05f });
 	_scene["Shark"]->setPos(glm::vec3{ 0.0f, 5.0f, 0.0f });
 

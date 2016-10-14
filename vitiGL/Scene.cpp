@@ -142,16 +142,16 @@ void Scene::addChild(IGameObject * object, const std::string & name, const std::
 	addChild(object, glm::vec3{}, 1.0f, name, parentName);
 }
 
-void Scene::addChild(SceneNode * node, const std::string & parentName) {
+void Scene::addChild(SceneNode * node, const std::string& name, const std::string & parentName) {
 	assert(node != nullptr);
-	std::string nodeName;
-	if (node->name() == "") {
+	std::string nodeName = name;
+	if (name == "") {
 		nodeName = "Node[" + std::to_string(++_counter) + "]";
 		node->setName(nodeName);
 	}
 
 #ifdef CONSOLE_LOG
-	std::cout << "<Scene::addChild>Added a Scene Node with the name " << nodeName << " and the parent " << parentName << std::endl;
+	std::cout << "<Scene::addChild>Adding a Scene Node with the name " << nodeName << " and the parent " << parentName << std::endl;
 #endif
 
 	/* Search for the parent: */
@@ -162,6 +162,9 @@ void Scene::addChild(SceneNode * node, const std::string & parentName) {
 
 	/* link the child to its parent: */
 	parent->addChild(node);
+
+	/* put the child in the scene map: */
+	_scene.insert(std::make_pair(nodeName, node));
 
 	/*	Now we linked the node and its children to the node-net, we need to put it 
 		and all children in the appropriate scene lists: */
@@ -179,7 +182,6 @@ void Scene::addToList(SceneNode* node) {
 
 		switch (node->type()) {
 		case ObjType::shape:
-		case ObjType::model:
 		{
 			Shape* s = static_cast<Shape*>(object);
 			if (s->isTransparent()) {
@@ -189,18 +191,6 @@ void Scene::addToList(SceneNode* node) {
 			_shapes.insert(std::make_pair(nodeName, object));
 		}
 		break;
-		/*
-		case ObjType::model:
-		{
-		Model* model = static_cast<Model*>(object);
-		for (auto& M : model->_mesh) {
-		if (M.isTransparent())
-		_transparent.insert(std::make_pair(nodeName, &M));
-		else;
-		_shapes.insert(std::make_pair(nodeName, &M));
-		}
-		}
-		break;*/
 		case ObjType::dlight:
 			_dlights.insert(std::make_pair(nodeName, static_cast<dLight*>(object)));
 			break;
@@ -218,6 +208,11 @@ void Scene::addToList(SceneNode* node) {
 		default:
 			throw vitiError("<Scene::addChild>Unknown Object type.");
 		}
+	}
+
+	/* recursivly visit all children: */
+	for (auto i = node->childrenBegin(); i < node->childrenEnd(); i++) {
+		addToList(*i);
 	}
 }
 
@@ -355,7 +350,7 @@ pLight * Scene::findPLight(const std::string & name) {
 }
 
 void Scene::updateCullingList(Frustum & frustum, SceneNode* from) {
-	if ((from->obj()) && (from->type() == ObjType::shape || from->type() == ObjType::model)) {
+	if ((from->obj()) && (from->type() == ObjType::shape)) {
 		if (frustum.isInside(*from)) _cullingList.push_back(from);
 	}
 

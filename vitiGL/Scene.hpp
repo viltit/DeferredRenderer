@@ -59,7 +59,10 @@ public:
 		_M = glm::rotate(_M, glm::radians(angle), axis);
 	}
 
-	void		scale(const glm::vec3& scale) { _M = glm::scale(_M, scale); }
+	void		scale(const glm::vec3& scale) { 
+		_M = glm::scale(_M, scale); 
+		for (auto C : _children) C->scale(scale);
+	}
 
 	float		radius() const { return _radius; }
 
@@ -74,6 +77,9 @@ public:
 	auto		childrenEnd()	{ return _children.end(); }
 
 protected:
+	/* private constructor, should be used only by classes inheriting from SceneNode: */
+	SceneNode() {}
+
 	IGameObject* _obj;
 
 	SceneNode*	_parent;
@@ -108,7 +114,9 @@ public:
 					const std::string& name = "",
 					const std::string& parentName = "root");
 
-	void addChild	(SceneNode* node, const std::string& parentName);
+	void addChild	(SceneNode* node, 
+					const std::string& name = "",
+					const std::string& parentName = "root");
 
 	/* removes node and all its children: */
 	void remove(const std::string& name);
@@ -177,7 +185,7 @@ private:
 	SceneNode* _root; //we store root so we dont need to search it
 
 	/* seperate lists for drawing: */
-	std::map<std::string, SceneNode*> _scene;
+	std::map<std::string, SceneNode*> _scene;	//only used by SearchByName
 	std::vector<SceneNode*>	_cullingList;
 	std::map<std::string, IGameObject*>	_shapes;
 	std::map<std::string, IGameObject*> _transparent;
