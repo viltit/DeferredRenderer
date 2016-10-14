@@ -2,6 +2,7 @@
 #include "Frustum.hpp"
 #include "vitiGlobals.hpp"
 #include "Skybox.hpp"
+#include "Camera.hpp"
 
 #include <iostream>
 
@@ -134,7 +135,14 @@ void Scene::addChild
 	switch (object->type()) {
 	case ObjType::shape:
 	case ObjType::model:
-		_shapes.insert(std::make_pair(nodeName, static_cast<Shape*>(object)));
+	{
+		Shape* s = static_cast<Shape*>(object);
+		if (s->isTransparent()) {
+			_transparent.insert(std::make_pair(nodeName, object));
+		}
+		else
+			_shapes.insert(std::make_pair(nodeName, object));
+	}
 		break;
 	case ObjType::dlight:
 		_dlights.insert(std::make_pair(nodeName, static_cast<dLight*>(object)));
@@ -204,6 +212,22 @@ void Scene::drawShapes(const Shader & shader, Frustum& frustum) {
 	updateCullingList(frustum, _root);
 
 	for (auto& N : _cullingList) N->draw(shader); 
+}
+
+void Scene::drawTransparent(const Shader & shader, Frustum & frustum) {
+	//to do: frustum culling
+	
+	/* sort objects by distance to camera: */
+	std::map<float, IGameObject*> sorted;
+	for (auto& O : _transparent) {
+		float distance = glm::length(_scene[O.first]->pos() - _cam->pos());
+		sorted[distance] = O.second;
+	}
+
+	/* now draw in reverse order: */
+	for (std::map<float, IGameObject*>::reverse_iterator i = sorted.rbegin(); i != sorted.rend(); ++i) {
+		i->second->draw(shader);
+	}
 }
 
 void Scene::drawShapesNaked(const Shader & shader) const {

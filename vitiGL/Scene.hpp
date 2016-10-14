@@ -23,6 +23,7 @@ namespace vitiGL {
 
 class Frustum;
 class Skybox;
+class Camera;
 
 /*	CLASS SceneNode ------------------------------------------------------------------------------ */
 class SceneNode {
@@ -109,6 +110,8 @@ public:
 	/* removes node and all its children: */
 	void remove(const std::string& name);
 
+	void addCamera(Camera* cam) { _cam = cam; }
+
 	/* access scene elements: */
 	SceneNode* findByName(const std::string& name);
 	
@@ -118,7 +121,8 @@ public:
 	void drawShapes(const Shader& shader);
 	/* draw every Shape in the scene with view-frustum culling: */
 	void drawShapes(const Shader& shader, Frustum& frustum);
-
+	/* draw transparent Shapes: */
+	void drawTransparent(const Shader& shader, Frustum& frustum);
 	/* draw everything, but without textures (->for the shadowmap) */
 	void drawShapesNaked(const Shader& shader) const;
 	void drawShapesNaked(const Shader& shader, Frustum& frustum);
@@ -171,9 +175,12 @@ private:
 	/* seperate lists for drawing: */
 	std::map<std::string, SceneNode*> _scene;
 	std::vector<SceneNode*>	_cullingList;
-	std::map<std::string, Shape*>	_shapes;
+	std::map<std::string, IGameObject*>	_shapes;
+	std::map<std::string, IGameObject*> _transparent;
 	std::map<std::string, dLight*>	_dlights;
 	std::map<std::string, pLight*>	_plights;
+
+	Camera*			_cam;
 
 	Skybox*			_skybox;
 

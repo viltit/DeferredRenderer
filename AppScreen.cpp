@@ -66,6 +66,7 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	Skybox* skybox = new Skybox(faces);
 	_scene.addChild(skybox, "Skybox");
 
+	_scene.addCamera(&_cam);
 
 	//_scene["plight"]->setPos(glm::vec3{ 0.0f, 30.0f, 0.0f }); //BUGGED
 

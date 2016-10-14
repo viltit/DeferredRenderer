@@ -47,6 +47,8 @@ public:
 	bool srgbOn()	{ sRGB = true; }
 	bool srgbOff()	{ sRGB = false; }
 
+	bool isTransparent() const { return material.isTransparent(); }
+
 protected:
 	virtual void initVertices(std::vector<Vertex>& vertices) = 0; //pure abstract function !!
 	virtual void uploadVertices(const std::vector<Vertex>& vertices);
@@ -73,6 +75,8 @@ public:
 	virtual void draw(const Shader& shader) const override;
 	virtual void drawNaked(const Shader& shader) const override;
 
+	bool isTransparent() const { return material.isTransparent(); }
+
 protected:
 	virtual void initVertices(std::vector<Vertex>& vertices) = 0; //pure abstract function !!
 
@@ -87,6 +91,7 @@ protected:
 
 	virtual void normalizeSeam	(std::vector<Vertex>& vertices,
 								 std::vector<GLuint>& indices);
+
 
 	GLuint		vao;
 	GLuint		vbo;

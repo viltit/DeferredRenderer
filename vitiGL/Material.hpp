@@ -21,7 +21,7 @@ public:
 	Material();
 
 	//textures HAVE to be in order: [0] -> diffuse; [1] -> specular; [2] -> normal; [3] -> bump
-	Material(std::vector<GLuint> textures, float shiny = 22.0f, float transparency = 0.0f);
+	Material(std::vector<GLuint> textures, float shiny = 22.0f, bool transparency = false);
 
 	~Material();
 
@@ -34,15 +34,15 @@ public:
 	void setShiny(float val)	{ _shiny = val; }
 	float shiny() const			{ return _shiny; }
 
-	void setTransparency(float val) { _transp = val; }
-	float transparency() const		{ return _transp; }
+	bool isTransparent() const  { return _transparent;  }
 
 	Material& operator = (const Material mat);
 
 private:
 	std::vector<GLuint> _tbo;
 	float _shiny;
-	float _transp;
+
+	bool _transparent;
 
 	const std::string texNames[5] = {
 		"diffuse",

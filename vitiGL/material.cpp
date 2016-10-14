@@ -9,15 +9,15 @@ namespace vitiGL {
 
 Material::Material() 
 	: _shiny	{ 22.0f },
-	  _transp	{ 0.0f }
+	  _transparent	{false }
 {
 	_tbo.resize(3);
 }
 
-Material::Material(std::vector<GLuint> textures, float shiny, float transparency)
+Material::Material(std::vector<GLuint> textures, float shiny, bool transparency)
 	:	_tbo		{ textures },
 		_shiny		{ shiny },
-		_transp		{ transparency }
+		_transparent { transparency }
 {
 	_tbo.resize(3);
 }
@@ -72,7 +72,7 @@ Material & Material::operator=(const Material mat) {
 	if (this != &mat) {
 		_tbo = mat._tbo;
 		_shiny = mat._shiny;
-		_transp = mat._transp;
+		_transparent = mat._transparent;
 	}
 
 	return *this;
