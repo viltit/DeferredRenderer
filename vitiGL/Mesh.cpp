@@ -9,6 +9,7 @@
 namespace vitiGL {
 
 Mesh::Mesh(std::vector<Vertex>& vertices, std::vector<GLuint> indices, std::vector<std::pair<int, GLuint>>& textures)
+	: ShapeI(ObjType::mesh)
 {
 	numVertices = indices.size();
 
@@ -31,10 +32,9 @@ Mesh::Mesh(std::vector<Vertex>& vertices, std::vector<GLuint> indices, std::vect
 		case TEXTURE_BUMP:
 			material.setTexture(TEXTURE_BUMP, T.second);
 			break;
-		/*
 		case TEXTURE_ALPHA:
 			material.setTexture(TEXTURE_ALPHA, T.second);
-			break;*/
+			break;
 		default:
 			throw vitiError("<Mesh::Mesh> Invalid Texture index.");
 		}

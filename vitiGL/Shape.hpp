@@ -70,6 +70,7 @@ protected:
 class ShapeI : public IGameObject {
 public:
 	ShapeI();
+	ShapeI(ObjType type);
 	virtual ~ShapeI();
 
 	virtual void draw(const Shader& shader) const override;

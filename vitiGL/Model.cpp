@@ -128,7 +128,7 @@ Model::Model(const std::string& filePath, bool textureFolder)
 			}
 			catch (fileError) {
 			}
-			/*alpha mask texture:
+			/* alpha mask texture: */
 			try {
 				std::cout << "Trying to open texture file " << basePath + materials[matIndex].alpha_texname << std::endl;
 				textures.push_back(std::make_pair(
@@ -137,7 +137,7 @@ Model::Model(const std::string& filePath, bool textureFolder)
 				);
 			}
 			catch (fileError) {
-			}*/
+			}
 
 		}
 
@@ -148,7 +148,18 @@ Model::Model(const std::string& filePath, bool textureFolder)
 
 		SceneNode* child = new SceneNode{ meshName, mesh, glm::vec3{}, 30.0f }; //TO DO: Calculate radius!
 		
+		std::cout << "TRANSPARENT: " << mesh->isTransparent() << std::endl;
+
 		addChild(child);
+
+		Shape* s = static_cast<Shape*>(child->obj());
+
+		/* TO FIX:: WE OBVOUISLY LOOSE MEMBER DATA WHEN WE CAST TO A SHAPE: 
+			it IS a somewhat wrong cast because mesh is a ShapeI, not a shape... */
+		std::cout << "TRANSPARENT AGAIN: " << s->isTransparent() << std::endl;
+
+		Mesh* m = static_cast<Mesh*>(child->obj());
+		std::cout << "TRANSPARENT AS MESH CAST: " << m->isTransparent() << std::endl;
 	}
 	std::cout << "END PROCESSING OBJ FILE " << filePath << std::endl << std::endl;
 }

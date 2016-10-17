@@ -161,6 +161,14 @@ ShapeI::ShapeI()
 		numVertices	{ 0 }
 {}
 
+ShapeI::ShapeI(ObjType type)
+	:	IGameObject	{ type },
+		vao			{ 0 },
+		vbo			{ 0 },
+		ebo			{ 0 },
+		numVertices	{ 0 }
+{}
+
 ShapeI::~ShapeI() {
 }
 

@@ -25,6 +25,9 @@ public:
 
 	~Material();
 
+	Material(const Material& mat) = delete;
+	Material(Material&& mat) = delete;
+
 	//shader has to be on before calling the function
 	void setUniforms(const Shader& shader) const;
 
@@ -34,9 +37,9 @@ public:
 	void setShiny(float val)	{ _shiny = val; }
 	float shiny() const			{ return _shiny; }
 
-	bool isTransparent() const  { return _transparent;  }
+	bool isTransparent() const  { return (_tbo.size() > 3 && _tbo[3] != 0);  }
 
-	Material& operator = (const Material mat);
+	Material& operator = (const Material& mat);
 
 private:
 	std::vector<GLuint> _tbo;
@@ -48,8 +51,8 @@ private:
 		"diffuse",
 		"specular",
 		"normal",
-		"bump",
-		"alpha"
+		"alpha",
+		"bump"
 	};
 };
 }

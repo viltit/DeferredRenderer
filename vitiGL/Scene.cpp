@@ -101,7 +101,10 @@ Scene::Scene()
 }
 
 Scene::~Scene() {
-	//needs cleanup
+	if (_root) {
+		delete _root;
+		_root = nullptr;    
+	}
 }
 
 void Scene::addChild
@@ -186,9 +189,23 @@ void Scene::addToList(SceneNode* node) {
 			Shape* s = static_cast<Shape*>(object);
 			if (s->isTransparent()) {
 				_transparent.insert(std::make_pair(nodeName, object));
+				std::cout << "TRANSPARENT\n";
 			}
 			else
 				_shapes.insert(std::make_pair(nodeName, object));
+		}
+		break;
+		case ObjType::mesh: 
+		{
+			Mesh* s = static_cast<Mesh*>(object);
+			if (s->isTransparent()) {
+				_transparent.insert(std::make_pair(nodeName, s));
+				std::cout << "TRANSPARENT\n";
+			}
+			else {
+				std::cout << "NOT TRANSPARENT\n";
+				_shapes.insert(std::make_pair(nodeName, s));
+			}
 		}
 		break;
 		case ObjType::dlight:
@@ -350,7 +367,7 @@ pLight * Scene::findPLight(const std::string & name) {
 }
 
 void Scene::updateCullingList(Frustum & frustum, SceneNode* from) {
-	if ((from->obj()) && (from->type() == ObjType::shape)) {
+	if ((from->obj()) && (from->type() == ObjType::shape || from->type() == ObjType::mesh)) {
 		if (frustum.isInside(*from)) _cullingList.push_back(from);
 	}
 

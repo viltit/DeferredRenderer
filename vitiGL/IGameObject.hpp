@@ -12,7 +12,8 @@ enum class ObjType {
 	shape,
 	plight,
 	dlight,
-	skybox
+	skybox,
+	mesh
 };
 
 class IGameObject {
