@@ -1,8 +1,9 @@
 #include "AppScreen.hpp"
 #include "vitiGL.hpp"
 
-
 #include "App.hpp"
+
+#include <conio.h>
 
 using namespace vitiGL;
 
@@ -85,6 +86,9 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 
 	initGUI();
 	_timer.on();
+
+	_scene.print();
+	char c = _getch();
 }
 
 

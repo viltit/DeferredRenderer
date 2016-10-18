@@ -169,6 +169,13 @@ public:
 		}
 	}
 
+	//debug:
+	void print() {
+		for (auto& S : _scene) {
+			std::cout << "scene node name: " << S.first << "\t\tMemory address: " << S.second << std::endl;
+		}
+	}
+
 	//temporary function, needs another solution:
 	dLight* findDLight(const std::string& name);
 	pLight* findPLight(const std::string& name);

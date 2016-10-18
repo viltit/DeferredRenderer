@@ -178,6 +178,9 @@ void Scene::addChild(SceneNode * node, const std::string& name, const std::strin
 void Scene::addToList(SceneNode* node) {
 	assert(node != nullptr);
 
+	std::cout << "SCENE PRINTOUT: \n";
+	print();
+
 	/* put the child in the appropriate vector:*/
 	if (node->obj() != nullptr) {
 		IGameObject* object = node->obj();
@@ -189,7 +192,6 @@ void Scene::addToList(SceneNode* node) {
 			Shape* s = static_cast<Shape*>(object);
 			if (s->isTransparent()) {
 				_transparent.insert(std::make_pair(nodeName, object));
-				std::cout << "TRANSPARENT\n";
 			}
 			else
 				_shapes.insert(std::make_pair(nodeName, object));
@@ -200,10 +202,8 @@ void Scene::addToList(SceneNode* node) {
 			Mesh* s = static_cast<Mesh*>(object);
 			if (s->isTransparent()) {
 				_transparent.insert(std::make_pair(nodeName, s));
-				std::cout << "TRANSPARENT\n";
 			}
 			else {
-				std::cout << "NOT TRANSPARENT\n";
 				_shapes.insert(std::make_pair(nodeName, s));
 			}
 		}
@@ -224,6 +224,12 @@ void Scene::addToList(SceneNode* node) {
 			break;
 		default:
 			throw vitiError("<Scene::addChild>Unknown Object type.");
+		}
+
+		/* make sure the node is in the scene list */
+		if (_scene[node->name()] == nullptr) {
+			_scene.erase(node->name()); //this line should NOT be necessary, but it is atm -> see scene.print(), we have nullptrs
+			_scene.insert(std::make_pair(node->name(), node));
 		}
 	}
 
@@ -285,7 +291,12 @@ void Scene::drawTransparent(const Shader & shader, Frustum & frustum) {
 	/* sort objects by distance to camera: */
 	std::map<float, IGameObject*> sorted;
 	for (auto& O : _transparent) {
-		float distance = glm::length(_scene[O.first]->pos() - _cam->pos());
+		std::cout << "TRANSPARENT DRAWING: Drawing an object named " << O.first << std::endl;
+		findByName(O.first);
+		std::cout << "Find by Name was ok\n";
+		if (findByName(O.first) == nullptr) std::cout << "BUT ITS A NULLPTR\n";
+
+		float distance = glm::length(findByName(O.first)->pos() - _cam->pos());
 		sorted[distance] = O.second;
 	}
 

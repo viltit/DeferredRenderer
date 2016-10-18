@@ -17,6 +17,7 @@ namespace vitiGL {
 		_fshader	{ "Shaders/DeferredRenderer/final.vert.glsl", "Shaders/DeferredRenderer/final.frag.glsl" },
 		_dshader	{ "Shaders/simple.vert.glsl", "Shaders/simple.frag.glsl" },
 		_sbshader	{ "Shaders/Skybox/Skybox.vert.glsl", "Shaders/Skybox/skybox.frag.glsl" },
+		_tshader	{ "Shaders/DeferredRenderer/vertex.glsl", "Shaders/DeferredRenderer/fragment.glsl" },
 		_debug		{ QuadPos::topRight },
 		_debug2		{ QuadPos::aboveMiddleRight },
 		_debug3		{ QuadPos::belowMiddleRight },
@@ -63,16 +64,17 @@ void glRendererDeferred::draw() {
 	_scene->drawDShadows(cam, _frustum);
 	_scene->drawPShadows(cam);
 
-	/* draw: */
+	/* draw deferred passes: */
 	drawGeo();
 	drawLight();
 	drawFinal();
 
-	//the framebuffer will apply bloom and other pp-effects
+	/* turn framebuffer on, draw forward and apply pp-effects: */
 	_framebuffer.on();
 	_quad.draw(_dshader, _tbo[finalCol]);
 
 	drawSkybox();
+	drawTransparent();
 
 	_framebuffer.off();
 
@@ -238,6 +240,13 @@ void glRendererDeferred::drawSkybox() {
 	_scene->drawSkybox(_sbshader);
 
 	_sbshader.off();
+}
+
+void glRendererDeferred::drawTransparent() {
+	/* the depht map should already be ready from the drawSkybox call */
+	_tshader.on();
+	_scene->drawTransparent(_tshader, _frustum);
+	_tshader.off();
 }
 
 void glRendererDeferred::drawFinal() {

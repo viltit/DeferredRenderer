@@ -82,17 +82,21 @@ protected:
 	/* the three drawing stages: */
 	void		drawGeo();
 	void		drawLight();
-	void		drawSkybox();
 	void		drawFinal();
+
+	/* forward drawing: */
+	void		drawSkybox();
+	void		drawTransparent();
 
 	/*	The shaders for the three drawing stages: 
 		TO DO: Put them into a vector 
 	*/
-	Shader		_gshader; 
-	Shader		_lshader;
-	Shader		_fshader;
-	Shader		_sbshader;
-	Shader		_dshader; //debug
+	Shader		_gshader;	//deferred - geometry pass
+	Shader		_lshader;	//deferred - lightnis pass
+	Shader		_fshader;	//deferred - finishing pass
+	Shader		_sbshader;	//skybox
+	Shader		_tshader;	//transparent objects
+	Shader		_dshader;	//debug
 
 	/* the texture buffers: */
 	GLuint		_tbo[8];
