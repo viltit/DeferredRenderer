@@ -178,9 +178,6 @@ void Scene::addChild(SceneNode * node, const std::string& name, const std::strin
 void Scene::addToList(SceneNode* node) {
 	assert(node != nullptr);
 
-	std::cout << "SCENE PRINTOUT: \n";
-	print();
-
 	/* put the child in the appropriate vector:*/
 	if (node->obj() != nullptr) {
 		IGameObject* object = node->obj();
@@ -288,14 +285,11 @@ void Scene::drawShapes(const Shader & shader, Frustum& frustum) {
 void Scene::drawTransparent(const Shader & shader, Frustum & frustum) {
 	//to do: frustum culling
 	
-	/* sort objects by distance to camera: */
+	/*	sort objects by distance to camera: 
+		PROBLEM: On the same model, distance is always the same and only one object will be stored */
+
 	std::map<float, IGameObject*> sorted;
 	for (auto& O : _transparent) {
-		std::cout << "TRANSPARENT DRAWING: Drawing an object named " << O.first << std::endl;
-		findByName(O.first);
-		std::cout << "Find by Name was ok\n";
-		if (findByName(O.first) == nullptr) std::cout << "BUT ITS A NULLPTR\n";
-
 		float distance = glm::length(findByName(O.first)->pos() - _cam->pos());
 		sorted[distance] = O.second;
 	}
@@ -378,13 +372,8 @@ pLight * Scene::findPLight(const std::string & name) {
 }
 
 void Scene::updateCullingList(Frustum & frustum, SceneNode* from) {
-	if ((from->obj()) && (from->type() == ObjType::shape || from->type() == ObjType::mesh)) {
-		if (frustum.isInside(*from)) _cullingList.push_back(from);
+	for (auto& S : _shapes) {
+		if (frustum.isInside(*_scene[S.first])) _cullingList.push_back(_scene[S.first]);
 	}
-
-
-	/* visit all childs by recursion: */
-	for (auto i = from->childrenBegin(); i < from->childrenEnd(); i++) updateCullingList(frustum, *i);
 }
-
 }

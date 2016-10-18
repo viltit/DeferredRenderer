@@ -141,12 +141,14 @@
   <ItemGroup>
     <None Include="Shaders\DeferredRenderer\final.frag.glsl" />
     <None Include="Shaders\DeferredRenderer\final.vert.glsl" />
+    <None Include="Shaders\DeferredRenderer\fragment.glsl" />
     <None Include="Shaders\DeferredRenderer\geo.frag.glsl" />
     <None Include="Shaders\DeferredRenderer\geo.vert.glsl" />
     <None Include="Shaders\DeferredRenderer\light.frag.glsl" />
     <None Include="Shaders\DeferredRenderer\light.vert.glsl" />
     <None Include="Shaders\DeferredRenderer\pp.frag.glsl" />
     <None Include="Shaders\DeferredRenderer\pp.vert.glsl" />
+    <None Include="Shaders\DeferredRenderer\vertex.glsl" />
     <None Include="Shaders\Effects\normal.frag.glsl" />
     <None Include="Shaders\Effects\normal.geo.glsl" />
     <None Include="Shaders\Effects\normal.vert.glsl" />

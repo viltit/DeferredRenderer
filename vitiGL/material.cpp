@@ -32,9 +32,11 @@ void Material::setUniforms(const Shader & shader) const {
 	assert(_tbo.size() < 5 , "<Material>: more than 4 textures defined");
 
 	for (size_t i = 0; i < _tbo.size(); i++) {
-		glActiveTexture(GL_TEXTURE0 + i);
-		glBindTexture(GL_TEXTURE_2D, _tbo[i]);
-		glUniform1i(shader.getUniform("material." + texNames[i]), i);
+		if (_tbo[i] != 0) {
+			glActiveTexture(GL_TEXTURE0 + i);
+			glBindTexture(GL_TEXTURE_2D, _tbo[i]);
+			glUniform1i(shader.getUniform("material." + texNames[i]), i);
+		}
 	}
 
 	//set subroutine for normal calculation:

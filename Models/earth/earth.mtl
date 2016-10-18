@@ -14,7 +14,22 @@ newmtl 01___Default
 	Ke 0.0000 0.0000 0.0000
 	map_Ka Models/earth/4096_earth.jpg
 	map_Kd Models/earth/4096_earth.jpg
-	map_Ks Models/earth/4096_specular.jpg
 	map_Ke Models/earth/4096_night_lights.jpg
+	map_Ks Models/earth/4096_specular.jpg
 	map_bump Models/earth/4096_normal.jpg
 	bump Models/earth/4096_normal.jpg
+
+newmtl 02___Default
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5882 0.5882 0.5882
+	Kd 0.5882 0.5882 0.5882
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ka Models/earth/4096_clouds.jpg
+	map_Kd Models/earth/4096_clouds.jpg
+	map_d Models/earth/4096_clouds.jpg

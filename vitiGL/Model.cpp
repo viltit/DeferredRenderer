@@ -100,7 +100,7 @@ Model::Model(const std::string& filePath, bool textureFolder)
 		if (matIndex >= 0) {
 			//diffuse tex
 			try {
-				std::cout << "Trying to open texture file " << basePath + materials[matIndex].diffuse_texname << std::endl;
+				std::cout << "Trying to open diffuse texture file " << basePath + materials[matIndex].diffuse_texname << std::endl;
 				textures.push_back(std::make_pair(
 						TEXTURE_DIFFUSE,
 						Cache::getTexture(basePath + materials[matIndex].diffuse_texname))
@@ -110,7 +110,7 @@ Model::Model(const std::string& filePath, bool textureFolder)
 			}
 			//specular tex:
 			try {
-				std::cout << "Trying to open texture file " << basePath + materials[matIndex].specular_texname << std::endl;
+				std::cout << "Trying to open specular texture file " << basePath + materials[matIndex].specular_texname << std::endl;
 				textures.push_back(std::make_pair(
 					TEXTURE_SPECULAR,
 					Cache::getTexture(basePath + materials[matIndex].specular_texname))
@@ -120,7 +120,7 @@ Model::Model(const std::string& filePath, bool textureFolder)
 			}
 			//normal tex:
 			try {
-				std::cout << "Trying to open texture file " << basePath + materials[matIndex].bump_texname << std::endl;
+				std::cout << "Trying to open normal texture file " << basePath + materials[matIndex].bump_texname << std::endl;
 				textures.push_back(std::make_pair(
 					TEXTURE_NORMAL,
 					Cache::getTexture(basePath + materials[matIndex].bump_texname))
@@ -130,7 +130,7 @@ Model::Model(const std::string& filePath, bool textureFolder)
 			}
 			/* alpha mask texture: */
 			try {
-				std::cout << "Trying to open texture file " << basePath + materials[matIndex].alpha_texname << std::endl;
+				std::cout << "Trying to open alpha texture file " << basePath + materials[matIndex].alpha_texname << std::endl;
 				textures.push_back(std::make_pair(
 					TEXTURE_ALPHA,
 					Cache::getTexture(basePath + materials[matIndex].alpha_texname))

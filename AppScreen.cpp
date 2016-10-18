@@ -38,7 +38,7 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	_scene.addChild(new Cuboid{ "xml/cubeSmall.xml" }, glm::vec3{ 2.0, 0.0f, 2.0 }, sqrt(1.0f), "Child2", "Child");
 	/*_scene.remove("Octahedron");*/
 
-	/**/_scene.addChild(new Model{ "Models/Old House/Old House 2 3D Models.obj", false }, "Shark");
+	/**/_scene.addChild(new Model{ "Models/earth/earth.obj", false }, "Shark");
 	_scene["Shark"]->scale(glm::vec3{ 0.05f, 0.05f, 0.05f });
 	_scene["Shark"]->setPos(glm::vec3{ 0.0f, 5.0f, 0.0f });
 
@@ -51,7 +51,7 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	_scene.setShadowcaster("dlight");
 
 	pLight* plight = new pLight{ &_cam };
-	plight->setProperty(lightProps::pos, glm::vec3{ 0.0f, 20.0f, 0.0f });
+	plight->setProperty(lightProps::pos, glm::vec3{ 0.0f, 30.0f, 0.0f });
 	plight->setProperty(lightProps::diffuse, glm::vec3{ 10.0f, 5.0f, 0.0f });
 	plight->setProperty(lightProps::specular, glm::vec3{ 20.0f, 10.0f, 0.0f });
 
@@ -86,9 +86,6 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 
 	initGUI();
 	_timer.on();
-
-	_scene.print();
-	char c = _getch();
 }
 
 

@@ -142,5 +142,11 @@
     <None Include="Shaders\Effects\normal.vert.glsl">
       <Filter>Resource Files\Normals</Filter>
     </None>
+    <None Include="Shaders\DeferredRenderer\fragment.glsl">
+      <Filter>Resource Files\Deferred</Filter>
+    </None>
+    <None Include="Shaders\DeferredRenderer\vertex.glsl">
+      <Filter>Resource Files\Deferred</Filter>
+    </None>
   </ItemGroup>
 </Project>

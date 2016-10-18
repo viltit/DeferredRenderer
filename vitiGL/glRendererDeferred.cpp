@@ -243,10 +243,26 @@ void glRendererDeferred::drawSkybox() {
 }
 
 void glRendererDeferred::drawTransparent() {
-	/* the depht map should already be ready from the drawSkybox call */
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	CamInfo cam = _camera->getMatrizes();
+
+	/* we need the depht information from the geometry buffer: */
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, _buffer[geo]);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _framebuffer.id());
+	glBlitFramebuffer(0, 0, _window->width(), _window->height(), 0, 0, _window->width(), _window->height(),
+		GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+
 	_tshader.on();
+
+	glm::mat4 V = glm::mat4(glm::mat3(cam.V));
+	glUniformMatrix4fv(_tshader.getUniform("VP"), 1, GL_FALSE, glm::value_ptr(cam.P * cam.V));
+
 	_scene->drawTransparent(_tshader, _frustum);
 	_tshader.off();
+
+	glDisable(GL_BLEND);
 }
 
 void glRendererDeferred::drawFinal() {
