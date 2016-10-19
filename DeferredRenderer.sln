@@ -10,6 +10,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DeferredRenderer", "Deferre
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vitiGL", "vitiGL\vitiGL.vcxproj", "{7A39AA66-E9A2-4290-AB9D-811DF10C1C15}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vitiGEO", "vitiGEO\vitiGEO.vcxproj", "{341CB649-F0BA-42BB-9DE2-647C2F1CEC0E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -34,6 +36,14 @@ Global
 		{7A39AA66-E9A2-4290-AB9D-811DF10C1C15}.Release|x64.Build.0 = Release|x64
 		{7A39AA66-E9A2-4290-AB9D-811DF10C1C15}.Release|x86.ActiveCfg = Release|Win32
 		{7A39AA66-E9A2-4290-AB9D-811DF10C1C15}.Release|x86.Build.0 = Release|Win32
+		{341CB649-F0BA-42BB-9DE2-647C2F1CEC0E}.Debug|x64.ActiveCfg = Debug|x64
+		{341CB649-F0BA-42BB-9DE2-647C2F1CEC0E}.Debug|x64.Build.0 = Debug|x64
+		{341CB649-F0BA-42BB-9DE2-647C2F1CEC0E}.Debug|x86.ActiveCfg = Debug|Win32
+		{341CB649-F0BA-42BB-9DE2-647C2F1CEC0E}.Debug|x86.Build.0 = Debug|Win32
+		{341CB649-F0BA-42BB-9DE2-647C2F1CEC0E}.Release|x64.ActiveCfg = Release|x64
+		{341CB649-F0BA-42BB-9DE2-647C2F1CEC0E}.Release|x64.Build.0 = Release|x64
+		{341CB649-F0BA-42BB-9DE2-647C2F1CEC0E}.Release|x86.ActiveCfg = Release|Win32
+		{341CB649-F0BA-42BB-9DE2-647C2F1CEC0E}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
