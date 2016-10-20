@@ -5,10 +5,14 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DeferredRenderer", "DeferredRenderer.vcxproj", "{24C677BA-C737-46E5-83DA-52196E7ADF43}"
 	ProjectSection(ProjectDependencies) = postProject
+		{341CB649-F0BA-42BB-9DE2-647C2F1CEC0E} = {341CB649-F0BA-42BB-9DE2-647C2F1CEC0E}
 		{7A39AA66-E9A2-4290-AB9D-811DF10C1C15} = {7A39AA66-E9A2-4290-AB9D-811DF10C1C15}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vitiGL", "vitiGL\vitiGL.vcxproj", "{7A39AA66-E9A2-4290-AB9D-811DF10C1C15}"
+	ProjectSection(ProjectDependencies) = postProject
+		{341CB649-F0BA-42BB-9DE2-647C2F1CEC0E} = {341CB649-F0BA-42BB-9DE2-647C2F1CEC0E}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vitiGEO", "vitiGEO\vitiGEO.vcxproj", "{341CB649-F0BA-42BB-9DE2-647C2F1CEC0E}"
 EndProject

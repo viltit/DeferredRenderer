@@ -8,19 +8,30 @@
 #include <string>
 
 #include "Scene.hpp"
+#include "AABBShape.hpp"
+#include <AABB.hpp>
 
 namespace vitiGL {
 
 class Mesh;
+class Camera;
 
 class Model : public SceneNode {
 public:
-	Model	(const std::string& filePath, 
+	Model	(const std::string& filePath,
+			 Camera* cam,
 			 bool textureFolder = true);
 	~Model();
 
+	/* wip, debug: */
+	void drawAABB();
+
 private:
 	static int id;
+
+	/* WIP: */
+	std::vector<vitiGEO::AABB> _aabb;
+	std::vector<AABBShape> _aabbShape;
 };
 
 }

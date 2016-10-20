@@ -25,6 +25,9 @@
     <Filter Include="Resource Files\Normals">
       <UniqueIdentifier>{1b9dc591-32ec-4ef9-b5d1-adbe28295ebb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\DrawBlank">
+      <UniqueIdentifier>{03601a39-b79c-4992-9ab3-9de4c2443e39}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.hpp">
@@ -147,6 +150,12 @@
     </None>
     <None Include="Shaders\DeferredRenderer\vertex.glsl">
       <Filter>Resource Files\Deferred</Filter>
+    </None>
+    <None Include="Shaders\DrawShape\fragment.glsl">
+      <Filter>Resource Files\DrawBlank</Filter>
+    </None>
+    <None Include="Shaders\DrawShape\vertex.glsl">
+      <Filter>Resource Files\DrawBlank</Filter>
     </None>
   </ItemGroup>
 </Project>

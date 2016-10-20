@@ -17,7 +17,7 @@ namespace vitiGL {
 
 int Model::id = 0;
 
-Model::Model(const std::string& filePath, bool textureFolder) 
+Model::Model(const std::string& filePath, Camera* cam, bool textureFolder)
 {
 #ifdef CONSOLE_LOG
 	std::cout << "\nSTART PROCESSING OBJ FILE " << filePath << std::endl;
@@ -150,11 +150,28 @@ Model::Model(const std::string& filePath, bool textureFolder)
 		SceneNode* child = new SceneNode{ meshName, mesh, glm::vec3{}, 30.0f }; //TO DO: Calculate radius!
 
 		addChild(child);
+
+		/* WIP: add aabb and aabbShape: */
+		std::vector<glm::vec3> points;
+		for (int i = 0; i < vertices.size(); i++) {
+			points.push_back(vertices[i].pos);
+		}
+		vitiGEO::AABB aabb{ points };
+		AABBShape aabbshape{ &aabb, cam };
+		_aabb.push_back(aabb);
+		_aabbShape.push_back(aabbshape);
 	}
 	std::cout << "END PROCESSING OBJ FILE " << filePath << std::endl << std::endl;
 }
 
 
 Model::~Model() {
+}
+
+
+void Model::drawAABB() {
+	for (auto& AABB : _aabbShape) {
+		AABB.draw();
+	}
 }
 }

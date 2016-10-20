@@ -70,8 +70,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(SolutionDir)../dependencies/includes/;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)../dependencies/libs;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)vitiGEO/;$(SolutionDir)../dependencies/includes/;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)Debug/;$(SolutionDir)../dependencies/libs;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>$(SolutionDir)../dependencies/includes;$(IncludePath)</IncludePath>
@@ -90,7 +90,7 @@
       <SubSystem>Windows</SubSystem>
     </Link>
     <Lib>
-      <AdditionalDependencies>SDL2.lib;openGL32.lib;glew32.lib;SOIL.lib;CEGUIBase-0_d.lib;CEGUIOpenGLRenderer-0_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;openGL32.lib;glew32.lib;SOIL.lib;CEGUIBase-0_d.lib;CEGUIOpenGLRenderer-0_d.lib;vitiGEO.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -147,6 +147,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AABBShape.cpp" />
     <ClCompile Include="Cache.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Console.cpp" />
@@ -179,6 +180,7 @@
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AABBShape.hpp" />
     <ClInclude Include="Cache.hpp" />
     <ClInclude Include="Camera.hpp" />
     <ClInclude Include="Console.hpp" />

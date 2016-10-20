@@ -38,7 +38,7 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	_scene.addChild(new Cuboid{ "xml/cubeSmall.xml" }, glm::vec3{ 2.0, 0.0f, 2.0 }, sqrt(1.0f), "Child2", "Child");
 	/*_scene.remove("Octahedron");*/
 
-	/**/_scene.addChild(new Model{ "Models/earth/earth.obj", false }, "Shark");
+	/**/_scene.addChild(new Model{ "Models/earth/earth.obj", &_cam, false }, "Shark");
 	_scene["Shark"]->scale(glm::vec3{ 0.05f, 0.05f, 0.05f });
 	_scene["Shark"]->setPos(glm::vec3{ 0.0f, 5.0f, 0.0f });
 
@@ -157,6 +157,10 @@ void AppScreen::update() {
 
 void AppScreen::draw() {
 	_drender.draw();
+
+	/* wip: */
+	Model* temp = static_cast<Model*>(_scene["Shark"]);
+	temp->drawAABB();
 	_gui.draw();
 }
 

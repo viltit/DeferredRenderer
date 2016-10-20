@@ -69,7 +69,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(SolutionDir)vitiGL/;$(SolutionDir)../dependencies/includes;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)vitiGEO/;$(SolutionDir)vitiGL/;$(SolutionDir)../dependencies/includes;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)Debug/;$(SolutionDir)../dependencies/libs;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -87,7 +87,7 @@
       <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>SDL2.lib;openGL32.lib;glew32.lib;SOIL.lib;CEGUIBase-0_d.lib;CEGUIOpenGLRenderer-0_d.lib;vitiGL.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;openGL32.lib;glew32.lib;SOIL.lib;CEGUIBase-0_d.lib;CEGUIOpenGLRenderer-0_d.lib;vitiGL.lib;vitiGEO.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -149,6 +149,8 @@
     <None Include="Shaders\DeferredRenderer\pp.frag.glsl" />
     <None Include="Shaders\DeferredRenderer\pp.vert.glsl" />
     <None Include="Shaders\DeferredRenderer\vertex.glsl" />
+    <None Include="Shaders\DrawShape\fragment.glsl" />
+    <None Include="Shaders\DrawShape\vertex.glsl" />
     <None Include="Shaders\Effects\normal.frag.glsl" />
     <None Include="Shaders\Effects\normal.geo.glsl" />
     <None Include="Shaders\Effects\normal.vert.glsl" />
