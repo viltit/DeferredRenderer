@@ -168,7 +168,6 @@ Model::Model(const std::string& filePath, Camera* cam, bool textureFolder)
 Model::~Model() {
 }
 
-
 void Model::drawAABB() {
 	for (auto& AABB : _aabbShape) {
 		AABB.draw();

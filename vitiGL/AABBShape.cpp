@@ -61,6 +61,17 @@ void AABBShape::draw() const {
 	_shader.off();
 }
 
+void AABBShape::update(vitiGEO::AABB * box) {
+	_box = box;
+	std::vector<Vertex> vertices(8);
+	initVertices(vertices);
+
+	glBindVertexArray(vao);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(Vertex) * vertices.size(), vertices.data());
+	glBindVertexArray(0);
+}
+
 void vitiGL::AABBShape::initVertices(std::vector<Vertex>& vertices) {
 	for (int i = 0; i <= 7; i++) {
 		glm::vec3 pos{};

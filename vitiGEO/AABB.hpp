@@ -4,7 +4,7 @@
 	page 302pp, with some differences 
 
 	To be aware of:
-	-	Class works with a right handed coordinate system
+	-	Class works with a right handed coordinate system (because OpenGL does too)
 */
 
 #pragma once
@@ -24,18 +24,26 @@ public:
 	/* construct an AABB for a set of given vertices: */
 	void construct(std::vector<glm::vec3>& vertices);
 
-	/* get one of the AABBs eight corners (i has to be in range [0, 7]: */
+	void transform(const glm::mat4& M);
+
+	/* get one of the AABBs eight corners (i has to be in range [0, 7]:) */
 	glm::vec3 corner(int i) const;
 
 	/* getters and setters: */
 	glm::vec3 min() const { return _min; }
 	glm::vec3 max() const { return _max; }
 
+	/* if min is bigger than max, we consider the box to be empty: */
+	bool isEmpty() const { return (_min.x > _max.x || _min.y > _max.y || _min.z > _max.z); }
+
 private:
 	void addPoint(const glm::vec3& point);
 
 	glm::vec3 _min;
 	glm::vec3 _max;
+
+	/* wip: */
+	glm::vec3 oldT;	//previous translation
 };
 }
 

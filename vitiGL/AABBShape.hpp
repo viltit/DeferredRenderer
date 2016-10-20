@@ -23,6 +23,9 @@ public:
 	void draw(const Shader& shader) const override { draw(); };
 	void draw() const;
 
+	/* for debug purpose only: */
+	void update(vitiGEO::AABB* box);
+
 private:
 	virtual void initVertices(std::vector<Vertex>& vertices) override;
 

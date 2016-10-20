@@ -140,6 +140,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AABB.hpp" />
+    <ClInclude Include="Math.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AABB.cpp" />

@@ -1,4 +1,5 @@
 #include "AABB.hpp"
+#include "Math.hpp"
 
 #include <limits>
 #include <assert.h>
@@ -28,6 +29,19 @@ void AABB::construct(std::vector<glm::vec3>& vertices) {
 	for (const auto& point : vertices) {
 		addPoint(point);
 	}
+}
+
+/* adapt the bounding box to a transformed object */
+void AABB::transform(const glm::mat4 & M) {
+	if (isEmpty()) return;
+
+	glm::vec3 temp{ oldT };
+	glm::vec3 t = getTranslation(M);
+	oldT = t;
+	t -= temp;
+
+	_min += t;
+	_max += t;
 }
 
 /* Corners: 
