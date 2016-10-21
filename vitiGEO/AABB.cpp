@@ -6,7 +6,12 @@
 
 namespace vitiGEO {
 
-AABB::AABB() {
+AABB::AABB()  {
+	float minF = std::numeric_limits<float>::min();
+	float maxF = std::numeric_limits<float>::max();
+
+	_min = { maxF, maxF, maxF };
+	_max = { minF, minF, minF };
 }
 
 AABB::AABB(std::vector<glm::vec3>& vertices) {
@@ -23,25 +28,97 @@ void AABB::construct(std::vector<glm::vec3>& vertices) {
 	_min = { maxF, maxF, maxF };
 	_max = { minF, minF, minF };
 
-	for (int i = 0; i < vertices.size(); i++)
-		vertices[i] *= 0.05f;
 
 	for (const auto& point : vertices) {
 		addPoint(point);
 	}
+
+	_oMin = _min;
+	_oMax = _max;
 }
 
 /* adapt the bounding box to a transformed object */
 void AABB::transform(const glm::mat4 & M) {
 	if (isEmpty()) return;
+	_min = _max = getTranslation(M);
 
-	glm::vec3 temp{ oldT };
-	glm::vec3 t = getTranslation(M);
-	oldT = t;
-	t -= temp;
+	/* matrix first column (glm::mat4 has column-row reversed !) */
+	if (M[0][0] > 0.0f) {
+		_min.x += M[0][0] * _oMin.x;
+		_max.x += M[0][0] * _oMax.x;
+	}
+	else {
+		_min.x += M[0][0] * _oMax.x;
+		_max.x += M[0][0] * _oMin.x;
+	}
+	if (M[1][0] > 0.0f) {
+		_min.y += M[1][0] * _oMin.x;
+		_max.y += M[1][0] * _oMax.x;
+	}
+	else {
+		_min.y += M[1][0] * _oMax.x;
+		_max.y += M[1][0] * _oMin.x;
+	}
+	if (M[2][0] > 0.0f) {
+		_min.z += M[2][0] * _oMin.x;
+		_max.z += M[2][0] * _oMax.x;
+	}
+	else {
+		_min.z += M[2][0] * _oMax.x;
+		_max.z += M[2][0] * _oMin.x;
+	}
 
-	_min += t;
-	_max += t;
+	/* second column */
+	if (M[0][1] > 0.0f) {
+		_min.x += M[0][1] * _oMin.y;
+		_max.x += M[0][1] * _oMax.y;
+	}
+	else {
+		_min.x += M[0][1] * _oMax.y;
+		_max.x += M[0][1] * _oMin.y;
+	}
+	if (M[1][1] > 0.0f) {
+		_min.y += M[1][1] * _oMin.y;
+		_max.y += M[1][1] * _oMax.y;
+	}
+	else {
+		_min.y += M[1][1] * _oMax.y;
+		_max.y += M[1][1] * _oMin.y;
+	}
+	if (M[2][1] > 0.0f) {
+		_min.z += M[2][1] * _oMin.y;
+		_max.z += M[2][1] * _oMax.y;
+	}
+	else {
+		_min.z += M[2][1] * _oMax.y;
+		_max.z += M[2][1] * _oMin.y;
+	}
+
+	/* third column */
+	if (M[0][2] > 0.0f) {
+		_min.x += M[0][2] * _oMin.z;
+		_max.x += M[0][2] * _oMax.z;
+	}
+	else {
+		_min.x += M[0][2] * _oMax.z;
+		_max.x += M[0][2] * _oMin.z;
+	}
+	if (M[1][2] > 0.0f) {
+		_min.y += M[1][2] * _oMin.z;
+		_max.y += M[1][2] * _oMax.z;
+	}
+	else {
+		_min.y += M[1][2] * _oMax.z;
+		_max.y += M[1][2] * _oMin.z;
+	}
+	if (M[2][2] > 0.0f) {
+		_min.z += M[2][2] * _oMin.z;
+		_max.z += M[2][2] * _oMax.z;
+	}
+	else {
+		_min.z += M[2][2] * _oMax.z;
+		_max.z += M[2][2] * _oMin.z;
+	}
 }
 
 /* Corners: 

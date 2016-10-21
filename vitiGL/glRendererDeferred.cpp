@@ -7,6 +7,7 @@
 #include "Camera.hpp"
 #include "Window.hpp"
 #include "Light.hpp"
+#include "Model.hpp"
 
 namespace vitiGL {
 
@@ -261,6 +262,10 @@ void glRendererDeferred::drawTransparent() {
 
 	_scene->drawTransparent(_tshader, _frustum);
 	_tshader.off();
+
+	/* debug: */
+	Model* temp = static_cast<Model*>(_scene->findByName("Shark"));
+	temp->drawAABB();
 
 	glDisable(GL_BLEND);
 }

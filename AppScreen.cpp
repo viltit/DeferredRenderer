@@ -155,9 +155,6 @@ void AppScreen::update() {
 void AppScreen::draw() {
 	_drender.draw();
 
-	/* wip: */
-	Model* temp = static_cast<Model*>(_scene["Shark"]);
-	temp->drawAABB();
 	_gui.draw();
 }
 

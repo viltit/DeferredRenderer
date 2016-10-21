@@ -33,6 +33,8 @@ public:
 	glm::vec3 min() const { return _min; }
 	glm::vec3 max() const { return _max; }
 
+	glm::vec3 center() const { return (_min + _max) * 0.5f; }
+
 	/* if min is bigger than max, we consider the box to be empty: */
 	bool isEmpty() const { return (_min.x > _max.x || _min.y > _max.y || _min.z > _max.z); }
 
@@ -42,8 +44,8 @@ private:
 	glm::vec3 _min;
 	glm::vec3 _max;
 
-	/* wip: */
-	glm::vec3 oldT;	//previous translation
+	glm::vec3 _oMin;	//min and max of the original, before any transformations happened
+	glm::vec3 _oMax;
 };
 }
 

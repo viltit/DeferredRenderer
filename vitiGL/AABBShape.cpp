@@ -50,14 +50,11 @@ AABBShape::~AABBShape() {
 void AABBShape::draw() const {
 	_shader.on();
 
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
 	_cam->setVPUniform(_shader);
 	
 	glBindVertexArray(vao);
 	glDrawElements(GL_TRIANGLES, numVertices, GL_UNSIGNED_INT, 0);
 
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	_shader.off();
 }
 
@@ -76,8 +73,6 @@ void vitiGL::AABBShape::initVertices(std::vector<Vertex>& vertices) {
 	for (int i = 0; i <= 7; i++) {
 		glm::vec3 pos{};
 		pos = _box->corner(i);
-
-		std::cout << "AABB Corner " << i << " :" << pos << std::endl;
 
 		vertices[i].pos = pos;
 	}
