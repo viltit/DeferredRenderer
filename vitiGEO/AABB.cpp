@@ -51,31 +51,31 @@ void AABB::transform(const glm::mat4 & M) {
 		_min.x += M[0][0] * _oMax.x;
 		_max.x += M[0][0] * _oMin.x;
 	}
-	if (M[1][0] > 0.0f) {
-		_min.y += M[1][0] * _oMin.x;
-		_max.y += M[1][0] * _oMax.x;
+	if (M[0][1] > 0.0f) {
+		_min.y += M[0][1] * _oMin.x;
+		_max.y += M[0][1] * _oMax.x;
 	}
 	else {
-		_min.y += M[1][0] * _oMax.x;
-		_max.y += M[1][0] * _oMin.x;
+		_min.y += M[0][1] * _oMax.x;
+		_max.y += M[0][1] * _oMin.x;
 	}
-	if (M[2][0] > 0.0f) {
-		_min.z += M[2][0] * _oMin.x;
-		_max.z += M[2][0] * _oMax.x;
+	if (M[0][2] > 0.0f) {
+		_min.z += M[0][2] * _oMin.x;
+		_max.z += M[0][2] * _oMax.x;
 	}
 	else {
-		_min.z += M[2][0] * _oMax.x;
-		_max.z += M[2][0] * _oMin.x;
+		_min.z += M[0][2] * _oMax.x;
+		_max.z += M[0][2] * _oMin.x;
 	}
 
 	/* second column */
-	if (M[0][1] > 0.0f) {
-		_min.x += M[0][1] * _oMin.y;
-		_max.x += M[0][1] * _oMax.y;
+	if (M[1][0] > 0.0f) {
+		_min.x += M[1][0] * _oMin.y;
+		_max.x += M[1][0] * _oMax.y;
 	}
 	else {
-		_min.x += M[0][1] * _oMax.y;
-		_max.x += M[0][1] * _oMin.y;
+		_min.x += M[1][0] * _oMax.y;
+		_max.x += M[1][0] * _oMin.y;
 	}
 	if (M[1][1] > 0.0f) {
 		_min.y += M[1][1] * _oMin.y;
@@ -85,31 +85,31 @@ void AABB::transform(const glm::mat4 & M) {
 		_min.y += M[1][1] * _oMax.y;
 		_max.y += M[1][1] * _oMin.y;
 	}
-	if (M[2][1] > 0.0f) {
-		_min.z += M[2][1] * _oMin.y;
-		_max.z += M[2][1] * _oMax.y;
+	if (M[1][2] > 0.0f) {
+		_min.z += M[1][2] * _oMin.y;
+		_max.z += M[1][2] * _oMax.y;
 	}
 	else {
-		_min.z += M[2][1] * _oMax.y;
-		_max.z += M[2][1] * _oMin.y;
+		_min.z += M[1][2] * _oMax.y;
+		_max.z += M[1][2] * _oMin.y;
 	}
 
 	/* third column */
-	if (M[0][2] > 0.0f) {
-		_min.x += M[0][2] * _oMin.z;
-		_max.x += M[0][2] * _oMax.z;
+	if (M[2][0] > 0.0f) {
+		_min.x += M[2][0] * _oMin.z;
+		_max.x += M[2][0] * _oMax.z;
 	}
 	else {
-		_min.x += M[0][2] * _oMax.z;
-		_max.x += M[0][2] * _oMin.z;
+		_min.x += M[2][0] * _oMax.z;
+		_max.x += M[2][0] * _oMin.z;
 	}
-	if (M[1][2] > 0.0f) {
-		_min.y += M[1][2] * _oMin.z;
-		_max.y += M[1][2] * _oMax.z;
+	if (M[2][1] > 0.0f) {
+		_min.y += M[2][1] * _oMin.z;
+		_max.y += M[2][1] * _oMax.z;
 	}
 	else {
-		_min.y += M[1][2] * _oMax.z;
-		_max.y += M[1][2] * _oMin.z;
+		_min.y += M[2][1] * _oMax.z;
+		_max.y += M[2][1] * _oMin.z;
 	}
 	if (M[2][2] > 0.0f) {
 		_min.z += M[2][2] * _oMin.z;
