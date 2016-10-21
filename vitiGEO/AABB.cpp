@@ -2,6 +2,7 @@
 #include "Math.hpp"
 
 #include <limits>
+#include <cmath>
 #include <assert.h>
 
 namespace vitiGEO {
@@ -140,6 +141,24 @@ glm::vec3 AABB::corner(int i) const {
 	};
 }
 
+glm::vec3 AABB::getClosestPoint (const glm::vec3 & p) const {
+	glm::vec3 r{};
+
+	if (p.x < _min.x) r.x = _min.x;
+	else if (p.x > _max.x) r.x = _max.x;
+	else r.x = p.x;
+
+	if (p.y < _min.y) r.y = _min.y;
+	else if (p.y > _max.y) r.y = _max.y;
+	else r.y = p.y;
+
+	if (p.z < _min.z) r.z = _min.z;
+	else if (p.z > _max.z) r.z = _max.z;
+	else r.z = p.z;
+
+	return r;
+}
+
 void AABB::addPoint(const glm::vec3 & p) {
 	if (p.x < _min.x) _min.x = p.x;
 	if (p.x > _max.x) _max.x = p.x;
@@ -147,5 +166,39 @@ void AABB::addPoint(const glm::vec3 & p) {
 	if (p.y > _max.y) _max.y = p.y;
 	if (p.z < _min.z) _min.z = p.z;
 	if (p.z > _max.z) _max.z = p.z;
+}
+
+
+bool AABBIntersection(const AABB & box1, const AABB & box2, AABB * intersect) {
+	/* check for overlap: */
+	glm::vec3 min1 = box1.min();
+	glm::vec3 min2 = box2.min();
+	glm::vec3 max1 = box1.max();
+	glm::vec3 max2 = box2.max();
+
+	if (min1.x > max2.x) return false;
+	if (max1.x < min2.x) return false;
+	if (min1.y > max2.y) return false;
+	if (max1.y < min2.y) return false;
+	if (min1.z > max2.z) return false;
+	if (max1.z < min2.z) return false;
+
+	/* we have an overlap. Return true or calculate the intersection box: */
+	if (intersect == nullptr) return true;
+
+	glm::vec3 mini;
+	glm::vec3 maxi;
+
+	mini.x = fmax(min1.x, min2.x);
+	maxi.x = fmin(max1.x, max2.x);
+	mini.y = fmax(min1.y, min2.y);
+	maxi.y = fmin(max1.y, max2.y);
+	mini.z = fmax(min1.z, min2.z);
+	maxi.z = fmin(max1.z, max2.z);
+
+	intersect->setMin(mini);
+	intersect->setMax(maxi);
+
+	return true;
 }
 }

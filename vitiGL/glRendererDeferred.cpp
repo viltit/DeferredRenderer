@@ -263,7 +263,7 @@ void glRendererDeferred::drawTransparent() {
 	_scene->drawTransparent(_tshader, _frustum);
 	_tshader.off();
 
-	/* debug: */
+	/* TEMPRORARY DEBUG CODE : */
 	Model* temp = static_cast<Model*>(_scene->findByName("Shark"));
 	temp->drawAABB();
 

@@ -8,9 +8,18 @@
 
 namespace vitiGL {
 
-Mesh::Mesh(std::vector<Vertex>& vertices, std::vector<GLuint> indices, std::vector<std::pair<int, GLuint>>& textures)
-	: ShapeI(ObjType::mesh)
+Mesh::Mesh(std::vector<Vertex>& vertices, std::vector<GLuint> indices, std::vector<std::pair<int, GLuint>>& textures, Camera* cam)
+	:	ShapeI	{ ObjType::mesh }
+		
 {
+	/* WIP: add aabb and aabbShape: */
+	std::vector<glm::vec3> points;
+	for (int i = 0; i < vertices.size(); i++) {
+		points.push_back(vertices[i].pos);
+	}
+	_aabb.construct(points);
+	_aabbShape = new AABBShape{ &_aabb, cam };
+
 	numVertices = indices.size();
 
 	calcNormals(vertices, indices);
@@ -48,6 +57,8 @@ Mesh::Mesh(const Mesh& mesh)
 	ebo = mesh.ebo;
 	material = mesh.material;
 	numVertices = mesh.numVertices;
+	_aabb = mesh._aabb;
+	_aabbShape = mesh._aabbShape;
 }
 
 Mesh::Mesh(Mesh && mesh) {
@@ -56,6 +67,8 @@ Mesh::Mesh(Mesh && mesh) {
 	material = mesh.material;
 	ebo = mesh.ebo;
 	numVertices = mesh.numVertices;
+	_aabb = mesh._aabb;
+	_aabbShape = mesh._aabbShape;
 
 	mesh.vbo = 0;
 	mesh.vao = 0;

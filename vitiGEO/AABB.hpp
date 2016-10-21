@@ -29,9 +29,16 @@ public:
 	/* get one of the AABBs eight corners (i has to be in range [0, 7]:) */
 	glm::vec3 corner(int i) const;
 
+	/*	returns the closest point on the aabb to another point. Returns the original
+		point if he is inside the aabb */
+	glm::vec3 getClosestPoint (const glm::vec3& point) const;
+
 	/* getters and setters: */
 	glm::vec3 min() const { return _min; }
 	glm::vec3 max() const { return _max; }
+
+	void setMin(const glm::vec3& min) { _min = min; }
+	void setMax(const glm::vec3& max) { _max = max; }
 
 	glm::vec3 center() const { return (_min + _max) * 0.5f; }
 
@@ -47,5 +54,9 @@ private:
 	glm::vec3 _oMin;	//min and max of the original, before any transformations happened
 	glm::vec3 _oMax;
 };
+
+/* test if two aabbs intersect each other. optionally, give back intersection-aabb: */
+bool AABBIntersection(const AABB& box1, const AABB& box2, AABB* intersect = nullptr);
+
 }
 

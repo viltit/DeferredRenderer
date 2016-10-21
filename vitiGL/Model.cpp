@@ -142,7 +142,7 @@ Model::Model(const std::string& filePath, Camera* cam, bool textureFolder)
 		}
 
 		/* make another scene node with a vitiGL::Mesh as its object: */
-		Mesh* mesh = new Mesh{ vertices, indices, textures };
+		Mesh* mesh = new Mesh{ vertices, indices, textures, cam };
 		std::string meshName = shape.name;
 		if (meshName == "") meshName = "Mesh_" + std::to_string(++id);
 		else meshName += "_" + std::to_string(++id);
@@ -150,16 +150,6 @@ Model::Model(const std::string& filePath, Camera* cam, bool textureFolder)
 		SceneNode* child = new SceneNode{ meshName, mesh, glm::vec3{}, 30.0f }; //TO DO: Calculate radius!
 
 		addChild(child);
-
-		/* WIP: add aabb and aabbShape: */
-		std::vector<glm::vec3> points;
-		for (int i = 0; i < vertices.size(); i++) {
-			points.push_back(vertices[i].pos);
-		}
-		vitiGEO::AABB aabb{ points };
-		AABBShape aabbshape{ &aabb, cam };
-		_aabb.push_back(aabb);
-		_aabbShape.push_back(aabbshape);
 	}
 	std::cout << "END PROCESSING OBJ FILE " << filePath << std::endl << std::endl;
 }
@@ -168,9 +158,32 @@ Model::Model(const std::string& filePath, Camera* cam, bool textureFolder)
 Model::~Model() {
 }
 
+
+/* because we have an aabb, we need to update it too: */
+void Model::update(const Uint32& deltaTime)  {
+	/* calculate new position: */
+	if (_parent) _W = _parent->posMatrix() * _M;
+	else _W = _M;
+
+	/* give world position to the shape for drawing: */
+	if (_obj) _obj->setModelMatrix(_W);
+
+	/* update all children: */
+	for (auto& C : _children) C->update(deltaTime);
+
+	/* update the aabb: */
+	for (auto& C : _children) {
+		if (C->obj()) {
+			Mesh* mesh = static_cast<Mesh*>(C->obj());
+			mesh->updateAABB();
+		}
+	}
+}
+
 void Model::drawAABB() {
-	for (auto& AABB : _aabbShape) {
-		AABB.draw();
+	for (auto& C : _children) {
+		Mesh* mesh = static_cast<Mesh*>(C->obj());
+		mesh->drawAABB();
 	}
 }
 }
