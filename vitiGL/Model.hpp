@@ -24,10 +24,12 @@ public:
 	~Model();
 
 	/* because we have an aabb, we need to update it too: */
+	/* TO DO: Every Shape (or every IGameObj??) has an aabb */
 	void update(const Uint32& deltaTime) override;
 
 	/* wip, debug: */
 	void drawAABB();
+	std::vector<vitiGEO::AABB*> aabb();
 
 private:
 	static int id;

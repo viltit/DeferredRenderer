@@ -21,7 +21,7 @@ public:
 	/*	We deviate from our normal rules here: The AABB is using its own shader 
 		(so if another shader is on when calling this function, it will be off afterward) */
 	void draw(const Shader& shader) const override { draw(); };
-	void draw() const;
+	void draw(const glm::vec4& color = { 1.0f, 0.0f, 0.0f, 0.4f }) const;
 
 	/* for debug purpose only: */
 	void update(vitiGEO::AABB* box);

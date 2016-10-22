@@ -40,7 +40,11 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 
 	/**/_scene.addChild(new Model{ "Models/Old House/Old House 2 3D Models.obj", &_cam, false }, "Shark");
 	_scene["Shark"]->scale(glm::vec3{ 0.05f, 0.05f, 0.05f });
-	_scene["Shark"]->setPos(glm::vec3{ 0.0f, 5.0f, 0.0f });
+	_scene["Shark"]->setPos(glm::vec3{ -5.0f, 0.0f, -5.0f });
+
+	/**/_scene.addChild(new Model{ "Models/Old House/Old House 2 3D Models.obj", &_cam, false }, "Shark2");
+	_scene["Shark2"]->scale(glm::vec3{ 0.05f, 0.05f, 0.05f });
+	_scene["Shark2"]->setPos(glm::vec3{ 5.0f, 0.0f, 5.0f });
 
 	_scene.addChild(new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ -3.0f, -3.0f, -3.0f }, sqrt(1800.0f), "Floor");
 	_scene.addChild(new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ 20.0f, 7.0f, -3.0f }, sqrt(1800.0f), "Wall");

@@ -47,11 +47,13 @@ AABBShape::AABBShape(const AABBShape &s)
 AABBShape::~AABBShape() {
 }
 
-void AABBShape::draw() const {
+void AABBShape::draw(const glm::vec4& color) const {
 	_shader.on();
 
 	_cam->setVPUniform(_shader);
-	
+	glUniform4f(_shader.getUniform("col"), color.r, color.g, color.b, color.a);
+	glUniformMatrix4fv(_shader.getUniform("M"), 1, GL_FALSE, glm::value_ptr(_M));
+
 	glBindVertexArray(vao);
 	glDrawElements(GL_TRIANGLES, numVertices, GL_UNSIGNED_INT, 0);
 

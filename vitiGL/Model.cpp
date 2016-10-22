@@ -186,4 +186,14 @@ void Model::drawAABB() {
 		mesh->drawAABB();
 	}
 }
+
+std::vector<vitiGEO::AABB*> Model::aabb() {
+	std::vector<vitiGEO::AABB*> temp;
+	for (auto& C : _children) {
+		Mesh* mesh = static_cast<Mesh*>(C->obj());
+		temp.push_back(mesh->aabb());
+	}
+
+	return temp;
+}
 }

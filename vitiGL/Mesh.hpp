@@ -37,7 +37,7 @@ public:
 
 	/* debug function: draw aaabb */
 	void drawAABB() const { _aabbShape->draw(); }
-	vitiGEO::AABB aabb() { return _aabb; }
+	vitiGEO::AABB* aabb() { return &_aabb; }
 
 protected:
 	// Inherited via Shape (obsolete in this case...)

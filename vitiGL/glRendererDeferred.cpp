@@ -263,9 +263,26 @@ void glRendererDeferred::drawTransparent() {
 	_scene->drawTransparent(_tshader, _frustum);
 	_tshader.off();
 
-	/* TEMPRORARY DEBUG CODE : */
+	/* TEMPRORARY DEBUG CODE: Visualize the aabb and their intersection */
 	Model* temp = static_cast<Model*>(_scene->findByName("Shark"));
 	temp->drawAABB();
+	vitiGEO::AABB* aabb1 = temp->aabb().at(2);
+
+	temp = static_cast<Model*>(_scene->findByName("Shark2"));
+	temp->drawAABB();
+	vitiGEO::AABB* aabb2 = temp->aabb().at(2);
+
+	vitiGEO::AABB intersect;
+
+	vitiGEO::AABBIntersection(*aabb1, *aabb2, &intersect);
+	AABBShape iShape (&intersect, _camera);
+
+	glm::mat4 M = iShape.matrix();
+	M = glm::scale(M, glm::vec3{ 1.01f, 1.01f, 1.01f });
+	iShape.setModelMatrix(M);
+	iShape.draw(glm::vec4{0.0f, 0.0f, 1.0f, 1.0f});
+
+	/* END OF DEBUG CODE */
 
 	glDisable(GL_BLEND);
 }
