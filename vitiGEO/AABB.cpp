@@ -141,6 +141,15 @@ glm::vec3 AABB::corner(int i) const {
 	};
 }
 
+void AABB::add(const AABB & aabb) {
+	if (_min.x > aabb._min.x) _min.x = aabb._min.x;
+	if (_max.x < aabb._max.x) _max.x = aabb._max.x;
+	if (_min.y > aabb._min.y) _min.y = aabb._min.y;
+	if (_max.y < aabb._max.y) _max.y = aabb._max.y;
+	if (_min.z > aabb._min.z) _min.z = aabb._min.z;
+	if (_max.z < aabb._max.z) _max.z = aabb._max.z;
+}
+
 glm::vec3 AABB::getClosestPoint (const glm::vec3 & p) const {
 	glm::vec3 r{};
 

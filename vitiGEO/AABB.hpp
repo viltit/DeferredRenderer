@@ -29,6 +29,9 @@ public:
 	/* get one of the AABBs eight corners (i has to be in range [0, 7]:) */
 	glm::vec3 corner(int i) const;
 
+	/* merge the aabb with another aabb: */
+	void add(const AABB& aabb);
+
 	/*	returns the closest point on the aabb to another point. Returns the original
 		point if he is inside the aabb */
 	glm::vec3 getClosestPoint (const glm::vec3& point) const;
