@@ -15,6 +15,8 @@
 
 namespace vitiGEO {
 
+class Ray;
+
 class AABB {
 public:
 	AABB();
@@ -32,9 +34,22 @@ public:
 	/* merge the aabb with another aabb: */
 	void add(const AABB& aabb);
 
+	/*	test for intersection with a ray: 
+		returns the fraction of the rays vector to the intersection point:
+			intersection = ray.origin + ray.direction * f,
+		or a huge number if there is no intersection					*/
+	bool rayIntersection(const Ray& ray, glm::vec3& intersection, float& f);
+
+	/*	clip a line against one of the three planes of the aabb, return false 
+		if there is no intersection, return f-max and f-min as the fractions
+		of the intersection points 
+		param i: 0 for x-axis, 1 for y-axis, 2 for z-axis				*/
+	bool clipLine(int dim, const Ray& ray, float& f_low, float& f_high);
+
 	/*	returns the closest point on the aabb to another point. Returns the original
 		point if he is inside the aabb */
 	glm::vec3 getClosestPoint (const glm::vec3& point) const;
+
 
 	/* getters and setters: */
 	glm::vec3 min() const { return _min; }

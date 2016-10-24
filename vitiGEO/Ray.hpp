@@ -8,12 +8,11 @@
 
 namespace vitiGEO {
 
-class Ray {
+struct Ray {
 public:
 	Ray(const glm::vec3& origin, const glm::vec3& delta);
 	~Ray();
 
-private:
 	glm::vec3 _origin;	//rays point of origin
 	glm::vec3 _delta;	//rays length and direction
 

@@ -4,6 +4,13 @@
 #include <limits>
 #include <cmath>
 #include <assert.h>
+#include <math.h>
+#include <iostream>
+
+#include "Ray.hpp"
+
+/* IMPORTANT TO DO: FUNCTIONS LIKE ADD POINT NEED TO WORK WITH UN-SCALED AND UN-ROTATED MIN AND MAX */
+
 
 namespace vitiGEO {
 
@@ -148,6 +155,47 @@ void AABB::add(const AABB & aabb) {
 	if (_max.y < aabb._max.y) _max.y = aabb._max.y;
 	if (_min.z > aabb._min.z) _min.z = aabb._min.z;
 	if (_max.z < aabb._max.z) _max.z = aabb._max.z;
+}
+
+bool AABB::rayIntersection(const Ray & ray, glm::vec3& intersection, float& f) {
+	float f_low = 0.0f;
+	float f_high = 1.0f;
+
+	std::cout << "Raytracing against an aabb with min = " << _min.x << "/" << _min.y << "/" << _min.z << 
+		" and max = " << _max.x << "/" << _max.y << "/" << _max.z << std::endl;
+	std::cout << "Ray origin: " << ray._origin.x << "/" << ray._origin.y << "/" << ray._origin.z << std::endl;
+	std::cout << "Ray direction" << ray._delta.x << "/" << ray._delta.y << "/" << ray._delta.z << std::endl;
+
+	if (!clipLine(0, ray, f_low, f_high)) return false;
+	if (!clipLine(1, ray, f_low, f_high)) return false;
+	if (!clipLine(2, ray, f_low, f_high)) return false;
+
+	intersection = ray._origin + ray._delta * f_low;
+	f = f_low;
+
+	return true;
+}
+
+bool AABB::clipLine(int dim, const Ray & ray, float & f_low, float & f_high) {
+	assert(dim >= 0 && dim <= 3);
+
+	float low;
+	float high;
+
+	low = (_min[dim] - ray._origin[dim]) / ray._delta[dim];
+	high = (_max[dim] - ray._origin[dim]) / ray._delta[dim];
+
+	if (low > high) std::swap(low, high);
+
+	if (high < f_low) return false;
+	if (low > f_high) return false;
+
+	f_low = fmax(low, f_low);
+	f_high = fmin(high, f_high);
+
+	if (f_low > f_high) return false;
+
+	return true;
 }
 
 glm::vec3 AABB::getClosestPoint (const glm::vec3 & p) const {

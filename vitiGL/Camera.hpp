@@ -77,6 +77,8 @@ public:
 	float		farPlane() const	{ return _far; }
 	float		aspect() const	{ return _aspect; }
 
+	glm::vec3	dir() { return _dir; }
+
 private:
 	float		_aspect;		// viewport aspect ratio
 	float		_near;			// near and far clipping plane

@@ -5,6 +5,9 @@
 
 #include <conio.h>
 
+#include "vitiGEO/Ray.hpp"
+#include "vitiGEO/AABB.hpp"
+
 using namespace vitiGL;
 
 AppScreen::AppScreen(App* app, vitiGL::Window* window)
@@ -316,6 +319,30 @@ void AppScreen::updateInput() {
 			break;
 		case SDL_MOUSEWHEEL:
 			_cam.zoom(input.wheel.y);
+			break;
+		case SDL_MOUSEBUTTONDOWN:
+		{
+			/* TEMPORARY DEBUG CODE */
+
+			_scene.addChild(new Cuboid{ "xml/cubeSmall.xml" }, _cam.pos() + 30.0f * _cam.dir(), sqrt(1.0f));
+
+			vitiGEO::Ray ray{ _cam.pos(), _cam.dir() * 30.0f };
+
+			Model* temp = static_cast<Model*>(_scene.findByName("Shark"));
+			vitiGEO::AABB* aabb = temp->aabb().at(2);
+
+			glm::vec3 intersection;
+			float f{ 0.0f };
+
+			std::cout << "Camera dir: " << _cam.dir() << std::endl;
+
+			if (aabb->rayIntersection(ray, intersection, f)) {
+				std::cout << "HIT\n";
+				std::cout << "f = " << f << std::endl;
+				std::cout << "intersection = " << intersection << std::endl;
+				_scene.addChild(new Octahedron{ "xml/cube.xml" }, intersection, sqrt(2.0f));
+			}
+		}
 			break;
 		}
 	}
