@@ -13,11 +13,11 @@ Mesh::Mesh(std::vector<Vertex>& vertices, std::vector<GLuint> indices, std::vect
 		
 {
 	/* WIP: add aabb and aabbShape: */
-	std::vector<glm::vec3> points;
-	for (int i = 0; i < vertices.size(); i++) {
-		points.push_back(vertices[i].pos);
+	_vertices.resize(indices.size());
+	for (int i = 0; i < indices.size(); i++) {
+		_vertices.push_back(vertices[indices[i]].pos);
 	}
-	_aabb.construct(points);
+	_aabb.construct(_vertices);
 	_aabbShape = new AABBShape{ &_aabb, cam };
 
 	numVertices = indices.size();
@@ -59,6 +59,7 @@ Mesh::Mesh(const Mesh& mesh)
 	numVertices = mesh.numVertices;
 	_aabb = mesh._aabb;
 	_aabbShape = mesh._aabbShape;
+	_vertices = mesh._vertices;
 }
 
 Mesh::Mesh(Mesh && mesh) {
@@ -69,6 +70,7 @@ Mesh::Mesh(Mesh && mesh) {
 	numVertices = mesh.numVertices;
 	_aabb = mesh._aabb;
 	_aabbShape = mesh._aabbShape;
+	_vertices = mesh._vertices;
 
 	mesh.vbo = 0;
 	mesh.vao = 0;

@@ -196,4 +196,13 @@ std::vector<vitiGEO::AABB*> Model::aabb() {
 
 	return temp;
 }
+
+std::vector<std::vector<glm::vec3>> Model::vertices() {
+	std::vector<std::vector<glm::vec3>> vertices;
+	for (auto& C : _children) {
+		Mesh* mesh = static_cast<Mesh*>(C->obj());
+		vertices.push_back(mesh->vertices());
+	}
+	return vertices;
+}
 }

@@ -39,12 +39,16 @@ public:
 	void drawAABB() const { _aabbShape->draw(); }
 	vitiGEO::AABB* aabb() { return &_aabb; }
 
+	std::vector<glm::vec3>& vertices() { return _vertices; }
+
 protected:
 	// Inherited via Shape (obsolete in this case...)
 	virtual void initVertices(std::vector<Vertex>& vertices) override;
 
 	vitiGEO::AABB _aabb;
-	AABBShape*	  _aabbShape; //for debugging
+	AABBShape* _aabbShape;
+
+	std::vector<glm::vec3> _vertices;
 
 	glm::vec3 size;
 	glm::vec2 uv;

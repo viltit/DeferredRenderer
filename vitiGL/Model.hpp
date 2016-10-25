@@ -30,6 +30,7 @@ public:
 	/* wip, debug: */
 	void drawAABB();
 	std::vector<vitiGEO::AABB*> aabb();
+	std::vector<std::vector<glm::vec3>> vertices();
 
 private:
 	static int id;

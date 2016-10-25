@@ -322,9 +322,11 @@ void AppScreen::updateInput() {
 			break;
 		case SDL_MOUSEBUTTONDOWN:
 		{
-			/* TEMPORARY DEBUG CODE */
+			/* TEMPORARY DEBUG CODE - TEST RAY-OBJECT COLLISION DETECTION 
+			
+				this is messy and just here to see if we get correct results */
 
-			_scene.addChild(new Cuboid{ "xml/cubeSmall.xml" }, _cam.pos() + 30.0f * _cam.dir(), sqrt(1.0f));
+			//_scene.addChild(new Cuboid{ "xml/cubeSmall.xml" }, _cam.pos() + 30.0f * _cam.dir(), sqrt(1.0f));
 
 			vitiGEO::Ray ray{ _cam.pos(), _cam.dir() * 30.0f };
 
@@ -341,9 +343,36 @@ void AppScreen::updateInput() {
 				std::cout << "f = " << f << std::endl;
 				std::cout << "intersection = " << intersection << std::endl;
 				_scene.addChild(new Octahedron{ "xml/cube.xml" }, intersection, sqrt(2.0f));
+
+				glm::vec3 tuv{};
+				/* test for detailed collision with the mesh: */
+				std::vector<glm::vec3> vertices = temp->vertices().at(2);
+				for (int i = 0; i < vertices.size();) {
+					std::vector<glm::vec3> triangle;
+					for (int j = 0; j < 3; j++) {
+						glm::vec4 vertex = { vertices[i].x, vertices[i].y, vertices[i].z, 1.0f };
+						vertex = temp->posMatrix() * vertex;
+						triangle.push_back(glm::vec3{ vertex.x, vertex.y, vertex.z });
+						i++;
+					}
+					if (ray.rayTriangleIntersect(triangle, tuv)) {
+						std::cout << "---------------------------- HIT THE MESH!\n";
+						std::cout << "Ray delta factor: " << tuv.x << std::endl;
+
+						glm::vec3 hitPoint = ray._origin + glm::normalize(ray._delta) * tuv.x;
+
+						_scene.addChild(new Cuboid{ "xml/cubeSmall.xml" }, hitPoint, sqrt(1.0f));
+					}
+				}
 			}
+
+			/* END OF DEBUG CODE */
+			
 		}
 			break;
 		}
+
+
+
 	}
 }

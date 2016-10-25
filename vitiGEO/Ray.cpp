@@ -1,5 +1,7 @@
 #include "Ray.hpp"
 
+#include <iostream>
+
 namespace vitiGEO {
 
 Ray::Ray(const glm::vec3& origin, const glm::vec3& delta) 
@@ -11,6 +13,11 @@ Ray::~Ray() {
 }
 
 bool Ray::rayTriangleIntersect(std::vector<glm::vec3> triangle, glm::vec3 & tuv) {
+	/* WHAT GOES WRONG HERE? => The vertices are not scaled, not rotated, not translated! */
+
+
+	assert(triangle.size() == 3);
+
 	const float epsilon = 0.000001;  //treshold for assuming a value is zero
 
 	/* get two triangles edges: */
@@ -49,7 +56,7 @@ bool Ray::rayTriangleIntersect(std::vector<glm::vec3> triangle, glm::vec3 & tuv)
 	float invDet = 1.0f / det;
 
 	tuv.x *= invDet;
-	tuv.x /= _delta.length();
+	//tuv.x /= _delta.length();
 	tuv.y *= invDet;
 	tuv.z *= invDet;
 
