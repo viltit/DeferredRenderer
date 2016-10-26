@@ -165,6 +165,7 @@
     <ClCompile Include="material.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Model.cpp" />
+    <ClCompile Include="RayTriangle.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="ScreenList.cpp" />
     <ClCompile Include="Shader.cpp" />
@@ -203,6 +204,7 @@
     <ClInclude Include="Material.hpp" />
     <ClInclude Include="Mesh.hpp" />
     <ClInclude Include="Model.hpp" />
+    <ClInclude Include="RayTriangle.hpp" />
     <ClInclude Include="Scene.hpp" />
     <ClInclude Include="ScreenList.hpp" />
     <ClInclude Include="Shader.hpp" />

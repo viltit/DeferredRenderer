@@ -18,6 +18,9 @@ namespace vitiGL {
 
 class Shader {
 public:
+	Shader() {};
+
+	/* use this constructor if in doubt */
 	Shader(const std::string& vertexPath, const std::string& fragmentPath,
 		   const std::string& geoPath = "", const std::string& tessPath = "");
 	~Shader();
@@ -29,14 +32,17 @@ public:
 
 	GLuint	program() const { return programID; }
 
-private:
-	void	init(const std::string& vertexPath, const std::string& fragmentPath,
-				 const std::string& geoPath = "", const std::string& tessPath = "");
+
+	void	init(const std::string& vertexPath, 
+				 const std::string& fragmentPath,
+				 const std::string& geoPath = "", 
+				 const std::string& tessPath = "");
 
 	void	compile(const std::string& filePath, GLint shaderID);
 
 	void	link();
 
+private:
 	GLint	programID;
 
 	GLint	vertexID;

@@ -16,6 +16,7 @@ Shader::Shader(const std::string & vertexPath, const std::string & fragmentPath,
 		tessID		{ 0 }
 {
 	init(vertexPath, fragmentPath, geoPath, tessPath);
+	link();
 }
 
 Shader::~Shader() {
@@ -70,9 +71,6 @@ void Shader::init(const std::string& vertexPath, const std::string& fragmentPath
 		if (tessID == 0) throw shaderError("OpenGL could not create an identifier for the tesselation control shader");
 		compile(tessPath, tessID);
 	}
-
-	//Now that all shaders are compiled, link the program:
-	link();
 }
 
 void Shader::compile(const std::string& filePath, GLint shaderID) {

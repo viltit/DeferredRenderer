@@ -7,6 +7,7 @@
 
 #include "vitiGEO/Ray.hpp"
 #include "vitiGEO/AABB.hpp"
+#include "vitiGL/RayTriangle.hpp"
 
 using namespace vitiGL;
 
@@ -364,7 +365,17 @@ void AppScreen::updateInput() {
 						_scene.addChild(new Cuboid{ "xml/cubeSmall.xml" }, hitPoint, sqrt(1.0f));
 					}
 				}
+
+				/* TEST: USE TRANSFORM FEEDBACK: */
+				auto i = temp->childrenBegin() + 2;
+				
+				Mesh* mesh = static_cast<Mesh*>((*i)->obj());
+
+				glm::vec3 output;
+				RayTriangle::update(mesh, &ray, output);
 			}
+			
+
 
 			/* END OF DEBUG CODE */
 			
