@@ -13,9 +13,6 @@ Ray::~Ray() {
 }
 
 bool Ray::rayTriangleIntersect(std::vector<glm::vec3> triangle, glm::vec3 & tuv) {
-	/* WHAT GOES WRONG HERE? => The vertices are not scaled, not rotated, not translated! */
-
-
 	assert(triangle.size() == 3);
 
 	const float epsilon = 0.000001;  //treshold for assuming a value is zero

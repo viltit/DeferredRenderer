@@ -28,6 +28,9 @@
     <Filter Include="Resource Files\DrawBlank">
       <UniqueIdentifier>{03601a39-b79c-4992-9ab3-9de4c2443e39}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Raytracing">
+      <UniqueIdentifier>{6c766b16-d0cc-499e-8d64-a9230aba7a77}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.hpp">
@@ -156,6 +159,15 @@
     </None>
     <None Include="Shaders\DrawShape\vertex.glsl">
       <Filter>Resource Files\DrawBlank</Filter>
+    </None>
+    <None Include="Shaders\Raytracing\triangle.frag.glsl">
+      <Filter>Resource Files\Raytracing</Filter>
+    </None>
+    <None Include="Shaders\Raytracing\triangle.geo.glsl">
+      <Filter>Resource Files\Raytracing</Filter>
+    </None>
+    <None Include="Shaders\Raytracing\triangle.vert.glsl">
+      <Filter>Resource Files\Raytracing</Filter>
     </None>
   </ItemGroup>
 </Project>

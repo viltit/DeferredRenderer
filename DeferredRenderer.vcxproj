@@ -158,6 +158,9 @@
     <None Include="Shaders\framebuffer.vert.glsl" />
     <None Include="Shaders\gaussianBlur.frag.glsl" />
     <None Include="Shaders\gaussianBlur.vert.glsl" />
+    <None Include="Shaders\Raytracing\triangle.frag.glsl" />
+    <None Include="Shaders\Raytracing\triangle.geo.glsl" />
+    <None Include="Shaders\Raytracing\triangle.vert.glsl" />
     <None Include="Shaders\Renderer\final.frag.glsl" />
     <None Include="Shaders\Renderer\final.vert.glsl" />
     <None Include="Shaders\Renderer\fragment.glsl" />

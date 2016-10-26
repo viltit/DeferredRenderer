@@ -161,11 +161,6 @@ bool AABB::rayIntersection(const Ray & ray, glm::vec3& intersection, float& f) {
 	float f_low = 0.0f;
 	float f_high = 1.0f;
 
-	std::cout << "Raytracing against an aabb with min = " << _min.x << "/" << _min.y << "/" << _min.z << 
-		" and max = " << _max.x << "/" << _max.y << "/" << _max.z << std::endl;
-	std::cout << "Ray origin: " << ray._origin.x << "/" << ray._origin.y << "/" << ray._origin.z << std::endl;
-	std::cout << "Ray direction" << ray._delta.x << "/" << ray._delta.y << "/" << ray._delta.z << std::endl;
-
 	if (!clipLine(0, ray, f_low, f_high)) return false;
 	if (!clipLine(1, ray, f_low, f_high)) return false;
 	if (!clipLine(2, ray, f_low, f_high)) return false;
