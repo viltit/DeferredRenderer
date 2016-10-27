@@ -1,4 +1,7 @@
-/* Class to perform Ray-Triangle-Intersection tests on the gpu */
+/*	Class to perform Ray-Triangle-Intersection tests on the gpu 
+
+	TO DO: Fix the hacks mentioned in the cpp with a robust solution 
+	(it works now, but in a potentially dangerous way) */
 
 #pragma once
 
@@ -15,7 +18,8 @@ class RayTriangle {
 public:
 	RayTriangle();
 
-	static bool update(const Mesh* mesh, const vitiGEO::Ray* ray, glm::vec3& output);
+	static void start();
+	static bool update(const Mesh* mesh, const vitiGEO::Ray* ray, std::vector<glm::vec3>& output);
 
 private:
 	static Shader _shader;

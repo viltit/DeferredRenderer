@@ -47,6 +47,8 @@ public:
 	bool srgbOn()	{ sRGB = true; }
 	bool srgbOff()	{ sRGB = false; }
 
+	int countVertices() const { return numVertices; }
+
 	bool isTransparent() const { return material.isTransparent(); }
 
 protected:
@@ -75,6 +77,8 @@ public:
 
 	virtual void draw(const Shader& shader) const override;
 	virtual void drawNaked(const Shader& shader) const override;
+
+	int countVertices() const { return numVertices; }
 
 	bool isTransparent() const { return material.isTransparent(); }
 

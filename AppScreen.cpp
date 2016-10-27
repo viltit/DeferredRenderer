@@ -20,6 +20,7 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	_console{ this, &_gui, "layouts/console.layout"}
 {
 	_index = SCREEN_INDEX_APP;
+	RayTriangle::start();
 
 	/* Create the scene elements: 
 	int prefix = 1;
@@ -337,16 +338,11 @@ void AppScreen::updateInput() {
 			glm::vec3 intersection;
 			float f{ 0.0f };
 
-			std::cout << "Camera dir: " << _cam.dir() << std::endl;
-
 			if (aabb->rayIntersection(ray, intersection, f)) {
-				std::cout << "HIT\n";
-				std::cout << "f = " << f << std::endl;
-				std::cout << "intersection = " << intersection << std::endl;
 				_scene.addChild(new Octahedron{ "xml/cube.xml" }, intersection, sqrt(2.0f));
 
 				glm::vec3 tuv{};
-				/* test for detailed collision with the mesh: */
+				/* test for detailed collision with the mesh: 
 				std::vector<glm::vec3> vertices = temp->vertices().at(2);
 				for (int i = 0; i < vertices.size();) {
 					std::vector<glm::vec3> triangle;
@@ -359,24 +355,32 @@ void AppScreen::updateInput() {
 					if (ray.rayTriangleIntersect(triangle, tuv)) {
 						std::cout << "---------------------------- HIT THE MESH!\n";
 						std::cout << "Ray delta factor: " << tuv.x << std::endl;
+						std::cout << "UV: " << tuv.y << "/" << tuv.z << std::endl;
 
 						glm::vec3 hitPoint = ray._origin + glm::normalize(ray._delta) * tuv.x;
 
 						_scene.addChild(new Cuboid{ "xml/cubeSmall.xml" }, hitPoint, sqrt(1.0f));
 					}
-				}
+				}*/
 
 				/* TEST: USE TRANSFORM FEEDBACK: */
 				auto i = temp->childrenBegin() + 2;
 				
 				Mesh* mesh = static_cast<Mesh*>((*i)->obj());
 
-				glm::vec3 output;
+				std::vector<glm::vec3> output;
 				RayTriangle::update(mesh, &ray, output);
+				for (int i = 0; i < output.size(); i++) {
+					std::cout << "GPU HIT DETECTION RESULTS ----------------------\n";
+					std::cout << "Factor t: " << output[i].x << std::endl;
+					std::cout << "uv: " << output[i].y << "/" << output[i].z << std::endl;
+
+					//test drawing: 
+					glm::vec3 hitPoint = ray._origin + glm::normalize(ray._delta) * output[i].x;
+					_scene.addChild(new Cuboid{ "xml/cubeSmall.xml" }, hitPoint, sqrt(1.0f));
+				}
 			}
 			
-
-
 			/* END OF DEBUG CODE */
 			
 		}

@@ -9,11 +9,13 @@ Shader RayTriangle::_shader;
 GLuint RayTriangle::_buffer;
 
 RayTriangle::RayTriangle() {
+}
 
+void RayTriangle::start() {
 	/* Set up the shader program: */
-	_shader.init("Shaders/Raytracing/Triangle.vert.glsl", 
-				 "Shaders/Raytracing/Triangle.frag.glsl", 
-				 "Shaders/Raytracing/Triangle.geo.glsl");
+	_shader.init("Shaders/Raytracing/Triangle.vert.glsl",
+		"Shaders/Raytracing/Triangle.frag.glsl",
+		"Shaders/Raytracing/Triangle.geo.glsl");
 
 	const char* varyingNames[] = {
 		"uv",
@@ -28,10 +30,10 @@ RayTriangle::RayTriangle() {
 
 	glGenBuffers(1, &_buffer);
 	glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, _buffer);
-	glBufferData(GL_TRANSFORM_FEEDBACK_BUFFER, size, nullptr, GL_DYNAMIC_COPY);
+	glBufferData(GL_TRANSFORM_FEEDBACK_BUFFER, 100000 * size, nullptr, GL_DYNAMIC_COPY);
 }
 
-bool RayTriangle::update(const Mesh * mesh, const vitiGEO::Ray * ray, glm::vec3 & output) {
+bool RayTriangle::update(const Mesh * mesh, const vitiGEO::Ray * ray, std::vector<glm::vec3>& output) {
 	_shader.on();
 	glEnable(GL_RASTERIZER_DISCARD);
 
@@ -46,6 +48,25 @@ bool RayTriangle::update(const Mesh * mesh, const vitiGEO::Ray * ray, glm::vec3 
 
 	glDisable(GL_RASTERIZER_DISCARD);
 	_shader.off();
+
+	/* unfortunatly, the feedback buffer is filled with ray-triangle intersection data
+	   for every triangle in the mesh, so we need this ugly hack to filter out all
+	   data from triangles which do not intersect: */
+
+	std::vector<float> out(3 * mesh->countVertices());
+	std::vector<float> hits;
+
+	glGetBufferSubData(GL_TRANSFORM_FEEDBACK_BUFFER, 0, out.size() * sizeof(float), out.data());
+
+	for (int i = 0; i < out.size(); i++) {
+		if (out[i] != 0) hits.push_back(out[i]);
+	}
+
+	/* another ugly hack because every hit gets registered three times: */
+	for (int i = 0; i < hits.size(); i += 9) {
+		glm::vec3 temp = { hits[i + 2], hits[i], hits[i + 1] };
+		output.push_back(temp);
+	}
 
 	return false;
 }
