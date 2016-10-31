@@ -45,6 +45,7 @@ void AABB::construct(std::vector<glm::vec3>& vertices) {
 	_oMax = _max;
 }
 
+
 /* adapt the bounding box to a transformed object */
 void AABB::transform(const glm::mat4 & M) {
 	if (isEmpty()) return;

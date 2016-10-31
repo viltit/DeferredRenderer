@@ -342,7 +342,7 @@ void ShapeI::normalizeSeam(std::vector<Vertex>& vertices, std::vector<GLuint>& i
 Cuboid::Cuboid(const std::string& configFile, const glm::vec3& position)
 	:	Shape()
 {
-	VertexData vdata{ 0, 0, 0 };
+	VertexData vdata{ 0, 0, 0, vitiGEO::AABB{ } };
 	slData sdata = Cache::getShape(configFile);
 
 	size = sdata.size;
@@ -352,6 +352,7 @@ Cuboid::Cuboid(const std::string& configFile, const glm::vec3& position)
 	material.setTexture(TEXTURE_SPECULAR, Cache::getTexture(sdata.textures[1]));
 	material.setTexture(TEXTURE_NORMAL, Cache::getTexture(sdata.textures[2]));
 
+	/* Look if this shape is already loaded (identifier is the shapes config path!) */
 	if (!Cache::isVertexLoaded(configFile)) {
 		std::vector<Vertex> vertices;
 		initVertices(vertices);
@@ -359,13 +360,22 @@ Cuboid::Cuboid(const std::string& configFile, const glm::vec3& position)
 		calcTangents(vertices);
 		uploadVertices(vertices);
 		numVertices = vertices.size();
-		Cache::pushVertex(configFile, vao, vbo, numVertices);
+
+		/* construct the aabb: */
+		std::vector<glm::vec3> pos;
+		for (Vertex& V : vertices) {
+			pos.push_back(V.pos);
+		}
+		aabb.construct(pos);
+
+		Cache::pushVertex(configFile, vao, vbo, numVertices, aabb);
 	}
 	else {
 		vdata = Cache::pullVertex(configFile);
 		vao = vdata.vao;
 		vbo = vdata.vbo;
 		numVertices = vdata.numVertices;
+		aabb = vdata.aabb;
 	}
 
 	_M = glm::translate(_M, position);
@@ -434,7 +444,7 @@ void Cuboid::initVertices(std::vector<Vertex>& vertices) {
 /*	------------------------------------------------------------------------------------------------------------- */
 Tetrahedron::Tetrahedron(const std::string & configFile, const glm::vec3& position) : Shape() {
 	/* load data from config file: */
-	VertexData vdata{ 0, 0, 0 };
+	VertexData vdata{ 0, 0, 0, vitiGEO::AABB{} };
 	slData sdata = Cache::getShape(configFile);
 
 	size = sdata.size;
@@ -444,6 +454,7 @@ Tetrahedron::Tetrahedron(const std::string & configFile, const glm::vec3& positi
 	material.setTexture(TEXTURE_SPECULAR, Cache::getTexture(sdata.textures[1]));
 	material.setTexture(TEXTURE_NORMAL, Cache::getTexture(sdata.textures[2]));
 
+	/* Look if this shape is already loaded (identifier is the shapes config path!) */
 	if (!Cache::isVertexLoaded(configFile)) {
 		std::vector<Vertex> vertices;
 		initVertices(vertices);
@@ -451,13 +462,22 @@ Tetrahedron::Tetrahedron(const std::string & configFile, const glm::vec3& positi
 		calcTangents(vertices);
 		uploadVertices(vertices);
 		numVertices = vertices.size();
-		Cache::pushVertex(configFile, vao, vbo, numVertices);
+
+		/* construct the aabb: */
+		std::vector<glm::vec3> pos;
+		for (Vertex& V : vertices) {
+			pos.push_back(V.pos);
+		}
+		aabb.construct(pos);
+
+		Cache::pushVertex(configFile, vao, vbo, numVertices, aabb);
 	}
 	else {
 		vdata = Cache::pullVertex(configFile);
 		vao = vdata.vao;
 		vbo = vdata.vbo;
 		numVertices = vdata.numVertices;
+		aabb = vdata.aabb;
 	}
 
 	_M = glm::translate(_M, position);
@@ -501,7 +521,7 @@ void Tetrahedron::initVertices(std::vector<Vertex>& vertices) {
 
 Octahedron::Octahedron(const std::string& configFile, const glm::vec3& position) : Shape() {
 	
-	VertexData vdata{ 0, 0, 0 };
+	VertexData vdata{ 0, 0, 0, vitiGEO::AABB{} };
 	slData sdata = Cache::getShape(configFile);
 
 	size = sdata.size;
@@ -511,6 +531,7 @@ Octahedron::Octahedron(const std::string& configFile, const glm::vec3& position)
 	material.setTexture(TEXTURE_SPECULAR, Cache::getTexture(sdata.textures[1]));
 	material.setTexture(TEXTURE_NORMAL, Cache::getTexture(sdata.textures[2]));
 
+	/* Look if this shape is already loaded (identifier is the shapes config path!) */
 	if (!Cache::isVertexLoaded(configFile)) {
 		std::vector<Vertex> vertices;
 		initVertices(vertices);
@@ -518,13 +539,22 @@ Octahedron::Octahedron(const std::string& configFile, const glm::vec3& position)
 		calcTangents(vertices);
 		uploadVertices(vertices);
 		numVertices = vertices.size();
-		Cache::pushVertex(configFile, vao, vbo, numVertices);
+
+		/* construct the aabb: */
+		std::vector<glm::vec3> pos;
+		for (Vertex& V : vertices) {
+			pos.push_back(V.pos);
+		}
+		aabb.construct(pos);
+
+		Cache::pushVertex(configFile, vao, vbo, numVertices, aabb);
 	}
 	else {
 		vdata = Cache::pullVertex(configFile);
 		vao = vdata.vao;
 		vbo = vdata.vbo;
 		numVertices = vdata.numVertices;
+		aabb = vdata.aabb;
 	}
 
 	_M = glm::translate(_M, position);
@@ -597,7 +627,7 @@ Icosahedron::Icosahedron(const std::string & configFile, const glm::vec3& positi
 	: Shape()
 {
 	/* load data from config file: */
-	VertexData vdata{ 0, 0, 0 };
+	VertexData vdata{ 0, 0, 0, vitiGEO::AABB{} };
 	slData sdata = Cache::getShape(configFile);
 
 	size = sdata.size;
@@ -607,6 +637,7 @@ Icosahedron::Icosahedron(const std::string & configFile, const glm::vec3& positi
 	material.setTexture(TEXTURE_SPECULAR, Cache::getTexture(sdata.textures[1]));
 	material.setTexture(TEXTURE_NORMAL, Cache::getTexture(sdata.textures[2]));
 
+	/* Look if this shape is already loaded (identifier is the shapes config path!) */
 	if (!Cache::isVertexLoaded(configFile)) {
 		std::vector<Vertex> vertices;
 		initVertices(vertices);
@@ -614,15 +645,23 @@ Icosahedron::Icosahedron(const std::string & configFile, const glm::vec3& positi
 		calcTangents(vertices);
 		uploadVertices(vertices);
 		numVertices = vertices.size();
-		Cache::pushVertex(configFile, vao, vbo, numVertices);
+
+		/* construct the aabb: */
+		std::vector<glm::vec3> pos;
+		for (Vertex& V : vertices) {
+			pos.push_back(V.pos);
+		}
+		aabb.construct(pos);
+
+		Cache::pushVertex(configFile, vao, vbo, numVertices, aabb);
 	}
 	else {
 		vdata = Cache::pullVertex(configFile);
 		vao = vdata.vao;
 		vbo = vdata.vbo;
 		numVertices = vdata.numVertices;
+		aabb = vdata.aabb;
 	}
-
 	_M = glm::translate(_M, position);
 }
 
@@ -756,7 +795,7 @@ void Icosahedron::initVertices(std::vector<Vertex>& vertices) {
 
 Sphere::Sphere(const std::string & configFile) : Icosahedron() {
 	/* load data from config file: */
-	VertexData vdata{ 0, 0, 0 };
+	VertexData vdata{ 0, 0, 0, vitiGEO::AABB{} };
 	slData sdata = Cache::getShape(configFile);
 
 	size = sdata.size;
@@ -778,13 +817,22 @@ Sphere::Sphere(const std::string & configFile) : Icosahedron() {
 		calcTangents(vertices);
 		uploadVertices(vertices);
 		numVertices = vertices.size();
-		Cache::pushVertex(configFile, vao, vbo, numVertices);
+
+		/* construct the aabb: */
+		std::vector<glm::vec3> pos;
+		for (Vertex& V : vertices) {
+			pos.push_back(V.pos);
+		}
+		aabb.construct(pos);
+
+		Cache::pushVertex(configFile, vao, vbo, numVertices, aabb);
 	}
 	else {
 		vdata = Cache::pullVertex(configFile);
 		vao = vdata.vao;
 		vbo = vdata.vbo;
 		numVertices = vdata.numVertices;
+		aabb = vdata.aabb;
 	}
 }
 

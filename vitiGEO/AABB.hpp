@@ -13,6 +13,7 @@
 
 #include <glm/glm.hpp>
 
+
 namespace vitiGEO {
 
 class Ray;

@@ -23,19 +23,21 @@ SceneNode::SceneNode(const std::string& name, IGameObject* object, glm::vec3 pos
 	setPos(pos);
 }
 
-SceneNode::~SceneNode(){
+SceneNode::~SceneNode() {
 	if (_obj) {
-
 #ifdef CONSOLE_LOG
-		std::cout << "<SceneNode>Deleting an object with the name " << _name << std::endl;
+		std::cout << "<SceneNode>Start deleting an object with the name " << _name << std::endl;
 #endif
-
 		delete _obj;
 		_obj = nullptr;
 	}
-
-	for (auto& C : _children)
+	for (auto& C : _children) {
 		if (C != nullptr) delete C;
+		C = nullptr;
+	}
+#ifdef CONSOLE_LOG
+	std::cout << "<SceneNode>Finished deleting an object with the name " << _name << std::endl;
+#endif
 }
 
 void SceneNode::update(const Uint32 & deltaTime) {
@@ -285,13 +287,18 @@ void Scene::drawShapes(const Shader & shader, Frustum& frustum) {
 void Scene::drawTransparent(const Shader & shader, Frustum & frustum) {
 	//to do: frustum culling
 	
-	/*	sort objects by distance to camera: 
-		PROBLEM: On the same model, distance is always the same and only one object will be stored */
+	/*	sort objects by distance to camera. We take the aabbs center as comparison point */
 
 	std::map<float, IGameObject*> sorted;
 	for (auto& O : _transparent) {
-		float distance = glm::length(findByName(O.first)->pos() - _cam->pos());
-		sorted[distance] = O.second;
+		Shape* s = static_cast<Shape*>(O.second);
+
+		/* this code leads to a program crash on exiting the app */
+		if (s) {
+			s->getAABB()->transform(O.second->matrix());
+			float distance = glm::length(s->getAABB()->center() - _cam->pos());
+			sorted[distance] = O.second;
+		}
 	}
 
 	/* now draw in reverse order: */

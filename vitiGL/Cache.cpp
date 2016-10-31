@@ -43,8 +43,8 @@ void VertexCache::push(const std::string & meshName, VertexData vertexData) {
 	_cache.insert(std::make_pair(meshName, vertexData));
 }
 
-void VertexCache::push(const std::string & meshName, GLuint vao, GLuint vbo, int numVertices) {
-	VertexData data{ vao, vbo, numVertices };
+void VertexCache::push(const std::string & meshName, GLuint vao, GLuint vbo, int numVertices, vitiGEO::AABB aabb) {
+	VertexData data{ vao, vbo, numVertices, aabb };
 	push(meshName, data);
 }
 
@@ -148,8 +148,8 @@ VertexData Cache::pullVertex(const std::string & meshName) {
 	return _vertexCache.pull(meshName);
 }
 
-void Cache::pushVertex(const std::string & meshName, GLuint vao, GLuint vbo, int numVertices) {
-	_vertexCache.push(meshName, vao, vbo, numVertices);
+void Cache::pushVertex(const std::string & meshName, GLuint vao, GLuint vbo, int numVertices, vitiGEO::AABB aabb) {
+	_vertexCache.push(meshName, vao, vbo, numVertices, aabb);
 }
 
 

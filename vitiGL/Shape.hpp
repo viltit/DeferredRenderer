@@ -8,6 +8,8 @@
 #include "IGameObject.hpp"
 #include "Material.hpp"
 
+#include <AABB.hpp>	//from vitiGEO static library
+
 
 namespace vitiGL {
 
@@ -44,6 +46,9 @@ public:
 	virtual void drawNaked(const Shader& shader) const override;
 	//virtual void multidraw(const Shader& shader) = 0;
 
+	/* get a pointer to the objects aabb: */
+	vitiGEO::AABB* getAABB() { return &aabb; }
+
 	bool srgbOn()	{ sRGB = true; }
 	bool srgbOff()	{ sRGB = false; }
 
@@ -62,6 +67,8 @@ protected:
 	GLuint		vbo;
 	Material	material;
 
+	vitiGEO::AABB aabb;
+
 	int			numVertices;
 	bool		invert;		//invert the normals
 	bool		sRGB;		//gamma-correct diffuse textures on loading
@@ -77,6 +84,8 @@ public:
 
 	virtual void draw(const Shader& shader) const override;
 	virtual void drawNaked(const Shader& shader) const override;
+
+	vitiGEO::AABB* getAABB() { return &aabb; }
 
 	int countVertices() const { return numVertices; }
 
@@ -103,6 +112,8 @@ protected:
 	GLuint		ebo;
 
 	Material	material;
+
+	vitiGEO::AABB aabb;
 
 	int			numVertices;
 };

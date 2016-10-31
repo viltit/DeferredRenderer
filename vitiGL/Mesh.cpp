@@ -17,8 +17,8 @@ Mesh::Mesh(std::vector<Vertex>& vertices, std::vector<GLuint> indices, std::vect
 	for (int i = 0; i < indices.size(); i++) {
 		_vertices.push_back(vertices[indices[i]].pos);
 	}
-	_aabb.construct(_vertices);
-	_aabbShape = new AABBShape{ &_aabb, cam };
+	aabb.construct(_vertices);
+	_aabbShape = new AABBShape{ &aabb, cam };
 
 	numVertices = indices.size();
 
@@ -57,7 +57,7 @@ Mesh::Mesh(const Mesh& mesh)
 	ebo = mesh.ebo;
 	material = mesh.material;
 	numVertices = mesh.numVertices;
-	_aabb = mesh._aabb;
+	aabb = mesh.aabb;
 	_aabbShape = mesh._aabbShape;
 	_vertices = mesh._vertices;
 }
@@ -68,7 +68,7 @@ Mesh::Mesh(Mesh && mesh) {
 	material = mesh.material;
 	ebo = mesh.ebo;
 	numVertices = mesh.numVertices;
-	_aabb = mesh._aabb;
+	aabb = mesh.aabb;
 	_aabbShape = mesh._aabbShape;
 	_vertices = mesh._vertices;
 

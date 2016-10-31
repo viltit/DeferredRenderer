@@ -16,6 +16,8 @@
 #include <map>
 #include <GL/glew.h>
 
+#include <AABB.hpp>
+
 namespace vitiGL {
 
 struct slData;
@@ -23,13 +25,14 @@ struct slData;
 /* Vertex buffer objects and vertex arrray objects: -------------------------- */
 
 struct VertexData {
-	VertexData(GLuint Vao, GLuint Vbo, int numVert) 
-		: vao{ Vao }, vbo{ Vbo }, numVertices { numVert }
+	VertexData(GLuint Vao, GLuint Vbo, int numVert, vitiGEO::AABB Aabb) 
+		: vao{ Vao }, vbo{ Vbo }, numVertices { numVert }, aabb{ Aabb }
 	{}
 
 	GLuint	vao;
 	GLuint	vbo;
 	int		numVertices;
+	vitiGEO::AABB aabb;
 };
 
 class VertexCache {
@@ -41,7 +44,7 @@ public:
 
 	VertexData	pull		(const std::string& meshName);
 	void		push		(const std::string& meshName, VertexData vertexData);
-	void		push		(const std::string& meshName, GLuint vao, GLuint vbo, int numVertices);
+	void		push		(const std::string& meshName, GLuint vao, GLuint vbo, int numVertices, vitiGEO::AABB aabb);
 
 private:
 	std::map<std::string, VertexData> _cache;
@@ -80,7 +83,7 @@ public:
 
 	static bool	isVertexLoaded(const std::string& meshName);
 	static VertexData pullVertex(const std::string& meshName);
-	static void pushVertex(const std::string & meshName, GLuint vao, GLuint vbo, int numVertices);
+	static void pushVertex(const std::string & meshName, GLuint vao, GLuint vbo, int numVertices, vitiGEO::AABB aabb);
 
 private:
 	static TextureCache  _textureCache;

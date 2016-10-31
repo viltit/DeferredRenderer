@@ -11,7 +11,6 @@
 #pragma once
 
 #include <string>
-#include <AABB.hpp>
 
 #include "Shape.hpp"
 #include "AABBShape.hpp"
@@ -33,11 +32,10 @@ public:
 
 	~Mesh();
 
-	void updateAABB() { _aabb.transform(_M); _aabbShape->update(&_aabb); }
+	void updateAABB() { aabb.transform(_M); _aabbShape->update(&aabb); }
 
 	/* debug function: draw aaabb */
 	void drawAABB() const { _aabbShape->draw(); }
-	vitiGEO::AABB* aabb() { return &_aabb; }
 
 	std::vector<glm::vec3>& vertices() { return _vertices; }
 
@@ -45,7 +43,6 @@ protected:
 	// Inherited via Shape (obsolete in this case...)
 	virtual void initVertices(std::vector<Vertex>& vertices) override;
 
-	vitiGEO::AABB _aabb;
 	AABBShape* _aabbShape;
 
 	std::vector<glm::vec3> _vertices;
