@@ -12,6 +12,9 @@ RayTriangle::RayTriangle() {
 }
 
 void RayTriangle::start() {
+	/* determine the size of the feedback buffer */
+	float size = 3 * 3 * 3 * sizeof(float);
+
 	/* Set up the shader program: */
 	_shader.init("Shaders/Raytracing/Triangle.vert.glsl",
 		"Shaders/Raytracing/Triangle.frag.glsl",
@@ -26,14 +29,16 @@ void RayTriangle::start() {
 	_shader.link();
 
 	/* set up the (mini)buffer for the shaders output: */
-	int size = sizeof(glm::vec2) + sizeof(float);
-
 	glGenBuffers(1, &_buffer);
 	glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, _buffer);
-	glBufferData(GL_TRANSFORM_FEEDBACK_BUFFER, 100000 * size, nullptr, GL_DYNAMIC_COPY);
+	glBufferData(GL_TRANSFORM_FEEDBACK_BUFFER, size, nullptr, GL_DYNAMIC_COPY);
 }
 
 bool RayTriangle::update(const Mesh * mesh, const vitiGEO::Ray * ray, std::vector<glm::vec3>& output) {
+
+	std::vector<float> out(27);
+	std::vector<float> hits;
+
 	_shader.on();
 	glEnable(GL_RASTERIZER_DISCARD);
 
@@ -42,6 +47,8 @@ bool RayTriangle::update(const Mesh * mesh, const vitiGEO::Ray * ray, std::vecto
 
 	glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, _buffer);
 
+	glClearBufferData(GL_TRANSFORM_FEEDBACK_BUFFER, GL_R32F, GL_RGBA, GL_FLOAT, nullptr);
+
 	glBeginTransformFeedback(GL_TRIANGLES);
 	mesh->drawNaked(_shader);
 	glEndTransformFeedback();
@@ -49,25 +56,19 @@ bool RayTriangle::update(const Mesh * mesh, const vitiGEO::Ray * ray, std::vecto
 	glDisable(GL_RASTERIZER_DISCARD);
 	_shader.off();
 
-	/* unfortunatly, the feedback buffer is filled with ray-triangle intersection data
-	   for every triangle in the mesh, so we need this ugly hack to filter out all
-	   data from triangles which do not intersect: */
-
-	std::vector<float> out(3 * mesh->countVertices());
-	std::vector<float> hits;
-
 	glGetBufferSubData(GL_TRANSFORM_FEEDBACK_BUFFER, 0, out.size() * sizeof(float), out.data());
 
+	/* discard 0-values: */
 	for (int i = 0; i < out.size(); i++) {
 		if (out[i] != 0) hits.push_back(out[i]);
 	}
 
-	/* another ugly hack because every hit gets registered three times: */
+	/* an ugly hack because every hit gets registered three times: */
 	for (int i = 0; i < hits.size(); i += 9) {
 		glm::vec3 temp = { hits[i + 2], hits[i], hits[i + 1] };
 		output.push_back(temp);
 	}
 
-	return false;
+	return true;
 }
 }

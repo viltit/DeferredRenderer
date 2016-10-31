@@ -19,19 +19,15 @@ out float t;
 bool calcIntersection();
 
 void main() {
-	if (calcIntersection() == false) {
-		uv = vec2(0, 0);
-		t = 0;
+	if (calcIntersection() == true) {
+		gl_Position = gl_in[0].gl_Position;
+		EmitVertex();
+		gl_Position = gl_in[1].gl_Position;
+		EmitVertex();
+		gl_Position = gl_in[2].gl_Position;
+		EmitVertex();
 		EndPrimitive();
-	};
-
-	gl_Position = gl_in[0].gl_Position;
-	EmitVertex();
-	gl_Position = gl_in[1].gl_Position;
-	EmitVertex();
-	gl_Position = gl_in[2].gl_Position;
-	EmitVertex();
-	EndPrimitive();
+	}
 }
 
 bool calcIntersection() {

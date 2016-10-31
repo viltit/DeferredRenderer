@@ -339,10 +339,11 @@ void AppScreen::updateInput() {
 			float f{ 0.0f };
 
 			if (aabb->rayIntersection(ray, intersection, f)) {
-				_scene.addChild(new Octahedron{ "xml/cube.xml" }, intersection, sqrt(2.0f));
+				//_scene.addChild(new Octahedron{ "xml/cube.xml" }, intersection, sqrt(2.0f));
 
-				glm::vec3 tuv{};
+				
 				/* test for detailed collision with the mesh: 
+				glm::vec3 tuv{};
 				std::vector<glm::vec3> vertices = temp->vertices().at(2);
 				for (int i = 0; i < vertices.size();) {
 					std::vector<glm::vec3> triangle;
@@ -370,8 +371,8 @@ void AppScreen::updateInput() {
 
 				std::vector<glm::vec3> output;
 				RayTriangle::update(mesh, &ray, output);
+				std::cout << "GPU HIT DETECTION RESULTS ----------------------\n";
 				for (int i = 0; i < output.size(); i++) {
-					std::cout << "GPU HIT DETECTION RESULTS ----------------------\n";
 					std::cout << "Factor t: " << output[i].x << std::endl;
 					std::cout << "uv: " << output[i].y << "/" << output[i].z << std::endl;
 
