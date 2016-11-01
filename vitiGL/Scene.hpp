@@ -1,10 +1,9 @@
 /*	CLASS SCENE_NODE -------------------------------------------------------------------------
 	
-	loosly following this tutorial:
-	https://research.ncl.ac.uk/game/mastersdegree/graphicsforgames/scenemanagement/
-
 	Task:	Hold the objects in our scene and establish a parent-child relationship between
 			them. Also, together with class Scene, perform viewFrustum culling
+
+			!! Also, the sceneNode class is responsible for deleting all game objects. !!
 ------------------------------------------------------------------------------------------------ */
 
 
@@ -92,8 +91,9 @@ protected:
 
 /*	CLASS SCENE ------------------------------------------------------------------------------
 	Task:	Wrapper to identify Scene Nodes by name and adding childs to a parent by the
-			parent name. Scene also holds all lights.
+			parent name.
 
+			KEEP TRACK OF ALL AND EVERY GAME OBJECT AND MANAGE THEIR DESTRUCTION
 --------------------------------------------------------------------------------------------- */
 
 class Scene {
@@ -183,6 +183,7 @@ public:
 private:
 	void updateCullingList(Frustum& frustum, SceneNode* from);
 	void addToList(SceneNode* node);
+	void removeFromList(SceneNode* node);
 
 	int _counter;
 

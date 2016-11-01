@@ -23,6 +23,8 @@ SceneNode::SceneNode(const std::string& name, IGameObject* object, glm::vec3 pos
 	setPos(pos);
 }
 
+
+/* If a scene node gets deleted, all its children will be deleted too: */
 SceneNode::~SceneNode() {
 	if (_obj) {
 #ifdef CONSOLE_LOG
@@ -32,8 +34,15 @@ SceneNode::~SceneNode() {
 		_obj = nullptr;
 	}
 	for (auto& C : _children) {
-		if (C != nullptr) delete C;
-		C = nullptr;
+		if (C) {
+			std::cout << "Deleting a child with the name " << C->_name << std::endl;
+			if (C->obj()) {
+				delete C->obj();
+				C->_obj = nullptr;
+			}
+			delete C;
+			C = nullptr;
+		}
 	}
 #ifdef CONSOLE_LOG
 	std::cout << "<SceneNode>Finished deleting an object with the name " << _name << std::endl;
@@ -231,32 +240,70 @@ void Scene::addToList(SceneNode* node) {
 			_scene.insert(std::make_pair(node->name(), node));
 		}
 	}
-
 	/* recursivly visit all children: */
 	for (auto i = node->childrenBegin(); i < node->childrenEnd(); i++) {
 		addToList(*i);
 	}
 }
 
-/* wip */
+/* takes a given scene node out of its respective list: */
+void Scene::removeFromList(SceneNode * node) {
+	assert(node);
+
+	if (node->obj()) {
+		std::string name = node->name();
+		IGameObject* obj = node->obj();
+
+		switch (obj->type()) {
+		case ObjType::shape:
+		{
+			Shape* s = static_cast<Shape*>(obj);
+			if (s->isTransparent()) _transparent.erase(name);
+			else _shapes.erase(name);
+		}
+		break;
+		case ObjType::mesh:
+		{
+			Mesh* m = static_cast<Mesh*>(obj);
+			if (m->isTransparent()) _transparent.erase(name);
+			else _shapes.erase(name);
+		}
+		break;
+		case ObjType::dlight:
+			if (_dshadowcaster == obj) _dshadowcaster = nullptr;
+			_dlights.erase(name);
+			break;
+		case ObjType::plight:
+			if (_pshadowcaster == obj) _pshadowcaster = nullptr;
+			_plights.erase(name);
+			break;
+		case ObjType::skybox:
+			_skybox = nullptr;
+			break;
+		}
+	}
+
+	/* also, take object out of the scene list: */
+	_scene.erase(node->name());
+
+	/* recursivly visit all children: */
+	for (auto i = node->childrenBegin(); i < node->childrenEnd(); i++) {
+		removeFromList(*i);
+	}
+}
+
 void Scene::remove(const std::string & name) {
 	SceneNode* node = findByName(name);
 	if (!node) 
 		throw vitiError(("<Scene::remove>Trying to remove an inexisting scene node with the name " + name).c_str());
-	
 
-	for (auto i = node->childrenBegin(); i != node->childrenEnd(); i++) {
-		delete *i;
-	}
-
-	/* take the node out of its respective lists: */
-	_scene.erase(name);
-	_shapes.erase(name); //WIP
-
-	/* tell the nodes parent it died: */
+	/* tell the nodes parent its child has died: */
 	node->remove();
 
-	/* delete the node itself: */
+	/* take the nodes game object and all its children out of the respective scene lists: */
+	removeFromList(node);
+
+	/* delete the node and all its children from memory: */
 	delete node;
 	node = nullptr;
 }
