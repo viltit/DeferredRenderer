@@ -29,8 +29,7 @@ class SceneNode {
 public:
 	SceneNode(const std::string& name, 
 			  IGameObject* object = nullptr, 
-			  glm::vec3 pos = { 0.0f, 0.0f, 0.0f }, 
-			  float radius = 1.0f);
+			  glm::vec3 pos = { 0.0f, 0.0f, 0.0f });
 
 	virtual ~SceneNode();
 	
@@ -103,7 +102,6 @@ public:
 
 	void addChild	(IGameObject* object, 
 					glm::vec3 pos = {},
-					float radius =  1.0f, 
 					const std::string& name = "", 
 					const std::string& parentName = "root");
 

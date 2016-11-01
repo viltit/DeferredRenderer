@@ -147,7 +147,7 @@ Model::Model(const std::string& filePath, Camera* cam, bool textureFolder)
 		if (meshName == "") meshName = "Mesh_" + std::to_string(++id);
 		else meshName += "_" + std::to_string(++id);
 
-		SceneNode* child = new SceneNode{ meshName, mesh, glm::vec3{}, 30.0f }; //TO DO: Calculate radius!
+		SceneNode* child = new SceneNode{ meshName, mesh, glm::vec3{} };
 
 		addChild(child);
 	}

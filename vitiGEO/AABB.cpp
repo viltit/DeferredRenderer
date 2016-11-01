@@ -172,6 +172,40 @@ bool AABB::rayIntersection(const Ray & ray, glm::vec3& intersection, float& f) {
 	return true;
 }
 
+bool AABB::planeIntersection(const glm::vec3 & n, float d) const {
+	float minD, maxD;
+
+	/* inspect the normal: */
+	if (n.x > 0.0f) {
+		minD = n.x * _min.x;
+		maxD = n.x * _max.x;
+	}
+	else {
+		minD = n.x * _max.x;
+		maxD = n.x * _min.x;
+	}
+	if (n.y > 0.0f) {
+		minD += n.y * _min.y;
+		maxD += n.y * _max.y;
+	}
+	else {
+		minD += n.y * _max.y;
+		maxD += n.y * _min.y;
+	}
+	if (n.z > 0.0f) {
+		minD += n.z * _min.z;
+		maxD += n.z * _max.z;
+	}
+	else {
+		minD += n.z * _max.z;
+		maxD += n.z * _min.z;
+	}
+
+	if (minD >= d || maxD <= d) return false;
+
+	return true;
+}
+
 bool AABB::clipLine(int dim, const Ray & ray, float & f_low, float & f_high) {
 	assert(dim >= 0 && dim <= 3);
 

@@ -13,14 +13,22 @@ namespace vitiGL {
 
 /* CLASS SCENE NODE ------------------------------------------------------------- */
 
-SceneNode::SceneNode(const std::string& name, IGameObject* object, glm::vec3 pos, float radius)
+SceneNode::SceneNode(const std::string& name, IGameObject* object, glm::vec3 pos)
 	:	_parent		{ nullptr },
 		_obj		{ object },
-		_radius		{ radius },
 		_name		{ name }
 {
 	/* get the initial position in case the Shape already has one: */
 	setPos(pos);
+
+	/* if the attached object has an aabb, get its "radius": */
+	if (_obj) {
+		if (_obj->type() == ObjType::mesh || _obj->type() == ObjType::shape) {
+			Shape* s = static_cast<Shape*>(_obj);
+			_radius = s->getAABB()->diameter() * 0.5f;
+		}
+		else _radius = 1.0f;
+	}
 }
 
 
@@ -55,7 +63,15 @@ void SceneNode::update(const Uint32 & deltaTime) {
 	else _W = _M;
 	
 	/* give world position to the shape for drawing: */
-	if (_obj) _obj->setModelMatrix(_W);
+	if (_obj) {
+		_obj->setModelMatrix(_W);
+		
+		/* update aabb: */
+		if (_obj->type() == ObjType::shape || _obj->type() == ObjType::mesh) {
+			vitiGEO::AABB* aabb = static_cast<Shape*>(_obj)->getAABB();
+			aabb->transform(_W);
+		}
+	}
 
 	/* update all children: */
 	for (auto& C : _children) C->update(deltaTime);
@@ -122,7 +138,6 @@ void Scene::addChild
 (
 	IGameObject* object, 
 	glm::vec3 pos, 
-	float radius /* = 1.0f */, 
 	const std::string& name /*= ""*/, 
 	const std::string & parentName /* = "root" */
 )
@@ -140,7 +155,7 @@ void Scene::addChild
 	if (parent == nullptr) {
 		throw initError(("<Scene::addChild> Could not find a parent with the name " + parentName).c_str());
 	}
-	SceneNode* child = new SceneNode(nodeName, object, pos, radius);
+	SceneNode* child = new SceneNode(nodeName, object, pos);
 
 	/* link the child to its parent: */
 	parent->addChild(child);
@@ -153,7 +168,7 @@ void Scene::addChild
 }
 
 void Scene::addChild(IGameObject * object, const std::string & name, const std::string& parentName) {
-	addChild(object, glm::vec3{}, 1.0f, name, parentName);
+	addChild(object, glm::vec3{}, name, parentName);
 }
 
 void Scene::addChild(SceneNode * node, const std::string& name, const std::string & parentName) {

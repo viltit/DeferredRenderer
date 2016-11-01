@@ -35,11 +35,15 @@ public:
 	/* merge the aabb with another aabb: */
 	void add(const AABB& aabb);
 
-	/*	test for intersection with a ray: 
+	/*	tests for intersection with a ray: 
 		returns the fraction of the rays vector to the intersection point:
 			intersection = ray.origin + ray.direction * f,
 		or a huge number if there is no intersection					*/
 	bool rayIntersection(const Ray& ray, glm::vec3& intersection, float& f);
+
+	/*	tests for an intersection with a plane given by the equation N*P - d = 0 
+		NOT BUG-TESTES YET	*/
+	bool planeIntersection(const glm::vec3& n, float d) const;
 
 	/*	clip a line against one of the three planes of the aabb, return false 
 		if there is no intersection, return f-max and f-min as the fractions
@@ -51,10 +55,11 @@ public:
 		point if he is inside the aabb */
 	glm::vec3 getClosestPoint (const glm::vec3& point) const;
 
-
 	/* getters and setters: */
 	glm::vec3 min() const { return _min; }
 	glm::vec3 max() const { return _max; }
+
+	float diameter() const { return glm::length(_max - _min); }
 
 	void setMin(const glm::vec3& min) { _min = min; }
 	void setMax(const glm::vec3& max) { _max = max; }
