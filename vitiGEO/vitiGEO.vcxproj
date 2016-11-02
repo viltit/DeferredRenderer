@@ -146,11 +146,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AABB.hpp" />
+    <ClInclude Include="Frustum.hpp" />
+    <ClInclude Include="Geometry.hpp" />
     <ClInclude Include="Math.hpp" />
     <ClInclude Include="Ray.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AABB.cpp" />
+    <ClCompile Include="Frustum.cpp" />
+    <ClCompile Include="Geometry.cpp" />
     <ClCompile Include="Ray.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

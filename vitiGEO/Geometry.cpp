@@ -1,6 +1,6 @@
 #include "Geometry.hpp"
 
-namespace vitiGL {
+namespace vitiGEO {
 
 Plane::Plane()
 	:	_distance	{ 0.0f }

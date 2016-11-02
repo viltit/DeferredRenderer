@@ -339,14 +339,14 @@ void Scene::drawShapes(const Shader & shader) {
 	for (const auto& S : _shapes) S.second->draw(shader);
 }
 
-void Scene::drawShapes(const Shader & shader, Frustum& frustum) {
+void Scene::drawShapes(const Shader & shader, vitiGEO::Frustum& frustum) {
 	_cullingList.clear();
 	updateCullingList(frustum, _root);
 
 	for (auto& N : _cullingList) N->draw(shader); 
 }
 
-void Scene::drawTransparent(const Shader & shader, Frustum & frustum) {
+void Scene::drawTransparent(const Shader & shader, vitiGEO::Frustum & frustum) {
 	//to do: frustum culling
 	
 	/*	sort objects by distance to camera. We take the aabbs center as comparison point */
@@ -373,7 +373,7 @@ void Scene::drawShapesNaked(const Shader & shader) const {
 	for (const auto& S : _shapes) S.second->drawNaked(shader);
 }
 
-void Scene::drawShapesNaked(const Shader & shader, Frustum& frustum) {
+void Scene::drawShapesNaked(const Shader & shader, vitiGEO::Frustum& frustum) {
 	_cullingList.clear();
 	updateCullingList(frustum, _root);
 
@@ -422,7 +422,7 @@ void Scene::drawPShadows(const CamInfo & cam) {
 	_pShadow.off();
 }
 
-void Scene::drawDShadows(const CamInfo & cam, Frustum& frustum) {
+void Scene::drawDShadows(const CamInfo & cam, vitiGEO::Frustum& frustum) {
 	_dShadow.on();
 	_dShadow.draw(_dshadowcaster, this, cam, frustum);
 	_dShadow.off();
@@ -440,9 +440,9 @@ pLight * Scene::findPLight(const std::string & name) {
 	return static_cast<pLight*>(node->obj());
 }
 
-void Scene::updateCullingList(Frustum & frustum, SceneNode* from) {
+void Scene::updateCullingList(vitiGEO::Frustum & frustum, SceneNode* from) {
 	for (auto& S : _shapes) {
-		if (frustum.isInside(*_scene[S.first])) _cullingList.push_back(_scene[S.first]);
+		if (frustum.isInside(_scene[S.first]->pos(), _scene[S.first]->radius())) _cullingList.push_back(_scene[S.first]);
 	}
 }
 }

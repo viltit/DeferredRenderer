@@ -1,6 +1,7 @@
 #pragma once
 
-#include "Frustum.hpp"
+#include <Frustum.hpp>
+
 #include "sQuad.hpp"
 #include "Shadowmap.hpp"
 #include "DrawNormals.hpp"
@@ -112,7 +113,7 @@ protected:
 	GaussBlur	_gauss;
 
 	/* cameras view-perspective frustum: */
-	Frustum		_frustum;
+	vitiGEO::Frustum _frustum;
 
 	/* screen sized quad to to draw into :*/
 	sQuad		_quad;

@@ -89,7 +89,6 @@ void Shape::calcNormals(std::vector<Vertex>& vertices) {
 		v1.normal = normal;
 		v2.normal = normal;
 	}
-	//to do: average the different normals of overlapping edges
 }
 
 void Shape::calcTangents(std::vector<Vertex>& vertices, bool bitangents) {
@@ -304,6 +303,9 @@ void ShapeI::calcTangents(std::vector<Vertex>& vertices, std::vector<GLuint>& in
 		}
 	}
 }
+
+/*	 TO DO: 
+	 This function seems not necessary, it was introduces due to a bugged model */
 
 void ShapeI::normalizeSeam(std::vector<Vertex>& vertices, std::vector<GLuint>& indices) {
 	/*	we still have a problem with vertices at the object's seam

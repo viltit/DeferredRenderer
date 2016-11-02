@@ -1,6 +1,7 @@
 #pragma once
 
-#include "Frustum.hpp"
+#include <Frustum.hpp>
+
 #include "Shader.hpp"
 #include "Shadowmap.hpp"
 
@@ -25,7 +26,7 @@ public:
 
 protected:
 	/* view Frustum: */
-	Frustum			_frustum;
+	vitiGEO::Frustum _frustum;
 
 	/* Framebuffers and Shaders: */
 	Framebuffer		_framebuffer;

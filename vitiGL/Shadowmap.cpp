@@ -12,6 +12,8 @@
 #include "Scene.hpp"
 #include "Frustum.hpp"
 
+#include <Frustum.hpp>
+
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <algorithm>
@@ -56,7 +58,7 @@ void DirShadowmap::on() {
 	glClear(GL_DEPTH_BUFFER_BIT);
 }
 
-void DirShadowmap::draw(const dLight* light, Scene* scene, const CamInfo& camera, Frustum& frustum) {
+void DirShadowmap::draw(const dLight* light, Scene* scene, const CamInfo& camera, vitiGEO::Frustum& frustum) {
 	if (!light || !scene) return;
 	if (_updateCascade) updateCascades(camera);
 

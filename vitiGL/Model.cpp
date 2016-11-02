@@ -182,8 +182,8 @@ void Model::update(const Uint32& deltaTime)  {
 
 void Model::drawAABB() {
 	for (auto& C : _children) {
-		Mesh* mesh = static_cast<Mesh*>(C->obj());
-		mesh->drawAABB();
+			Mesh* mesh = static_cast<Mesh*>(C->obj());
+			mesh->drawAABB();
 	}
 }
 

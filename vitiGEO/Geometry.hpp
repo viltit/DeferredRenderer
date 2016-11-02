@@ -5,7 +5,7 @@
 
 #include <glm/glm.hpp>
 
-namespace vitiGL {
+namespace vitiGEO {
 
 /*	Class Plane ------------------------------------------------------------------------
 	the plane is represented in the form 

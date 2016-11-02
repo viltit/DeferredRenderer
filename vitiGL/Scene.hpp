@@ -13,6 +13,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <map>
 
+#include <Frustum.hpp>
+
 #include "Shape.hpp"
 #include "Error.hpp"
 #include "Light.hpp"
@@ -126,12 +128,12 @@ public:
 	/* draw every Shape in the scene: */
 	void drawShapes(const Shader& shader);
 	/* draw every Shape in the scene with view-frustum culling: */
-	void drawShapes(const Shader& shader, Frustum& frustum);
+	void drawShapes(const Shader& shader, vitiGEO::Frustum& frustum);
 	/* draw transparent Shapes: */
-	void drawTransparent(const Shader& shader, Frustum& frustum);
+	void drawTransparent(const Shader& shader, vitiGEO::Frustum& frustum);
 	/* draw everything, but without textures (->for the shadowmap) */
 	void drawShapesNaked(const Shader& shader) const;
-	void drawShapesNaked(const Shader& shader, Frustum& frustum);
+	void drawShapesNaked(const Shader& shader, vitiGEO::Frustum& frustum);
 
 	/* draw lights (for second pass in deferred rendering) */
 	void drawDlights(const Shader& shader) const;
@@ -146,7 +148,7 @@ public:
 	/* draw shadowmaps: */
 	void setShadowcaster(const std::string& name);
 	void drawPShadows(const CamInfo& cam);
-	void drawDShadows(const CamInfo& cam, Frustum& frustum);
+	void drawDShadows(const CamInfo& cam, vitiGEO::Frustum& frustum);
 
 	/* get the shadowmaps: */
 	GLuint pShadowTex() { return _pShadow.texture(); }
@@ -179,7 +181,7 @@ public:
 	pLight* findPLight(const std::string& name);
 
 private:
-	void updateCullingList(Frustum& frustum, SceneNode* from);
+	void updateCullingList(vitiGEO::Frustum& frustum, SceneNode* from);
 	void addToList(SceneNode* node);
 	void removeFromList(SceneNode* node);
 

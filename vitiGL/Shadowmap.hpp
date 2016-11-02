@@ -11,6 +11,8 @@
 #include "Framebuffer.hpp"
 #include "GaussBlur.hpp"
 
+#include <Frustum.hpp>
+
 namespace vitiGL {
 
 class Camera;
@@ -25,7 +27,7 @@ public:
 
 	/* make sure depth test and face culling is enabled! -> do it in on() function? */
 	void on();
-	void draw(const dLight* light, Scene * scene, const CamInfo & camera, Frustum & frustum);
+	void draw(const dLight* light, Scene * scene, const CamInfo & camera, vitiGEO::Frustum & frustum);
 	void off();
 
 	void setUniforms(const Shader& shader); //sets all the uniforms relevant to lightning

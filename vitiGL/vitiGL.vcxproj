@@ -154,9 +154,7 @@
     <ClCompile Include="DrawNormals.cpp" />
     <ClCompile Include="Error.cpp" />
     <ClCompile Include="Framebuffer.cpp" />
-    <ClCompile Include="Frustum.cpp" />
     <ClCompile Include="GaussBlur.cpp" />
-    <ClCompile Include="Geometry.cpp" />
     <ClCompile Include="glRenderer.cpp" />
     <ClCompile Include="glRendererDeferred.cpp" />
     <ClCompile Include="GUI.cpp" />
@@ -189,9 +187,7 @@
     <ClInclude Include="DrawNormals.hpp" />
     <ClInclude Include="Error.hpp" />
     <ClInclude Include="Framebuffer.hpp" />
-    <ClInclude Include="Frustum.hpp" />
     <ClInclude Include="GaussBlur.hpp" />
-    <ClInclude Include="Geometry.hpp" />
     <ClInclude Include="glRenderer.hpp" />
     <ClInclude Include="glRendererDeferred.hpp" />
     <ClInclude Include="GUI.hpp" />
