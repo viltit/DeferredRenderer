@@ -58,10 +58,13 @@ SceneNode::~SceneNode() {
 }
 
 void SceneNode::update(const Uint32 & deltaTime) {
-	/* calculate new position: */
+	/* get position from physics: */
+	if (_pobj) _M = _pobj->worldMatrix() * _M;
+
+	/* calculate world position: */
 	if (_parent) _W = _parent->_W * _M;
 	else _W = _M;
-	
+
 	/* give world position to the shape for drawing: */
 	if (_obj) {
 		_obj->setModelMatrix(_W);
@@ -112,6 +115,10 @@ void SceneNode::remove() {
 			break;
 		}
 	}
+}
+
+void SceneNode::addPhysics(float mass, const glm::vec3& velocity) {
+	_pobj = new vitiGEO::PhysicObject{ pos(), velocity, mass };
 }
 
 
@@ -350,7 +357,6 @@ void Scene::drawTransparent(const Shader & shader, vitiGEO::Frustum & frustum) {
 	//to do: frustum culling
 	
 	/*	sort objects by distance to camera. We take the aabbs center as comparison point */
-
 	std::map<float, IGameObject*> sorted;
 	for (auto& O : _transparent) {
 		Shape* s = static_cast<Shape*>(O.second);

@@ -8,6 +8,7 @@
 #include "vitiGEO/Ray.hpp"
 #include "vitiGEO/AABB.hpp"
 #include "vitiGL/RayTriangle.hpp"
+#include "vitiGEO/PhysicEngine.hpp"
 
 using namespace vitiGL;
 
@@ -81,6 +82,11 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	_scene.addChild(skybox, "Skybox");
 
 	_scene.addCamera(&_cam);
+
+	_scene.addChild(new Octahedron{ "xml/cube.xml" }, glm::vec3{ 3.0, 3.0f, 15.0 }, "Octahedron");
+	SceneNode* temp = _scene["Octahedron"];
+	//temp->addPhysics(10.0f);
+
 
 	//_scene["plight"]->setPos(glm::vec3{ 0.0f, 30.0f, 0.0f }); //BUGGED
 
@@ -158,6 +164,9 @@ void AppScreen::update() {
 		temp->rotate(float(frameTime) / (20.0f), glm::vec3{ 0.0f, 1.0f, 0.0f });
 
 	updateInput();
+	std::cout << "IM OK\n";
+	//vitiGEO::PhysicEngine::update(frameTime);
+	std::cout << "IM STILL OK\n";
 	_scene.update(frameTime);
 	_cam.update();
 	_gui.update(frameTime);

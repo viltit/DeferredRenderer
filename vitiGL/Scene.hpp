@@ -14,6 +14,7 @@
 #include <map>
 
 #include <Frustum.hpp>
+#include <PhysicObject.hpp>
 
 #include "Shape.hpp"
 #include "Error.hpp"
@@ -67,7 +68,10 @@ public:
 	std::string name() { return _name; }
 
 	ObjType		type() { return _obj->type(); }
+
 	IGameObject* obj() { return _obj; }
+
+	void		addPhysics(float mass, const glm::vec3& velocity = {});
 
 	/* get an iterator to the childrens vector: */
 	auto		childrenBegin() { return _children.begin(); }
@@ -78,6 +82,7 @@ protected:
 	SceneNode() {}
 
 	IGameObject* _obj;
+	vitiGEO::PhysicObject* _pobj;
 
 	SceneNode*	_parent;
 	std::vector<SceneNode*> _children;
@@ -94,7 +99,8 @@ protected:
 	Task:	Wrapper to identify Scene Nodes by name and adding childs to a parent by the
 			parent name.
 
-			KEEP TRACK OF ALL AND EVERY GAME OBJECT AND MANAGE THEIR DESTRUCTION
+			KEEP TRACK OF ALL AND EVERY GAME OBJECT AND MANAGE THEIR DESTRUCTION:
+			- functions addToList and removeFromList are at the core of this
 --------------------------------------------------------------------------------------------- */
 
 class Scene {
