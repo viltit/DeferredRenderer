@@ -128,9 +128,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DataStructures.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Error.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>

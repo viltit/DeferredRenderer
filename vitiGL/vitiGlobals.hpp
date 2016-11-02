@@ -11,5 +11,4 @@ namespace vitiGL {
 		extern int window_h;
 		extern unsigned int screenshot;
 	}
-	
 }
