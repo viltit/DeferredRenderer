@@ -25,6 +25,7 @@
 #include "Light.hpp"
 #include "Shadowmap.hpp"
 
+
 namespace vitiGL {
 
 class Frustum;
@@ -50,6 +51,9 @@ public:
 
 	virtual void remove();
 
+	/* add physics component to this element: */
+	void addPhysics(float mass);
+
 	/*	getters and setters: */
 	float		radius() const { return _radius; }
 
@@ -72,6 +76,7 @@ protected:
 	SceneNode() {}
 
 	IGameObject* _obj;
+	vitiGEO::PhysicObject* _physics;
 
 	SceneNode*	_parent;
 	std::vector<SceneNode*> _children;

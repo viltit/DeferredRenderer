@@ -3,6 +3,7 @@
 #include "PhysicObject.hpp"
 
 #include <iostream>
+#include <algorithm>
 
 namespace vitiGEO {
 
@@ -15,5 +16,9 @@ void PhysicEngine::update(const unsigned int& deltaTime) {
 	for (auto& obj : _objects) {
 		obj->update(seconds);
 	}
+}
+
+void PhysicEngine::removeObject(PhysicObject * obj) {
+	_objects.erase(std::remove(_objects.begin(), _objects.end(), obj), _objects.end());
 }
 }

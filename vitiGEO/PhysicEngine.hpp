@@ -15,6 +15,7 @@ public:
 	void update(const unsigned int& deltaTime);
 	
 	static void addObject(PhysicObject* obj) { _objects.push_back(obj); }
+	static void removeObject(PhysicObject* obj);
 
 protected:
 	static std::vector<PhysicObject*> _objects;

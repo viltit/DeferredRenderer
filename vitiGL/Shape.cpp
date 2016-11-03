@@ -23,6 +23,7 @@ Shape::Shape()
 
 
 Shape::~Shape() {
+	std::cout << "deleting a shape\n";
 	//if (vao) glDeleteVertexArrays(1, &vao);
 	//if (vbo) glDeleteBuffers(1, &vbo);
 }

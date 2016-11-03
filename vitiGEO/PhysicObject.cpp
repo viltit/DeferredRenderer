@@ -1,24 +1,23 @@
 #include "PhysicObject.hpp"
+
 #include "Math.hpp"
+#include "PhysicEngine.hpp"
 
 #include <iostream>
 
 namespace vitiGEO {
 
-PhysicObject::PhysicObject() 
-	:	_validW		{ false },
-		_mass		{ 0.0f }
-{}
-
-PhysicObject::PhysicObject(const glm::vec3 & pos, const glm::vec3 & velocity, float mass) 
-	:	_validW		{ false },
-		_pos		{ pos },
+PhysicObject::PhysicObject(Transform& transform, float mass, const glm::vec3& velocity)
+	:	_transform	{ transform },
 		_v			{ velocity },
 		_mass		{ mass }
-{}
+{
+	PhysicEngine::addObject(this);
+}
 
 
 PhysicObject::~PhysicObject() {
+	PhysicEngine::removeObject(this);
 }
 
 /*	very simple newtonian physics: 
@@ -27,17 +26,7 @@ PhysicObject::~PhysicObject() {
 void PhysicObject::update(const float& deltaTime) {
 	_v += _force * _mass * deltaTime;
 	_v += glm::vec3{ 0.01f, 0.01f, 0.01f };
-	_pos += _v * deltaTime;
-	_validW = false;
-}
 
-const glm::mat4 & PhysicObject::worldMatrix() const {
-	if (!_validW) {
-		//for later: adjust rotation
-		_W = setTranslation(_W, _pos);
-		_validW = true;
-	}
-	return _W;
+	_transform.move(_v * deltaTime);
 }
-
 }

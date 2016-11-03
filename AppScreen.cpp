@@ -41,6 +41,8 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	/**/_scene.addChild(new Model{ "Models/Old House/Old House 2 3D Models.obj", &_cam, false }, "Shark");
 	_scene["Shark"]->transform.scale(glm::vec3{ 0.05f, 0.05f, 0.05f });
 	_scene["Shark"]->transform.setPos(glm::vec3{ -5.0f, 0.0f, -5.0f });
+	_scene["Shark"]->addPhysics(10.0f);
+
 
 	_scene.addChild(new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ -3.0f, -3.0f, -3.0f }, "Floor");
 	_scene.addChild(new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ 20.0f, 7.0f, -3.0f }, "Wall");
@@ -71,7 +73,12 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 
 	_scene.addCamera(&_cam);
 
+	/* test: */
 	_scene.addChild(new Octahedron{ "xml/cube.xml" }, glm::vec3{ 3.0, 3.0f, 15.0 }, "Octahedron");
+	_scene.addChild(new Octahedron{ "xml/cube.xml" }, glm::vec3{ 3.0, 3.0f, 15.0 }, "Octahedron2", "Octahedron");
+	_scene.addChild(new Octahedron{ "xml/cube.xml" }, glm::vec3{ 3.0, 3.0f, 15.0 }, "Octahedron3", "Octahedron2");
+	_scene.addChild(new Octahedron{ "xml/cube.xml" }, glm::vec3{ 3.0, 3.0f, 15.0 }, "Octahedron4", "Octahedron3");
+	_scene.remove("Octahedron2");
 
 	//_scene["plight"]->setPos(glm::vec3{ 0.0f, 30.0f, 0.0f }); //BUGGED
 

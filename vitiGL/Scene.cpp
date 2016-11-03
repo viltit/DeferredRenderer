@@ -6,7 +6,6 @@
 #include "Mesh.hpp"
 #include "Model.hpp"
 
-#include <PhysicEngine.hpp>
 
 #include <iostream>
 #include <assert.h>
@@ -36,27 +35,27 @@ SceneNode::SceneNode(const std::string& name, IGameObject* object, glm::vec3 pos
 
 /* If a scene node gets deleted, all its children will be deleted too: */
 SceneNode::~SceneNode() {
-	if (_obj) {
+
 #ifdef CONSOLE_LOG
-		std::cout << "<SceneNode>Start deleting an object with the name " << _name << std::endl;
+	std::cout << "<SceneNode>Deleting an object with the name " << _name << std::endl;
 #endif
+
+	if (_obj) {
+		std::cout << "... deleting _obj...\n";
 		delete _obj;
 		_obj = nullptr;
 	}
+	if (_physics) {
+		std::cout << "...deleting _physics...\n";
+		delete _physics;
+		_physics = nullptr;
+	}
 	for (auto& C : _children) {
 		if (C) {
-			std::cout << "Deleting a child with the name " << C->_name << std::endl;
-			if (C->obj()) {
-				delete C->obj();
-				C->_obj = nullptr;
-			}
 			delete C;
 			C = nullptr;
 		}
 	}
-#ifdef CONSOLE_LOG
-	std::cout << "<SceneNode>Finished deleting an object with the name " << _name << std::endl;
-#endif
 }
 
 void SceneNode::update(const Uint32 & deltaTime) {
@@ -114,6 +113,10 @@ void SceneNode::remove() {
 			break;
 		}
 	}
+}
+
+void SceneNode::addPhysics(float mass) {
+	_physics = new vitiGEO::PhysicObject{ transform, mass };
 }
 
 /* CLASS SCENE ----------------------------------------------------------------------- */
