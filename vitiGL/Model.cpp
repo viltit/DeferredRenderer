@@ -158,18 +158,14 @@ Model::Model(const std::string& filePath, Camera* cam, bool textureFolder)
 Model::~Model() {
 }
 
-
 /* because we have an aabb, we need to update it too: */
 void Model::update(const Uint32& deltaTime)  {
-	/* get position from physics: */
-	if (_pobj) _M = _pobj->worldMatrix();
-
 	/* calculate new position: */
-	if (_parent) _W = _parent->posMatrix() * _M;
-	else _W = _M;
+	if (_parent) transform.setWorldMatrix(_parent->transform.worldMatrix() * transform.localMatrix());
+	else transform.setWorldMatrix(transform.localMatrix());
 
 	/* give world position to the shape for drawing: */
-	if (_obj) _obj->setModelMatrix(_W);
+	if (_obj) _obj->setModelMatrix(transform.worldMatrix());
 
 	/* update all children: */
 	for (auto& C : _children) C->update(deltaTime);

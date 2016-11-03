@@ -238,7 +238,7 @@ void Scene::addToList(SceneNode* node) {
 		case ObjType::plight:
 		{
 			pLight* light = static_cast<pLight*>(object);
-			node->setPos(light->pos());
+			node->transform.setPos(light->pos());
 			_plights.insert(std::make_pair(nodeName, light));
 		}
 		break;
@@ -442,7 +442,9 @@ pLight * Scene::findPLight(const std::string & name) {
 
 void Scene::updateCullingList(vitiGEO::Frustum & frustum, SceneNode* from) {
 	for (auto& S : _shapes) {
-		if (frustum.isInside(_scene[S.first]->pos(), _scene[S.first]->radius())) _cullingList.push_back(_scene[S.first]);
+		glm::vec3 pos = _scene[S.first]->transform.pos();
+		float radius = _scene[S.first]->radius();
+		if (frustum.isInside(pos, radius)) _cullingList.push_back(_scene[S.first]);
 	}
 }
 }
