@@ -16,17 +16,16 @@ public:
 	/* deltaTime: seconds */
 	virtual void update(const float& deltaTime);
 
-	/* getters and setters: */
-	const glm::vec3& pos()			const { return _pos; }
-	const glm::vec3& velocity()		const { return _v; }
-	const glm::vec3& force()		const { return _force; }
+	/* getters: */
+	const glm::vec3& pos()			const	{ return _pos; }
+	const glm::vec3& velocity()		const	{ return _v; }
+	const glm::vec3& force()		const	{ return _force; }
 	
-
-	const glm::mat4& worldMatrix()	const { return _W; }
+	const glm::mat4& worldMatrix()	const;
 
 protected:
-	glm::mat4	_W;			// world position Matrix
-	bool		_validW;	// marks if W needs to be updated
+	mutable glm::mat4	_W;	// world position Matrix
+	mutable bool _validW;	// marks if W needs to be updated
 
 	/* linear: */
 	glm::vec3	_pos;		// world position vector

@@ -1,9 +1,12 @@
 /*	CLASS SCENE_NODE -------------------------------------------------------------------------
 	
-	Task:	Hold the objects in our scene and establish a parent-child relationship between
-			them. Also, together with class Scene, perform viewFrustum culling
+	Tasks:	
+	1)	Hold the objects in our scene and establish a parent-child relationship between
+		them. Also, together with class Scene, perform viewFrustum culling
 
-			!! Also, the sceneNode class is responsible for deleting all game objects. !!
+	2)	SceneNode is the main interface for the user to interact with the game objects. I
+
+	3)  Also, the sceneNode class is responsible for deleting all game objects. !!
 ------------------------------------------------------------------------------------------------ */
 
 
@@ -15,6 +18,7 @@
 
 #include <Frustum.hpp>
 #include <PhysicObject.hpp>
+#include <Transform.hpp>
 
 #include "Shape.hpp"
 #include "Error.hpp"
@@ -46,22 +50,7 @@ public:
 
 	virtual void remove();
 
-	/*	getters and setters, all inline:
-	rotation, scaling, positioning will always affect the children too!		*/
-	void		move(const glm::vec3& pos) { _W = glm::translate(_W, pos); _M = glm::translate(_M, pos); }
-	void		setPos(const glm::vec3& pos) { 
-		_M[3][0] = pos.x; _M[3][1] = pos.y; _M[3][2] = pos.z; 
-	}
-
-	glm::vec3	pos() const { return glm::vec3{ _W[3][0], _W[3][1], _W[3][2] }; }
-	glm::mat4	posMatrix() const { return _W; }
-
-	void		rotate(float angle, const glm::vec3& axis) {
-		_M = glm::rotate(_M, glm::radians(angle), axis);
-	}
-
-	void		scale(const glm::vec3& scale) { _M = glm::scale(_M, scale); }
-
+	/*	getters and setters: */
 	float		radius() const { return _radius; }
 
 	void setName(const std::string& name) { _name = name; }
@@ -71,24 +60,21 @@ public:
 
 	IGameObject* obj() { return _obj; }
 
-	void		addPhysics(float mass, const glm::vec3& velocity = {});
-
 	/* get an iterator to the childrens vector: */
 	auto		childrenBegin() { return _children.begin(); }
 	auto		childrenEnd()	{ return _children.end(); }
+
+	/* public variable transform for accessing translations, rotations etc.: */
+	vitiGEO::Transform transform;
 
 protected:
 	/* private constructor, should be used only by classes inheriting from SceneNode: */
 	SceneNode() {}
 
 	IGameObject* _obj;
-	vitiGEO::PhysicObject* _pobj;
 
 	SceneNode*	_parent;
 	std::vector<SceneNode*> _children;
-
-	glm::mat4	_M;		//model position
-	glm::mat4	_W;		//world position
 
 	float		_radius;
 

@@ -267,9 +267,6 @@ void glRendererDeferred::drawTransparent() {
 	Model* temp = static_cast<Model*>(_scene->findByName("Shark"));
 	temp->drawAABB();
 
-	temp = static_cast<Model*>(_scene->findByName("Shark2"));
-	temp->drawAABB();
-
 	/* END OF DEBUG CODE */
 
 	glDisable(GL_BLEND);

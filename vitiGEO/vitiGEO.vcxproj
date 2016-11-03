@@ -152,11 +152,13 @@
     <ClInclude Include="PhysicEngine.hpp" />
     <ClInclude Include="PhysicObject.hpp" />
     <ClInclude Include="Ray.hpp" />
+    <ClInclude Include="Transform.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AABB.cpp" />
     <ClCompile Include="Frustum.cpp" />
     <ClCompile Include="Geometry.cpp" />
+    <ClCompile Include="Math.cpp" />
     <ClCompile Include="PhysicEngine.cpp" />
     <ClCompile Include="PhysicObject.cpp" />
     <ClCompile Include="Ray.cpp" />

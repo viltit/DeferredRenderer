@@ -12,7 +12,7 @@ class PhysicObject;
 class PhysicEngine {
 public:
 
-	static void update(const unsigned int& deltaTime);
+	void update(const unsigned int& deltaTime);
 	
 	static void addObject(PhysicObject* obj) { _objects.push_back(obj); }
 

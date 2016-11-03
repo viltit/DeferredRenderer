@@ -1,4 +1,7 @@
 #include "PhysicObject.hpp"
+#include "Math.hpp"
+
+#include <iostream>
 
 namespace vitiGEO {
 
@@ -23,7 +26,18 @@ PhysicObject::~PhysicObject() {
 */
 void PhysicObject::update(const float& deltaTime) {
 	_v += _force * _mass * deltaTime;
+	_v += glm::vec3{ 0.01f, 0.01f, 0.01f };
 	_pos += _v * deltaTime;
+	_validW = false;
+}
+
+const glm::mat4 & PhysicObject::worldMatrix() const {
+	if (!_validW) {
+		//for later: adjust rotation
+		_W = setTranslation(_W, _pos);
+		_validW = true;
+	}
+	return _W;
 }
 
 }

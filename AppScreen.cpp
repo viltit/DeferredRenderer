@@ -8,7 +8,6 @@
 #include "vitiGEO/Ray.hpp"
 #include "vitiGEO/AABB.hpp"
 #include "vitiGL/RayTriangle.hpp"
-#include "vitiGEO/PhysicEngine.hpp"
 
 using namespace vitiGL;
 
@@ -39,20 +38,10 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 		}
 	}*/
 
-	_scene.addChild(new Octahedron{ "xml/cube.xml" }, glm::vec3{ 3.0, 3.0f, 15.0 }, "Octahedron");
-	_scene.addChild(new Cuboid{ "xml/cubeSmall.xml" }, glm::vec3{ 2.0, 0.0f, 2.0 }, "Child", "Octahedron");
-	_scene.addChild(new Cuboid{ "xml/cubeSmall.xml" }, glm::vec3{ 2.0, 0.0f, 2.0 }, "Child2", "Child");
-	_scene.remove("Octahedron");
-
 	/**/_scene.addChild(new Model{ "Models/Old House/Old House 2 3D Models.obj", &_cam, false }, "Shark");
 	_scene["Shark"]->scale(glm::vec3{ 0.05f, 0.05f, 0.05f });
 	_scene["Shark"]->setPos(glm::vec3{ -5.0f, 0.0f, -5.0f });
-
-	/**/_scene.addChild(new Model{ "Models/Old House/Old House 2 3D Models.obj", &_cam, false }, "Shark2");
-	_scene["Shark2"]->scale(glm::vec3{ 0.05f, 0.05f, 0.05f });
-	_scene["Shark2"]->setPos(glm::vec3{ 5.0f, 0.0f, 5.0f });
-
-	_scene.remove("Shark2");
+	_scene["Shark"]->addPhysics(10.0f);
 
 	_scene.addChild(new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ -3.0f, -3.0f, -3.0f }, "Floor");
 	_scene.addChild(new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ 20.0f, 7.0f, -3.0f }, "Wall");
@@ -84,8 +73,7 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	_scene.addCamera(&_cam);
 
 	_scene.addChild(new Octahedron{ "xml/cube.xml" }, glm::vec3{ 3.0, 3.0f, 15.0 }, "Octahedron");
-	SceneNode* temp = _scene["Octahedron"];
-	//temp->addPhysics(10.0f);
+	_scene["Octahedron"]->addPhysics(10.0f);
 
 
 	//_scene["plight"]->setPos(glm::vec3{ 0.0f, 30.0f, 0.0f }); //BUGGED
@@ -164,12 +152,13 @@ void AppScreen::update() {
 		temp->rotate(float(frameTime) / (20.0f), glm::vec3{ 0.0f, 1.0f, 0.0f });
 
 	updateInput();
-	std::cout << "IM OK\n";
-	//vitiGEO::PhysicEngine::update(frameTime);
-	std::cout << "IM STILL OK\n";
+
+	/* update all components: */
+	_physics.update(frameTime);
 	_scene.update(frameTime);
 	_cam.update();
 	_gui.update(frameTime);
+
 }
 
 void AppScreen::draw() {

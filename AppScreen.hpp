@@ -5,6 +5,8 @@
 
 #include <string>
 
+#include "vitiGEO/PhysicEngine.hpp"
+
 class App;
 class vitiGL::Window;
 
@@ -36,6 +38,8 @@ protected:
 	vitiGL::Camera		_cam;
 	vitiGL::glRenderer  _renderer;
 	vitiGL::glRendererDeferred _drender; //test
+
+	vitiGEO::PhysicEngine _physics;
 
 	vitiGL::GUI			_gui;
 	vitiGL::Console		_console;

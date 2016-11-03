@@ -161,6 +161,9 @@ Model::~Model() {
 
 /* because we have an aabb, we need to update it too: */
 void Model::update(const Uint32& deltaTime)  {
+	/* get position from physics: */
+	if (_pobj) _M = _pobj->worldMatrix();
+
 	/* calculate new position: */
 	if (_parent) _W = _parent->posMatrix() * _M;
 	else _W = _M;

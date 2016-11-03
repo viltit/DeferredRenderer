@@ -8,9 +8,9 @@
 namespace vitiGEO {
 
 /* get the translation vector from a matrix: */
-glm::vec3 getTranslation(const glm::mat4& M) {
-	return glm::vec3{ M[3][0], M[3][1], M[3][2] };
-}
+glm::vec3 getTranslation(const glm::mat4& M);
 
+/* put translation vector into matrix: */
+glm::mat4 setTranslation(const glm::mat4& M, const glm::vec3& pos);
 
 }

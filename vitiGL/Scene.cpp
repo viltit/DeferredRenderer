@@ -6,6 +6,8 @@
 #include "Mesh.hpp"
 #include "Model.hpp"
 
+#include <PhysicEngine.hpp>
+
 #include <iostream>
 #include <assert.h>
 
@@ -19,7 +21,7 @@ SceneNode::SceneNode(const std::string& name, IGameObject* object, glm::vec3 pos
 		_name		{ name }
 {
 	/* get the initial position in case the Shape already has one: */
-	setPos(pos);
+	transform.setPos(pos);
 
 	/* if the attached object has an aabb, get its "radius": */
 	if (_obj) {
@@ -58,21 +60,18 @@ SceneNode::~SceneNode() {
 }
 
 void SceneNode::update(const Uint32 & deltaTime) {
-	/* get position from physics: */
-	if (_pobj) _M = _pobj->worldMatrix() * _M;
-
-	/* calculate world position: */
-	if (_parent) _W = _parent->_W * _M;
-	else _W = _M;
+	/* tell transform to adapt parents matrix, if there is a parent: */
+	if (_parent)  transform.setWorldMatrix(_parent->transform.worldMatrix() * transform.localMatrix());
+	else transform.setWorldMatrix(transform.localMatrix());
 
 	/* give world position to the shape for drawing: */
 	if (_obj) {
-		_obj->setModelMatrix(_W);
+		_obj->setModelMatrix(transform.worldMatrix());
 		
 		/* update aabb: */
 		if (_obj->type() == ObjType::shape || _obj->type() == ObjType::mesh) {
 			vitiGEO::AABB* aabb = static_cast<Shape*>(_obj)->getAABB();
-			aabb->transform(_W);
+			aabb->transform(transform.worldMatrix());
 		}
 	}
 
@@ -116,11 +115,6 @@ void SceneNode::remove() {
 		}
 	}
 }
-
-void SceneNode::addPhysics(float mass, const glm::vec3& velocity) {
-	_pobj = new vitiGEO::PhysicObject{ pos(), velocity, mass };
-}
-
 
 /* CLASS SCENE ----------------------------------------------------------------------- */
 Scene::Scene() 
@@ -333,7 +327,7 @@ void Scene::remove(const std::string & name) {
 
 SceneNode * Scene::findByName(const std::string & name) {
 	auto node = _scene.find(name);
-	if (node == _scene.end()) return nullptr; //possibly dangerous!
+	if (node == _scene.end()) throw vitiError(("<Scene::findByName> Could not find scene node named " + name).c_str());
 	return node->second;
 }
 
