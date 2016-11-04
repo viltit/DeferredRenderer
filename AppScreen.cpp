@@ -75,12 +75,7 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 
 	/* test: */
 	_scene.addChild(new Octahedron{ "xml/cube.xml" }, glm::vec3{ 3.0, 3.0f, 15.0 }, "Octahedron");
-	_scene.addChild(new Octahedron{ "xml/cube.xml" }, glm::vec3{ 3.0, 3.0f, 15.0 }, "Octahedron2", "Octahedron");
-	_scene.addChild(new Octahedron{ "xml/cube.xml" }, glm::vec3{ 3.0, 3.0f, 15.0 }, "Octahedron3", "Octahedron2");
-	_scene.addChild(new Octahedron{ "xml/cube.xml" }, glm::vec3{ 3.0, 3.0f, 15.0 }, "Octahedron4", "Octahedron3");
-	_scene.remove("Octahedron2");
-
-	//_scene["plight"]->setPos(glm::vec3{ 0.0f, 30.0f, 0.0f }); //BUGGED
+	_scene["Octahedron"]->addPhysics(10.0f);
 
 	/*
 	pLight* plight2 = new pLight{ &_cam };
@@ -155,9 +150,10 @@ void AppScreen::update() {
 	if (_rotate) 
 		temp->transform.rotate(float(frameTime) / (20.0f), glm::vec3{ 0.0f, 1.0f, 0.0f });
 
-	updateInput();
+	_scene["Octahedron"]->physics()->setForce(glm::vec3{ 0.0f, 0.0f, 0.0f });
 
 	/* update all components: */
+	updateInput();
 	_physics.update(frameTime);
 	_scene.update(frameTime);
 	_cam.update();
@@ -271,6 +267,12 @@ void AppScreen::updateInput() {
 				break;
 			case SDLK_d:
 				_cam.move(Move::right);
+				break;
+			case SDLK_UP:
+				_scene["Octahedron"]->physics()->addForce(glm::vec3{ 0.0f, 0.0f, 1.0f });
+				break;
+			case SDLK_DOWN:
+				_scene["Octahedron"]->physics()->addForce(glm::vec3{ 0.0f, 0.0f, -1.0f });
 				break;
 			case SDLK_F1:
 				_console.setVisible(_console.isVisible()? false : true);

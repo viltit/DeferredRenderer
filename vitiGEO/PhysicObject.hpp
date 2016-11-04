@@ -3,6 +3,7 @@
 #pragma once
 
 #include <glm/glm.hpp>
+#include <glm/gtc/quaternion.hpp>
 
 #include "Transform.hpp"
 
@@ -21,12 +22,23 @@ public:
 	const glm::vec3& velocity()		const	{ return _v; }
 	const glm::vec3& force()		const	{ return _force; }
 
+	/* setters: */
+	void setForce(const glm::vec3& force) { _force = force; }
+	void addForce(const glm::vec3& force) { _force += force; }
+
 protected:
 	Transform&	_transform;	//holds position, rotation and scale
 
+	/* linear */
 	glm::vec3	_v;			// velocitiy vector
 	glm::vec3	_force;		// the force that is applied on this object
-	float		_mass;		// the objects mass
+	float		_massI;		// 1 / mass (to avoid lots of divisions)
+
+	/* angular: */
+	glm::quat	_O;			// Orientation quaternion
+	glm::vec3	_av;		// angular velocity
+	glm::vec3	_torque;
+	glm::mat3	_inertiaI;	//inverse of the inertia matrix
 
 };
 }

@@ -49,6 +49,7 @@ void AABB::construct(std::vector<glm::vec3>& vertices) {
 /* adapt the bounding box to a transformed object */
 void AABB::transform(const glm::mat4 & M) {
 	if (isEmpty()) return;
+
 	_min = _max = getTranslation(M);
 
 	/* matrix first column (glm::mat4 has column-row reversed !) */

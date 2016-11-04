@@ -63,6 +63,7 @@ public:
 	ObjType		type() { return _obj->type(); }
 
 	IGameObject* obj() { return _obj; }
+	vitiGEO::PhysicObject* physics() { return _physics; }
 
 	/* get an iterator to the childrens vector: */
 	auto		childrenBegin() { return _children.begin(); }
