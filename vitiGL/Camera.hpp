@@ -2,8 +2,6 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtx/quaternion.hpp>
-#include <glm/gtc/quaternion.hpp>
-#include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "Shader.hpp"
@@ -101,7 +99,6 @@ private:
 	glm::vec3	_right;
 	glm::vec3	_up;
 	glm::vec3	_worldUp;
-	glm::quat	_rotation;
 
 	glm::vec3	_mousePos;
 

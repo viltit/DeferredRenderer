@@ -9,6 +9,8 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/quaternion.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include <iostream>
 
@@ -35,6 +37,12 @@ public:
 
 	void	rotate(float angle, const glm::vec3& axis) {
 		_M = glm::rotate(_M, glm::radians(angle), axis);
+		_validW = false;
+	}
+
+	void	rotate(const glm::quat& q) {
+		glm::mat4 R = glm::toMat4(q);
+		_M = R * _M;
 		_validW = false;
 	}
 

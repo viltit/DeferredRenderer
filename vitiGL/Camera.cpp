@@ -14,7 +14,6 @@ Camera::Camera(float aspect)
 		_fov		{ 80.0f },
 		_maxFov		{ 110.0f },
 		_minFov		{ 10.0f },
-		_rotation	{ glm::quat{ 1.0f, 0.0f, 0.0f, 0.0f } },
 		_pos		{ glm::vec3{ 0.0f, 0.0f, 0.0f } },
 		_target		{ glm::vec3{ 0.0f, 0.0f, -1.0f } },
 		_dpos		{ glm::vec3{ 0.0f, 0.0f, 0.0f } },

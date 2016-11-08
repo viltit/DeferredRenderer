@@ -263,10 +263,10 @@ void glRendererDeferred::drawTransparent() {
 	_scene->drawTransparent(_tshader, _frustum);
 	_tshader.off();
 
-	/* TEMPRORARY DEBUG CODE: Visualize the aabb and their intersection */
+	/* TEMPRORARY DEBUG CODE: Visualize the aabb and their intersection
 	Model* temp = static_cast<Model*>(_scene->findByName("Shark"));
 	temp->drawAABB();
-
+	*/
 	/* END OF DEBUG CODE */
 
 	glDisable(GL_BLEND);
