@@ -1,4 +1,4 @@
-/*	wrapper class to manage all PhysicObjects 
+/*	wrapper singleton class to manage all PhysicObjects
 	right now, its kind of superfluos, it will be of more use once we have collision detection */
 
 #pragma once
@@ -8,23 +8,36 @@
 
 namespace vitiGEO {
 
+constexpr int SOLVER_ITERATIONS{ 20 };
+
 class PhysicObject;
+class Constraint;
 
 class PhysicEngine {
 public:
-	static void update(const unsigned int& deltaTime);
-	
-	static void addObject(PhysicObject* obj) { _objects.push_back(obj); }
-	static void removeObject(PhysicObject* obj);
+	static PhysicEngine* instance();
 
-	static float timestep() { return _timestep; }
+	void update(const unsigned int& deltaTime);
+	
+	void addObject(PhysicObject* obj) { _objects.push_back(obj); }
+	void removeObject(PhysicObject* obj);
+
+	void addConstraint(Constraint* c) { _constraints.push_back(c); }
+	void removeConstraint(Constraint* c);
+
+	float timestep() { return _timestep; }
 
 protected:
-	static std::vector<PhysicObject*> _objects;
+	PhysicEngine();
 
-	static float _timestep;		/* the timestep each update should take */
-	static float _timeAccum;	/* accumulated update time */
+	void solveConstraint();
 
-	static glm::vec3 _g;		/* gravity */
+	std::vector<PhysicObject*> _objects;
+	std::vector<Constraint*> _constraints;
+
+	float _timestep;	/* the timestep each update should take */
+	float _timeAccum;	/* accumulated update time */
+
+	glm::vec3 _g;		/* gravity */
 };
 }

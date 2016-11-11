@@ -1,6 +1,7 @@
 #include "Constraint.hpp"
 
 #include "PhysicObject.hpp"
+#include "PhysicEngine.hpp"
 
 #include <cmath>
 #include <assert.h>
@@ -114,8 +115,8 @@ void DistanceConstraint::preSolver(float deltaTime) {
 	_j4 = glm::cross(r2, abn);
 
 	/* so called Baumgarte Offset to counter solving errors: */
-	float distance_offset = _d - ab.length();
+	float distanceOffset = _d - ab.length();
 	float baumgarte = 0.1f;
-
+	_b = -(baumgarte / deltaTime * distanceOffset);
 }
 }

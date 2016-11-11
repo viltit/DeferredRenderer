@@ -53,6 +53,7 @@ public:
 
 	/* add physics component to this element: */
 	void addPhysics(float mass);
+	void removePhysics();
 
 	/*	getters and setters: */
 	float		radius() const { return _radius; }

@@ -19,6 +19,8 @@ public:
 	/* deltaTime: seconds */
 	virtual void update(const float& deltaTime);
 
+	void remove();
+
 	/* getters: */
 	const glm::vec3& velocity()		const	{ return _v; }
 	const glm::vec3& angularVelocity() const { return _av; }

@@ -13,12 +13,13 @@ PhysicObject::PhysicObject(Transform& transform, float mass, const glm::vec3& ve
 		_massI		{ 1.0f / mass },
 		_O			{ glm::quat{ }}
 {
-	PhysicEngine::addObject(this);
+	/* every physic object is part of the engine on construction: */
+	PhysicEngine::instance()->addObject(this);
 }
 
 
 PhysicObject::~PhysicObject() {
-	PhysicEngine::removeObject(this);
+	PhysicEngine::instance()->removeObject(this);
 }
 
 /*	very simple newtonian physics: 
@@ -39,5 +40,8 @@ void PhysicObject::update(const float& deltaTime) {
 	_O = _O +  deltaRot;
 	_O = glm::normalize(_O);
 	_transform.rotate(_O);
+}
+void PhysicObject::remove() {
+	PhysicEngine::instance()->removeObject(this);
 }
 }

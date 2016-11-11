@@ -10,6 +10,7 @@
 #include "vitiGL/RayTriangle.hpp"
 
 using namespace vitiGL;
+using namespace vitiGEO;
 
 AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	: IAppScreen{ app },
@@ -42,6 +43,7 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	_scene["Shark"]->transform.scale(glm::vec3{ 0.05f, 0.05f, 0.05f });
 	_scene["Shark"]->transform.setPos(glm::vec3{ -5.0f, 0.0f, -5.0f });
 	_scene["Shark"]->addPhysics(10.0f);
+	_scene["Shark"]->removePhysics();
 
 
 	_scene.addChild(new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ -3.0f, -3.0f, -3.0f }, "Floor");
@@ -154,7 +156,7 @@ void AppScreen::update() {
 
 	/* update all components: */
 	updateInput();
-	vitiGEO::PhysicEngine::update(frameTime);
+	PhysicEngine::instance()->update(frameTime);
 	_scene.update(frameTime);
 	_cam.update();
 	_gui.update(frameTime);

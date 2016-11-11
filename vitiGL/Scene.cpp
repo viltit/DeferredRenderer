@@ -119,6 +119,12 @@ void SceneNode::addPhysics(float mass) {
 	_physics = new vitiGEO::PhysicObject{ transform, mass };
 }
 
+void SceneNode::removePhysics() {
+	_physics->remove();
+	delete _physics;
+	_physics = nullptr;
+}
+
 /* CLASS SCENE ----------------------------------------------------------------------- */
 Scene::Scene() 
 	: _counter{ 0 },
