@@ -21,6 +21,8 @@ public:
 	/* getters: */
 	const glm::vec3& velocity()		const	{ return _v; }
 	const glm::vec3& force()		const	{ return _force; }
+	float invMass()					const	{ return _massI; }
+	const glm::mat3& invInertia()	const	{ return _inertiaI; }
 
 	/* setters: */
 	void setForce(const glm::vec3& force) { _force = force; }

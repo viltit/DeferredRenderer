@@ -2,6 +2,7 @@
 	Class to create a Window with SDL2 that has an OpenGL context attached to it
 */
 
+
 #pragma once
 
 #include <string>
@@ -24,16 +25,16 @@ enum class wStyle {
 
 class Window {
 public:
-	Window	(const std::string& name, unsigned int width, unsigned int height, 
-			 wStyle style = wStyle::max, Color col = {0x00, 0x00, 0x00, 0xFF});
-	~Window	();
+	Window(const std::string& name, unsigned int width, unsigned int height,
+		wStyle style = wStyle::max, Color col = { 0x00, 0x00, 0x00, 0xFF });
+	~Window();
 
 	void	clear() const;		//Clear screen
 	void	swap() const;		//Update screen
 
 	/* getters, inline: */
-	int		width() const	{ return w; }
-	int		height() const	{ return h; }
+	int		width() const { return w; }
+	int		height() const { return h; }
 
 private:
 	SDL_Window*		window;

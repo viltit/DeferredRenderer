@@ -25,14 +25,19 @@ PhysicObject::~PhysicObject() {
 	we can add stuff like friction later
 */
 void PhysicObject::update(const float& deltaTime) {
+	/* update velocity and position: */
 	_v += _force * _massI * deltaTime;
-	
-	_av = glm::vec3{ 0.1f, 0.1f, 0.1f };
+	//add friction here
+	_transform.move(_v * deltaTime);
+
+	/* update angular velocity and rotation: */
+	glm::vec3 angularAcc = _inertiaI * _torque;
+	_av += angularAcc * deltaTime;
+	//add friction here
+
 	glm::quat deltaRot = _O * _av;
 	_O = _O +  deltaRot;
 	_O = glm::normalize(_O);
-
-	_transform.move(_v * deltaTime);
 	_transform.rotate(_O);
 }
 }
