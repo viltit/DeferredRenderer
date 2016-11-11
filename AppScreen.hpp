@@ -39,8 +39,6 @@ protected:
 	vitiGL::glRenderer  _renderer;
 	vitiGL::glRendererDeferred _drender; //test
 
-	vitiGEO::PhysicEngine _physics;
-
 	vitiGL::GUI			_gui;
 	vitiGL::Console		_console;
 

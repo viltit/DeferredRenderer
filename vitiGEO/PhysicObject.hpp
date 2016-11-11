@@ -4,6 +4,7 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
+#include <glm/gtx/quaternion.hpp>
 
 #include "Transform.hpp"
 
@@ -20,13 +21,21 @@ public:
 
 	/* getters: */
 	const glm::vec3& velocity()		const	{ return _v; }
+	const glm::vec3& angularVelocity() const { return _av; }
 	const glm::vec3& force()		const	{ return _force; }
+
 	float invMass()					const	{ return _massI; }
 	const glm::mat3& invInertia()	const	{ return _inertiaI; }
 
+	const glm::quat& orientation()	const	{ return _O; }
+
+	Transform* transform()					{ return &_transform; }
+
 	/* setters: */
-	void setForce(const glm::vec3& force) { _force = force; }
-	void addForce(const glm::vec3& force) { _force += force; }
+	void setVelocity(const glm::vec3& v)	{ _v = v; }
+	void setAngularVelocity(const glm::vec3& av) { _av = av; }
+	void setForce(const glm::vec3& force)	{ _force = force; }
+	void addForce(const glm::vec3& force)	{ _force += force; }
 
 protected:
 	Transform&	_transform;	//holds position, rotation and scale

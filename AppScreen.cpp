@@ -154,7 +154,7 @@ void AppScreen::update() {
 
 	/* update all components: */
 	updateInput();
-	_physics.update(frameTime);
+	vitiGEO::PhysicEngine::update(frameTime);
 	_scene.update(frameTime);
 	_cam.update();
 	_gui.update(frameTime);
