@@ -115,7 +115,7 @@ DistanceConstraint::DistanceConstraint(PhysicObject * a, PhysicObject * b,
 }
 
 void DistanceConstraint::preSolver(float deltaTime) {
-	_iSum = 0.0f;
+	//_iSum = 0.0f;
 
 	/* get the global coordinates of the constraints end point: */
 	glm::vec3 r1 = glm::toMat3(_objA->orientation()) * _localA;
