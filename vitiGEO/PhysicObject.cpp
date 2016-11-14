@@ -13,6 +13,13 @@ PhysicObject::PhysicObject(Transform& transform, float mass, const glm::vec3& ve
 		_massI		{ 1.0f / mass },
 		_O			{ glm::quat{ }}
 {
+	/* WIP: Inertia matrix. Right now, we assume everything is a unit length cube: */
+	glm::mat3 inertia{};
+	inertia[0][0] = mass / 6.0f;
+	inertia[1][1] = mass / 6.0f;
+	inertia[2][2] = mass / 6.0f;
+	_inertiaI = glm::inverse(inertia);
+
 	/* every physic object is part of the engine on construction: */
 	PhysicEngine::instance()->addObject(this);
 }

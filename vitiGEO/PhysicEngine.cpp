@@ -22,6 +22,8 @@ void PhysicEngine::update(const unsigned int& deltaTime) {
 	while (_timeAccum >= _timestep) {
 		_timeAccum -= _timestep;
 
+		solveConstraint();
+
 		/* update every object: */
 		for (auto& obj : _objects) {
 			obj->update(_timestep);
