@@ -2,17 +2,22 @@
 
 #include "Math.hpp"
 #include "PhysicEngine.hpp"
+#include "PhysicShape.hpp"
 
 #include <iostream>
 
 namespace vitiGEO {
 
-PhysicObject::PhysicObject(Transform& transform, float mass, const glm::vec3& velocity)
+PhysicObject::PhysicObject(Transform& transform, AABB* aabb, const std::vector<glm::vec3>& vertices, 
+	float mass, const glm::vec3& velocity)
 	:	_transform	{ transform },
 		_v			{ velocity },
 		_massI		{ 1.0f / mass },
-		_O			{ glm::quat{ }}
+		_O			{ glm::quat{ }},
+		_aabb		{ aabb }
 {
+	assert(_aabb);
+
 	/* WIP: Inertia matrix. Right now, we assume everything is a unit length cube: */
 	glm::mat3 inertia{};
 	inertia[0][0] = mass / 6.0f;
@@ -27,6 +32,10 @@ PhysicObject::PhysicObject(Transform& transform, float mass, const glm::vec3& ve
 
 PhysicObject::~PhysicObject() {
 	PhysicEngine::instance()->removeObject(this);
+	if (_shape) {
+		delete _shape;
+		_shape = nullptr;
+	}
 }
 
 /*	very simple newtonian physics: 

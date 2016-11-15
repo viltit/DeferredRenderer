@@ -2,9 +2,12 @@
 
 #pragma once
 
+#include <vector>
 #include <glm/glm.hpp>
 
 namespace vitiGEO {
+
+const float EPSILON_TRESHOLD = 0.0001f;
 
 class PhysicObject;
 
@@ -20,12 +23,12 @@ public:
 	~Collidor();
 
 	/* broad phase check: */
-	bool AABBIntersection(const PhysicObject* obj1, const PhysicObject* obj2);
-
+	bool AABBIntersect(const PhysicObject* obj1, const PhysicObject* obj2);
 	/* separating axis theorem: */
 	bool SAT(const PhysicObject* obj1, const PhysicObject* obj2, CollidorData& out);
 
 protected:
+	void addSATAxis(const glm::vec3& axis, std::vector<glm::vec3>& SATAxes);
 };
 
 }

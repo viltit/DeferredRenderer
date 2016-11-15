@@ -37,15 +37,11 @@ public:
 	/* debug function: draw aaabb */
 	void drawAABB() const { _aabbShape->draw(); }
 
-	std::vector<glm::vec3>& vertices() { return _vertices; }
-
 protected:
 	// Inherited via Shape (obsolete in this case...)
 	virtual void initVertices(std::vector<Vertex>& vertices) override;
 
 	AABBShape* _aabbShape;
-
-	std::vector<glm::vec3> _vertices;
 
 	glm::vec3 size;
 	glm::vec2 uv;

@@ -257,12 +257,14 @@ void AABB::addPoint(const glm::vec3 & p) {
 }
 
 
-bool AABBIntersection(const AABB & box1, const AABB & box2, AABB * intersect) {
+bool AABBIntersection(const AABB* box1, const AABB* box2, AABB * intersect) {
+	assert(box1 && box2);
+	
 	/* check for overlap: */
-	glm::vec3 min1 = box1.min();
-	glm::vec3 min2 = box2.min();
-	glm::vec3 max1 = box1.max();
-	glm::vec3 max2 = box2.max();
+	glm::vec3 min1 = box1->min();
+	glm::vec3 min2 = box2->min();
+	glm::vec3 max1 = box1->max();
+	glm::vec3 max2 = box2->max();
 
 	if (min1.x > max2.x) return false;
 	if (max1.x < min2.x) return false;

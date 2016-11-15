@@ -153,6 +153,7 @@
     <ClInclude Include="Math.hpp" />
     <ClInclude Include="PhysicEngine.hpp" />
     <ClInclude Include="PhysicObject.hpp" />
+    <ClInclude Include="PhysicShape.hpp" />
     <ClInclude Include="Ray.hpp" />
     <ClInclude Include="Transform.hpp" />
   </ItemGroup>
@@ -165,6 +166,7 @@
     <ClCompile Include="Math.cpp" />
     <ClCompile Include="PhysicEngine.cpp" />
     <ClCompile Include="PhysicObject.cpp" />
+    <ClCompile Include="PhysicShape.cpp" />
     <ClCompile Include="Ray.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

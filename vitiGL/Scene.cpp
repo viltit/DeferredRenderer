@@ -116,7 +116,13 @@ void SceneNode::remove() {
 }
 
 void SceneNode::addPhysics(float mass) {
-	_physics = new vitiGEO::PhysicObject{ transform, mass };
+	/* only mesh and shape objects supported: */
+	if (_obj && _obj->type() != ObjType::mesh && _obj->type() != ObjType::shape)
+		return;
+
+	/* we assume the object has an aabb: */
+	Shape* s = static_cast<Shape*>(_obj);
+	_physics = new vitiGEO::PhysicObject{ transform, s->getAABB(), s->vertices(), mass };
 }
 
 void SceneNode::removePhysics() {

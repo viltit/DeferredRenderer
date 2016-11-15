@@ -345,7 +345,7 @@ void ShapeI::normalizeSeam(std::vector<Vertex>& vertices, std::vector<GLuint>& i
 Cuboid::Cuboid(const std::string& configFile, const glm::vec3& position)
 	:	Shape()
 {
-	VertexData vdata{ 0, 0, 0, vitiGEO::AABB{ } };
+	VertexData vdata{ 0, 0, 0, vitiGEO::AABB{ }, _vertices };
 	slData sdata = Cache::getShape(configFile);
 
 	size = sdata.size;
@@ -365,13 +365,12 @@ Cuboid::Cuboid(const std::string& configFile, const glm::vec3& position)
 		numVertices = vertices.size();
 
 		/* construct the aabb: */
-		std::vector<glm::vec3> pos;
 		for (Vertex& V : vertices) {
-			pos.push_back(V.pos);
+			_vertices.push_back(V.pos);
 		}
-		aabb.construct(pos);
+		aabb.construct(_vertices);
 
-		Cache::pushVertex(configFile, vao, vbo, numVertices, aabb);
+		Cache::pushVertex(configFile, vao, vbo, numVertices, aabb, _vertices);
 	}
 	else {
 		vdata = Cache::pullVertex(configFile);
@@ -379,6 +378,7 @@ Cuboid::Cuboid(const std::string& configFile, const glm::vec3& position)
 		vbo = vdata.vbo;
 		numVertices = vdata.numVertices;
 		aabb = vdata.aabb;
+		_vertices = vdata.vertices;
 	}
 
 	_M = glm::translate(_M, position);
@@ -447,7 +447,7 @@ void Cuboid::initVertices(std::vector<Vertex>& vertices) {
 /*	------------------------------------------------------------------------------------------------------------- */
 Tetrahedron::Tetrahedron(const std::string & configFile, const glm::vec3& position) : Shape() {
 	/* load data from config file: */
-	VertexData vdata{ 0, 0, 0, vitiGEO::AABB{} };
+	VertexData vdata{ 0, 0, 0, vitiGEO::AABB{}, _vertices };
 	slData sdata = Cache::getShape(configFile);
 
 	size = sdata.size;
@@ -467,13 +467,12 @@ Tetrahedron::Tetrahedron(const std::string & configFile, const glm::vec3& positi
 		numVertices = vertices.size();
 
 		/* construct the aabb: */
-		std::vector<glm::vec3> pos;
 		for (Vertex& V : vertices) {
-			pos.push_back(V.pos);
+			_vertices.push_back(V.pos);
 		}
-		aabb.construct(pos);
+		aabb.construct(_vertices);
 
-		Cache::pushVertex(configFile, vao, vbo, numVertices, aabb);
+		Cache::pushVertex(configFile, vao, vbo, numVertices, aabb, _vertices);
 	}
 	else {
 		vdata = Cache::pullVertex(configFile);
@@ -481,6 +480,7 @@ Tetrahedron::Tetrahedron(const std::string & configFile, const glm::vec3& positi
 		vbo = vdata.vbo;
 		numVertices = vdata.numVertices;
 		aabb = vdata.aabb;
+		_vertices = vdata.vertices;
 	}
 
 	_M = glm::translate(_M, position);
@@ -524,7 +524,7 @@ void Tetrahedron::initVertices(std::vector<Vertex>& vertices) {
 
 Octahedron::Octahedron(const std::string& configFile, const glm::vec3& position) : Shape() {
 	
-	VertexData vdata{ 0, 0, 0, vitiGEO::AABB{} };
+	VertexData vdata{ 0, 0, 0, vitiGEO::AABB{}, _vertices };
 	slData sdata = Cache::getShape(configFile);
 
 	size = sdata.size;
@@ -544,13 +544,12 @@ Octahedron::Octahedron(const std::string& configFile, const glm::vec3& position)
 		numVertices = vertices.size();
 
 		/* construct the aabb: */
-		std::vector<glm::vec3> pos;
 		for (Vertex& V : vertices) {
-			pos.push_back(V.pos);
+			_vertices.push_back(V.pos);
 		}
-		aabb.construct(pos);
+		aabb.construct(_vertices);
 
-		Cache::pushVertex(configFile, vao, vbo, numVertices, aabb);
+		Cache::pushVertex(configFile, vao, vbo, numVertices, aabb, _vertices);
 	}
 	else {
 		vdata = Cache::pullVertex(configFile);
@@ -558,6 +557,7 @@ Octahedron::Octahedron(const std::string& configFile, const glm::vec3& position)
 		vbo = vdata.vbo;
 		numVertices = vdata.numVertices;
 		aabb = vdata.aabb;
+		_vertices = vdata.vertices;
 	}
 
 	_M = glm::translate(_M, position);
@@ -630,7 +630,7 @@ Icosahedron::Icosahedron(const std::string & configFile, const glm::vec3& positi
 	: Shape()
 {
 	/* load data from config file: */
-	VertexData vdata{ 0, 0, 0, vitiGEO::AABB{} };
+	VertexData vdata{ 0, 0, 0, vitiGEO::AABB{}, _vertices };
 	slData sdata = Cache::getShape(configFile);
 
 	size = sdata.size;
@@ -650,13 +650,12 @@ Icosahedron::Icosahedron(const std::string & configFile, const glm::vec3& positi
 		numVertices = vertices.size();
 
 		/* construct the aabb: */
-		std::vector<glm::vec3> pos;
 		for (Vertex& V : vertices) {
-			pos.push_back(V.pos);
+			_vertices.push_back(V.pos);
 		}
-		aabb.construct(pos);
+		aabb.construct(_vertices);
 
-		Cache::pushVertex(configFile, vao, vbo, numVertices, aabb);
+		Cache::pushVertex(configFile, vao, vbo, numVertices, aabb, _vertices);
 	}
 	else {
 		vdata = Cache::pullVertex(configFile);
@@ -664,6 +663,7 @@ Icosahedron::Icosahedron(const std::string & configFile, const glm::vec3& positi
 		vbo = vdata.vbo;
 		numVertices = vdata.numVertices;
 		aabb = vdata.aabb;
+		_vertices = vdata.vertices;
 	}
 	_M = glm::translate(_M, position);
 }
@@ -798,7 +798,7 @@ void Icosahedron::initVertices(std::vector<Vertex>& vertices) {
 
 Sphere::Sphere(const std::string & configFile) : Icosahedron() {
 	/* load data from config file: */
-	VertexData vdata{ 0, 0, 0, vitiGEO::AABB{} };
+	VertexData vdata{ 0, 0, 0, vitiGEO::AABB{}, _vertices };
 	slData sdata = Cache::getShape(configFile);
 
 	size = sdata.size;
@@ -822,13 +822,12 @@ Sphere::Sphere(const std::string & configFile) : Icosahedron() {
 		numVertices = vertices.size();
 
 		/* construct the aabb: */
-		std::vector<glm::vec3> pos;
 		for (Vertex& V : vertices) {
-			pos.push_back(V.pos);
+			_vertices.push_back(V.pos);
 		}
-		aabb.construct(pos);
+		aabb.construct(_vertices);
 
-		Cache::pushVertex(configFile, vao, vbo, numVertices, aabb);
+		Cache::pushVertex(configFile, vao, vbo, numVertices, aabb, _vertices);
 	}
 	else {
 		vdata = Cache::pullVertex(configFile);
@@ -836,6 +835,7 @@ Sphere::Sphere(const std::string & configFile) : Icosahedron() {
 		vbo = vdata.vbo;
 		numVertices = vdata.numVertices;
 		aabb = vdata.aabb;
+		_vertices = vdata.vertices;
 	}
 }
 

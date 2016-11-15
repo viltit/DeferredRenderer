@@ -80,7 +80,7 @@ private:
 };
 
 /* test if two aabbs intersect each other. optionally, give back intersection-aabb: */
-bool AABBIntersection(const AABB& box1, const AABB& box2, AABB* intersect = nullptr);
+bool AABBIntersection(const AABB* box1, const AABB* box2, AABB* intersect = nullptr);
 
 }
 

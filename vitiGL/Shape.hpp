@@ -49,6 +49,8 @@ public:
 	/* get a pointer to the objects aabb: */
 	vitiGEO::AABB* getAABB() { return &aabb; }
 
+	std::vector<glm::vec3>& vertices() { return _vertices; }
+
 	bool srgbOn()	{ sRGB = true; }
 	bool srgbOff()	{ sRGB = false; }
 
@@ -67,6 +69,7 @@ protected:
 	GLuint		vbo;
 	Material	material;
 
+	std::vector<glm::vec3> _vertices;
 	vitiGEO::AABB aabb;
 
 	int			numVertices;
@@ -87,6 +90,8 @@ public:
 
 	vitiGEO::AABB* getAABB() { return &aabb; }
 
+	std::vector<glm::vec3>& vertices() { return _vertices; }
+
 	int countVertices() const { return numVertices; }
 
 	bool isTransparent() const { return material.isTransparent(); }
@@ -105,7 +110,8 @@ protected:
 
 	virtual void normalizeSeam	(std::vector<Vertex>& vertices,
 								 std::vector<GLuint>& indices);
-
+	
+	std::vector<glm::vec3> _vertices;
 
 	GLuint		vao;
 	GLuint		vbo;
