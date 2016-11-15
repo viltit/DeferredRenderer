@@ -7,12 +7,13 @@
 #include <glm/gtx/quaternion.hpp>
 
 #include "Transform.hpp"
+#include "AABB.hpp"
 
 namespace vitiGEO {
 
 class PhysicObject {
 public:
-	PhysicObject(Transform& transform, float mass = 1.0f, const glm::vec3& velocity = {});
+	PhysicObject(Transform& transform, AABB* aabb, float mass = 1.0f, const glm::vec3& velocity = {});
 
 	~PhysicObject();
 
@@ -40,7 +41,8 @@ public:
 	void addForce(const glm::vec3& force)	{ _force += force; }
 
 protected:
-	Transform&	_transform;	//holds position, rotation and scale
+	Transform&	_transform;	// holds position, rotation and scale
+	AABB*		_aabb;		// axis aligned bounding box
 
 	/* linear */
 	glm::vec3	_v;			// velocitiy vector

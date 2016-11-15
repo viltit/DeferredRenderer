@@ -7,11 +7,12 @@
 
 namespace vitiGEO {
 
-PhysicObject::PhysicObject(Transform& transform, float mass, const glm::vec3& velocity)
+PhysicObject::PhysicObject(Transform& transform, AABB* aabb, float mass, const glm::vec3& velocity)
 	:	_transform	{ transform },
 		_v			{ velocity },
 		_massI		{ 1.0f / mass },
-		_O			{ glm::quat{ }}
+		_O			{ glm::quat{ }},
+		_aabb		{ aabb }
 {
 	/* WIP: Inertia matrix. Right now, we assume everything is a unit length cube: */
 	glm::mat3 inertia{};
@@ -43,7 +44,7 @@ void PhysicObject::update(const float& deltaTime) {
 	_av += angularAcc * deltaTime;
 	//add friction here
 
-	glm::quat deltaRot = _O * _av;
+	glm::quat deltaRot = _O * _av * deltaTime * 0.5f;
 	_O = _O +  deltaRot;
 	_O = glm::normalize(_O);
 	_transform.rotate(_O);
