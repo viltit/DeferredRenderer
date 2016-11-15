@@ -33,6 +33,7 @@ public:
 	const glm::quat& orientation()	const	{ return _O; }
 
 	Transform* transform()					{ return &_transform; }
+	AABB* aabb() const						{ return _aabb; }
 
 	/* setters: */
 	void setVelocity(const glm::vec3& v)	{ _v = v; }

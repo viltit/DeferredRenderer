@@ -21,13 +21,7 @@ void PhysicEngine::update(const unsigned int& deltaTime) {
 		be a problem on very low fps: */
 	while (_timeAccum >= _timestep) {
 		_timeAccum -= _timestep;
-
-		solveConstraint();
-
-		/* update every object: */
-		for (auto& obj : _objects) {
-			obj->update(_timestep);
-		}
+		updatePhysics();
 	}
 }
 
@@ -43,6 +37,32 @@ PhysicEngine::PhysicEngine() {
 	_timestep = 1.0f / 60.0f;
 	_timeAccum = 0.0f;
 	_g = glm::vec3{ 0.0f, -9.81f, 0.0f };
+}
+
+void PhysicEngine::updatePhysics() {
+	collisionBroad();
+
+	solveConstraint();
+
+	/* update every object: */
+	for (auto& obj : _objects) {
+		obj->update(_timestep);
+	}
+}
+
+void PhysicEngine::collisionBroad() {
+	_collisionBroad.clear();
+
+	for (size_t i = 0; i < _objects.size() - 1; i++) {
+		for (size_t j = 0; j < _objects.size(); j++) {
+			if (_collider.AABBIntersect(_objects[i], _objects[j])) {
+				_collisionBroad.push_back(CollidorPair{ _objects[i], _objects[j] });
+			}
+		}
+	}
+}
+
+void PhysicEngine::collisionNarrow() {
 }
 
 void PhysicEngine::solveConstraint() {

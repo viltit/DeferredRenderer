@@ -6,12 +6,19 @@
 #include <vector>
 #include <glm/glm.hpp>
 
+#include "Collidor.hpp"
+
 namespace vitiGEO {
 
 constexpr int SOLVER_ITERATIONS{ 20 };
 
 class PhysicObject;
 class Constraint;
+
+struct CollidorPair {
+	PhysicObject* objA;
+	PhysicObject* objB;
+};
 
 class PhysicEngine {
 public:
@@ -30,10 +37,17 @@ public:
 protected:
 	PhysicEngine();
 
+	void updatePhysics();
+	void collisionBroad();	/* brute force at the moment -> to do in future: add octtree */
+	void collisionNarrow();	
 	void solveConstraint();
 
 	std::vector<PhysicObject*> _objects;
 	std::vector<Constraint*> _constraints;
+
+	std::vector<CollidorPair> _collisionBroad; // possible collision candidates after broad check
+
+	Collidor _collider;
 
 	float _timestep;	/* the timestep each update should take */
 	float _timeAccum;	/* accumulated update time */

@@ -14,6 +14,8 @@ PhysicObject::PhysicObject(Transform& transform, AABB* aabb, float mass, const g
 		_O			{ glm::quat{ }},
 		_aabb		{ aabb }
 {
+	assert(_aabb);
+
 	/* WIP: Inertia matrix. Right now, we assume everything is a unit length cube: */
 	glm::mat3 inertia{};
 	inertia[0][0] = mass / 6.0f;
