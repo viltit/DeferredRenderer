@@ -2,12 +2,14 @@
 
 #include "Math.hpp"
 #include "PhysicEngine.hpp"
+#include "PhysicShape.hpp"
 
 #include <iostream>
 
 namespace vitiGEO {
 
-PhysicObject::PhysicObject(Transform& transform, AABB* aabb, float mass, const glm::vec3& velocity)
+PhysicObject::PhysicObject(Transform& transform, AABB* aabb, const std::vector<glm::vec3>& vertices, 
+	float mass, const glm::vec3& velocity)
 	:	_transform	{ transform },
 		_v			{ velocity },
 		_massI		{ 1.0f / mass },
@@ -30,6 +32,10 @@ PhysicObject::PhysicObject(Transform& transform, AABB* aabb, float mass, const g
 
 PhysicObject::~PhysicObject() {
 	PhysicEngine::instance()->removeObject(this);
+	if (_shape) {
+		delete _shape;
+		_shape = nullptr;
+	}
 }
 
 /*	very simple newtonian physics: 

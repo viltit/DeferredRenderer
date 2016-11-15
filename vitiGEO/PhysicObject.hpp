@@ -1,5 +1,7 @@
 /* base class for all Object responding to newtonian physics */
 
+/* TO DO: Now that we have the vertices, we can construct the aabb right here */
+
 #pragma once
 
 #include <glm/glm.hpp>
@@ -11,9 +13,15 @@
 
 namespace vitiGEO {
 
+class PhysicShape;
+
 class PhysicObject {
 public:
-	PhysicObject(Transform& transform, AABB* aabb, float mass = 1.0f, const glm::vec3& velocity = {});
+	PhysicObject	(Transform& transform, 
+					AABB* aabb, 
+					const std::vector<glm::vec3>& vertices, 
+					float mass = 1.0f, 
+					const glm::vec3& velocity = {});
 
 	~PhysicObject();
 
@@ -32,8 +40,10 @@ public:
 
 	const glm::quat& orientation()	const	{ return _O; }
 
+	/* access to important member objects: */
 	Transform* transform()					{ return &_transform; }
-	AABB* aabb() const						{ return _aabb; }
+	AABB* aabb()					const	{ return _aabb; }
+	PhysicShape* shape()			const	{ return _shape; }
 
 	/* setters: */
 	void setVelocity(const glm::vec3& v)	{ _v = v; }
@@ -44,6 +54,7 @@ public:
 protected:
 	Transform&	_transform;	// holds position, rotation and scale
 	AABB*		_aabb;		// axis aligned bounding box
+	PhysicShape* _shape;	// holds the vertices
 
 	/* linear */
 	glm::vec3	_v;			// velocitiy vector
