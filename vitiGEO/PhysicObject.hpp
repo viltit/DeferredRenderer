@@ -53,8 +53,6 @@ public:
 
 protected:
 	Transform&	_transform;	// holds position, rotation and scale
-	AABB*		_aabb;		// axis aligned bounding box
-	PhysicShape* _shape;	// holds the vertices
 
 	/* linear */
 	glm::vec3	_v;			// velocitiy vector
@@ -67,6 +65,9 @@ protected:
 	glm::vec3	_torque;
 	glm::mat3	_inertiaI;	//inverse of the inertia matrix
 
+	/* physic shapes: */
+	AABB*		_aabb;		// axis aligned bounding box
+	PhysicShape* _shape;	// holds the vertices
 };
 }
 

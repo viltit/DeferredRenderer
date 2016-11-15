@@ -16,8 +16,11 @@ bool Collidor::AABBIntersect(const PhysicObject * obj1, const PhysicObject * obj
 	return false;
 }
 
-bool Collidor::SAT(const PhysicObject * obj1, const PhysicObject * obj2, CollidorData & out)
-{
+bool Collidor::SAT(const PhysicObject * obj1, const PhysicObject * obj2, CollidorData & out) {
+	/* Assemble the axes we need to test against: */
+	std::vector<glm::vec3> axes;
+
+
 	return false;
 }
 

@@ -12,6 +12,7 @@ public:
 	PhysicShape(PhysicObject* owner, const std::vector<glm::vec3>& vertices);
 	~PhysicShape();
 
+	void normals(std::vector<glm::vec3>& axes);
 
 protected:
 	std::vector<glm::vec3> _vertices;

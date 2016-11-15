@@ -117,18 +117,34 @@ void SceneNode::remove() {
 
 void SceneNode::addPhysics(float mass) {
 	/* only mesh and shape objects supported: */
-	if (_obj && _obj->type() != ObjType::mesh && _obj->type() != ObjType::shape)
-		return;
+	bool doIt = true;
+	if (!_obj || (_obj->type() != ObjType::mesh && _obj->type() != ObjType::shape))
+		doIt = false;
 
-	/* we assume the object has an aabb: */
-	Shape* s = static_cast<Shape*>(_obj);
-	_physics = new vitiGEO::PhysicObject{ transform, s->getAABB(), s->vertices(), mass };
+	if (doIt) {
+		/* we assume the object has an aabb: */
+		Shape* s = static_cast<Shape*>(_obj);
+
+		_physics = new vitiGEO::PhysicObject{ transform, s->getAABB(), s->vertices(), mass };
+	}
+
+	/* WIP: add all children: */
+	for (auto& C : _children) {
+		C->addPhysics(mass);
+	}
 }
 
 void SceneNode::removePhysics() {
-	_physics->remove();
-	delete _physics;
-	_physics = nullptr;
+	if (_physics) {
+		_physics->remove();
+		delete _physics;
+		_physics = nullptr;
+	}
+
+	for (auto C : _children) {
+		C->removePhysics();
+	}
+
 }
 
 /* CLASS SCENE ----------------------------------------------------------------------- */

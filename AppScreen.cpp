@@ -83,13 +83,15 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	_scene.addChild(new Octahedron{ "xml/cube.xml" }, glm::vec3{ 5.0, 3.0f, 15.0 }, "Octahedron2");
 	_scene["Octahedron2"]->addPhysics(10.0f);
 
+	_scene.addChild(new Cuboid{ "xml/cubeSmall.xml" }, glm::vec3{ 5.0, 8.0f, 15.0 }, "Octahedron3");
+	_scene["Octahedron3"]->addPhysics(10.0f);
+
 	DistanceConstraint* c = new DistanceConstraint {
 		_scene["Octahedron"]->physics(),
 		_scene["Octahedron2"]->physics(),
 		glm::vec3{ 4.0f, 3.0f, 15.0f},
 		glm::vec3{ 6.0f, 3.0f, 15.0f}
 	};
-				
 	PhysicEngine::instance()->addConstraint(c);
 
 	/*
