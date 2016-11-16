@@ -144,7 +144,6 @@ void SceneNode::removePhysics() {
 	for (auto C : _children) {
 		C->removePhysics();
 	}
-
 }
 
 /* CLASS SCENE ----------------------------------------------------------------------- */

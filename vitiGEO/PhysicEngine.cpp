@@ -41,6 +41,7 @@ PhysicEngine::PhysicEngine() {
 
 void PhysicEngine::updatePhysics() {
 	collisionBroad();
+	collisionNarrow();
 
 	solveConstraint();
 
@@ -54,7 +55,7 @@ void PhysicEngine::collisionBroad() {
 	_collisionBroad.clear();
 
 	for (size_t i = 0; i < _objects.size() - 1; i++) {
-		for (size_t j = 0; j < _objects.size(); j++) {
+		for (size_t j = i + 1; j < _objects.size(); j++) {
 			if (_collider.AABBIntersect(_objects[i], _objects[j])) {
 				_collisionBroad.push_back(CollidorPair{ _objects[i], _objects[j] });
 			}
@@ -63,7 +64,10 @@ void PhysicEngine::collisionBroad() {
 }
 
 void PhysicEngine::collisionNarrow() {
-
+	for (size_t i = 0; i < _collisionBroad.size(); i++) {
+		CollidorData data;
+		_collider.SAT(_collisionBroad[i].objA, _collisionBroad[i].objB, data);
+	}
 }
 
 void PhysicEngine::solveConstraint() {

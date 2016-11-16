@@ -29,6 +29,10 @@ public:
 
 protected:
 	void addSATAxis(const glm::vec3& axis, std::vector<glm::vec3>& SATAxes);
+	
+	bool testSATAxis(const glm::vec3 axis,
+					const PhysicObject* obj1, const PhysicObject* obj2,
+					CollidorData& out) const;
 };
 
 }

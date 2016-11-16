@@ -266,6 +266,19 @@ void glRendererDeferred::drawTransparent() {
 	/* TEMPRORARY DEBUG CODE: Visualize the aabb and their intersection*/
 	Model* temp = static_cast<Model*>(_scene->findByName("Shark"));
 	temp->drawAABB();
+
+	/* debug: */
+	try {
+		AABBShape shape = AABBShape(_scene->findByName("Octahedron")->physics()->aabb(), _camera);
+		shape.draw();
+		AABBShape shape2 = AABBShape(_scene->findByName("Octahedron2")->physics()->aabb(), _camera);
+		shape2.draw();
+		AABBShape shape3 = AABBShape(_scene->findByName("Octahedron3")->physics()->aabb(), _camera);
+		shape3.draw();
+	}
+	catch (...) {
+
+	}
 	
 	/* END OF DEBUG CODE */
 
