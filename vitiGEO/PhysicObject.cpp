@@ -25,8 +25,9 @@ PhysicObject::PhysicObject(Transform& transform, AABB* aabb, const std::vector<g
 	inertia[2][2] = mass / 6.0f;
 	_inertiaI = glm::inverse(inertia);
 
-	/* create the shape: */
-	_shape = new PhysicShape{ this, vertices };
+	/* create the shape: 
+		TO DO: switch depending on shape type */
+	_shape = new CuboidShape{ this };
 
 	/* every physic object is part of the engine on construction: */
 	PhysicEngine::instance()->addObject(this);

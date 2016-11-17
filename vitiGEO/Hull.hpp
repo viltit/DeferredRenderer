@@ -1,3 +1,11 @@
+/*	 ----------------------------------------------------------------
+	class to represent shapes for the Physics Engine
+	stores vertices, edges and faces, of the shape	
+	
+	the class is ressource intensive on construction, but 
+	should be fast once the instance is built				
+	---------------------------------------------------------------- */
+
 #pragma once
 
 #include <glm/glm.hpp>
@@ -8,7 +16,14 @@ namespace vitiGEO {
 struct hEdge;
 struct hFace;
 
+
+/* helper structs: ----------------------------------------------- */
 struct hVertex {
+	hVertex(glm::vec3 p, int i) 
+		: pos { p },
+		  id  { id }
+	{}
+
 	int id;
 	glm::vec3 pos;
 	std::vector<int> edges;
@@ -16,14 +31,25 @@ struct hVertex {
 };
 
 struct hEdge {
+	hEdge(int vertexStart, int vertexEnd, int i)
+		:	vStart	{ vertexStart },
+			vEnd	{ vertexEnd },
+			id		{ i }
+	{}
+
 	int id;
-	int vertexStart;
-	int vertexEnd;
+	int vStart;
+	int vEnd;
 	std::vector<int> neighbourEdges;
 	std::vector<int> faces;
 };
 
 struct hFace {
+	hFace(const glm::vec3& n, int i)
+		:	normal	{ glm::normalize(n) },
+			id		{ i }
+	{}
+
 	int id;
 	glm::vec3 normal;
 	std::vector<int> vertices;
@@ -31,16 +57,21 @@ struct hFace {
 	std::vector<int> neighbourFaces;
 };
 
+/* class Hull: ---------------------------------------------- */
 class Hull {
 public:
 	Hull();
 	~Hull();
 
 	void addVertex(const glm::vec3& v);
-	void addFace(const glm::vec3& normal, int numVertices, const std::vector<int> vertIds);
+	void addFace(const glm::vec3& normal, const std::vector<int>& vertIds);
 
+	/* returns -1 for not found */
 	int edgeID(int v1_ID, int v2_ID);
 
+	void minMaxOnAxis(const glm::vec3 & axis, glm::vec3 & outMin, glm::vec3 & outMax) const;
+
+	/* getters: */
 	const hVertex& vertex(int id)	{ return _vertices[id]; }
 	const hEdge& edge(int id)		{ return _edges[id]; }
 	const hFace& face(int id)		{ return _faces[id]; }

@@ -6,32 +6,28 @@
 namespace vitiGEO {
 
 
-
-CuboidShape::CuboidShape(PhysicObject* owner)
-	:	IPhysicShape{ owner }
+CuboidShape::CuboidShape(PhysicObject* owner, const glm::vec3& halfSize)
+	:	IPhysicShape{ owner },
+		_halfSize{ halfSize }
 {
 	assert(owner);
-
-	/*	hard coded vertices, edges and normals: 
-		(we only store normals and edges relevant for collision testing) */
-	_vertices.push_back(glm::vec3{ -1.0f, -1.0f, -1.0f });
-	_vertices.push_back(glm::vec3{ -1.0f, 1.0f, -1.0f });
-	_vertices.push_back(glm::vec3{ 1.0f, 1.0f, -1.0f });
-	_vertices.push_back(glm::vec3{ 1.0f, -1.0f, -1.0f });
-
-	_vertices.push_back(glm::vec3{ -1.0f, -1.0f, 1.0f });
-	_vertices.push_back(glm::vec3{ -1.0f, 1.0f, 1.0f });
-	_vertices.push_back(glm::vec3{ 1.0f, 1.0f, 1.0f });
-	_vertices.push_back(glm::vec3{ 1.0f, -1.0f, 1.0f });
-
-	_normals.push_back(glm::vec3{ 1.0f, 0.0f, 0.0f });
-	_normals.push_back(glm::vec3{ 0.0f, 1.0f, 0.0f });
-	_normals.push_back(glm::vec3{ 0.0f, 0.0f, 1.0f });
-
+	if (_hull.numVertices() == 0)
+		initHull();
 }
 
+CuboidShape::~CuboidShape() {
+}
 
-PhysicShape::~PhysicShape() {
+glm::mat3 CuboidShape::inverseInertia(float invMass) const {
+	glm::mat3 inertia{ };
+	glm::vec3 sizeSq{ 2.0f * _halfSize };
+	sizeSq = sizeSq * sizeSq;
+
+	inertia[0][0] = 12.f * invMass / (sizeSq.y + sizeSq.z);
+	inertia[1][1] = 12.f * invMass / (sizeSq.x + sizeSq.z);
+	inertia[2][2] = 12.f * invMass / (sizeSq.x + sizeSq.y);
+
+	return inertia;
 }
 
 void PhysicShape::normals(std::vector<glm::vec3>& axes) {
@@ -62,38 +58,47 @@ void PhysicShape::minMaxOnAxis(const glm::vec3 & axis, glm::vec3 & outMin, glm::
 	glm::mat3 iW = glm::transpose(glm::mat3(W));
 	glm::vec3 localAxis = iW * axis;
 
-	/* start finding min max values of the vertices projected on our local axis: */
-	float projection;
+	/* TO DO: call Hull::minMaxOnAxis()*/
 
-	int minVertex{ 0 }, maxVertex{ 0 };
-	
-	float minProjection = FLT_MAX;
-	float maxProjection = -FLT_MAX;
+	outMin = glm::mat3(W) * /* minMaxAxis out */;
+	outMax = glm::mat3(W) * /* minMaxAxis out */;
+}
 
-	for (size_t i = 0; i < _vertices.size(); i++) {
-		projection = glm::dot(localAxis, _vertices[i]);
 
-		if (projection > maxProjection) {
-			maxProjection = projection;
-			maxVertex = i;
-		}
-		if (projection < minProjection) {
-			minProjection = projection;
-			minVertex = i;
-		}
-	}
-	
-	/* End of finding min max values -> prepare output: */
-	outMin = glm::mat3(W) * _vertices[minVertex];
-	outMax = glm::mat3(W) * _vertices[maxVertex];
+
+void CuboidShape::normals(std::vector<glm::vec3>& axes) {
+
 }
-void CuboidShape::normals(std::vector<glm::vec3>& axes)
-{
+
+void CuboidShape::edges(std::vector<glm::vec3>& edges) {
 }
-void CuboidShape::edges(std::vector<glm::vec3>& edges)
-{
+
+void CuboidShape::minMaxOnAxis(const glm::vec3 & axis, glm::vec3 & outMin, glm::vec3 & outMax) const {
 }
-void CuboidShape::minMaxOnAxis(const glm::vec3 & axis, glm::vec3 & outMin, glm::vec3 & outMax) const
-{
+
+void CuboidShape::initHull() {
+	_hull.addVertex(glm::vec3(-1.0f, -1.0f, -1.0f));	// 0
+	_hull.addVertex(glm::vec3(-1.0f, 1.0f, -1.0f));		// 1
+	_hull.addVertex(glm::vec3(1.0f, 1.0f, -1.0f));		// 2
+	_hull.addVertex(glm::vec3(1.0f, -1.0f, -1.0f));		// 3
+
+	_hull.addVertex(glm::vec3(-1.0f, -1.0f, 1.0f));		// 4
+	_hull.addVertex(glm::vec3(-1.0f, 1.0f, 1.0f));		// 5
+	_hull.addVertex(glm::vec3(1.0f, 1.0f, 1.0f));		// 6
+	_hull.addVertex(glm::vec3(1.0f, -1.0f, 1.0f));		// 7
+
+	std::vector<int> face1 = { 0, 1, 2, 3 };
+	std::vector<int> face2 = { 7, 6, 5, 4 };
+	std::vector<int> face3 = { 5, 6, 2, 1 };
+	std::vector<int> face4 = { 0, 3, 7, 4 };
+	std::vector<int> face5 = { 6, 7, 3, 2 };
+	std::vector<int> face6 = { 4, 5, 1, 0 };
+
+	_hull.addFace(glm::vec3(0.0f, 0.0f, -1.0f), face1);
+	_hull.addFace(glm::vec3(0.0f, 0.0f, 1.0f), face2);
+	_hull.addFace(glm::vec3(0.0f, 1.0f, 0.0f), face3);
+	_hull.addFace(glm::vec3(0.0f, -1.0f, 0.0f), face4);
+	_hull.addFace(glm::vec3(1.0f, 0.0f, 0.0f), face5);
+	_hull.addFace(glm::vec3(-1.0f, 0.0f, 0.0f), face6);
 }
 }

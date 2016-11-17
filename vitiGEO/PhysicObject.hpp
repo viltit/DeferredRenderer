@@ -13,7 +13,7 @@
 
 namespace vitiGEO {
 
-class PhysicShape;
+class IPhysicShape;
 
 class PhysicObject {
 public:
@@ -43,7 +43,7 @@ public:
 	/* access to important member objects: */
 	Transform* transform()					{ return &_transform; }
 	AABB* aabb()					const	{ return _aabb; }
-	PhysicShape* shape()			const	{ return _shape; }
+	IPhysicShape* shape()			const	{ return _shape; }
 
 	/* setters: */
 	void setVelocity(const glm::vec3& v)	{ _v = v; }
@@ -67,7 +67,7 @@ protected:
 
 	/* physic shapes: */
 	AABB*		_aabb;		// axis aligned bounding box
-	PhysicShape* _shape;	// holds the vertices
+	IPhysicShape* _shape;	// holds the vertices
 };
 }
 
