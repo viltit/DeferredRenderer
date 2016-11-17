@@ -51,6 +51,9 @@
     <ClInclude Include="PhysicShape.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Hull.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AABB.cpp">
@@ -81,6 +84,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="PhysicShape.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Hull.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -5,61 +5,28 @@
 
 namespace vitiGEO {
 
-PhysicShape::PhysicShape(PhysicObject* owner, const std::vector<glm::vec3>& vertices)
-	:	_owner{ owner }
+
+
+CuboidShape::CuboidShape(PhysicObject* owner)
+	:	IPhysicShape{ owner }
 {
 	assert(owner);
 
-	/*	calculate vertices, edges and the faces normals. 
-		this is a brute-force solution					*/
-	
-	/* vertices */
-	for (size_t i = 0; i < vertices.size(); i++) {
-		bool takeIt = true;
-		for (int j = 0; j < _vertices.size(); j++) {
-			if (vertices[i] == _vertices[j]) takeIt = false;
-		}
-		if (takeIt) _vertices.push_back(vertices[i]);
-	}
+	/*	hard coded vertices, edges and normals: 
+		(we only store normals and edges relevant for collision testing) */
+	_vertices.push_back(glm::vec3{ -1.0f, -1.0f, -1.0f });
+	_vertices.push_back(glm::vec3{ -1.0f, 1.0f, -1.0f });
+	_vertices.push_back(glm::vec3{ 1.0f, 1.0f, -1.0f });
+	_vertices.push_back(glm::vec3{ 1.0f, -1.0f, -1.0f });
 
-	/* edges */
-	for (size_t i = 0; i < _vertices.size();) {
-		int edgeIndex1, edgeIndex2;
-		edgeIndex1 = i;
-		glm::vec3 v1 = _vertices[i++];
-		edgeIndex2 = i;
-		glm::vec3 v2 = _vertices[(i < _vertices.size())? i : 0];
+	_vertices.push_back(glm::vec3{ -1.0f, -1.0f, 1.0f });
+	_vertices.push_back(glm::vec3{ -1.0f, 1.0f, 1.0f });
+	_vertices.push_back(glm::vec3{ 1.0f, 1.0f, 1.0f });
+	_vertices.push_back(glm::vec3{ 1.0f, -1.0f, 1.0f });
 
-		glm::vec3 e1 = v2 - v1;
-
-		_edges.push_back(Edge{ edgeIndex2, edgeIndex1 });
-	}
-
-	/* normals: */
-	for (size_t i = 0; i < vertices.size();) {
-		glm::vec3 v1 = vertices[i++];
-		glm::vec3 v2 = vertices[i++];
-		glm::vec3 v3 = vertices[i++];
-
-		glm::vec3 e1 = v2 - v1;
-		glm::vec3 e2 = v3 - v2;
-
-		/* only take genuine normals: */
-		bool takeIt = true;
-		glm::vec3 normal = glm::normalize(glm::cross(e1, e2));
-		for (size_t j = 0; j < _normals.size(); j++) {
-			if (glm::dot(_normals[j], normal) > 1.0f - 0.001f) takeIt = false;
-		}
-		if (takeIt)
-			_normals.push_back(normal);
-	}
-
-	std::cout << "NORMALS: " << _normals.size() << std::endl;
-	for (int i = 0; i < _normals.size(); i++) {
-		std::cout << "Normal[" << i << "]: " << _normals[i].x << "/" << _normals[i].y << "/" << _normals[i].z << std::endl;
-	}
-	std::cout << "Number of edges: " << _edges.size() << std::endl;
-	std::cout << "Number of vertices: " << _vertices.size() << std::endl;
+	_normals.push_back(glm::vec3{ 1.0f, 0.0f, 0.0f });
+	_normals.push_back(glm::vec3{ 0.0f, 1.0f, 0.0f });
+	_normals.push_back(glm::vec3{ 0.0f, 0.0f, 1.0f });
 
 }
 
@@ -119,5 +86,14 @@ void PhysicShape::minMaxOnAxis(const glm::vec3 & axis, glm::vec3 & outMin, glm::
 	/* End of finding min max values -> prepare output: */
 	outMin = glm::mat3(W) * _vertices[minVertex];
 	outMax = glm::mat3(W) * _vertices[maxVertex];
+}
+void CuboidShape::normals(std::vector<glm::vec3>& axes)
+{
+}
+void CuboidShape::edges(std::vector<glm::vec3>& edges)
+{
+}
+void CuboidShape::minMaxOnAxis(const glm::vec3 & axis, glm::vec3 & outMin, glm::vec3 & outMax) const
+{
 }
 }

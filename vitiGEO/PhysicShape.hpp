@@ -17,18 +17,25 @@ struct Edge {
 	int eEnd;
 };
 
-class PhysicShape {
+/*	---------------------------------------------------------------------------
+	Abstract interface for different kind of shapes: 
+	-------------------------------------------------------------------------- */
+
+class IPhysicShape {
 public:
-	PhysicShape(PhysicObject* owner, const std::vector<glm::vec3>& vertices);
-	~PhysicShape();
+	IPhysicShape(PhysicObject* owner) 
+		: _owner { owner }
+	{};
+
+	virtual ~IPhysicShape() {};
 
 	/* return the oriented normals of the shape: */
-	void normals(std::vector<glm::vec3>& axes);
-	void edges(std::vector<glm::vec3>& edges);
+	virtual void normals(std::vector<glm::vec3>& axes) = 0;
+	virtual void edges(std::vector<glm::vec3>& edges) = 0;
 
-	glm::vec3& vertex(int index)  { return _vertices[index]; }
+	virtual void minMaxOnAxis(const glm::vec3& axis, glm::vec3& outMin, glm::vec3& outMax) const = 0;
 
-	void minMaxOnAxis(const glm::vec3& axis, glm::vec3& outMin, glm::vec3& outMax) const;
+	glm::vec3& vertex(int index) { return _vertices[index]; }
 
 protected:
 	std::vector<glm::vec3> _vertices;
@@ -36,6 +43,19 @@ protected:
 	std::vector<Edge> _edges;
 
 	PhysicObject* _owner;
+};
+
+/*	Cuboid Shape : -------------------------------------------------------------- */
+class CuboidShape : public IPhysicShape {
+public:
+	CuboidShape(PhysicObject* owner);
+
+	virtual void normals(std::vector<glm::vec3>& axes) override;
+	virtual void edges(std::vector<glm::vec3>& edges) override;
+	virtual void minMaxOnAxis(const glm::vec3 & axis, glm::vec3 & outMin, glm::vec3 & outMax) const override;
+
+protected:
+	
 };
 
 }
