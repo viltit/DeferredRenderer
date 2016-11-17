@@ -27,7 +27,26 @@ bool Collidor::SAT(const PhysicObject * obj1, const PhysicObject * obj2, Collido
 	obj1->shape()->normals(axes);
 	obj2->shape()->normals(axes);
 
-	/* To do: Add edge-edge cases */
+	std::cout << "Sat-Axes before edge-edge: " << axes.size() << std::endl;
+
+	/* Add edge-edge axes */
+	std::vector<glm::vec3> edges1;
+	std::vector<glm::vec3> edges2;
+	obj1->shape()->edges(edges1);
+	obj2->shape()->edges(edges2);
+
+	std::cout << "obj1 edges: " << edges1.size() << std::endl;
+	std::cout << "obj2 edges: " << edges2.size() << std::endl;
+
+	for (auto& E1 : edges1) {
+		for (auto& E2 : edges2) {
+			E1 = glm::normalize(E1);
+			E2 = glm::normalize(E2);
+			addSATAxis(glm::cross(E1, E2), axes);
+		}
+	}
+
+	std::cout << "Sat-Axes after edge-edge: " << axes.size() << std::endl;
 
 	/* test if we find a separating axis between the two objs and bail out if we do: */
 	for (const auto& a : axes) {
@@ -38,9 +57,10 @@ bool Collidor::SAT(const PhysicObject * obj1, const PhysicObject * obj2, Collido
 		}
 	}   
 	out = bestCollision;
+	/*
 	std::cout << "COLLISION!\n";
 	std::cout << "Depth: " << out.depth << std::endl;
-	std::cout << "Hit normal: " << out.hitNormal.x << "/" << out.hitNormal.y << "/" << out.hitNormal.z << std::endl;
+	std::cout << "Hit normal: " << out.hitNormal.x << "/" << out.hitNormal.y << "/" << out.hitNormal.z << std::endl;*/
 	return true;
 }
 

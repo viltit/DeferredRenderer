@@ -10,21 +10,39 @@ PhysicShape::PhysicShape(PhysicObject* owner, const std::vector<glm::vec3>& vert
 {
 	assert(owner);
 
-	_vertices = vertices;
+	/*	calculate vertices, edges and the faces normals. 
+		this is a brute-force solution					*/
+	
+	/* vertices */
+	for (size_t i = 0; i < vertices.size(); i++) {
+		bool takeIt = true;
+		for (int j = 0; j < _vertices.size(); j++) {
+			if (vertices[i] == _vertices[j]) takeIt = false;
+		}
+		if (takeIt) _vertices.push_back(vertices[i]);
+	}
 
-	/* calculate edges and the faces normals. We assume we have triangles. */
+	/* edges */
 	for (size_t i = 0; i < _vertices.size();) {
+		int edgeIndex1, edgeIndex2;
+		edgeIndex1 = i;
 		glm::vec3 v1 = _vertices[i++];
-		glm::vec3 v2 = _vertices[i++];
-		glm::vec3 v3 = _vertices[i++];
+		edgeIndex2 = i;
+		glm::vec3 v2 = _vertices[(i < _vertices.size())? i : 0];
+
+		glm::vec3 e1 = v2 - v1;
+
+		_edges.push_back(Edge{ edgeIndex2, edgeIndex1 });
+	}
+
+	/* normals: */
+	for (size_t i = 0; i < vertices.size();) {
+		glm::vec3 v1 = vertices[i++];
+		glm::vec3 v2 = vertices[i++];
+		glm::vec3 v3 = vertices[i++];
 
 		glm::vec3 e1 = v2 - v1;
 		glm::vec3 e2 = v3 - v2;
-		glm::vec3 e3 = v1 - v3;
-
-		_edges.push_back(e1);
-		_edges.push_back(e2);
-		_edges.push_back(e3);
 
 		/* only take genuine normals: */
 		bool takeIt = true;
@@ -40,6 +58,9 @@ PhysicShape::PhysicShape(PhysicObject* owner, const std::vector<glm::vec3>& vert
 	for (int i = 0; i < _normals.size(); i++) {
 		std::cout << "Normal[" << i << "]: " << _normals[i].x << "/" << _normals[i].y << "/" << _normals[i].z << std::endl;
 	}
+	std::cout << "Number of edges: " << _edges.size() << std::endl;
+	std::cout << "Number of vertices: " << _vertices.size() << std::endl;
+
 }
 
 
@@ -50,6 +71,18 @@ void PhysicShape::normals(std::vector<glm::vec3>& axes) {
 	glm::mat3 M = glm::toMat3(_owner->orientation());
 	for (size_t i = 0; i < _normals.size(); i++) {
 		axes.push_back(M * _normals[i]);
+	}
+}
+
+void PhysicShape::edges(std::vector<glm::vec3>& edges) {
+	glm::mat4 M4 = glm::toMat4(_owner->orientation());
+	M4 = glm::scale(M4, glm::vec3{ 0.5f, 0.5f, 0.5f });
+	glm::mat3 M = glm::mat3(M4);
+
+	for (size_t i = 0; i < _edges.size(); i++) {
+		glm::vec3 a = M * _vertices[_edges[i].eBegin];
+		glm::vec3 b = M * _vertices[_edges[i].eEnd];
+		edges.push_back(glm::vec3{ b - a });
 	}
 }
 
@@ -65,7 +98,7 @@ void PhysicShape::minMaxOnAxis(const glm::vec3 & axis, glm::vec3 & outMin, glm::
 	/* start finding min max values of the vertices projected on our local axis: */
 	float projection;
 
-	int minVertex, maxVertex;
+	int minVertex{ 0 }, maxVertex{ 0 };
 	
 	float minProjection = FLT_MAX;
 	float maxProjection = -FLT_MAX;
