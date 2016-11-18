@@ -40,14 +40,13 @@ void CuboidShape::collisionNormals(std::vector<glm::vec3>& axes) const {
 
 
 void CuboidShape::edges(std::vector<glm::vec3>& edges) const {
-	glm::mat4 M4 = glm::toMat4(_owner->orientation());
-	M4 = glm::scale(M4, _halfSize);
-	glm::mat3 M = glm::mat3(M4);
+	glm::mat4 M = glm::toMat4(_owner->orientation());
+	M = glm::scale(M, _halfSize);
 
 	for (size_t i = 0; i < _hull.numEdges(); ++i) {
 		const hEdge& edge = _hull.edge(i);
-		glm::vec3 a = M *  _hull.vertex(edge.vStart).pos;
-		glm::vec3 b = M * _hull.vertex(edge.vEnd).pos;
+		glm::vec3 a = M *  glm::vec4{ _hull.vertex(edge.vStart).pos, 1.0f };
+		glm::vec3 b = M * glm::vec4{ _hull.vertex(edge.vEnd).pos, 1.0f };
 		edges.push_back(glm::vec3{ b - a });
 	}
 }
@@ -58,14 +57,14 @@ void CuboidShape::minMaxOnAxis(const glm::vec3 & axis, glm::vec3 & outMin, glm::
 	glm::mat4 W = _owner->transform()->worldMatrix();
 	W = glm::scale(W, _halfSize);
 
-	glm::mat3 iW = glm::transpose(glm::mat3(W));
-	glm::vec3 localAxis = iW * axis;
+	glm::mat4 iW = glm::transpose((W));
+	glm::vec3 localAxis = iW * glm::vec4{ axis, 1.0f };
 
 	/* TO DO: call Hull::minMaxOnAxis()*/
 	_hull.minMaxOnAxis(localAxis, outMin, outMax);
 
-	outMin = glm::mat3(W) * outMin;
-	outMax = glm::mat3(W) * outMax;
+	outMin = W * glm::vec4{ outMin, 1.0f };
+	outMax = W * glm::vec4{ outMax, 1.0f };
 }
 
 

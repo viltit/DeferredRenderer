@@ -268,7 +268,9 @@ void glRendererDeferred::drawTransparent() {
 	Model* temp = static_cast<Model*>(_scene->findByName("Shark"));
 	temp->drawAABB();*/
 
-	/* debug: */
+	glRendererDebug::instance()->draw(*_camera);
+
+	/* debug: 
 	try {
 		AABBShape shape = AABBShape(_scene->findByName("Octahedron")->physics()->aabb(), _camera);
 		shape.draw();
@@ -279,10 +281,9 @@ void glRendererDeferred::drawTransparent() {
 	}
 	catch (...) {
 
-	}
+	}*/
 	
 	/* END OF DEBUG CODE */
-	glRendererDebug::instance()->draw(*_camera);
 
 	glDisable(GL_BLEND);
 }
