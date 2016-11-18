@@ -69,6 +69,12 @@ void CuboidShape::minMaxOnAxis(const glm::vec3 & axis, glm::vec3 & outMin, glm::
 }
 
 
+void CuboidShape::debugDraw() {
+	glm::mat4 M = _owner->transform()->worldMatrix();
+	M = glm::scale(M, _halfSize);
+	_hull.drawDebug(M);
+}
+
 void CuboidShape::initHull() {
 	_hull.addVertex(glm::vec3(-1.0f, -1.0f, -1.0f));	// 0
 	_hull.addVertex(glm::vec3(-1.0f, 1.0f, -1.0f));		// 1

@@ -2,7 +2,6 @@
 
 #include "Math.hpp"
 #include "PhysicEngine.hpp"
-#include "PhysicShape.hpp"
 
 #include <iostream>
 
@@ -58,4 +57,5 @@ void PhysicObject::update(const float& deltaTime) {
 void PhysicObject::remove() {
 	PhysicEngine::instance()->removeObject(this);
 }
+
 }

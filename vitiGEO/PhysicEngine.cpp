@@ -33,6 +33,12 @@ void PhysicEngine::removeConstraint(Constraint * c) {
 	_constraints.erase(std::remove(_constraints.begin(), _constraints.end(), c), _constraints.end());
 }
 
+void PhysicEngine::drawDebug() {
+	for (const auto& o : _objects) {
+		o->debugDraw();
+	}
+}
+
 PhysicEngine::PhysicEngine() {
 	_timestep = 1.0f / 60.0f;
 	_timeAccum = 0.0f;

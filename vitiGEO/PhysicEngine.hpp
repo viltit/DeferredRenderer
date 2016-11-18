@@ -34,6 +34,8 @@ public:
 
 	float timestep() { return _timestep; }
 
+	void drawDebug();
+
 protected:
 	PhysicEngine();
 

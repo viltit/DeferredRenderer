@@ -182,10 +182,7 @@ void AppScreen::update() {
 
 void AppScreen::draw() {
 	_drender.draw();
-	glRendererDebug::instance()->addPoint(_scene["Octahedron"]->transform.pos(), 0.1);
-	glRendererDebug::instance()->addThickLine(_scene["Octahedron"]->transform.pos(), _scene["Octahedron2"]->transform.pos(), 0.1);
-	glRendererDebug::instance()->draw(_cam);
-	glRendererDebug::instance()->addPoint(_scene["Octahedron2"]->transform.pos(), 0.1);
+	PhysicEngine::instance()->drawDebug();
 	_gui.draw();
 }
 

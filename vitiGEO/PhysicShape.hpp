@@ -29,6 +29,7 @@ public:
 
 	virtual void minMaxOnAxis(const glm::vec3& axis, glm::vec3& outMin, glm::vec3& outMax) const = 0;
 
+	virtual void debugDraw() = 0;
 
 protected:
 	PhysicObject* _owner;
@@ -51,6 +52,8 @@ public:
 
 	void setHalfSize(const glm::vec3& half) { _halfSize = half; }
 	glm::vec3 halfSize() const { return _halfSize; }
+
+	virtual void debugDraw() override;
 
 protected:
 	static void initHull();

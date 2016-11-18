@@ -80,6 +80,8 @@ public:
 	size_t numEdges()				{ return _edges.size(); }
 	size_t numFaces()				{ return _faces.size(); }
 
+	void drawDebug(glm::mat4 M);
+
 protected:
 	int addEdge(int parentFace, int vStart, int vEnd);	/* called by addFace */
 

@@ -10,10 +10,10 @@
 
 #include "Transform.hpp"
 #include "AABB.hpp"
+#include "PhysicShape.hpp"
 
 namespace vitiGEO {
 
-class IPhysicShape;
 
 class PhysicObject {
 public:
@@ -50,6 +50,8 @@ public:
 	void setAngularVelocity(const glm::vec3& av) { _av = av; }
 	void setForce(const glm::vec3& force)	{ _force = force; }
 	void addForce(const glm::vec3& force)	{ _force += force; }
+
+	void debugDraw() { _shape->debugDraw(); }
 
 protected:
 	Transform&	_transform;	// holds position, rotation and scale
