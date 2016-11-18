@@ -5,6 +5,7 @@
 
 namespace vitiGEO {
 
+Hull CuboidShape::_hull;
 
 CuboidShape::CuboidShape(PhysicObject* owner, const glm::vec3& halfSize)
 	:	IPhysicShape{ owner },
@@ -30,51 +31,43 @@ glm::mat3 CuboidShape::inverseInertia(float invMass) const {
 	return inertia;
 }
 
-void PhysicShape::normals(std::vector<glm::vec3>& axes) {
+void CuboidShape::collisionNormals(std::vector<glm::vec3>& axes) const {
 	glm::mat3 M = glm::toMat3(_owner->orientation());
-	for (size_t i = 0; i < _normals.size(); i++) {
-		axes.push_back(M * _normals[i]);
-	}
+	axes.push_back(M * glm::vec3{ 1.0f, 0.0f, 0.0f });
+	axes.push_back(M * glm::vec3{ 0.0f, 1.0f, 0.0f });
+	axes.push_back(M * glm::vec3{ 0.0f, 0.0f, 1.0f });
 }
 
-void PhysicShape::edges(std::vector<glm::vec3>& edges) {
+
+void CuboidShape::edges(std::vector<glm::vec3>& edges) const {
 	glm::mat4 M4 = glm::toMat4(_owner->orientation());
-	M4 = glm::scale(M4, glm::vec3{ 0.5f, 0.5f, 0.5f });
+	M4 = glm::scale(M4, _halfSize);
 	glm::mat3 M = glm::mat3(M4);
 
-	for (size_t i = 0; i < _edges.size(); i++) {
-		glm::vec3 a = M * _vertices[_edges[i].eBegin];
-		glm::vec3 b = M * _vertices[_edges[i].eEnd];
+	for (size_t i = 0; i < _hull.numEdges(); ++i) {
+		const hEdge& edge = _hull.edge(i);
+		glm::vec3 a = M *  _hull.vertex(edge.vStart).pos;
+		glm::vec3 b = M * _hull.vertex(edge.vEnd).pos;
 		edges.push_back(glm::vec3{ b - a });
 	}
 }
 
-void PhysicShape::minMaxOnAxis(const glm::vec3 & axis, glm::vec3 & outMin, glm::vec3 & outMax) const {
+void CuboidShape::minMaxOnAxis(const glm::vec3 & axis, glm::vec3 & outMin, glm::vec3 & outMax) const {
 	
 	/* we need to transform the axis to local space: */
 	glm::mat4 W = _owner->transform()->worldMatrix();
-	W = glm::scale(W, glm::vec3{ 0.5f, 0.5f, 0.5f });
+	W = glm::scale(W, _halfSize);
 
 	glm::mat3 iW = glm::transpose(glm::mat3(W));
 	glm::vec3 localAxis = iW * axis;
 
 	/* TO DO: call Hull::minMaxOnAxis()*/
+	_hull.minMaxOnAxis(localAxis, outMin, outMax);
 
-	outMin = glm::mat3(W) * /* minMaxAxis out */;
-	outMax = glm::mat3(W) * /* minMaxAxis out */;
+	outMin = glm::mat3(W) * outMin;
+	outMax = glm::mat3(W) * outMax;
 }
 
-
-
-void CuboidShape::normals(std::vector<glm::vec3>& axes) {
-
-}
-
-void CuboidShape::edges(std::vector<glm::vec3>& edges) {
-}
-
-void CuboidShape::minMaxOnAxis(const glm::vec3 & axis, glm::vec3 & outMin, glm::vec3 & outMax) const {
-}
 
 void CuboidShape::initHull() {
 	_hull.addVertex(glm::vec3(-1.0f, -1.0f, -1.0f));	// 0

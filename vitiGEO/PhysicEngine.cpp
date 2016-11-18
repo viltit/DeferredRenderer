@@ -66,7 +66,9 @@ void PhysicEngine::collisionBroad() {
 void PhysicEngine::collisionNarrow() {
 	for (size_t i = 0; i < _collisionBroad.size(); i++) {
 		CollidorData data;
-		_collider.SAT(_collisionBroad[i].objA, _collisionBroad[i].objB, data);
+		if (_collider.SAT(_collisionBroad[i].objA, _collisionBroad[i].objB, data))
+			std::cout << "COLLISION\n";
+		else std::cout << "NO COLLISION\n";
 	}
 }
 

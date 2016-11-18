@@ -24,8 +24,8 @@ public:
 	virtual glm::mat3 inverseInertia(float invMass) const = 0;
 
 	/* return the oriented normals of the shape: */
-	virtual void normals(std::vector<glm::vec3>& axes) = 0;
-	virtual void edges(std::vector<glm::vec3>& edges) = 0;
+	virtual void collisionNormals(std::vector<glm::vec3>& axes) const = 0;
+	virtual void edges(std::vector<glm::vec3>& edges) const = 0;
 
 	virtual void minMaxOnAxis(const glm::vec3& axis, glm::vec3& outMin, glm::vec3& outMax) const = 0;
 
@@ -45,8 +45,8 @@ public:
 
 	virtual glm::mat3 inverseInertia(float invMass) const override;
 
-	virtual void normals(std::vector<glm::vec3>& axes) override;
-	virtual void edges(std::vector<glm::vec3>& edges) override;
+	virtual void collisionNormals(std::vector<glm::vec3>& axes) const override;
+	virtual void edges(std::vector<glm::vec3>& edges) const override;
 	virtual void minMaxOnAxis(const glm::vec3 & axis, glm::vec3 & outMin, glm::vec3 & outMax) const override;
 
 	void setHalfSize(const glm::vec3& half) { _halfSize = half; }

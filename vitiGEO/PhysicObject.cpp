@@ -18,16 +18,11 @@ PhysicObject::PhysicObject(Transform& transform, AABB* aabb, const std::vector<g
 {
 	assert(_aabb);
 
-	/* WIP: Inertia matrix. Right now, we assume everything is a unit length cube: */
-	glm::mat3 inertia{};
-	inertia[0][0] = mass / 6.0f;
-	inertia[1][1] = mass / 6.0f;
-	inertia[2][2] = mass / 6.0f;
-	_inertiaI = glm::inverse(inertia);
-
 	/* create the shape: 
 		TO DO: switch depending on shape type */
 	_shape = new CuboidShape{ this };
+
+	_inertiaI = _shape->inverseInertia(_massI);
 
 	/* every physic object is part of the engine on construction: */
 	PhysicEngine::instance()->addObject(this);

@@ -9,12 +9,12 @@ Hull::~Hull() {
 }
 
 void Hull::addVertex(const glm::vec3 & v) {
-	hVertex vertex{ v, _vertices.size() };
+	hVertex vertex{ v, int(_vertices.size()) };
 	_vertices.push_back(vertex);
 }
 
 void Hull::addFace(const glm::vec3 & normal, const std::vector<int>& vertIds) {
-	hFace face{ normal, _faces.size() };
+	hFace face{ normal, int(_faces.size()) };
 	_faces.push_back(face);
 	hFace* facePtr = &_faces[_faces.size() - 1];
 

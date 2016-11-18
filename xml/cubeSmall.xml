@@ -12,9 +12,9 @@
 	</TEXTURE>
 	<DIMENSION>
 		<SIZE>
-			0.5
-			0.5
-			0.5
+			1.0
+			1.0
+			1.0
 		</SIZE>
 		<UV>
 			1.0

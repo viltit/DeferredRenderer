@@ -14,7 +14,8 @@ Collidor::~Collidor() {
 
 bool Collidor::AABBIntersect(const PhysicObject * obj1, const PhysicObject * obj2) {
 	if (AABBIntersection(obj1->aabb(), obj2->aabb())) return true;
-	return false;
+	//return false;
+	return true;
 }
 
 bool Collidor::SAT(const PhysicObject * obj1, const PhysicObject * obj2, CollidorData & out) {
@@ -24,19 +25,14 @@ bool Collidor::SAT(const PhysicObject * obj1, const PhysicObject * obj2, Collido
 
 	/* Assemble the axes we need to test against: */
 	std::vector<glm::vec3> axes;
-	obj1->shape()->normals(axes);
-	obj2->shape()->normals(axes);
-
-	std::cout << "Sat-Axes before edge-edge: " << axes.size() << std::endl;
+	obj1->shape()->collisionNormals(axes);
+	obj2->shape()->collisionNormals(axes);
 
 	/* Add edge-edge axes */
 	std::vector<glm::vec3> edges1;
 	std::vector<glm::vec3> edges2;
 	obj1->shape()->edges(edges1);
 	obj2->shape()->edges(edges2);
-
-	std::cout << "obj1 edges: " << edges1.size() << std::endl;
-	std::cout << "obj2 edges: " << edges2.size() << std::endl;
 
 	for (auto& E1 : edges1) {
 		for (auto& E2 : edges2) {
@@ -46,21 +42,19 @@ bool Collidor::SAT(const PhysicObject * obj1, const PhysicObject * obj2, Collido
 		}
 	}
 
-	std::cout << "Sat-Axes after edge-edge: " << axes.size() << std::endl;
-
 	/* test if we find a separating axis between the two objs and bail out if we do: */
 	for (const auto& a : axes) {
-		if (!testSATAxis(a, obj1, obj2, currentCollision))
+		if (!testSATAxis(a, obj1, obj2, currentCollision)) {
 			return false;
+		}
 		if (currentCollision.depth >= bestCollision.depth) {
 			bestCollision = currentCollision;
 		}
 	}   
 	out = bestCollision;
-	/*
-	std::cout << "COLLISION!\n";
-	std::cout << "Depth: " << out.depth << std::endl;
-	std::cout << "Hit normal: " << out.hitNormal.x << "/" << out.hitNormal.y << "/" << out.hitNormal.z << std::endl;*/
+	
+	//std::cout << "Depth: " << out.depth << std::endl;
+	//std::cout << "Hit normal: " << out.hitNormal.x << "/" << out.hitNormal.y << "/" << out.hitNormal.z << std::endl;
 	return true;
 }
 

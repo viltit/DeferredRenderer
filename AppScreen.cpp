@@ -41,9 +41,9 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 		}
 	}*/
 
-	/**/_scene.addChild(new Model{ "Models/Old House/Old House 2 3D Models.obj", &_cam, false }, "Shark");
+	/*_scene.addChild(new Model{ "Models/Old House/Old House 2 3D Models.obj", &_cam, false }, "Shark");
 	_scene["Shark"]->transform.scale(glm::vec3{ 0.05f, 0.05f, 0.05f });
-	_scene["Shark"]->transform.setPos(glm::vec3{ -5.0f, 0.0f, -5.0f });
+	_scene["Shark"]->transform.setPos(glm::vec3{ -5.0f, 0.0f, -5.0f });*/
 	//_scene["Shark"]->addPhysics(10.0f);
 	//_scene["Shark"]->removePhysics();
 
@@ -78,22 +78,23 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	_scene.addCamera(&_cam);
 
 	/* test: */
-	_scene.addChild(new Octahedron{ "xml/cube.xml" }, glm::vec3{ 3.0, 3.0f, 15.0 }, "Octahedron");
+	_scene.addChild(new Cuboid{ "xml/cubeSmall.xml" }, glm::vec3{ 3.0, 3.0f, 15.0 }, "Octahedron");
 	_scene["Octahedron"]->addPhysics(10.0f);
 
-	_scene.addChild(new Octahedron{ "xml/cube.xml" }, glm::vec3{ 5.0, 3.0f, 15.0 }, "Octahedron2");
+	_scene.addChild(new Cuboid{ "xml/cubeSmall.xml" }, glm::vec3{ 5.0, 3.0f, 15.0 }, "Octahedron2");
 	_scene["Octahedron2"]->addPhysics(10.0f);
 
 	_scene.addChild(new Cuboid{ "xml/cubeSmall.xml" }, glm::vec3{ 3.0, 3.0f, 16.0 }, "Octahedron3");
 	_scene["Octahedron3"]->addPhysics(10.0f);
 
+	/*
 	DistanceConstraint* c = new DistanceConstraint {
 		_scene["Octahedron"]->physics(),
 		_scene["Octahedron2"]->physics(),
 		glm::vec3{ 4.0f, 3.0f, 15.0f},
 		glm::vec3{ 6.0f, 3.0f, 15.0f}
 	};
-	PhysicEngine::instance()->addConstraint(c);
+	PhysicEngine::instance()->addConstraint(c);*/
 
 	/*
 	pLight* plight2 = new pLight{ &_cam };
@@ -163,10 +164,10 @@ void AppScreen::update() {
 			temp->rotate(float(frameTime) * j/ (5.0f * i  + 5), glm::vec3{ 0.0f, 1.0f, 0.0f });
 		}
 	}*/
-
+	/*
 	Model* temp = static_cast<Model*>(_scene["Shark"]);
 	if (_rotate) 
-		temp->transform.rotate(float(frameTime) / (20.0f), glm::vec3{ 0.0f, 1.0f, 0.0f });
+		temp->transform.rotate(float(frameTime) / (20.0f), glm::vec3{ 0.0f, 1.0f, 0.0f });*/
 
 	_scene["Octahedron"]->physics()->setForce(glm::vec3{ 0.0f, 0.0f, 0.0f });
 
@@ -181,7 +182,9 @@ void AppScreen::update() {
 
 void AppScreen::draw() {
 	_drender.draw();
-
+	glRendererDebug::instance()->addPoint(_scene["Octahedron"]->transform.pos(), 0.1);
+	glRendererDebug::instance()->addThickLine(_scene["Octahedron"]->transform.pos(), _scene["Octahedron2"]->transform.pos(), 2.0f);
+	glRendererDebug::instance()->draw(_cam);
 	_gui.draw();
 }
 
@@ -292,6 +295,12 @@ void AppScreen::updateInput() {
 			case SDLK_DOWN:
 				_scene["Octahedron"]->physics()->addForce(glm::vec3{ 0.0f, 0.0f, -1.0f });
 				break;
+			case SDLK_LEFT:
+				_scene["Octahedron"]->physics()->addForce(glm::vec3{ -1.0f, 0.0f, 0.0f });
+				break;
+			case SDLK_RIGHT:
+				_scene["Octahedron"]->physics()->addForce(glm::vec3{ 1.0f, 0.0f, 0.0f });
+				break;
 			case SDLK_F1:
 				_console.setVisible(_console.isVisible()? false : true);
 				break;	
@@ -334,7 +343,8 @@ void AppScreen::updateInput() {
 			case SDLK_KP_DIVIDE:
 				break;
 			case SDLK_r:
-				_rotate = (_rotate) ? false : true;
+				_scene["Octahedron"]->physics()->setAngularVelocity(glm::vec3{ 0.1f, 0.1f, 0.1f });
+				_scene["Octahedron3"]->physics()->setAngularVelocity(glm::vec3{ -0.1f, -0.1f, -0.1f });
 				break;
 			}
 			break;
@@ -354,6 +364,7 @@ void AppScreen::updateInput() {
 
 			//_scene.addChild(new Cuboid{ "xml/cubeSmall.xml" }, _cam.pos() + 30.0f * _cam.dir(), sqrt(1.0f));
 
+			/*
 			vitiGEO::Ray ray{ _cam.pos(), _cam.dir() * 30.0f };
 
 			Model* temp = static_cast<Model*>(_scene.findByName("Shark"));
@@ -362,7 +373,7 @@ void AppScreen::updateInput() {
 			glm::vec3 intersection;
 			float f{ 0.0f };
 
-			if (aabb->rayIntersection(ray, intersection, f)) {
+			if (aabb->rayIntersection(ray, intersection, f)) {*/
 				//_scene.addChild(new Octahedron{ "xml/cube.xml" }, intersection, sqrt(2.0f));
 
 				
@@ -388,7 +399,7 @@ void AppScreen::updateInput() {
 					}
 				}*/
 
-				/* TEST: USE TRANSFORM FEEDBACK: */
+				/* TEST: USE TRANSFORM FEEDBACK: 
 				auto i = temp->childrenBegin() + 2;
 				
 				Mesh* mesh = static_cast<Mesh*>((*i)->obj());
@@ -404,7 +415,7 @@ void AppScreen::updateInput() {
 					glm::vec3 hitPoint = ray._origin + glm::normalize(ray._delta) * output[i].x;
 					_scene.addChild(new Cuboid{ "xml/cubeSmall.xml" }, hitPoint);
 				}
-			}
+			}*/
 			
 			/* END OF DEBUG CODE */
 			

@@ -156,6 +156,7 @@
     <ClCompile Include="Framebuffer.cpp" />
     <ClCompile Include="GaussBlur.cpp" />
     <ClCompile Include="glRenderer.cpp" />
+    <ClCompile Include="glRendererDebug.cpp" />
     <ClCompile Include="glRendererDeferred.cpp" />
     <ClCompile Include="GUI.cpp" />
     <ClCompile Include="iApp.cpp" />
@@ -188,6 +189,7 @@
     <ClInclude Include="Framebuffer.hpp" />
     <ClInclude Include="GaussBlur.hpp" />
     <ClInclude Include="glRenderer.hpp" />
+    <ClInclude Include="glRendererDebug.hpp" />
     <ClInclude Include="glRendererDeferred.hpp" />
     <ClInclude Include="GUI.hpp" />
     <ClInclude Include="IApp.hpp" />

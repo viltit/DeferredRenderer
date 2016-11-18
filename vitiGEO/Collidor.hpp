@@ -7,7 +7,7 @@
 
 namespace vitiGEO {
 
-const float EPSILON_TRESHOLD = 0.001f;
+const float EPSILON_TRESHOLD = 0.0001f;
 
 class PhysicObject;
 
