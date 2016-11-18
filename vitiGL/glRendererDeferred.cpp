@@ -8,6 +8,7 @@
 #include "Window.hpp"
 #include "Light.hpp"
 #include "Model.hpp"
+#include "glRendererDebug.hpp"
 
 namespace vitiGL {
 
@@ -281,6 +282,7 @@ void glRendererDeferred::drawTransparent() {
 	}
 	
 	/* END OF DEBUG CODE */
+	glRendererDebug::instance()->draw(*_camera);
 
 	glDisable(GL_BLEND);
 }
