@@ -31,7 +31,7 @@ void glRendererDebug::addThickLine(const glm::vec3 & start, const glm::vec3 & en
 void glRendererDebug::draw(const Camera & cam) {
 	/* get the size in bytes for all data:*/
 	size_t size = _points.size() + _lines.size() + _tLines.size();
-	size *= 4 * sizeof(float);
+	size = size * 4 * sizeof(float);
 
 	/* get the offsets: */
 	size_t offsetLines = _points.size();
@@ -68,6 +68,7 @@ void glRendererDebug::draw(const Camera & cam) {
 	glEnableVertexAttribArray(1);
 
 	/* draw: */
+	glEnable(GL_BLEND);
 	if (!_points.empty()) {
 		_pShader.on();
 		cam.setVPUniform(_pShader);
@@ -75,20 +76,21 @@ void glRendererDebug::draw(const Camera & cam) {
 		glDrawArrays(GL_POINTS, 0, _points.size() >> 1);
 		_pShader.off();
 	}
+
 	if (!_lines.empty()) {
 		_lShader.on();
 		cam.setVPUniform(_lShader);
-		glUniform1f(_lShader.getUniform("aspect"), 1.0f / cam.aspect());
-		glDrawArrays(GL_LINE, offsetLines >> 1, _lines.size() >> 1);
+		glDrawArrays(GL_LINES, offsetLines >> 1, _lines.size() >> 1);
 		_lShader.off();
 	}
 	if (!_tLines.empty()) {
 		_tLShader.on();
 		cam.setVPUniform(_tLShader);
 		glUniform1f(_tLShader.getUniform("aspect"), 1.0f / cam.aspect());
-		glDrawArrays(GL_LINE, offsetTLines >> 1, _tLines.size() >> 1);
+		glDrawArrays(GL_LINES, offsetTLines >> 1, _tLines.size() >> 1);
 		_tLShader.off();
 	}
+	glDisable(GL_BLEND);
 
 	/* clear all vectors: */
 	_points.clear();
@@ -97,8 +99,9 @@ void glRendererDebug::draw(const Camera & cam) {
 }
 
 glRendererDebug::glRendererDebug()
-	:	_pShader{ "Shaders/Debug/vertex.glsl", "Shaders/Debug/fragment.glsl", "Shaders/Debug/points.geo.glsl" },
-		_tLShader{ "Shaders/Debug/vertex.glsl", "Shaders/Debug/fragment.glsl", "Shaders/Debug/lines.geo.glsl" }
+	:	_pShader	{ "Shaders/Debug/vertex.glsl", "Shaders/Debug/fragment.glsl", "Shaders/Debug/points.geo.glsl" },
+		_lShader	{ "Shaders/Debug/passThrough.vert.glsl", "Shaders/Debug/fragment.glsl" },
+		_tLShader	{ "Shaders/Debug/vertex.glsl", "Shaders/Debug/fragment.glsl", "Shaders/Debug/line.geo.glsl" }
 {
 	std::cout << "Debug Renderer init\n";
 

@@ -31,6 +31,9 @@
     <Filter Include="Resource Files\Raytracing">
       <UniqueIdentifier>{6c766b16-d0cc-499e-8d64-a9230aba7a77}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Debug">
+      <UniqueIdentifier>{528e1cee-0145-4d8e-80b2-128f06949dc5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.hpp">
@@ -168,6 +171,21 @@
     </None>
     <None Include="Shaders\Raytracing\triangle.vert.glsl">
       <Filter>Resource Files\Raytracing</Filter>
+    </None>
+    <None Include="Shaders\Debug\fragment.glsl">
+      <Filter>Resource Files\Debug</Filter>
+    </None>
+    <None Include="Shaders\Debug\line.geo.glsl">
+      <Filter>Resource Files\Debug</Filter>
+    </None>
+    <None Include="Shaders\Debug\vertex.glsl">
+      <Filter>Resource Files\Debug</Filter>
+    </None>
+    <None Include="Shaders\Debug\points.geo.glsl">
+      <Filter>Resource Files\Debug</Filter>
+    </None>
+    <None Include="Shaders\Debug\passThrough.vert.glsl">
+      <Filter>Resource Files\Debug</Filter>
     </None>
   </ItemGroup>
 </Project>

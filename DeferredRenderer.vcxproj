@@ -139,6 +139,11 @@
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Shaders\Debug\fragment.glsl" />
+    <None Include="Shaders\Debug\line.geo.glsl" />
+    <None Include="Shaders\Debug\passThrough.vert.glsl" />
+    <None Include="Shaders\Debug\points.geo.glsl" />
+    <None Include="Shaders\Debug\vertex.glsl" />
     <None Include="Shaders\DeferredRenderer\final.frag.glsl" />
     <None Include="Shaders\DeferredRenderer\final.vert.glsl" />
     <None Include="Shaders\DeferredRenderer\fragment.glsl" />
