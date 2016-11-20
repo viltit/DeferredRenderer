@@ -13,9 +13,12 @@ Collidor::~Collidor() {
 }
 
 bool Collidor::AABBIntersect(const PhysicObject * obj1, const PhysicObject * obj2) {
-	if (AABBIntersection(obj1->aabb(), obj2->aabb())) return true;
-	//return false;
-	return true;
+	if (AABBIntersection(obj1->aabb(), obj2->aabb())) {
+		std::cout << "Collidor: No detail check needed...\n";
+		return true;
+	}
+	std::cout << "Collidor: Need detail check...\n";
+	return false;
 }
 
 bool Collidor::SAT(const PhysicObject * obj1, const PhysicObject * obj2, CollidorData & out) {

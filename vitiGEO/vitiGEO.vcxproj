@@ -151,6 +151,7 @@
     <ClInclude Include="Frustum.hpp" />
     <ClInclude Include="Geometry.hpp" />
     <ClInclude Include="Hull.hpp" />
+    <ClInclude Include="Manifold.hpp" />
     <ClInclude Include="Math.hpp" />
     <ClInclude Include="PhysicEngine.hpp" />
     <ClInclude Include="PhysicObject.hpp" />
@@ -165,6 +166,7 @@
     <ClCompile Include="Frustum.cpp" />
     <ClCompile Include="Geometry.cpp" />
     <ClCompile Include="Hull.cpp" />
+    <ClCompile Include="Manifold.cpp" />
     <ClCompile Include="Math.cpp" />
     <ClCompile Include="PhysicEngine.cpp" />
     <ClCompile Include="PhysicObject.cpp" />

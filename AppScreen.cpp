@@ -25,9 +25,9 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	_index = SCREEN_INDEX_APP;
 	RayTriangle::start();
 
-	/* Create the scene elements: 
+	/* Create the scene elements: */
 	int prefix = 1;
-	for (int i = -5; i < 4; i++) {
+	for (int i = -2; i < 3; i++) {
 		prefix = (prefix == 1) ? -1 : 1;
 		for (int j = 1; j < 5; j++) {
 			std::string parentName = "Cube" + std::to_string(i) + "/" + std::to_string(j);
@@ -35,11 +35,19 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 			std::string child2Name = "SmallCuboid" + std::to_string(i) + "/" + std::to_string(j);
 			std::string lightName = "plight" + std::to_string(i);
 
-			_scene.addChild(new Octahedron{ "xml/cube.xml" }, glm::vec3{ prefix * i * 3.0, j * 3.0f, i * 3.0 }, sqrt(2.0f), parentName);
-			_scene.addChild(new Cuboid{ "xml/cubeSmall.xml" }, glm::vec3{ 2.0, 0.0f, 2.0 }, sqrt(1.0f), childName, parentName);
-			_scene.addChild(new Tetrahedron{ "xml/cubeTiny.xml" }, glm::vec3{ 0.0, prefix * 1.0f, 0.0 }, sqrt(1.0f), child2Name, childName);
+			_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ prefix * i * 3.0, j * 3.0f, i * 3.0 }, parentName);
+			_scene[parentName]->addPhysics(10.0f);
+			_scene[parentName]->transform.scale(glm::vec3{ 2.0f, 2.0f, 2.0f });
+			_scene.addChild(new Cuboid{ "xml/cubeSmall.xml" }, glm::vec3{ 2.0, 0.0f, 2.0 }, childName, parentName);
+			_scene[childName]->addPhysics(5.0f);
+			_scene.addChild(new Cuboid{ "xml/cubeSmall.xml" }, glm::vec3{ 0.0, prefix * 1.0f, 0.0 }, child2Name, childName);
+			_scene[child2Name]->addPhysics(5.0f);
+			_scene[child2Name]->transform.scale(glm::vec3{ 0.6f, 0.6f, 0.6f });
 		}
-	}*/
+	}
+	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ 0.0f, 2.0f, -1.0f }, "Cuboid");
+	_scene["Cuboid"]->addPhysics(10.0f);
+	_scene["Cuboid"]->transform.scale(glm::vec3{ 2.0f, 2.0f, 2.0f });
 
 	/*_scene.addChild(new Model{ "Models/Old House/Old House 2 3D Models.obj", &_cam, false }, "Shark");
 	_scene["Shark"]->transform.scale(glm::vec3{ 0.05f, 0.05f, 0.05f });
@@ -57,7 +65,7 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	_scene.setShadowcaster("dlight");
 
 	pLight* plight = new pLight{ &_cam };
-	plight->setProperty(lightProps::pos, glm::vec3{ 0.0f, 30.0f, 0.0f });
+	plight->setProperty(lightProps::pos, glm::vec3{ 0.0f, 20.0f, 0.0f });
 	plight->setProperty(lightProps::diffuse, glm::vec3{ 10.0f, 5.0f, 0.0f });
 	plight->setProperty(lightProps::specular, glm::vec3{ 20.0f, 10.0f, 0.0f });
 
@@ -77,15 +85,6 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 
 	_scene.addCamera(&_cam);
 
-	/* test: */
-	_scene.addChild(new Cuboid{ "xml/cubeSmall.xml" }, glm::vec3{ 3.0, 3.0f, 15.0 }, "Octahedron");
-	_scene["Octahedron"]->addPhysics(10.0f);
-
-	_scene.addChild(new Cuboid{ "xml/cubeSmall.xml" }, glm::vec3{ 5.0, 3.0f, 15.0 }, "Octahedron2");
-	_scene["Octahedron2"]->addPhysics(10.0f);
-
-	_scene.addChild(new Cuboid{ "xml/cubeSmall.xml" }, glm::vec3{ 3.0, 3.0f, 16.0 }, "Octahedron3");
-	_scene["Octahedron3"]->addPhysics(10.0f);
 
 	/*
 	DistanceConstraint* c = new DistanceConstraint {
@@ -169,8 +168,6 @@ void AppScreen::update() {
 	if (_rotate) 
 		temp->transform.rotate(float(frameTime) / (20.0f), glm::vec3{ 0.0f, 1.0f, 0.0f });*/
 
-	_scene["Octahedron"]->physics()->setForce(glm::vec3{ 0.0f, 0.0f, 0.0f });
-
 	/* update all components: */
 	updateInput();
 	PhysicEngine::instance()->update(frameTime);
@@ -182,7 +179,7 @@ void AppScreen::update() {
 
 void AppScreen::draw() {
 	_drender.draw();
-	PhysicEngine::instance()->drawDebug();
+	//PhysicEngine::instance()->drawDebug();
 	_gui.draw();
 }
 
@@ -288,16 +285,16 @@ void AppScreen::updateInput() {
 				_cam.move(Move::right);
 				break;
 			case SDLK_UP:
-				_scene["Octahedron"]->physics()->addForce(glm::vec3{ 0.0f, 0.0f, 1.0f });
+				_scene["Cuboid"]->physics()->addForce(glm::vec3{ 0.0f, 0.0f, 1.0f });
 				break;
 			case SDLK_DOWN:
-				_scene["Octahedron"]->physics()->addForce(glm::vec3{ 0.0f, 0.0f, -1.0f });
+				_scene["Cuboid"]->physics()->addForce(glm::vec3{ 0.0f, 0.0f, -1.0f });
 				break;
 			case SDLK_LEFT:
-				_scene["Octahedron"]->physics()->addForce(glm::vec3{ -1.0f, 0.0f, 0.0f });
+				_scene["Cuboid"]->physics()->addForce(glm::vec3{ -1.0f, 0.0f, 0.0f });
 				break;
 			case SDLK_RIGHT:
-				_scene["Octahedron"]->physics()->addForce(glm::vec3{ 1.0f, 0.0f, 0.0f });
+				_scene["Cuboid"]->physics()->addForce(glm::vec3{ 1.0f, 0.0f, 0.0f });
 				break;
 			case SDLK_F1:
 				_console.setVisible(_console.isVisible()? false : true);
@@ -341,8 +338,7 @@ void AppScreen::updateInput() {
 			case SDLK_KP_DIVIDE:
 				break;
 			case SDLK_r:
-				_scene["Octahedron"]->physics()->setAngularVelocity(glm::vec3{ 0.1f, 0.1f, 0.1f });
-				_scene["Octahedron3"]->physics()->setAngularVelocity(glm::vec3{ -0.1f, -0.1f, -0.1f });
+				_scene["Cuboid"]->physics()->setAngularVelocity(glm::vec3{ 0.1f, 0.1f, 0.1f });
 				break;
 			}
 			break;
@@ -420,8 +416,5 @@ void AppScreen::updateInput() {
 		}
 			break;
 		}
-
-
-
 	}
 }
