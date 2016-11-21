@@ -23,6 +23,12 @@ public:
 	/* test if a sphere is left or right of the plane (relative to (0, 0, 0)) : */
 	bool		sphereInPlane(const glm::vec3& pos, float radius) const;
 
+	/* test if a given point lies on the plane: */
+	bool		pointInPlane(const glm::vec3& point) const;
+
+	/* perform a plane-edge intersection: */
+	glm::vec3	planeEdgeIntersection(const glm::vec3& start, const glm::vec3& end) const;
+
 	/* getters and setters: */
 	void		setNormal(const glm::vec3& normal)	{ _normal = normal; }
 	glm::vec3	normal() const						{ return _normal; }
@@ -33,6 +39,8 @@ public:
 protected:
 	glm::vec3	_normal;
 	float		_distance;
+
+	const float _THRESHOLD = 0.0001f;
 };
 
 }

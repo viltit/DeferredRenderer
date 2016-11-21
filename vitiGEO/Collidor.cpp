@@ -63,7 +63,9 @@ bool Collidor::SAT(const PhysicObject * obj1, const PhysicObject * obj2, Collido
 	return true;
 }
 
-bool Collidor::buildManifold(const PhysicObject * obj1, const PhysicObject * obj2, 
+/* naming:	- the incident face is the one we clip to find the collision contact point
+			- the reference face is the one we clip against */
+void Collidor::buildManifold(const PhysicObject * obj1, const PhysicObject * obj2, 
 	const CollidorData & collision, Manifold * manifold) 
 {
 	assert(manifold);
@@ -76,7 +78,50 @@ bool Collidor::buildManifold(const PhysicObject * obj1, const PhysicObject * obj
 	std::vector<Plane> adjacentPlanes1;
 	std::vector<Plane> adjacentPlanes2;
 
-	obj1->shape()->calcIncident(collision.hitNormal, polygon1, normal1, adjacentPlanes1);
+	/* get the data to calculate reference and incident polygon: */
+	obj1->shape()->calcIncidentReference(collision.hitNormal, polygon1, normal1, adjacentPlanes1);
+	obj2->shape()->calcIncidentReference(-collision.hitNormal, polygon2, normal2, adjacentPlanes2);
+
+	if (polygon1.size() == 0 || polygon2.size() == 0) return;
+
+	if (polygon1.size() == 1);
+	if (polygon2.size() == 1); //we have a curve -> not supported yet
+
+	/* find out which face we clip against the other: */
+	bool flipped{ false };
+	std::list<glm::vec3>* incPoly{ nullptr }; //pointer to incident Polygon which will be clipped
+	glm::vec3* incNormal{ nullptr };
+	std::vector<Plane>* refAdjPlanes { nullptr };
+	Plane refPlane;
+
+	/* which polygon's normal is more parallel to the collision normal? */
+	if (fabs(glm::dot(collision.hitNormal, normal1)) >
+		fabs(glm::dot(collision.hitNormal, normal2))) 
+	{
+		float planeDistance = -glm::dot(-normal1, polygon1.front());
+		refPlane.setNormal(-normal1);
+		refPlane.setDistance(planeDistance);
+		refAdjPlanes = &adjacentPlanes1;
+
+		incPoly = &polygon2;
+		incNormal = &normal2;
+
+		flipped = false;
+	}
+	else {
+		float planeDistance = -glm::dot(-normal2, polygon2.front());
+		refPlane.setNormal(-normal2);
+		refPlane.setDistance(planeDistance);
+		refAdjPlanes = &adjacentPlanes2;
+
+		incPoly = &polygon1;
+		incNormal = &normal1;
+
+		flipped = true;
+	}
+
+	/* Clip the incident face to the adjacent edges of the reference face */
+	/*  GO ON HERE */
 
 }
 
@@ -116,6 +161,47 @@ bool Collidor::testSATAxis(const glm::vec3 axis, const PhysicObject * obj1, cons
 	}
 
 	return false;
+}
+
+void Collidor::SutherlandHodgesonClipping(const std::list<glm::vec3>& inPoly, int numClippingPlanes, 
+	const Plane* clippingPlanes, std::list<glm::vec3>& outPoly, bool removePoints)
+{
+	std::list<glm::vec3> tPoly1;
+	std::list<glm::vec3> tPoly2;
+	std::list<glm::vec3>* input = &tPoly1;
+	std::list<glm::vec3>* output = &tPoly2;
+
+	*output = inPoly;
+	for (size_t i = 0; i < numClippingPlanes; ++i) {
+		if (output->empty()) break;
+
+		const Plane& plane = clippingPlanes[i];
+		std::swap(input, output);
+		output->clear();
+
+		glm::vec3 startPoint = input->back();
+		for (const auto& endPoint : *input) {
+			bool isStartInPlane = plane.pointInPlane(startPoint);
+			bool isEndInPlane = plane.pointInPlane(endPoint);
+
+			if (removePoints) {
+				if (isEndInPlane) output->push_back(endPoint);
+			}
+			else {
+				if (isStartInPlane && isEndInPlane)
+					output->push_back(endPoint);
+				else if (isStartInPlane && !isEndInPlane)
+					output->push_back(plane.planeEdgeIntersection(startPoint, endPoint));
+				else if (!isStartInPlane && isEndInPlane) {
+					output->push_back(plane.planeEdgeIntersection(endPoint, startPoint));
+					output->push_back(endPoint);
+				}
+			}
+
+			startPoint = endPoint;
+		}
+	}
+	outPoly = *output; //may be wrong
 }
 
 }

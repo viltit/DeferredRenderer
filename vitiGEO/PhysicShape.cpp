@@ -67,7 +67,7 @@ void CuboidShape::minMaxOnAxis(const glm::vec3 & axis, glm::vec3 & outMin, glm::
 	outMax = W * glm::vec4{ _hull.vertex(maxID).pos, 1.0f };
 }
 
-void CuboidShape::calcReferenceFace(const glm::vec3 & axis, std::list<glm::vec3>& outFace, 
+void CuboidShape::calcIncidentReference(const glm::vec3 & axis, std::list<glm::vec3>& outFace,
 	glm::vec3& outNormal, std::vector<Plane>& outAdjacentPlanes) 
 {
 	glm::mat4 W = _owner->transform()->worldMatrix();

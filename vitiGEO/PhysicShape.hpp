@@ -34,10 +34,11 @@ public:
 
 	/* computes the face that is closest to parallel to a given axis, returns the face, face normal, 
 	   and the planes of adjacent faces: */
-	virtual void calcIncident(const glm::vec3& axis,
-							std::list<glm::vec3>& outFace,
-							glm::vec3& outNormal,
-							std::vector<Plane>& outAdjacentPlanes) = 0;
+	virtual void calcIncidentReference
+			(const glm::vec3& axis,
+			std::list<glm::vec3>& outFace,
+			glm::vec3& outNormal,
+			std::vector<Plane>& outAdjacentPlanes) = 0;
 
 	virtual void debugDraw() = 0;
 
@@ -60,10 +61,11 @@ public:
 	virtual void edges(std::vector<glm::vec3>& edges) const override;
 	virtual void minMaxOnAxis(const glm::vec3 & axis, glm::vec3 & outMin, glm::vec3 & outMax) const override;
 
-	virtual void calcReferenceFace(const glm::vec3& axis,
-							std::list<glm::vec3>& outFace,
-							glm::vec3& outNormal,
-							std::vector<Plane>& outAdjacentPlanes);
+	virtual void calcIncidentReference
+			(const glm::vec3& axis,
+			std::list<glm::vec3>& outFace,
+			glm::vec3& outNormal,
+			std::vector<Plane>& outAdjacentPlanes) override;
 
 	void setHalfSize(const glm::vec3& half) { _halfSize = half; }
 	glm::vec3 halfSize() const { return _halfSize; }

@@ -28,7 +28,7 @@ public:
 	/* separating axis theorem: */
 	bool SAT(const PhysicObject* obj1, const PhysicObject* obj2, CollidorData& out);
 
-	bool buildManifold	(const PhysicObject* ob1, const PhysicObject* obj2, 
+	void buildManifold	(const PhysicObject* ob1, const PhysicObject* obj2, 
 						const CollidorData& collision, 
 						Manifold* manifold);
 
@@ -38,6 +38,13 @@ protected:
 	bool testSATAxis(const glm::vec3 axis,
 					const PhysicObject* obj1, const PhysicObject* obj2,
 					CollidorData& out) const;
+
+	void SutherlandHodgesonClipping(
+			const std::list<glm::vec3>& inPoly, 
+			int numClippingPlanes, 
+			const Plane* clippingPlanes, 
+			std::list <glm::vec3>& outPoly, 
+			bool removePoints);
 };
 
 }
