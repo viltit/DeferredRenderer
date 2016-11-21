@@ -3,6 +3,9 @@
 #include "PhysicObject.hpp"
 #include "PhysicShape.hpp"
 #include "AABB.hpp"
+#include "Manifold.hpp"
+
+#include <list>
 
 namespace vitiGEO {
 
@@ -14,10 +17,9 @@ Collidor::~Collidor() {
 
 bool Collidor::AABBIntersect(const PhysicObject * obj1, const PhysicObject * obj2) {
 	if (AABBIntersection(obj1->aabb(), obj2->aabb())) {
-		std::cout << "Collidor: No detail check needed...\n";
-		return true;
+		//return true;
+		return false;
 	}
-	std::cout << "Collidor: Need detail check...\n";
 	return false;
 }
 
@@ -59,6 +61,23 @@ bool Collidor::SAT(const PhysicObject * obj1, const PhysicObject * obj2, Collido
 	//std::cout << "Depth: " << out.depth << std::endl;
 	//std::cout << "Hit normal: " << out.hitNormal.x << "/" << out.hitNormal.y << "/" << out.hitNormal.z << std::endl;
 	return true;
+}
+
+bool Collidor::buildManifold(const PhysicObject * obj1, const PhysicObject * obj2, 
+	const CollidorData & collision, Manifold * manifold) 
+{
+	assert(manifold);
+
+	/* prepare variables: */
+	std::list<glm::vec3> polygon1;
+	std::list<glm::vec3> polygon2;
+	glm::vec3 normal1;
+	glm::vec3 normal2;
+	std::vector<Plane> adjacentPlanes1;
+	std::vector<Plane> adjacentPlanes2;
+
+	obj1->shape()->calcIncident(collision.hitNormal, polygon1, normal1, adjacentPlanes1);
+
 }
 
 void Collidor::addSATAxis(const glm::vec3& axis, std::vector<glm::vec3>& SATAxes) {

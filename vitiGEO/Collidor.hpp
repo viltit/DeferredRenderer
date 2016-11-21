@@ -10,6 +10,7 @@ namespace vitiGEO {
 const float EPSILON_TRESHOLD = 0.0001f;
 
 class PhysicObject;
+class Manifold;
 
 struct CollidorData {
 	glm::vec3 hitPoint;
@@ -26,6 +27,10 @@ public:
 	bool AABBIntersect(const PhysicObject* obj1, const PhysicObject* obj2);
 	/* separating axis theorem: */
 	bool SAT(const PhysicObject* obj1, const PhysicObject* obj2, CollidorData& out);
+
+	bool buildManifold	(const PhysicObject* ob1, const PhysicObject* obj2, 
+						const CollidorData& collision, 
+						Manifold* manifold);
 
 protected:
 	void addSATAxis(const glm::vec3& axis, std::vector<glm::vec3>& SATAxes);

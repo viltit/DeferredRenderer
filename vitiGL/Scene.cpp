@@ -6,7 +6,6 @@
 #include "Mesh.hpp"
 #include "Model.hpp"
 
-
 #include <iostream>
 #include <assert.h>
 
@@ -67,10 +66,11 @@ void SceneNode::update(const Uint32 & deltaTime) {
 	if (_obj) {
 		_obj->setModelMatrix(transform.worldMatrix());
 		
-		/* update aabb: */
+		/* update aabb and radius: */
 		if (_obj->type() == ObjType::shape || _obj->type() == ObjType::mesh) {
 			vitiGEO::AABB* aabb = static_cast<Shape*>(_obj)->getAABB();
 			aabb->transform(transform.worldMatrix());
+			_radius = aabb->diameter() * 0.5f;
 		}
 	}
 

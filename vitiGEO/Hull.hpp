@@ -69,7 +69,7 @@ public:
 	/* returns -1 for not found */
 	int edgeID(int v1_ID, int v2_ID);
 
-	void minMaxOnAxis(const glm::vec3 & axis, glm::vec3 & outMin, glm::vec3 & outMax) const;
+	void minMaxOnAxis(const glm::vec3 & axis, int& outMin, int& outMax) const;
 
 	/* getters: */
 	const hVertex& vertex(int id)	{ return _vertices[id]; }

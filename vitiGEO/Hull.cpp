@@ -71,7 +71,7 @@ int Hull::edgeID(int v1_ID, int v2_ID) {
 	return -1;
 }
 
-void Hull::minMaxOnAxis(const glm::vec3 & localAxis, glm::vec3 & outMin, glm::vec3 & outMax) const {
+void Hull::minMaxOnAxis(const glm::vec3 & localAxis, int& outMin, int& outMax) const {
 	/* start finding min max values of the vertices projected on our local axis: */
 	float projection;
 	int minVertex{ 0 }, maxVertex{ 0 };
@@ -92,8 +92,8 @@ void Hull::minMaxOnAxis(const glm::vec3 & localAxis, glm::vec3 & outMin, glm::ve
 		}
 	}
 
-	outMin = _vertices[minVertex].pos;
-	outMax = _vertices[maxVertex].pos;
+	outMin = minVertex;
+	outMax = maxVertex;
 }
 
 void Hull::drawDebug(const glm::mat4& M) {

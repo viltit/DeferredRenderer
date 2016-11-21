@@ -35,12 +35,12 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 			std::string child2Name = "SmallCuboid" + std::to_string(i) + "/" + std::to_string(j);
 			std::string lightName = "plight" + std::to_string(i);
 
-			_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ prefix * i * 3.0, j * 3.0f, i * 3.0 }, parentName);
+			_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ prefix * i * 5.0, j * 5.0f, i * 5.0 }, parentName);
 			_scene[parentName]->addPhysics(10.0f);
 			_scene[parentName]->transform.scale(glm::vec3{ 2.0f, 2.0f, 2.0f });
-			_scene.addChild(new Cuboid{ "xml/cubeSmall.xml" }, glm::vec3{ 2.0, 0.0f, 2.0 }, childName, parentName);
+			_scene.addChild(new Cuboid{ "xml/cubeSmall.xml" }, glm::vec3{ 3.0, 0.0f, 3.0 }, childName, parentName);
 			_scene[childName]->addPhysics(5.0f);
-			_scene.addChild(new Cuboid{ "xml/cubeSmall.xml" }, glm::vec3{ 0.0, prefix * 1.0f, 0.0 }, child2Name, childName);
+			_scene.addChild(new Cuboid{ "xml/cubeSmall.xml" }, glm::vec3{ 0.0, prefix * 3.0f, 0.0 }, child2Name, childName);
 			_scene[child2Name]->addPhysics(5.0f);
 			_scene[child2Name]->transform.scale(glm::vec3{ 0.6f, 0.6f, 0.6f });
 		}
