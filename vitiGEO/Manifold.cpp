@@ -70,14 +70,54 @@ void Manifold::updateConstraint(Contact & c) {
 	glm::vec3 tangent2 = glm::cross(c.cNormal, tangent1);
 	tangent2 = glm::normalize(tangent2);
 
-	float b = 0.0f; //normal collision constraint
+	/* normal collision constraint */
+	float b = 0.0f;
 
-	/* calculate Baumgarte Offset */
 	const float baumgarte_scalar = 0.2f;
 	const float baumgarte_slop = 0.01f;
 	float penetration_slop = fmin(c.depth + baumgarte_slop, 0.0f);
 	b += (baumgarte_scalar / PhysicEngine::instance()->timestep() * penetration_slop);
 
+	/* Elasticity */
+	const float elasticity = 0.8f;
+	const float elasticity_slop = 0.5f;
+
+	float elasticity_term = elasticity * glm::dot(c.cNormal,
+			- _objA->velocity()
+			- glm::cross(r1, _objA->angularVelocity())
+			+ _objB->velocity()
+			+ glm::cross(r2, _objB->angularVelocity())
+		);
+
+	b += fmin(elasticity_term + elasticity_slop, 0.0f);
+
+	/* Friction: */
+	float friction = _objA->friction() * _objB->friction();
+
+	/* and FINALLY, we are abe to set our constraints: */
+	c.normal = Constraint{
+		_objA, _objB,
+		-c.cNormal,
+		glm::cross(-r1, c.cNormal),
+		c.cNormal,
+		glm::cross(r2, c.cNormal),
+		b };
+
+	c.frictionA = Constraint{
+		_objA, _objB,
+		-tangent1 * friction,
+		glm::cross(-r1, tangent1) * friction,
+		tangent1 * friction,
+		glm::cross(r2, tangent1) * friction,
+		0.0f };
+
+	c.frictionB = Constraint{
+		_objA, _objB,
+		-tangent2 * friction,
+		glm::cross(-r1, tangent2) * friction,
+		tangent2 * friction,
+		glm::cross(r2, tangent2) * friction,
+		0.0f };
 }
 
 }

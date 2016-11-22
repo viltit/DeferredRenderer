@@ -4,6 +4,7 @@
 #include "PhysicShape.hpp"
 #include "AABB.hpp"
 #include "Manifold.hpp"
+#include "DebugInfo.hpp"
 
 namespace vitiGEO {
 
@@ -15,13 +16,12 @@ Collidor::~Collidor() {
 
 bool Collidor::AABBIntersect(const PhysicObject * obj1, const PhysicObject * obj2) {
 	if (AABBIntersection(obj1->aabb(), obj2->aabb())) {
-		//return true;
-		return false;
+		return true;
 	}
 	return false;
 }
 
-bool Collidor::SAT(const PhysicObject * obj1, const PhysicObject * obj2, CollidorData & out) {
+bool Collidor::SAT(PhysicObject * obj1, PhysicObject * obj2, CollidorData & out) {
 	CollidorData currentCollision;
 	CollidorData bestCollision;
 	bestCollision.depth = -FLT_MAX;
@@ -30,6 +30,7 @@ bool Collidor::SAT(const PhysicObject * obj1, const PhysicObject * obj2, Collido
 	std::vector<glm::vec3> axes;
 	obj1->shape()->collisionNormals(axes);
 	obj2->shape()->collisionNormals(axes);
+
 
 	/* Add edge-edge axes */
 	std::vector<glm::vec3> edges1;
@@ -55,9 +56,14 @@ bool Collidor::SAT(const PhysicObject * obj1, const PhysicObject * obj2, Collido
 		}
 	}   
 	out = bestCollision;
-	
-	//std::cout << "Depth: " << out.depth << std::endl;
-	//std::cout << "Hit normal: " << out.hitNormal.x << "/" << out.hitNormal.y << "/" << out.hitNormal.z << std::endl;
+
+	//Debug:
+	DebugInfo::instance()->addLine(
+		glm::vec4{ glm::vec3{ obj2->transform()->pos() }, 0.1f },
+		glm::vec4{ glm::vec3{ 3.0f * (obj2->transform()->pos() + bestCollision.hitNormal) }, 0.1f });
+	DebugInfo::instance()->addPoint(
+		glm::vec4{ glm::vec3{ 3.0f * (obj2->transform()->pos() + bestCollision.hitNormal) }, 0.5f });
+
 	return true;
 }
 

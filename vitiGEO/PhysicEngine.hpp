@@ -44,8 +44,9 @@ protected:
 	void collisionNarrow();	
 	void solveConstraint();
 
-	std::vector<PhysicObject*> _objects;
-	std::vector<Constraint*> _constraints;
+	std::vector<PhysicObject*>	_objects;
+	std::vector<Constraint*>	_constraints;
+	std::vector<Manifold*>		_manifolds;
 
 	std::vector<CollidorPair> _collisionBroad; // possible collision candidates after broad check
 

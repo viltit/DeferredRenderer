@@ -25,7 +25,7 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	_index = SCREEN_INDEX_APP;
 	RayTriangle::start();
 
-	/* Create the scene elements: */
+	/* Create the scene elements: 
 	int prefix = 1;
 	for (int i = -2; i < 3; i++) {
 		prefix = (prefix == 1) ? -1 : 1;
@@ -44,10 +44,15 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 			_scene[child2Name]->addPhysics(5.0f);
 			_scene[child2Name]->transform.scale(glm::vec3{ 0.6f, 0.6f, 0.6f });
 		}
-	}
+	}*/
 	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ 0.0f, 2.0f, -1.0f }, "Cuboid");
 	_scene["Cuboid"]->addPhysics(10.0f);
-	_scene["Cuboid"]->transform.scale(glm::vec3{ 2.0f, 2.0f, 2.0f });
+
+	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ 0.0f, 1.0f, 2.0f }, "Cuboid2");
+	_scene["Cuboid2"]->addPhysics(10.0f);
+
+	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ 2.0f, 2.0f, -1.0f }, "Cuboid3");
+	_scene["Cuboid3"]->addPhysics(10.0f);
 
 	/*_scene.addChild(new Model{ "Models/Old House/Old House 2 3D Models.obj", &_cam, false }, "Shark");
 	_scene["Shark"]->transform.scale(glm::vec3{ 0.05f, 0.05f, 0.05f });
@@ -285,16 +290,16 @@ void AppScreen::updateInput() {
 				_cam.move(Move::right);
 				break;
 			case SDLK_UP:
-				_scene["Cuboid"]->physics()->addForce(glm::vec3{ 0.0f, 0.0f, 1.0f });
+				_scene["Cuboid"]->physics()->addForce(glm::vec3{ 0.0f, 0.0f, 0.5f });
 				break;
 			case SDLK_DOWN:
-				_scene["Cuboid"]->physics()->addForce(glm::vec3{ 0.0f, 0.0f, -1.0f });
+				_scene["Cuboid"]->physics()->addForce(glm::vec3{ 0.0f, 0.0f, -0.5f });
 				break;
 			case SDLK_LEFT:
-				_scene["Cuboid"]->physics()->addForce(glm::vec3{ -1.0f, 0.0f, 0.0f });
+				_scene["Cuboid"]->physics()->addForce(glm::vec3{ -0.5f, 0.0f, 0.0f });
 				break;
 			case SDLK_RIGHT:
-				_scene["Cuboid"]->physics()->addForce(glm::vec3{ 1.0f, 0.0f, 0.0f });
+				_scene["Cuboid"]->physics()->addForce(glm::vec3{ 0.5f, 0.0f, 0.0f });
 				break;
 			case SDLK_F1:
 				_console.setVisible(_console.isVisible()? false : true);
@@ -339,6 +344,8 @@ void AppScreen::updateInput() {
 				break;
 			case SDLK_r:
 				_scene["Cuboid"]->physics()->setAngularVelocity(glm::vec3{ 0.1f, 0.1f, 0.1f });
+				_scene["Cuboid2"]->physics()->setAngularVelocity(glm::vec3{ 0.2f, 0.2f, 0.2f });
+				_scene["Cuboid3"]->physics()->setAngularVelocity(glm::vec3{ -0.3f, -0.3f, -0.3f });
 				break;
 			}
 			break;

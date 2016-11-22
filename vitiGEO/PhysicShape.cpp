@@ -1,6 +1,7 @@
 #include "PhysicShape.hpp"
 
 #include "PhysicObject.hpp"
+#include "DebugInfo.hpp"
 #include <assert.h>
 
 namespace vitiGEO {
@@ -36,6 +37,11 @@ void CuboidShape::collisionNormals(std::vector<glm::vec3>& axes) const {
 	axes.push_back(M * glm::vec3{ 1.0f, 0.0f, 0.0f });
 	axes.push_back(M * glm::vec3{ 0.0f, 1.0f, 0.0f });
 	axes.push_back(M * glm::vec3{ 0.0f, 0.0f, 1.0f });
+
+	int s = axes.size();
+	for (size_t i = 0; i < 3; i++)
+	DebugInfo::instance()->addLine( glm::vec4{glm::vec3{ _owner->transform()->pos()}, 0.1f},
+		glm::vec4{ glm::vec3{ _owner->transform()->pos() + axes[s - 1 - i] }, 0.1f });
 }
 
 

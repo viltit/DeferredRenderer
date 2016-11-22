@@ -2,6 +2,7 @@
 
 #include "PhysicObject.hpp"
 #include "Constraint.hpp"
+#include "Manifold.hpp"
 
 #include <iostream>
 #include <algorithm>
@@ -72,8 +73,15 @@ void PhysicEngine::collisionBroad() {
 void PhysicEngine::collisionNarrow() {
 	for (size_t i = 0; i < _collisionBroad.size(); i++) {
 		CollidorData data;
-		if (_collider.SAT(_collisionBroad[i].objA, _collisionBroad[i].objB, data));
-			//std::cout << "COLLISION\n";
+		if (_collider.SAT(_collisionBroad[i].objA, _collisionBroad[i].objB, data)) {
+			
+			/*	here would be the place to call a "bool onCollisionCallback()" function
+				in PhysicObject to implement special cases or to ignore the collision */
+			/*
+			Manifold* manifold = new Manifold{ _collisionBroad[i].objA, _collisionBroad[i].objB };
+			_collider.buildManifold(_collisionBroad[i].objA, _collisionBroad[i].objB, data, manifold);
+			_manifolds.push_back(manifold);*/
+		}
 	}
 }
 

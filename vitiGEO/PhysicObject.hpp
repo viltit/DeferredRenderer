@@ -40,6 +40,8 @@ public:
 
 	const glm::quat& orientation()	const	{ return _O; }
 
+	float friction()				const	{ return _friction; }
+
 	/* access to important member objects: */
 	Transform* transform()					{ return &_transform; }
 	AABB* aabb()					const	{ return _aabb; }
@@ -50,6 +52,7 @@ public:
 	void setAngularVelocity(const glm::vec3& av) { _av = av; }
 	void setForce(const glm::vec3& force)	{ _force = force; }
 	void addForce(const glm::vec3& force)	{ _force += force; }
+	void setFriction(float f)				{ _friction = f; }
 
 	void debugDraw() { _shape->debugDraw(); }
 
@@ -66,6 +69,8 @@ protected:
 	glm::vec3	_av;		// angular velocity
 	glm::vec3	_torque;
 	glm::mat3	_inertiaI;	//inverse of the inertia matrix
+
+	float _friction;
 
 	/* physic shapes: */
 	AABB*		_aabb;		// axis aligned bounding box

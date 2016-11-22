@@ -100,8 +100,8 @@ void Hull::drawDebug(const glm::mat4& M) {
 	/* draw all edges: */
 	for (const auto& e : _edges) {
 		DebugInfo::instance()->addLine(
-			glm::vec4{ glm::vec3{ M * glm::vec4{ _vertices[e.vStart].pos, 1.0f } } , 0.1f },
-			glm::vec4{ glm::vec3{ M * glm::vec4{ _vertices[e.vEnd].pos, 1.0f } }, 0.1f });
+			glm::vec4{ glm::vec3{ M * glm::vec4{ _vertices[e.vStart].pos, 1.0f } } , 0.03f },
+			glm::vec4{ glm::vec3{ M * glm::vec4{ _vertices[e.vEnd].pos, 1.0f } }, 0.03f });
 	}
 }
 

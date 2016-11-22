@@ -28,7 +28,7 @@ public:
 	/* broad phase check: */
 	bool AABBIntersect(const PhysicObject* obj1, const PhysicObject* obj2);
 	/* separating axis theorem: */
-	bool SAT(const PhysicObject* obj1, const PhysicObject* obj2, CollidorData& out);
+	bool SAT(PhysicObject* obj1, PhysicObject* obj2, CollidorData& out);
 
 	void buildManifold	(const PhysicObject* ob1, const PhysicObject* obj2, 
 						const CollidorData& collision, 
