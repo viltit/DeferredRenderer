@@ -9,6 +9,8 @@
 #include <vector>
 #include <glm/glm.hpp>
 
+#include "Constraint.hpp"
+
 namespace vitiGEO {
 
 class PhysicObject;
@@ -24,9 +26,9 @@ struct Contact {
 			depth   { depth }
 	{}
 
-	Constraint* normal;		// normal force constraint along the collision normal
-	Constraint* frictionA;	// friction force constraint along the contact plane (eg. perpendicular to the normal)
-	Constraint* frictionB;
+	Constraint normal;		// normal force constraint along the collision normal
+	Constraint frictionA;	// friction force constraint along the contact plane (eg. perpendicular to the normal)
+	Constraint frictionB;
 
 	glm::vec3 cNormal;
 	float depth;

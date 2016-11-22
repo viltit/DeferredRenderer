@@ -33,9 +33,15 @@ public:
 
 	void addImpulse();
 
+	void setSoftness(float s)	{ _softness = s; }
+	void setISumMin(float s)	{ _iSumMin = s; }
+	void setISumMax(float s)	{ _iSumMax = s; }
+
+	float iSum() const			{ return _iSum; }
+
 	/*	the solver needs to be adapted to the type of the constraint: 
 		it needs to be run BEFORE PhysicObject::update() */
-	virtual void preSolver(float deltaTime) = 0;
+	virtual void preSolver(float deltaTime) {};
 
 protected:
 	PhysicObject* _objA;
