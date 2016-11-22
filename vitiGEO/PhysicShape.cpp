@@ -33,15 +33,26 @@ glm::mat3 CuboidShape::inverseInertia(float invMass) const {
 }
 
 void CuboidShape::collisionNormals(std::vector<glm::vec3>& axes) const {
-	glm::mat3 M = glm::toMat3(_owner->orientation());
-	axes.push_back(M * glm::vec3{ 1.0f, 0.0f, 0.0f });
-	axes.push_back(M * glm::vec3{ 0.0f, 1.0f, 0.0f });
-	axes.push_back(M * glm::vec3{ 0.0f, 0.0f, 1.0f });
+	/* does NOT work:
+		glm::quat M = _owner->transform()->orientation();
+		
+		BUT this does: 
+	*/
+	glm::quat M = _owner->transform()->orientation();
 
-	int s = axes.size();
-	for (size_t i = 0; i < 3; i++)
-	DebugInfo::instance()->addLine( glm::vec4{glm::vec3{ _owner->transform()->pos()}, 0.1f},
-		glm::vec4{ glm::vec3{ _owner->transform()->pos() + axes[s - 1 - i] }, 0.1f });
+	glm::vec3 axis1 = M * glm::vec4{ 1.0f, 0.0f, 0.0f, 0.0f };
+	DebugInfo::instance()->addLine(glm::vec4{ glm::vec3{ _owner->transform()->pos() }, 0.1f },
+		glm::vec4{ glm::vec3{ _owner->transform()->pos() + axis1 }, 0.1f });
+	glm::vec3 axis2 = M * glm::vec4{ 0.0f, 1.0f, 0.0f, 0.0f };
+	DebugInfo::instance()->addLine(glm::vec4{ glm::vec3{ _owner->transform()->pos() }, 0.1f },
+		glm::vec4{ glm::vec3{ _owner->transform()->pos() + axis2 }, 0.1f });
+	glm::vec3 axis3 = M * glm::vec4{ 0.0f, 0.0f, 1.0f, 0.0f };
+	DebugInfo::instance()->addLine(glm::vec4{ glm::vec3{ _owner->transform()->pos() }, 0.1f },
+		glm::vec4{ glm::vec3{ _owner->transform()->pos() + axis3 }, 0.1f });
+
+	axes.push_back(M * glm::vec4{ 1.0f, 0.0f, 0.0f, 1.0f });
+	axes.push_back(M * glm::vec4{ 0.0f, 1.0f, 0.0f, 1.0f });
+	axes.push_back(M * glm::vec4{ 0.0f, 0.0f, 1.0f, 1.0f });
 }
 
 
