@@ -5,8 +5,6 @@
 #include "AABB.hpp"
 #include "Manifold.hpp"
 
-#include <list>
-
 namespace vitiGEO {
 
 Collidor::Collidor(){
@@ -121,8 +119,32 @@ void Collidor::buildManifold(const PhysicObject * obj1, const PhysicObject * obj
 	}
 
 	/* Clip the incident face to the adjacent edges of the reference face */
-	/*  GO ON HERE */
+	SutherlandHodgesonClipping(*incPoly, refAdjPlanes->size(), refAdjPlanes->data(), *incPoly, false);
+	
+	/* clip and remove any contact point that are above the reference face: */
+	SutherlandHodgesonClipping(*incPoly, 1, &refPlane, *incPoly, true);
 
+	/* we can now finally build the contact manifold: */
+	glm::vec3 startPoint = incPoly->back();
+	for (const auto& endPoint : *incPoly) {
+		float depth{ 0.0f };
+		glm::vec3 globalOnA;
+		glm::vec3 globalOnB;
+
+		if (flipped) {
+			depth = -(glm::dot(endPoint, collision.hitNormal)) - glm::dot(collision.hitNormal, polygon2.front());
+			globalOnA = endPoint + collision.hitNormal * depth;
+			globalOnB = endPoint;
+		}
+		else {
+			depth = glm::dot(endPoint, collision.hitNormal) - glm::dot(collision.hitNormal, polygon1.front());
+			globalOnA = endPoint;
+			globalOnB = endPoint - collision.hitNormal * depth;
+ 		}
+
+		manifold->addContact(globalOnA, globalOnB, collision.hitNormal, depth);
+		startPoint = endPoint;
+	}
 }
 
 void Collidor::addSATAxis(const glm::vec3& axis, std::vector<glm::vec3>& SATAxes) {

@@ -1,6 +1,6 @@
 #include "Hull.hpp"
 
-#include "../vitiGL/glRendererDebug.hpp"	//BAD, just to look if drenderer works
+#include "DebugInfo.hpp"
 
 namespace vitiGEO {
 
@@ -97,9 +97,11 @@ void Hull::minMaxOnAxis(const glm::vec3 & localAxis, int& outMin, int& outMax) c
 }
 
 void Hull::drawDebug(const glm::mat4& M) {
-	/* draw akk edges: */
+	/* draw all edges: */
 	for (const auto& e : _edges) {
-		vitiGL::glRendererDebug::instance()->addThickLine(M * glm::vec4{ _vertices[e.vStart].pos, 1.0f }, M * glm::vec4{ _vertices[e.vEnd].pos, 1.0f }, 0.1f);
+		DebugInfo::instance()->addLine(
+			glm::vec4{ glm::vec3{ M * glm::vec4{ _vertices[e.vStart].pos, 1.0f } } , 0.1f },
+			glm::vec4{ glm::vec3{ M * glm::vec4{ _vertices[e.vEnd].pos, 1.0f } }, 0.1f });
 	}
 }
 

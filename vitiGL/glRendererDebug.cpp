@@ -1,6 +1,7 @@
 #include "glRendererDebug.hpp"
 
 #include <iostream>
+#include <DebugInfo.hpp>
 
 namespace vitiGL {
 
@@ -29,6 +30,18 @@ void glRendererDebug::addThickLine(const glm::vec3 & start, const glm::vec3 & en
 }
 
 void glRendererDebug::draw(const Camera & cam) {
+	/* get the information from PhysicsEngine: */
+	std::vector<glm::vec4> linesStart = vitiGEO::DebugInfo::instance()->linesStart();
+	std::vector<glm::vec4> linesEnd = vitiGEO::DebugInfo::instance()->linesEnd();
+	std::vector<glm::vec4> points = vitiGEO::DebugInfo::instance()->points();
+
+	for (size_t i = 0; i < linesStart.size(); i++) {
+		addThickLine(glm::vec3{ linesStart[i] }, glm::vec3{ linesEnd[i] }, linesStart[i].w);
+	}
+	for (size_t i = 0; i < points.size(); i++) {
+		addPoint(glm::vec3{ points[i] }, points[i].w);
+	}
+
 	/* get the size in bytes for all data:*/
 	size_t size = _points.size() + _lines.size() + _tLines.size();
 	size = size * 4 * sizeof(float);
@@ -96,6 +109,9 @@ void glRendererDebug::draw(const Camera & cam) {
 	_points.clear();
 	_lines.clear();
 	_tLines.clear();
+
+	/* clear Physics Engine Debug: */
+	vitiGEO::DebugInfo::instance()->clear();
 }
 
 glRendererDebug::glRendererDebug()

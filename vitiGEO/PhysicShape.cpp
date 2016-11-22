@@ -133,7 +133,6 @@ void CuboidShape::calcIncidentReference(const glm::vec3 & axis, std::list<glm::v
 	}
 }
 
-
 void CuboidShape::debugDraw() {
 	glm::mat4 M = _owner->transform()->worldMatrix();
 	M = glm::scale(M, _halfSize);

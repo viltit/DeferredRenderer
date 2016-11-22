@@ -179,7 +179,7 @@ void AppScreen::update() {
 
 void AppScreen::draw() {
 	_drender.draw();
-	//PhysicEngine::instance()->drawDebug();
+	PhysicEngine::instance()->drawDebug();
 	_gui.draw();
 }
 

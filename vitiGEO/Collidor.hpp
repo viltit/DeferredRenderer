@@ -3,7 +3,9 @@
 #pragma once
 
 #include <vector>
+#include <list>
 #include <glm/glm.hpp>
+#include "Geometry.hpp"
 
 namespace vitiGEO {
 

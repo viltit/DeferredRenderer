@@ -148,6 +148,7 @@
     <ClInclude Include="AABB.hpp" />
     <ClInclude Include="Collidor.hpp" />
     <ClInclude Include="Constraint.hpp" />
+    <ClInclude Include="DebugInfo.hpp" />
     <ClInclude Include="Frustum.hpp" />
     <ClInclude Include="Geometry.hpp" />
     <ClInclude Include="Hull.hpp" />

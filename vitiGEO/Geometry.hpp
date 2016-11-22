@@ -20,6 +20,13 @@ public:
 	Plane		(const glm::vec3& normal, float distance, bool normalize = true);
 	~Plane		();
 
+	Plane operator = (const Plane& plane) {
+		if (&plane == this) return *this;
+		_normal = plane._normal;
+		_distance = plane._distance;
+		return *this;
+	}
+
 	/* test if a sphere is left or right of the plane (relative to (0, 0, 0)) : */
 	bool		sphereInPlane(const glm::vec3& pos, float radius) const;
 
