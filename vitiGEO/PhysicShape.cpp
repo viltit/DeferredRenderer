@@ -40,24 +40,24 @@ void CuboidShape::collisionNormals(std::vector<glm::vec3>& axes) const {
 	*/
 	glm::quat M = _owner->transform()->orientation();
 
-	glm::vec3 axis1 = M * glm::vec4{ 1.0f, 0.0f, 0.0f, 0.0f };
+	glm::vec3 axis1 = M * glm::vec3{ 1.0f, 0.0f, 0.0f };
 	DebugInfo::instance()->addLine(glm::vec4{ glm::vec3{ _owner->transform()->pos() }, 0.1f },
 		glm::vec4{ glm::vec3{ _owner->transform()->pos() + axis1 }, 0.1f });
-	glm::vec3 axis2 = M * glm::vec4{ 0.0f, 1.0f, 0.0f, 0.0f };
+	glm::vec3 axis2 = M * glm::vec3{ 0.0f, 1.0f, 0.0f };
 	DebugInfo::instance()->addLine(glm::vec4{ glm::vec3{ _owner->transform()->pos() }, 0.1f },
 		glm::vec4{ glm::vec3{ _owner->transform()->pos() + axis2 }, 0.1f });
-	glm::vec3 axis3 = M * glm::vec4{ 0.0f, 0.0f, 1.0f, 0.0f };
+	glm::vec3 axis3 = M * glm::vec3{ 0.0f, 0.0f, 1.0f };
 	DebugInfo::instance()->addLine(glm::vec4{ glm::vec3{ _owner->transform()->pos() }, 0.1f },
 		glm::vec4{ glm::vec3{ _owner->transform()->pos() + axis3 }, 0.1f });
 
-	axes.push_back(M * glm::vec4{ 1.0f, 0.0f, 0.0f, 1.0f });
-	axes.push_back(M * glm::vec4{ 0.0f, 1.0f, 0.0f, 1.0f });
-	axes.push_back(M * glm::vec4{ 0.0f, 0.0f, 1.0f, 1.0f });
+	axes.push_back(M * glm::vec3{ 1.0f, 0.0f, 0.0f });
+	axes.push_back(M * glm::vec3{ 0.0f, 1.0f, 0.0f });
+	axes.push_back(M * glm::vec3{ 0.0f, 0.0f, 1.0f });
 }
 
 
 void CuboidShape::edges(std::vector<glm::vec3>& edges) const {
-	glm::mat4 M = glm::toMat4(_owner->orientation());
+	glm::mat4 M = _owner->transform()->worldMatrix();
 	M = glm::scale(M, _halfSize);
 
 	for (size_t i = 0; i < _hull.numEdges(); ++i) {

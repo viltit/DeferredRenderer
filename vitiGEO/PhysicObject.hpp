@@ -38,7 +38,7 @@ public:
 	float invMass()					const	{ return _massI; }
 	const glm::mat3& invInertia()	const	{ return _inertiaI; }
 
-	const glm::quat& orientation()	const	{ return _O; }
+	//const glm::quat& orientation()	const	{ return _O; }
 
 	float friction()				const	{ return _friction; }
 

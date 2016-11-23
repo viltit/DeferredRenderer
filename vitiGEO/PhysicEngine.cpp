@@ -77,10 +77,10 @@ void PhysicEngine::collisionNarrow() {
 			
 			/*	here would be the place to call a "bool onCollisionCallback()" function
 				in PhysicObject to implement special cases or to ignore the collision */
-			/*
+			/**/
 			Manifold* manifold = new Manifold{ _collisionBroad[i].objA, _collisionBroad[i].objB };
 			_collider.buildManifold(_collisionBroad[i].objA, _collisionBroad[i].objB, data, manifold);
-			_manifolds.push_back(manifold);*/
+			_manifolds.push_back(manifold);
 		}
 	}
 }
