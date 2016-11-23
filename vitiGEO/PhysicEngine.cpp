@@ -19,7 +19,7 @@ void PhysicEngine::update(const unsigned int& deltaTime) {
 	_timeAccum += seconds;
 
 	for (Manifold* m : _manifolds) {
-		m->debugDraw();
+		//m->debugDraw();
 	}
 
 	/*	maintains correctness of differentiation-mathematics, but MAY
@@ -105,10 +105,9 @@ void PhysicEngine::solveConstraint() {
 
 
 	for (size_t i = 0; i < SOLVER_ITERATIONS; i++) {
-		/*
 		for (Manifold* m : _manifolds) {
 			m->applyImpulse();
-		}*/
+		}
 
 		for (Constraint* c : _constraints)
 			c->addImpulse();

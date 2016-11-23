@@ -43,7 +43,7 @@ PhysicObject::~PhysicObject() {
 void PhysicObject::update(const float& deltaTime) {
 	/* update velocity and position: */
 	_v += _force * _massI * deltaTime;
-	_v /= _friction;
+	//_v /= _friction;
 	_transform.move(_v * deltaTime);
 
 	/* update angular velocity and rotation: */

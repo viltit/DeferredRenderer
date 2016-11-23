@@ -82,6 +82,7 @@ void glRendererDebug::draw(const Camera & cam) {
 
 	/* draw: */
 	glEnable(GL_BLEND);
+
 	if (!_points.empty()) {
 		_pShader.on();
 		cam.setVPUniform(_pShader);

@@ -57,13 +57,6 @@ bool Collidor::SAT(PhysicObject * obj1, PhysicObject * obj2, CollidorData & out)
 	}   
 	out = bestCollision;
 
-	//Debug:
-	DebugInfo::instance()->addLine(
-		glm::vec4{ glm::vec3{ obj2->transform()->pos() }, 0.1f },
-		glm::vec4{ glm::vec3{ 3.0f * (obj2->transform()->pos() + bestCollision.hitNormal) }, 0.1f });
-	DebugInfo::instance()->addPoint(
-		glm::vec4{ glm::vec3{ 3.0f * (obj2->transform()->pos() + bestCollision.hitNormal) }, 0.5f });
-
 	return true;
 }
 
@@ -72,9 +65,6 @@ bool Collidor::SAT(PhysicObject * obj1, PhysicObject * obj2, CollidorData & out)
 void Collidor::buildManifold(const PhysicObject * obj1, const PhysicObject * obj2, 
 	const CollidorData & collision, Manifold * manifold) 
 {
-
-	std::cout << "Collision depth: " << collision.depth << std::endl;
-
 	assert(manifold);
 
 	/* prepare variables: */
@@ -152,6 +142,10 @@ void Collidor::buildManifold(const PhysicObject * obj1, const PhysicObject * obj
  		}
 
 		manifold->addContact(globalOnA, globalOnB, collision.hitNormal, depth);
+
+		DebugInfo::instance()->addPoint( glm::vec4{ globalOnA, 0.2f } );
+		DebugInfo::instance()->addPoint(glm::vec4{ globalOnB, 0.1f });
+
 		startPoint = endPoint;
 	}
 }
