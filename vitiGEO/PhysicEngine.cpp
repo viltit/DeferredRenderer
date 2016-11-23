@@ -3,6 +3,7 @@
 #include "PhysicObject.hpp"
 #include "Constraint.hpp"
 #include "Manifold.hpp"
+#include "DebugInfo.hpp"
 
 #include <iostream>
 #include <algorithm>
@@ -18,8 +19,12 @@ void PhysicEngine::update(const unsigned int& deltaTime) {
 	float seconds = float(deltaTime) / 1000.0f;
 	_timeAccum += seconds;
 
+	/* debug: */
 	for (Manifold* m : _manifolds) {
 		//m->debugDraw();
+	}
+	for (auto* o : _objects) {
+		std::cout << "velocity: " << o->velocity().x << "/" << o->velocity().y << "/" << o->velocity().z << std::endl;
 	}
 
 	/*	maintains correctness of differentiation-mathematics, but MAY

@@ -9,6 +9,7 @@
 #include "vitiGEO/AABB.hpp"
 #include "vitiGL/AABBShape.hpp"
 #include "vitiGEO/Constraint.hpp"
+#include "vitiGEO/DebugInfo.hpp"
 #include "vitiGL/RayTriangle.hpp"
 
 using namespace vitiGL;
@@ -48,8 +49,8 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ 0.0f, 2.0f, -1.0f }, "Cuboid");
 	_scene["Cuboid"]->addPhysics(10.0f);
 
-	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ 0.0f, 1.0f, 2.0f }, "Cuboid2");
-	_scene["Cuboid2"]->addPhysics(10.0f);
+	//_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ 0.0f, 1.0f, 2.0f }, "Cuboid2");
+	//_scene["Cuboid2"]->addPhysics(10.0f);
 
 	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ 2.0f, 2.0f, -1.0f }, "Cuboid3");
 	_scene["Cuboid3"]->addPhysics(10.0f);
@@ -181,6 +182,10 @@ void AppScreen::update() {
 	/* update all components: */
 	updateInput();
 	PhysicEngine::instance()->update(frameTime);
+
+	//DEBUG: Track the cube
+	vitiGEO::DebugInfo::instance()->addLine(glm::vec4{ _cam.pos() + _cam.dir(), 0.05f }, glm::vec4{ _scene["Cuboid"]->transform.pos(), 0.05f });
+	
 	_scene.update(frameTime);
 	_cam.update();
 	_gui.update(frameTime);
