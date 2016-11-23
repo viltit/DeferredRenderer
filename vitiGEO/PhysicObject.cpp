@@ -14,7 +14,7 @@ PhysicObject::PhysicObject(Transform& transform, AABB* aabb, const std::vector<g
 		_massI		{ 1.0f / mass },
 		_O			{ glm::quat{ }},
 		_aabb		{ aabb },
-		_friction	{ 4.0f }
+		_friction	{ 0.01f }
 {
 	assert(_aabb);
 

@@ -26,26 +26,26 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	_index = SCREEN_INDEX_APP;
 	RayTriangle::start();
 
-	/* Create the scene elements: 
+	/* Create the scene elements: */
 	int prefix = 1;
-	for (int i = -2; i < 3; i++) {
+	for (int i = -3; i < 3; i++) {
 		prefix = (prefix == 1) ? -1 : 1;
-		for (int j = 1; j < 5; j++) {
+		for (int j = 1; j < 7; j++) {
 			std::string parentName = "Cube" + std::to_string(i) + "/" + std::to_string(j);
-			std::string childName = "Cuboid" + std::to_string(i) + "/" + std::to_string(j);
-			std::string child2Name = "SmallCuboid" + std::to_string(i) + "/" + std::to_string(j);
+			//std::string childName = "Cuboid" + std::to_string(i) + "/" + std::to_string(j);
+			//std::string child2Name = "SmallCuboid" + std::to_string(i) + "/" + std::to_string(j);
 			std::string lightName = "plight" + std::to_string(i);
 
-			_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ prefix * i * 5.0, j * 5.0f, i * 5.0 }, parentName);
-			_scene[parentName]->addPhysics(10.0f);
+			_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ prefix * i * 4.0, j * 4.0f, i * 4.0 }, parentName);
+			_scene[parentName]->addPhysics(40.0f);
 			_scene[parentName]->transform.scale(glm::vec3{ 2.0f, 2.0f, 2.0f });
-			_scene.addChild(new Cuboid{ "xml/cubeSmall.xml" }, glm::vec3{ 3.0, 0.0f, 3.0 }, childName, parentName);
-			_scene[childName]->addPhysics(5.0f);
-			_scene.addChild(new Cuboid{ "xml/cubeSmall.xml" }, glm::vec3{ 0.0, prefix * 3.0f, 0.0 }, child2Name, childName);
-			_scene[child2Name]->addPhysics(5.0f);
-			_scene[child2Name]->transform.scale(glm::vec3{ 0.6f, 0.6f, 0.6f });
+			//_scene.addChild(new Cuboid{ "xml/cubeSmall.xml" }, glm::vec3{ 3.0, 0.0f, 3.0 }, childName, parentName);
+			//_scene[childName]->addPhysics(5.0f);
+			//_scene.addChild(new Cuboid{ "xml/cubeSmall.xml" }, glm::vec3{ 0.0, prefix * 3.0f, 0.0 }, child2Name, childName);
+			//_scene[child2Name]->addPhysics(5.0f);
+			//_scene[child2Name]->transform.scale(glm::vec3{ 0.6f, 0.6f, 0.6f });
 		}
-	}*/
+	}
 	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ 0.0f, 2.0f, -1.0f }, "Cuboid");
 	_scene["Cuboid"]->addPhysics(10.0f);
 
@@ -101,13 +101,12 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	};
 	PhysicEngine::instance()->addConstraint(c);*/
 
-	/*
 	pLight* plight2 = new pLight{ &_cam };
 	plight2->setProperty(lightProps::pos, glm::vec3{ 0.0f, 20.0f, 20.0f });
 	plight2->setProperty(lightProps::diffuse, glm::vec3{ 10.0f, 5.0f, 0.0f });
 	plight2->setProperty(lightProps::specular, glm::vec3{ 20.0f, 10.0f, 0.0f });
 
-	_scene.addChild(plight2, "plight2");*/
+	_scene.addChild(plight2, "plight2");
 
 	_cam.setPos(glm::vec3{ -4.0f, 8.0f, -5.0f });
 	_cam.setTarget(glm::vec3{ 0.0f, 0.0f, 0.0f });
