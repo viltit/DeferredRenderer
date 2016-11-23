@@ -72,6 +72,9 @@ bool Collidor::SAT(PhysicObject * obj1, PhysicObject * obj2, CollidorData & out)
 void Collidor::buildManifold(const PhysicObject * obj1, const PhysicObject * obj2, 
 	const CollidorData & collision, Manifold * manifold) 
 {
+
+	std::cout << "Collision depth: " << collision.depth << std::endl;
+
 	assert(manifold);
 
 	/* prepare variables: */

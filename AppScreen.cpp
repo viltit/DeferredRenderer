@@ -294,21 +294,39 @@ void AppScreen::updateInput() {
 			case SDLK_d:
 				_cam.move(Move::right);
 				break;
-			case SDLK_UP:
-				_scene["Cuboid"]->physics()->addForce(glm::vec3{ 0.0f, 0.0f, 0.5f });
+			
+			/* DEBUG: Control the cube :*/
+			case SDLK_KP_8:
+				_scene["Cuboid"]->physics()->setVelocity(glm::vec3{ 0.0f, 0.0f, 0.5f });
 				break;
-			case SDLK_DOWN:
-				_scene["Cuboid"]->physics()->addForce(glm::vec3{ 0.0f, 0.0f, -0.5f });
+			case SDLK_KP_2:
+				_scene["Cuboid"]->physics()->setVelocity(glm::vec3{ 0.0f, 0.0f, -0.5f });
 				break;
-			case SDLK_LEFT:
-				_scene["Cuboid"]->physics()->addForce(glm::vec3{ -0.5f, 0.0f, 0.0f });
+			case SDLK_KP_4:
+				_scene["Cuboid"]->physics()->setVelocity(glm::vec3{ -0.5f, 0.0f, 0.0f });
 				break;
-			case SDLK_RIGHT:
-				_scene["Cuboid"]->physics()->addForce(glm::vec3{ 0.5f, 0.0f, 0.0f });
+			case SDLK_KP_6:
+				_scene["Cuboid"]->physics()->setVelocity(glm::vec3{ 0.5f, 0.0f, 0.0f });
+				break;
+			case SDLK_KP_7:
+				_scene["Cuboid"]->physics()->setVelocity(glm::vec3{ 0.0f, 0.5f, 0.0f });
+				break;
+			case SDLK_KP_1:
+				_scene["Cuboid"]->physics()->setVelocity(glm::vec3{ 0.0f, -0.5f, 0.0f });
+				break;
+			case SDLK_KP_9:
+				_scene["Cuboid"]->physics()->setAngularVelocity(glm::vec3{ 0.0f, 0.5f, 0.0f });
+				break;
+			case SDLK_KP_3:
+				_scene["Cuboid"]->physics()->setAngularVelocity(glm::vec3{ 0.0f, -0.5f, 0.0f });
+				break;
+			case SDLK_KP_5:
+				_scene["Cuboid"]->physics()->setVelocity(glm::vec3{0.0f, 0.0f, 0.0f});
+				_scene["Cuboid"]->physics()->setAngularVelocity(glm::vec3{ 0.0f, 0.0f, 0.0f });
 				break;
 			case SDLK_F1:
 				_console.setVisible(_console.isVisible()? false : true);
-				break;	
+				break;
 			//debug:
 			case SDLK_F2:
 				_scene.switchCull();
