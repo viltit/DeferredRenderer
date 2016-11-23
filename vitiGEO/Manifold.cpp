@@ -3,6 +3,8 @@
 #include "PhysicObject.hpp"
 #include "PhysicEngine.hpp"
 
+#include "DebugInfo.hpp"
+
 namespace vitiGEO {
 
 Manifold::Manifold(PhysicObject * A, PhysicObject * B)
@@ -46,6 +48,20 @@ void Manifold::preSolver(float deltaTime) {
 }
 
 void Manifold::debugDraw() const {
+	if (_contacts.size() == 0) return;
+
+	const Contact& c = _contacts.back();
+
+	glm::vec3 globalOnA1 = _objA->transform()->pos() + _contacts.back().relPosA;
+	for (const Contact& c : _contacts) {
+		glm::vec3 globalOnA2 = _objA->transform()->pos() + c.relPosA;
+		glm::vec3 globalOnB = _objB->transform()->pos() + c.relPosB;
+
+		DebugInfo::instance()->addLine(glm::vec4{ globalOnA1, 0.1f }, glm::vec4{ globalOnA2, 0.1f });
+		DebugInfo::instance()->addPoint(glm::vec4{ globalOnA2, 0.2f });
+		DebugInfo::instance()->addLine(glm::vec4{ globalOnB, 0.1f }, glm::vec4{ globalOnA2, 0.1f });
+		globalOnA1 = globalOnA2;
+	}
 }
 
 void Manifold::updateConstraint(Contact & c) {

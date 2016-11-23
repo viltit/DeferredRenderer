@@ -18,6 +18,10 @@ void PhysicEngine::update(const unsigned int& deltaTime) {
 	float seconds = float(deltaTime) / 1000.0f;
 	_timeAccum += seconds;
 
+	for (Manifold* m : _manifolds) {
+		m->debugDraw();
+	}
+
 	/*	maintains correctness of differentiation-mathematics, but MAY
 		be a problem on very low fps: */
 	while (_timeAccum >= _timestep) {
@@ -47,6 +51,12 @@ PhysicEngine::PhysicEngine() {
 }
 
 void PhysicEngine::updatePhysics() {
+
+	for (Manifold* m : _manifolds) {
+		delete m;
+	}
+	_manifolds.clear(),
+
 	collisionBroad();
 	collisionNarrow();
 
@@ -86,10 +96,20 @@ void PhysicEngine::collisionNarrow() {
 }
 
 void PhysicEngine::solveConstraint() {
+	for (Manifold* m : _manifolds) {
+		m->preSolver(_timestep);
+	}
+
 	for (Constraint* c : _constraints)
-		c->preSolver(_timestep);
+		c->preSolver(_timestep); 
+
 
 	for (size_t i = 0; i < SOLVER_ITERATIONS; i++) {
+		/*
+		for (Manifold* m : _manifolds) {
+			m->applyImpulse();
+		}*/
+
 		for (Constraint* c : _constraints)
 			c->addImpulse();
 	}

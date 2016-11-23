@@ -113,6 +113,11 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 
 	initGUI();
 	_timer.on();
+
+	/* test: */
+	vitiGEO::Plane plane { glm::vec3{ 0.0f, 1.0f, 0.0f }, -1.0f };
+	bool b = plane.pointInPlane(glm::vec3{ 1.0f, 1.0f, 0.0f });
+	std::cout << "Point in Plane: " << b << std::endl;
 }
 
 

@@ -124,17 +124,11 @@ void Collidor::buildManifold(const PhysicObject * obj1, const PhysicObject * obj
 		flipped = true;
 	}
 
-	std::cout << "IncPoly size: " << incPoly->size() << std::endl;
-
 	/* Clip the incident face to the adjacent edges of the reference face */
 	SutherlandHodgesonClipping(*incPoly, refAdjPlanes->size(), refAdjPlanes->data(), *incPoly, false);
-
-	std::cout << "IncPoly size: " << incPoly->size() << std::endl;
 	
 	/* clip and remove any contact point that are above the reference face: */
 	SutherlandHodgesonClipping(*incPoly, 1, &refPlane, *incPoly, true);
-
-	std::cout << "IncPoly size: " << incPoly->size() << std::endl;
 
 	/* we can now finally build the contact manifold: */
 	glm::vec3 startPoint = incPoly->back();
@@ -235,6 +229,7 @@ void Collidor::SutherlandHodgesonClipping(const std::list<glm::vec3>& inPoly, in
 			startPoint = endPoint;
 		}
 	}
+
 	outPoly = *output; //may be wrong
 }
 

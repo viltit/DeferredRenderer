@@ -20,8 +20,8 @@ bool Plane::sphereInPlane(const glm::vec3 & pos, float radius) const {
 }
 
 bool Plane::pointInPlane(const glm::vec3 & point) const {
-	if (fabs(glm::dot(_normal, point) + _distance) < _THRESHOLD) return true;
-	return false;
+	if (glm::dot(_normal, point) + _distance < -_THRESHOLD) return false;
+	return true;
 }
 
 glm::vec3 Plane::planeEdgeIntersection(const glm::vec3 & start, const glm::vec3 & end) const {

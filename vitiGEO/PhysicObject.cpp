@@ -14,7 +14,7 @@ PhysicObject::PhysicObject(Transform& transform, AABB* aabb, const std::vector<g
 		_massI		{ 1.0f / mass },
 		_O			{ glm::quat{ }},
 		_aabb		{ aabb },
-		_friction	{ 0.5f }
+		_friction	{ 4.0f }
 {
 	assert(_aabb);
 
@@ -43,7 +43,7 @@ PhysicObject::~PhysicObject() {
 void PhysicObject::update(const float& deltaTime) {
 	/* update velocity and position: */
 	_v += _force * _massI * deltaTime;
-	_v *= _friction;
+	_v /= _friction;
 	_transform.move(_v * deltaTime);
 
 	/* update angular velocity and rotation: */
