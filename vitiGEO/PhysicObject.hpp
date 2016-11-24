@@ -30,22 +30,22 @@ public:
 
 	void remove();
 
+	/* access to important member objects: */
+	Transform* transform() { return &_transform; }
+	AABB* aabb()					const { return _aabb; }
+	IPhysicShape* shape()			const { return _shape; }
+
 	/* getters: */
 	const glm::vec3& velocity()		const	{ return _v; }
 	const glm::vec3& angularVelocity() const { return _av; }
 	const glm::vec3& force()		const	{ return _force; }
-
 	float invMass()					const	{ return _massI; }
 	const glm::mat3& invInertia()	const	{ return _inertiaI; }
 
-	//const glm::quat& orientation()	const	{ return _O; }
-
 	float friction()				const	{ return _friction; }
 
-	/* access to important member objects: */
-	Transform* transform()					{ return &_transform; }
-	AABB* aabb()					const	{ return _aabb; }
-	IPhysicShape* shape()			const	{ return _shape; }
+	bool hasG()						const	{ return _hasG; }
+	bool isActive()					const	{ return _isActive; }
 
 	/* setters: */
 	void setVelocity(const glm::vec3& v)	{ _v = v; }
@@ -54,7 +54,10 @@ public:
 	void addForce(const glm::vec3& force)	{ _force += force; }
 	void setFriction(float f)				{ _friction = f; }
 
-	void debugDraw() { _shape->debugDraw(); }
+	void debugDraw()						{ _shape->debugDraw(); }
+
+	void setG(bool g)						{ _hasG = g; }
+	void setActive(bool a)					{ _isActive = a; }
 
 protected:
 	Transform&	_transform;	// holds position, rotation and scale
@@ -75,6 +78,11 @@ protected:
 	/* physic shapes: */
 	AABB*		_aabb;		// axis aligned bounding box
 	IPhysicShape* _shape;	// holds the vertices
+
+	/* boolean parameters: */
+	bool	_isActive;		// object will still count in collision detection, but will not move itself
+	bool	_hasG;			// apply gravity;
+
 };
 }
 

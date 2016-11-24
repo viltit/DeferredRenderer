@@ -14,13 +14,14 @@ PhysicObject::PhysicObject(Transform& transform, AABB* aabb, const std::vector<g
 		_massI		{ 1.0f / mass },
 		_O			{ glm::quat{ }},
 		_aabb		{ aabb },
-		_friction	{ 0.01f }
+		_friction	{ 0.01f },
+		_isActive	{ true },
+		_hasG		{ true }
 {
 	assert(_aabb);
 
 	/* create the shape: 
-		TO DO: switch depending on shape type */
-	std::cout << _aabb->dimension().x / 2.0 << "/" << _aabb->dimension().y / 2.0f << "/" << _aabb->dimension().z / 2.0f << std::endl;
+		TO DO: switch depending on shape type. We assume everything is a cube now: */
 	_shape = new CuboidShape{ this, _aabb->dimension() * 0.5f };
 
 	_inertiaI = _shape->inverseInertia(_massI);
@@ -42,6 +43,8 @@ PhysicObject::~PhysicObject() {
 	we can add stuff like friction later
 */
 void PhysicObject::update(const float& deltaTime) {
+	if (!_isActive) return;
+
 	/* update velocity and position: */
 	_v += _force * _massI * deltaTime;
 	//_v /= _friction;

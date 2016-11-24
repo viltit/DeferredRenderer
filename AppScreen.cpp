@@ -49,12 +49,6 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ 0.0f, 2.0f, -1.0f }, "Cuboid");
 	_scene["Cuboid"]->addPhysics(10.0f);
 
-	//_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ 0.0f, 1.0f, 2.0f }, "Cuboid2");
-	//_scene["Cuboid2"]->addPhysics(10.0f);
-
-	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ 2.0f, 2.0f, -1.0f }, "Cuboid3");
-	_scene["Cuboid3"]->addPhysics(10.0f);
-
 	/*_scene.addChild(new Model{ "Models/Old House/Old House 2 3D Models.obj", &_cam, false }, "Shark");
 	_scene["Shark"]->transform.scale(glm::vec3{ 0.05f, 0.05f, 0.05f });
 	_scene["Shark"]->transform.setPos(glm::vec3{ -5.0f, 0.0f, -5.0f });*/
@@ -64,9 +58,11 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 
 	_scene.addChild(new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ -3.0f, -3.0f, -3.0f }, "Floor");
 	_scene["Floor"]->addPhysics(10000.0f);
+	_scene["Floor"]->physics()->setG(false);
 
 	_scene.addChild(new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ 20.0f, 7.0f, -3.0f }, "Wall");
 	_scene["Wall"]->addPhysics(10000.0f);
+	_scene["Wall"]->physics()->setG(true);
 	SceneNode* wall = _scene.findByName("Wall");
 	wall->transform.rotate(90.0f, glm::vec3{ 0.0f, 0.0f, 1.0f });
 
