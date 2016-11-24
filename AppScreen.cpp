@@ -63,7 +63,10 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 
 
 	_scene.addChild(new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ -3.0f, -3.0f, -3.0f }, "Floor");
+	_scene["Floor"]->addPhysics(10000.0f);
+
 	_scene.addChild(new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ 20.0f, 7.0f, -3.0f }, "Wall");
+	_scene["Wall"]->addPhysics(10000.0f);
 	SceneNode* wall = _scene.findByName("Wall");
 	wall->transform.rotate(90.0f, glm::vec3{ 0.0f, 0.0f, 1.0f });
 
@@ -301,28 +304,28 @@ void AppScreen::updateInput() {
 			
 			/* DEBUG: Control the cube :*/
 			case SDLK_KP_8:
-				_scene["Cuboid"]->physics()->setVelocity(glm::vec3{ 0.0f, 0.0f, 0.5f });
+				_scene["Cuboid"]->physics()->setVelocity(glm::vec3{ 0.0f, 0.0f, 1.0f });
 				break;
 			case SDLK_KP_2:
-				_scene["Cuboid"]->physics()->setVelocity(glm::vec3{ 0.0f, 0.0f, -0.5f });
+				_scene["Cuboid"]->physics()->setVelocity(glm::vec3{ 0.0f, 0.0f, -0.0f });
 				break;
 			case SDLK_KP_4:
-				_scene["Cuboid"]->physics()->setVelocity(glm::vec3{ -0.5f, 0.0f, 0.0f });
+				_scene["Cuboid"]->physics()->setVelocity(glm::vec3{ -1.0f, 0.0f, 0.0f });
 				break;
 			case SDLK_KP_6:
-				_scene["Cuboid"]->physics()->setVelocity(glm::vec3{ 0.5f, 0.0f, 0.0f });
+				_scene["Cuboid"]->physics()->setVelocity(glm::vec3{ 1.0f, 0.0f, 0.0f });
 				break;
 			case SDLK_KP_7:
-				_scene["Cuboid"]->physics()->setVelocity(glm::vec3{ 0.0f, 0.5f, 0.0f });
+				_scene["Cuboid"]->physics()->setVelocity(glm::vec3{ 0.0f, 1.0f, 0.0f });
 				break;
 			case SDLK_KP_1:
-				_scene["Cuboid"]->physics()->setVelocity(glm::vec3{ 0.0f, -0.5f, 0.0f });
+				_scene["Cuboid"]->physics()->setVelocity(glm::vec3{ 0.0f, -1.0f, 0.0f });
 				break;
 			case SDLK_KP_9:
-				_scene["Cuboid"]->physics()->setAngularVelocity(glm::vec3{ 0.0f, 0.5f, 0.0f });
+				_scene["Cuboid"]->physics()->setAngularVelocity(glm::vec3{ 0.0f, 1.0f, 0.0f });
 				break;
 			case SDLK_KP_3:
-				_scene["Cuboid"]->physics()->setAngularVelocity(glm::vec3{ 0.0f, -0.5f, 0.0f });
+				_scene["Cuboid"]->physics()->setAngularVelocity(glm::vec3{ 0.0f, -1.0f, 0.0f });
 				break;
 			case SDLK_KP_5:
 				_scene["Cuboid"]->physics()->setVelocity(glm::vec3{0.0f, 0.0f, 0.0f});

@@ -131,6 +131,10 @@ void AABB::transform(const glm::mat4 & M) {
 	}
 }
 
+glm::vec3 AABB::dimension() const {
+	return glm::vec3{ _oMax.x - _oMin.x, _oMax.y - _oMin.y, _oMax.z - _oMin.z };
+}
+
 /* Corners: 
 	i = 0: top right front
 	i = 1: top left front

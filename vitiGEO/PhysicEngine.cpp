@@ -23,9 +23,6 @@ void PhysicEngine::update(const unsigned int& deltaTime) {
 	for (Manifold* m : _manifolds) {
 		//m->debugDraw();
 	}
-	for (auto* o : _objects) {
-		std::cout << "velocity: " << o->velocity().x << "/" << o->velocity().y << "/" << o->velocity().z << std::endl;
-	}
 
 	/*	maintains correctness of differentiation-mathematics, but MAY
 		be a problem on very low fps: */

@@ -29,6 +29,9 @@ public:
 
 	void transform(const glm::mat4& M);
 
+	/* get height, width and depth of initial aabb: */
+	glm::vec3 dimension() const;
+
 	/* get one of the AABBs eight corners (i has to be in range [0, 7]:) */
 	glm::vec3 corner(int i) const;
 

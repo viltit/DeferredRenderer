@@ -123,7 +123,10 @@ void Collidor::buildManifold(const PhysicObject * obj1, const PhysicObject * obj
 	SutherlandHodgesonClipping(*incPoly, 1, &refPlane, *incPoly, true);
 
 	/* we can now finally build the contact manifold: */
-	if (incPoly->size() == 0) return;
+	if (incPoly->size() == 0) {
+		return;
+		std::cout << "incPoly.size() is null!\n";
+	}
 	glm::vec3 startPoint = incPoly->back();
 	for (const auto& endPoint : *incPoly) {
 		float depth{ 0.0f };
@@ -132,13 +135,6 @@ void Collidor::buildManifold(const PhysicObject * obj1, const PhysicObject * obj
 
 		if (flipped) {
 			depth = -(glm::dot(endPoint, collision.hitNormal) - glm::dot(collision.hitNormal, polygon2.front()));
-
-			std::cout << "collision.hitNormal: " << collision.hitNormal.x << "/" << collision.hitNormal.y << "/" << collision.hitNormal.z << "\n";
-			std::cout << "polygon2.front(): " << polygon2.front().x << "/" << polygon2.front().y << "/" << polygon2.front().z << "\n";
-
-			//DEPTH IS OFF THE CHARTS
-			std::cout << "Depth: " << depth << std::endl;
-
 			globalOnA = endPoint + collision.hitNormal * depth;
 			globalOnB = endPoint;
 		}

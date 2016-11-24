@@ -20,7 +20,8 @@ PhysicObject::PhysicObject(Transform& transform, AABB* aabb, const std::vector<g
 
 	/* create the shape: 
 		TO DO: switch depending on shape type */
-	_shape = new CuboidShape{ this };
+	std::cout << _aabb->dimension().x / 2.0 << "/" << _aabb->dimension().y / 2.0f << "/" << _aabb->dimension().z / 2.0f << std::endl;
+	_shape = new CuboidShape{ this, _aabb->dimension() * 0.5f };
 
 	_inertiaI = _shape->inverseInertia(_massI);
 

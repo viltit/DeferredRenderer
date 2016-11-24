@@ -13,6 +13,7 @@ CuboidShape::CuboidShape(PhysicObject* owner, const glm::vec3& halfSize)
 		_halfSize{ halfSize }
 {
 	assert(owner);
+
 	if (_hull.numVertices() == 0)
 		initHull();
 }
