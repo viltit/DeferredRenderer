@@ -21,8 +21,18 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	_renderer{ window, &_scene, &_cam },
 	_drender{ window, &_scene, &_cam },
 	_gui{ "GUI", "TaharezLook.scheme" },
-	_console{ this, &_gui, "layouts/console.layout"}
+	_console{ this, &_gui, "layouts/console.layout"},
+
+	/* TEST: Work with bullet physics */
+	_btConfig{ new btDefaultCollisionConfiguration() },
+	_btDispatcher{ new btCollisionDispatcher(_btConfig) },
+	_btBroadphase{ new btDbvtBroadphase() },
+	_btSolver{ new btSequentialImpulseConstraintSolver() },
+	_btWorld{ new btDiscreteDynamicsWorld(_btDispatcher, _btBroadphase, _btSolver, _btConfig) }
+
 {
+	_btWorld->setGravity(btVector3{ 0.0f, -9.8f, 0.0f });
+
 	_index = SCREEN_INDEX_APP;
 	RayTriangle::start();
 
@@ -34,11 +44,12 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 			std::string parentName = "Cube" + std::to_string(i) + "/" + std::to_string(j);
 			//std::string childName = "Cuboid" + std::to_string(i) + "/" + std::to_string(j);
 			//std::string child2Name = "SmallCuboid" + std::to_string(i) + "/" + std::to_string(j);
-			std::string lightName = "plight" + std::to_string(i);
 
 			_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ prefix * i * 4.0, j * 4.0f, i * 4.0 }, parentName);
-			_scene[parentName]->addPhysics(40.0f);
-			_scene[parentName]->transform.scale(glm::vec3{ 2.0f, 2.0f, 2.0f });
+			
+			
+			//_scene[parentName]->addPhysics(40.0f);
+			//_scene[parentName]->transform.scale(glm::vec3{ 2.0f, 2.0f, 2.0f });
 			//_scene.addChild(new Cuboid{ "xml/cubeSmall.xml" }, glm::vec3{ 3.0, 0.0f, 3.0 }, childName, parentName);
 			//_scene[childName]->addPhysics(5.0f);
 			//_scene.addChild(new Cuboid{ "xml/cubeSmall.xml" }, glm::vec3{ 0.0, prefix * 3.0f, 0.0 }, child2Name, childName);
@@ -47,7 +58,19 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 		}
 	}
 	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ 0.0f, 2.0f, -1.0f }, "Cuboid");
-	_scene["Cuboid"]->addPhysics(10.0f);
+	btTransform ct;
+	ct.setIdentity();
+	ct.setOrigin(btVector3{ 0.0f, 2.0f, -1.0f });
+	btBoxShape* cShape = new btBoxShape(btVector3{ 1.0f, 1.0f, 1.0f });
+	btMotionState* cState = new btDefaultMotionState(ct);
+	btVector3 inertia;
+	cShape->calculateLocalInertia(10.0f, inertia);
+	btRigidBody::btRigidBodyConstructionInfo cInfo = { btScalar(10.0f), cState, cShape, inertia };
+	btRigidBody* cBody = new btRigidBody{ cInfo };
+	_btWorld->addRigidBody(cBody);
+	_btBodies.push_back(cBody);
+
+	//_scene["Cuboid"]->addPhysics(10.0f);
 
 	/*_scene.addChild(new Model{ "Models/Old House/Old House 2 3D Models.obj", &_cam, false }, "Shark");
 	_scene["Shark"]->transform.scale(glm::vec3{ 0.05f, 0.05f, 0.05f });
@@ -58,11 +81,20 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 
 	_scene.addChild(new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ -3.0f, -3.0f, -3.0f }, "Floor");
 	_scene["Floor"]->addPhysics(10000.0f);
-	_scene["Floor"]->physics()->setG(false);
+	btTransform t;
+	t.setIdentity();
+	t.setOrigin(btVector3{ -3.0f, -3.0f, -3.0f });
+	btStaticPlaneShape* floor = new btStaticPlaneShape(btVector3{ 0.0f, 1.0f, 0.0f }, btScalar(3.0f));
+	btMotionState* motion = new btDefaultMotionState(t);
+	btRigidBody::btRigidBodyConstructionInfo info{ btScalar(0.0f), motion, floor };
+	btRigidBody* floorBody = new btRigidBody(info);
+	_btWorld->addRigidBody(floorBody);
+	_btBodies.push_back(floorBody);
+	//_scene["Floor"]->physics()->setG(false);
 
 	_scene.addChild(new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ 20.0f, 7.0f, -3.0f }, "Wall");
-	_scene["Wall"]->addPhysics(10000.0f);
-	_scene["Wall"]->physics()->setG(true);
+	//_scene["Wall"]->addPhysics(10000.0f);
+	//_scene["Wall"]->physics()->setG(true);
 	SceneNode* wall = _scene.findByName("Wall");
 	wall->transform.rotate(90.0f, glm::vec3{ 0.0f, 0.0f, 1.0f });
 
@@ -179,7 +211,13 @@ void AppScreen::update() {
 
 	/* update all components: */
 	updateInput();
-	PhysicEngine::instance()->update(frameTime);
+	_btWorld->stepSimulation(float(frameTime) / 1000.0f);
+	for (auto& body : _btBodies) {
+		btTransform t;
+		body->getMotionState()->getWorldTransform(t);
+	}
+	
+	//PhysicEngine::instance()->update(frameTime);
 
 	//DEBUG: Track the cube
 	vitiGEO::DebugInfo::instance()->addLine(glm::vec4{ _cam.pos() + _cam.dir(), 0.05f }, glm::vec4{ _scene["Cuboid"]->transform.pos(), 0.05f });
