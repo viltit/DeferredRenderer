@@ -61,14 +61,14 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	btTransform ct;
 	ct.setIdentity();
 	ct.setOrigin(btVector3{ 0.0f, 2.0f, -1.0f });
-	btBoxShape* cShape = new btBoxShape(btVector3{ 1.0f, 1.0f, 1.0f });
+	btBoxShape* cShape = new btBoxShape(btVector3{ 0.5f, 0.5f, 0.5f });
 	btMotionState* cState = new btDefaultMotionState(ct);
 	btVector3 inertia;
 	cShape->calculateLocalInertia(10.0f, inertia);
 	btRigidBody::btRigidBodyConstructionInfo cInfo = { btScalar(10.0f), cState, cShape, inertia };
 	btRigidBody* cBody = new btRigidBody{ cInfo };
 	_btWorld->addRigidBody(cBody);
-	_btBodies.push_back(cBody);
+	_btBodies.insert(std::make_pair("Cuboid", cBody));
 
 	//_scene["Cuboid"]->addPhysics(10.0f);
 
@@ -80,16 +80,16 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 
 
 	_scene.addChild(new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ -3.0f, -3.0f, -3.0f }, "Floor");
-	_scene["Floor"]->addPhysics(10000.0f);
+	//_scene["Floor"]->addPhysics(10000.0f);
 	btTransform t;
 	t.setIdentity();
-	t.setOrigin(btVector3{ -3.0f, -3.0f, -3.0f });
+	t.setOrigin(btVector3{ -0.0f, -3.0f, -0.0f });
 	btStaticPlaneShape* floor = new btStaticPlaneShape(btVector3{ 0.0f, 1.0f, 0.0f }, btScalar(3.0f));
 	btMotionState* motion = new btDefaultMotionState(t);
 	btRigidBody::btRigidBodyConstructionInfo info{ btScalar(0.0f), motion, floor };
 	btRigidBody* floorBody = new btRigidBody(info);
 	_btWorld->addRigidBody(floorBody);
-	_btBodies.push_back(floorBody);
+	_btBodies.insert(std::make_pair("Floor", floorBody));
 	//_scene["Floor"]->physics()->setG(false);
 
 	_scene.addChild(new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ 20.0f, 7.0f, -3.0f }, "Wall");
@@ -122,16 +122,6 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 
 	_scene.addCamera(&_cam);
 
-
-	/*
-	DistanceConstraint* c = new DistanceConstraint {
-		_scene["Octahedron"]->physics(),
-		_scene["Octahedron2"]->physics(),
-		glm::vec3{ 4.0f, 3.0f, 15.0f},
-		glm::vec3{ 6.0f, 3.0f, 15.0f}
-	};
-	PhysicEngine::instance()->addConstraint(c);*/
-
 	pLight* plight2 = new pLight{ &_cam };
 	plight2->setProperty(lightProps::pos, glm::vec3{ 0.0f, 20.0f, 20.0f });
 	plight2->setProperty(lightProps::diffuse, glm::vec3{ 10.0f, 5.0f, 0.0f });
@@ -144,11 +134,6 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 
 	initGUI();
 	_timer.on();
-
-	/* test: */
-	vitiGEO::Plane plane { glm::vec3{ 0.0f, 1.0f, 0.0f }, -1.0f };
-	bool b = plane.pointInPlane(glm::vec3{ 1.0f, 1.0f, 0.0f });
-	std::cout << "Point in Plane: " << b << std::endl;
 }
 
 
@@ -170,18 +155,6 @@ void AppScreen::onExit() {
 void AppScreen::update() {
 	Uint32 frameTime = _timer.frame_time();
 	Uint32 time = _timer.get_time();
-
-	/* Infobox update: 
-	_infoBox->deactivate();
-	std::string fps = "FPS: " + std::to_string(_timer.fps());
-	_fps->setText(CEGUI::String(fps));
-	std::string gamma = "Gamma (keypad + and -): " + std::to_string(_drender.gamma());
-	_gamma->setText(CEGUI::String(gamma));
-	std::string exposure = "HDR-Exposure (keypad / and *): " + std::to_string(_drender.exposure());
-	_hdr->setText(CEGUI::String(exposure));
-	std::string glError = "GL-Error: " + std::to_string(glGetError());
-	_glError->setText(CEGUI::String(glError));
-	_infoBox->activate();*/
 
 	std::string fps = "FPS: " + std::to_string(_timer.fps());
 	_console.setText(fps);
@@ -214,7 +187,30 @@ void AppScreen::update() {
 	_btWorld->stepSimulation(float(frameTime) / 1000.0f);
 	for (auto& body : _btBodies) {
 		btTransform t;
-		body->getMotionState()->getWorldTransform(t);
+		glm::mat4 M;
+		float btM[16];
+
+		body.second->getMotionState()->getWorldTransform(t);
+		btVector3 pos = body.second->getCenterOfMassPosition();
+
+		std::cout << "bt pos[" << body.first << "]: "  << pos.getX() << "/" << pos.getY() << "/" << pos.getZ() << std::endl;
+		
+		t.getOpenGLMatrix(btM);
+		M[0][0] = btM[0]; M[0][1] = btM[1]; M[0][2] = btM[2]; M[0][3] = btM[3];
+		M[1][0] = btM[4]; M[1][1] = btM[5]; M[1][2] = btM[6]; M[1][3] = btM[7];
+		M[2][0] = btM[8]; M[2][1] = btM[9]; M[2][2] = btM[10]; M[2][3] = btM[11];
+		M[3][0] = btM[12]; M[3][1] = btM[13]; M[3][2] = btM[14]; M[3][3] = btM[15];
+
+		btQuaternion btO = t.getRotation();
+		float angle = btO.getAngle();
+		btVector3 axis = btO.getAxis();
+
+		_scene[body.first]->transform.setPos(vitiGEO::getTranslation(M));
+		_scene[body.first]->transform.rotate(angle, glm::vec3{ axis.getX(), axis.getY(), axis.getZ() });
+
+		glm::vec3 glPos = _scene[body.first]->transform.pos();
+		std::cout << "gl pos[" << body.first << "]: " << glPos.x << "/" << glPos.y << "/" << glPos.z << std::endl;
+
 	}
 	
 	//PhysicEngine::instance()->update(frameTime);
@@ -338,32 +334,38 @@ void AppScreen::updateInput() {
 			
 			/* DEBUG: Control the cube :*/
 			case SDLK_KP_8:
-				_scene["Cuboid"]->physics()->setVelocity(glm::vec3{ 0.0f, 0.0f, 1.0f });
+				_btBodies["Cuboid"]->applyCentralImpulse(btVector3{ 0.0f, 0.0f, 100.0f });
 				break;
 			case SDLK_KP_2:
-				_scene["Cuboid"]->physics()->setVelocity(glm::vec3{ 0.0f, 0.0f, -0.0f });
+				_btBodies["Cuboid"]->applyCentralImpulse(btVector3{ 0.0f, 0.0f, -100.0f });
 				break;
 			case SDLK_KP_4:
-				_scene["Cuboid"]->physics()->setVelocity(glm::vec3{ -1.0f, 0.0f, 0.0f });
+				_btBodies["Cuboid"]->applyCentralImpulse(btVector3{ -100.0f, 0.0f, 0.0f });
 				break;
 			case SDLK_KP_6:
-				_scene["Cuboid"]->physics()->setVelocity(glm::vec3{ 1.0f, 0.0f, 0.0f });
+				_btBodies["Cuboid"]->applyCentralImpulse(btVector3{ 100.0f, 0.0f, 0.0f });
 				break;
 			case SDLK_KP_7:
-				_scene["Cuboid"]->physics()->setVelocity(glm::vec3{ 0.0f, 1.0f, 0.0f });
+				_btBodies["Cuboid"]->applyCentralImpulse(btVector3{ 0.0f, 100.0f, 0.0f });
 				break;
 			case SDLK_KP_1:
-				_scene["Cuboid"]->physics()->setVelocity(glm::vec3{ 0.0f, -1.0f, 0.0f });
+				_btBodies["Cuboid"]->applyCentralImpulse(btVector3{ 0.0f, -100.0f, 0.0f });
 				break;
 			case SDLK_KP_9:
-				_scene["Cuboid"]->physics()->setAngularVelocity(glm::vec3{ 0.0f, 1.0f, 0.0f });
+				_btBodies["Cuboid"]->applyTorque(btVector3{ 0.0f, 10.0f, 0.0f });
 				break;
 			case SDLK_KP_3:
-				_scene["Cuboid"]->physics()->setAngularVelocity(glm::vec3{ 0.0f, -1.0f, 0.0f });
+				_btBodies["Cuboid"]->applyTorque(btVector3{ 0.0f, -10.0f, 0.0f });
 				break;
 			case SDLK_KP_5:
-				_scene["Cuboid"]->physics()->setVelocity(glm::vec3{0.0f, 0.0f, 0.0f});
-				_scene["Cuboid"]->physics()->setAngularVelocity(glm::vec3{ 0.0f, 0.0f, 0.0f });
+				_scene["Cuboid"]->transform.setWorldMatrix(glm::mat4{});
+				break;
+			case SDLK_SPACE:
+			{
+				btRigidBody* temp = addCube(10.0f, _cam.pos());
+				glm::vec3 dir = _cam.dir() * 10.0f;
+				temp->setLinearVelocity(btVector3{ dir.x, dir.y, dir.z });
+			}
 				break;
 			case SDLK_F1:
 				_console.setVisible(_console.isVisible()? false : true);
@@ -405,11 +407,6 @@ void AppScreen::updateInput() {
 			case SDLK_KP_MULTIPLY:
 				break;
 			case SDLK_KP_DIVIDE:
-				break;
-			case SDLK_r:
-				_scene["Cuboid"]->physics()->setAngularVelocity(glm::vec3{ 0.1f, 0.1f, 0.1f });
-				_scene["Cuboid2"]->physics()->setAngularVelocity(glm::vec3{ 0.2f, 0.2f, 0.2f });
-				_scene["Cuboid3"]->physics()->setAngularVelocity(glm::vec3{ -0.3f, -0.3f, -0.3f });
 				break;
 			}
 			break;
@@ -488,4 +485,27 @@ void AppScreen::updateInput() {
 			break;
 		}
 	}
+}
+
+
+btRigidBody* AppScreen::addCube(float mass, const glm::vec3 pos) {
+	static int i = 0;
+	std::string name = "Cube" + std::to_string(i++);
+
+	_scene.addChild(new Cuboid{ "xml/cube.xml" }, pos, name);
+
+	btVector3 btPos{ pos.x, pos.y, pos.z };
+	btTransform ct;
+	ct.setIdentity();
+	ct.setOrigin(btPos);
+	btBoxShape* cShape = new btBoxShape(btVector3{ 0.5f, 0.5f, 0.5f });
+	btMotionState* cState = new btDefaultMotionState(ct);
+	btVector3 inertia;
+	cShape->calculateLocalInertia(10.0f, inertia);
+	btRigidBody::btRigidBodyConstructionInfo cInfo = { btScalar(10.0f), cState, cShape, inertia };
+	btRigidBody* cBody = new btRigidBody{ cInfo };
+	_btWorld->addRigidBody(cBody);
+	_btBodies.insert(std::make_pair(name, cBody));
+
+	return cBody;
 }
