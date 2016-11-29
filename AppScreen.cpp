@@ -101,9 +101,7 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	btTransform wt;
 	wt.setIdentity();
 	wt.setOrigin(btVector3{ 20.0f, 7.0f, -3.0f });
-	glm::quat glmO = swall->transform.orientation();
-	btQuaternion btO;
-	btO.setW(glmO.w); btO.setX(glmO.x); btO.setY(glmO.y); btO.setZ(glmO.z);
+	btQuaternion btO = glmQuatToBtQuat(swall->transform.orientation());
 	wt.setRotation(btO);
 	btStaticPlaneShape* wall = new btStaticPlaneShape(btVector3{ 0.0f, 1.0f, 0.0f }, btScalar(0.0f));
 	btMotionState* wmotion = new btDefaultMotionState(wt);
@@ -117,7 +115,7 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	_scene.setShadowcaster("dlight");
 
 	pLight* plight = new pLight{ &_cam };
-	plight->setProperty(lightProps::pos, glm::vec3{ 0.0f, 20.0f, 0.0f });
+	plight->setProperty(lightProps::pos, glm::vec3{ 0.0f, 2.0f, 0.0f });
 	plight->setProperty(lightProps::diffuse, glm::vec3{ 10.0f, 5.0f, 0.0f });
 	plight->setProperty(lightProps::specular, glm::vec3{ 20.0f, 10.0f, 0.0f });
 
@@ -199,33 +197,8 @@ void AppScreen::update() {
 
 	/* update all components: */
 	updateInput();
-	_btWorld->stepSimulation(float(frameTime) / 1000.0f);
-	for (auto& body : _btBodies) {
-		btTransform t;
-		glm::mat4 M;
-		float btM[16];
-
-		body.second->getMotionState()->getWorldTransform(t);
-		btVector3 pos = body.second->getCenterOfMassPosition();
-		
-		t.getOpenGLMatrix(btM);
-		M[0][0] = btM[0]; M[0][1] = btM[1]; M[0][2] = btM[2]; M[0][3] = btM[3];
-		M[1][0] = btM[4]; M[1][1] = btM[5]; M[1][2] = btM[6]; M[1][3] = btM[7];
-		M[2][0] = btM[8]; M[2][1] = btM[9]; M[2][2] = btM[10]; M[2][3] = btM[11];
-		M[3][0] = btM[12]; M[3][1] = btM[13]; M[3][2] = btM[14]; M[3][3] = btM[15];
-
-		btQuaternion btO = t.getRotation();
-		glm::quat O = _scene[body.first]->transform.orientation();
-		glm::quat O2 = glm::quat{ btO.getW(), btO.getX(), btO.getY(), btO.getZ() };
-
-		O2 = O2 * glm::inverse(O);
-
-		float angle = btO.getAngle();
-		btVector3 axis = btO.getAxis();
-
-		_scene[body.first]->transform.setPos(vitiGEO::getTranslation(M));
-		_scene[body.first]->transform.rotate(O2);
-	}
+	_btWorld->stepSimulation(1.0f / 60.0f);
+	
 	
 	//PhysicEngine::instance()->update(frameTime);
 
@@ -508,19 +481,9 @@ btRigidBody* AppScreen::addCube(float mass, const glm::vec3 pos) {
 	std::string name = "Cube" + std::to_string(i++);
 
 	_scene.addChild(new Cuboid{ "xml/cube.xml" }, pos, name);
+	_scene[name]->addPhysics(10.0f);
+	_btWorld->addRigidBody(_scene[name]->physics());
+	_btBodies.insert(std::make_pair(name, _scene[name]->physics()));
 
-	btVector3 btPos{ pos.x, pos.y, pos.z };
-	btTransform ct;
-	ct.setIdentity();
-	ct.setOrigin(btPos);
-	btBoxShape* cShape = new btBoxShape(btVector3{ 0.5f, 0.5f, 0.5f });
-	btMotionState* cState = new btDefaultMotionState(ct);
-	btVector3 inertia;
-	cShape->calculateLocalInertia(10.0f, inertia);
-	btRigidBody::btRigidBodyConstructionInfo cInfo = { btScalar(10.0f), cState, cShape, inertia };
-	btRigidBody* cBody = new btRigidBody{ cInfo };
-	_btWorld->addRigidBody(cBody);
-	_btBodies.insert(std::make_pair(name, cBody));
-
-	return cBody;
+	return _scene[name]->physics();
 }

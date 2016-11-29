@@ -1,8 +1,8 @@
 /*	class to transform the game objects (rotate, scale, ...) 
+	should act as intermediary between sceneNode and BulletPhysics	
 	
-	should act as intermediary between sceneNode and Physics	
-	
-	TO DO: As soon as physics implements angular movment, update matrix
+	also, we add a couple of functions to get from bullets Vector3 to
+	glm::vec3, and other data types
 */
 
 #pragma once
@@ -11,6 +11,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtc/type_ptr.hpp>
+
+#include <bt/btBulletDynamicsCommon.h>
 
 #include <iostream>
 
@@ -46,6 +48,11 @@ public:
 		_validW = false;
 	}
 
+	void	rotateTo(const glm::quat& q) {
+		glm::quat o = orientation();
+		rotate(q * glm::inverse(o));
+	}
+
 	void	scale(const glm::vec3& scale) { _M = glm::scale(_M, scale); _validW = false; }
 
 	void	setWorldMatrix(const glm::mat4& W) { _W = W; }
@@ -71,7 +78,7 @@ public:
 		return _W;
 	}
 
-	glm::quat& orientation() const {
+	glm::quat orientation() const {
 		if (!_validW) {
 			_M = setTranslation(_M, _pos);
 			_W = _M * _W;
@@ -90,4 +97,14 @@ private:
 	glm::vec3 _pos;
 
 };
+
+/*	Helper functions to convert bullet data to glm data and vice versa: */
+btQuaternion glmQuatToBtQuat(const glm::quat& q);
+
+btVector3 glmVecToBtVec(const glm::vec3& v);
+
+glm::quat btQuatToGlmQuat(const btQuaternion& q);
+
+glm::vec3 btVecToGlmVec(const btVector3& v);
+
 }

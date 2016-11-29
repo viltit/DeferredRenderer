@@ -173,6 +173,7 @@
     <ClCompile Include="PhysicObject.cpp" />
     <ClCompile Include="PhysicShape.cpp" />
     <ClCompile Include="Ray.cpp" />
+    <ClCompile Include="Transform.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

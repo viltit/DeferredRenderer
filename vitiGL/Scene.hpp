@@ -64,7 +64,7 @@ public:
 	ObjType		type() { return _obj->type(); }
 
 	IGameObject* obj() { return _obj; }
-	vitiGEO::PhysicObject* physics() { return _physics; }
+	btRigidBody* physics() { return _physics; }
 
 	/* get an iterator to the childrens vector: */
 	auto		childrenBegin() { return _children.begin(); }
@@ -78,7 +78,7 @@ protected:
 	SceneNode() {}
 
 	IGameObject* _obj;
-	vitiGEO::PhysicObject* _physics;
+	btRigidBody* _physics;
 
 	SceneNode*	_parent;
 	std::vector<SceneNode*> _children;

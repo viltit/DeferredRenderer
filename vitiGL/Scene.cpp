@@ -11,6 +11,8 @@
 
 namespace vitiGL {
 
+using namespace vitiGEO;
+
 /* CLASS SCENE NODE ------------------------------------------------------------- */
 
 SceneNode::SceneNode(const std::string& name, IGameObject* object, glm::vec3 pos)
@@ -58,6 +60,19 @@ SceneNode::~SceneNode() {
 }
 
 void SceneNode::update(const Uint32 & deltaTime) {
+	/* get the new position and rotation from bullet physics: */
+	if (_physics) {
+		btTransform t;
+		_physics->getMotionState()->getWorldTransform(t);
+
+		glm::vec3 pos = btVecToGlmVec(_physics->getCenterOfMassPosition());
+		glm::quat o1 = transform.orientation();
+		glm::quat o2 = btQuatToGlmQuat(t.getRotation());
+
+		transform.setPos(pos);
+		transform.rotate(o2 * glm::inverse(o1));
+	}
+
 	/* tell transform to adapt parents matrix, if there is a parent: */
 	if (_parent)  transform.setWorldMatrix(_parent->transform.worldMatrix() * transform.localMatrix());
 	else transform.setWorldMatrix(transform.localMatrix());
@@ -115,17 +130,31 @@ void SceneNode::remove() {
 	}
 }
 
+/* this only adds cuboids - need a more flexible solution for planes etc. */
 void SceneNode::addPhysics(float mass) {
 	/* only mesh and shape objects supported: */
 	bool doIt = true;
 	if (!_obj || (_obj->type() != ObjType::mesh && _obj->type() != ObjType::shape))
 		doIt = false;
 
+	/* create a new btPhysic object: */
 	if (doIt) {
-		/* we assume the object has an aabb: */
 		Shape* s = static_cast<Shape*>(_obj);
+		btTransform t;
 
-		_physics = new vitiGEO::PhysicObject{ transform, s->getAABB(), s->vertices(), mass };
+		t.setIdentity();
+		t.setOrigin(glmVecToBtVec(transform.pos()));
+		t.setRotation(glmQuatToBtQuat(transform.orientation()));
+
+		btBoxShape* shape = new btBoxShape(glmVecToBtVec(s->getAABB()->dimension() / 2.0f)); /* we assume everything is a box */
+
+		btVector3 inertia;
+		shape->calculateLocalInertia(mass, inertia);
+
+		btMotionState* motion = new btDefaultMotionState(t);
+
+		btRigidBody* body = new btRigidBody{ btScalar(mass), motion, shape, inertia };
+		_physics = body;
 	}
 
 	/* WIP: add all children: */
@@ -136,7 +165,6 @@ void SceneNode::addPhysics(float mass) {
 
 void SceneNode::removePhysics() {
 	if (_physics) {
-		_physics->remove();
 		delete _physics;
 		_physics = nullptr;
 	}
