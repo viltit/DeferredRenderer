@@ -83,8 +83,8 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	//_scene["Floor"]->addPhysics(10000.0f);
 	btTransform t;
 	t.setIdentity();
-	t.setOrigin(btVector3{ -0.0f, -3.0f, -0.0f });
-	btStaticPlaneShape* floor = new btStaticPlaneShape(btVector3{ 0.0f, 1.0f, 0.0f }, btScalar(3.0f));
+	t.setOrigin(btVector3{ -0.0f, -0.0f, -0.0f });
+	btStaticPlaneShape* floor = new btStaticPlaneShape(btVector3{ 0.0f, 1.0f, 0.0f }, btScalar(0.0f));
 	btMotionState* motion = new btDefaultMotionState(t);
 	btRigidBody::btRigidBodyConstructionInfo info{ btScalar(0.0f), motion, floor };
 	btRigidBody* floorBody = new btRigidBody(info);
@@ -95,8 +95,23 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	_scene.addChild(new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ 20.0f, 7.0f, -3.0f }, "Wall");
 	//_scene["Wall"]->addPhysics(10000.0f);
 	//_scene["Wall"]->physics()->setG(true);
-	SceneNode* wall = _scene.findByName("Wall");
-	wall->transform.rotate(90.0f, glm::vec3{ 0.0f, 0.0f, 1.0f });
+	SceneNode* swall = _scene.findByName("Wall");
+	swall->transform.rotate(90.0f, glm::vec3{ 0.0f, 0.0f, 1.0f });
+
+	btTransform wt;
+	wt.setIdentity();
+	wt.setOrigin(btVector3{ 20.0f, 7.0f, -3.0f });
+	glm::quat glmO = swall->transform.orientation();
+	btQuaternion btO;
+	btO.setW(glmO.w); btO.setX(glmO.x); btO.setY(glmO.y); btO.setZ(glmO.z);
+	wt.setRotation(btO);
+	btStaticPlaneShape* wall = new btStaticPlaneShape(btVector3{ 0.0f, 1.0f, 0.0f }, btScalar(0.0f));
+	btMotionState* wmotion = new btDefaultMotionState(wt);
+	btRigidBody::btRigidBodyConstructionInfo winfo{ btScalar(0.0f), wmotion, wall };
+	btRigidBody* wallBody = new btRigidBody(winfo);
+	_btWorld->addRigidBody(wallBody);
+	_btBodies.insert(std::make_pair("Wall", wallBody));
+
 
 	_scene.addChild(new dLight{ "dlight", glm::vec3{ 0.5f, -1.0f, -0.5f } }, "dlight");
 	_scene.setShadowcaster("dlight");
@@ -192,8 +207,6 @@ void AppScreen::update() {
 
 		body.second->getMotionState()->getWorldTransform(t);
 		btVector3 pos = body.second->getCenterOfMassPosition();
-
-		std::cout << "bt pos[" << body.first << "]: "  << pos.getX() << "/" << pos.getY() << "/" << pos.getZ() << std::endl;
 		
 		t.getOpenGLMatrix(btM);
 		M[0][0] = btM[0]; M[0][1] = btM[1]; M[0][2] = btM[2]; M[0][3] = btM[3];
@@ -202,15 +215,16 @@ void AppScreen::update() {
 		M[3][0] = btM[12]; M[3][1] = btM[13]; M[3][2] = btM[14]; M[3][3] = btM[15];
 
 		btQuaternion btO = t.getRotation();
+		glm::quat O = _scene[body.first]->transform.orientation();
+		glm::quat O2 = glm::quat{ btO.getW(), btO.getX(), btO.getY(), btO.getZ() };
+
+		O2 = O2 * glm::inverse(O);
+
 		float angle = btO.getAngle();
 		btVector3 axis = btO.getAxis();
 
 		_scene[body.first]->transform.setPos(vitiGEO::getTranslation(M));
-		_scene[body.first]->transform.rotate(angle, glm::vec3{ axis.getX(), axis.getY(), axis.getZ() });
-
-		glm::vec3 glPos = _scene[body.first]->transform.pos();
-		std::cout << "gl pos[" << body.first << "]: " << glPos.x << "/" << glPos.y << "/" << glPos.z << std::endl;
-
+		_scene[body.first]->transform.rotate(O2);
 	}
 	
 	//PhysicEngine::instance()->update(frameTime);
@@ -226,6 +240,7 @@ void AppScreen::update() {
 
 void AppScreen::draw() {
 	_drender.draw();
+
 	PhysicEngine::instance()->drawDebug();
 	_gui.draw();
 }
