@@ -62,9 +62,9 @@ void CuboidObject::update() {
 	_transform->setPos(pos);
 
 	/* adapt orientation: */
-	glm::quat o1 = _transform->orientation();
+	//glm::quat o1 = _transform->orientation();
 	glm::quat o2 = btQuatToGlmQuat(t.getRotation());
-	_transform->rotate(o2 * glm::inverse(o1));
+	_transform->rotateTo(o2 );
 }
 
 /* Plane ------------------------------------------------------------------------------------ */
@@ -78,7 +78,8 @@ PlaneObject::PlaneObject(Transform * transform,
 	btTransform t;
 
 	t.setIdentity();
-	t.setOrigin(glmVecToBtVec(transform->pos()));
+
+	//t.setOrigin(glmVecToBtVec(transform->pos()));
 	t.setRotation(glmQuatToBtQuat(transform->orientation()));
 
 	btStaticPlaneShape* shape = new btStaticPlaneShape(glmVecToBtVec(normal), d);

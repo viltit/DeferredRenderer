@@ -62,15 +62,11 @@ SceneNode::~SceneNode() {
 }
 
 void SceneNode::update(const Uint32 & deltaTime) {
-
 	/* tell transform to adapt parents matrix, if there is a parent: */
-	if (_parent)  transform.setWorldMatrix(_parent->transform.worldMatrix() * transform.localMatrix());
-	else transform.setWorldMatrix(transform.localMatrix());
+	if (_parent && _obj)  _obj->setModelMatrix(_parent->transform.worldMatrix() * transform.worldMatrix());
+	else if (_obj) _obj->setModelMatrix(transform.worldMatrix());
 
-	/* give world position to the shape for drawing: */
 	if (_obj) {
-		_obj->setModelMatrix(transform.worldMatrix());
-		
 		/* update aabb and radius: */
 		if (_obj->type() == ObjType::shape || _obj->type() == ObjType::mesh) {
 			vitiGEO::AABB* aabb = static_cast<Shape*>(_obj)->getAABB();

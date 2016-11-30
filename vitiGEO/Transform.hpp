@@ -23,77 +23,55 @@ namespace vitiGEO {
 class Transform {
 public:
 	Transform()
-		: _validW { false }
+		: _scale{ 1.0f, 1.0f, 1.0f }
 	{}
 
-	Transform(const glm::vec3& pos) 
-		: _validW { false },
-		  _pos	  { pos }
+	Transform(const glm::vec3& pos, const glm::vec3 scale = glm::vec3{ 1.0f, 1.0f, 1.0f })
+		: _pos	  { pos },
+		  _scale  { scale }
 	{}
 
 	~Transform() {};
 
 	/* setters: */
-	void	setPos(const glm::vec3& pos)	{ _pos = pos; _validW = false; }
-	void	move(const glm::vec3& distance) { _pos += distance; _validW = false; }
+	void	setPos(const glm::vec3& pos)	{ _pos = pos; }
+	void	move(const glm::vec3& distance) { _pos += distance; }
 
 	void	rotate(float angle, const glm::vec3& axis) {
-		_M = glm::rotate(_M, glm::radians(angle), axis);
-		_validW = false;
+		_o = _o * glm::quat(glm::radians(angle), axis) * glm::inverse(_o);
 	}
 
 	void	rotate(const glm::quat& q) {
-		glm::mat4 R = glm::toMat4(q);
-		_M = R * _M;
-		_validW = false;
+		_o = _o * q * glm::inverse(_o);
 	}
 
-	void	rotateTo(const glm::quat& q) {
-		glm::quat o = orientation();
-		rotate(q * glm::inverse(o));
+	void	rotateTo(const glm::quat& q)		{ _o = q; }
+	void	rotateTo(float angle, const glm::vec3& axis) {
+		_o = glm::quat(glm::radians(angle), axis);
 	}
 
-	void	scale(const glm::vec3& scale) { _M = glm::scale(_M, scale); _validW = false; }
-
-	void	setWorldMatrix(const glm::mat4& W) { _W = W; }
+	void	setScale(const glm::vec3& scale)	{ _scale = scale; }
 
 	/* getters: */
-	const glm::vec3& pos() const { return _pos; }
+	glm::vec3 pos() const { return _pos; }
+	glm::vec3 scale() const { return _scale; }
 
-	const glm::mat4& localMatrix() const {
-		if (!_validW) {
-			_M = setTranslation(_M, _pos);
-			_W = _M * _W;
-			_validW = true;
-		}
-		return _M;
-	}
-
-	const glm::mat4& worldMatrix()	const {
-		if (!_validW) {
-			_M = setTranslation(_M, _pos);
-			_W = _M * _W;
-			_validW = true;
-		}
-		return _W;
+	const glm::mat4 worldMatrix()	const {
+		glm::mat4 W{ };
+		W = glm::scale(W, _scale);
+		W = glm::toMat4(_o) * W;
+		W = setTranslation(W, _pos);
+		return W;
 	}
 
 	glm::quat orientation() const {
-		if (!_validW) {
-			_M = setTranslation(_M, _pos);
-		}
-		return glm::quat(_M);
+		return _o;
 	}
 
 private:
-	mutable glm::mat4 _M;	//local space matrix
-	mutable glm::mat4 _W;	//world space matrix
-
-	mutable bool _validW;
-
-	/* linear:*/
 	glm::vec3 _pos;
-
+	glm::vec3 _scale;
+	glm::quat _o;
 };
 
 /*	Helper functions to convert bullet data to glm data and vice versa: */

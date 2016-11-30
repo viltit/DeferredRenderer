@@ -28,17 +28,17 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	RayTriangle::start();
 
 	/* create some scene elements: */
-	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ 0.0f, 2.0f, -1.0f }, "Cuboid");
+	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ 0.0f, 200.0f, -1.0f }, "Cuboid");
 	/* TO DO: physics does not scale yet: */
-	//_scene["Cuboid"]->transform.scale(glm::vec3{ 3.0f, 3.0f, 3.0f });
+	//_scene["Cuboid"]->transform.setScale(glm::vec3{ 3.0f, 3.0f, 3.0f });
 	_scene["Cuboid"]->addPhysics(BodyType::cuboid, 10.0f);
 
-	_scene.addChild(new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ -3.0f, -3.0f, -3.0f }, "Floor");
-	_scene["Floor"]->addPhysics(BodyType::plane, 0.0f, glm::vec3{ 0.0f, 1.0f, 0.0f });
+	_scene.addChild(new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ 0.0f, 1.0f, 0.0f }, "Floor");
+	_scene["Floor"]->addPhysics(BodyType::plane, 1.0f, glm::vec3{ 0.0f, 1.0f, 0.0f });
 
-	_scene.addChild(new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ 20.0f, 7.0f, -3.0f }, "Wall");
-	_scene["Wall"]->transform.rotate(90.0f, glm::vec3{ 0.0f, 0.0f, 1.0f });
-	_scene["Wall"]->addPhysics(BodyType::plane, 0.0f, glm::vec3{ 0.0f, 1.0f, 0.0f });
+	_scene.addChild(new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ 0.0f, 7.0f, -3.0f }, "Wall");
+	_scene["Wall"]->transform.rotateTo(90.0f, glm::vec3{ 0.0f, 0.0f, 1.0f });
+	_scene["Wall"]->addPhysics(BodyType::plane, 7.0f, glm::vec3{ 0.0f, 1.0f, 0.0f });
 
 	/* add a directional and a point light: */
 	_scene.addChild(new dLight{ "dlight", glm::vec3{ 0.5f, -1.0f, -0.5f } }, "dlight");
@@ -89,6 +89,8 @@ void AppScreen::onExit() {
 }
 
 void AppScreen::update() {
+	std::cout << "Plane2 scale: " << _scene["Wall"]->transform.scale() << std::endl;
+
 	Uint32 frameTime = _timer.frame_time();
 	Uint32 time = _timer.get_time();
 
@@ -216,7 +218,12 @@ void AppScreen::updateInput() {
 			case SDLK_d:
 				_cam.move(Move::right);
 				break;
-
+			case SDLK_r:
+				_scene["Wall"]->transform.rotate(20.0f, glm::vec3{ 0.0f, 0.0f, 1.0f });
+				break;
+			case SDLK_t:
+				_scene["Wall"]->transform.rotateTo(0.0f, glm::vec3{ 0.0f, 0.0f, 1.0f });
+				break;
 				/* DEBUG: Control the cube :*/
 			case SDLK_KP_8:
 				//_btBodies["Cuboid"]->applyCentralImpulse(btVector3{ 0.0f, 0.0f, 100.0f });
@@ -339,7 +346,6 @@ void AppScreen::updateInput() {
 			}
 		}
 	}
-}
 
 
 void AppScreen::addCube(float mass, const glm::vec3 pos) {
