@@ -6,8 +6,6 @@
 #include <string>
 #include <map>
 
-#include "vitiGEO/PhysicEngine.hpp"
-#include <bt/btBulletDynamicsCommon.h>
 
 class App;
 class vitiGL::Window;
@@ -36,7 +34,7 @@ protected:
 	void initGUI();
 	void updateInput();
 
-	btRigidBody* addCube(float mass, const glm::vec3 pos);
+	void addCube(float mass, const glm::vec3 pos);
 
 	vitiGL::Scene		_scene;
 	vitiGL::Camera		_cam;
@@ -49,13 +47,5 @@ protected:
 	vitiGL::Timer		_timer;
 
 	bool				_rotate;
-
-
-	btDefaultCollisionConfiguration* _btConfig;
-	btCollisionDispatcher* _btDispatcher;
-	btBroadphaseInterface* _btBroadphase;
-	btSequentialImpulseConstraintSolver* _btSolver;
-	btDiscreteDynamicsWorld* _btWorld;
-	std::map<std::string, btRigidBody*> _btBodies;
 };
 

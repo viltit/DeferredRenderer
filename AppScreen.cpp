@@ -8,9 +8,9 @@
 #include "vitiGEO/Ray.hpp"
 #include "vitiGEO/AABB.hpp"
 #include "vitiGL/AABBShape.hpp"
-#include "vitiGEO/Constraint.hpp"
 #include "vitiGEO/DebugInfo.hpp"
 #include "vitiGL/RayTriangle.hpp"
+#include "vitiGEO/Physics.hpp"
 
 using namespace vitiGL;
 using namespace vitiGEO;
@@ -21,96 +21,25 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	_renderer{ window, &_scene, &_cam },
 	_drender{ window, &_scene, &_cam },
 	_gui{ "GUI", "TaharezLook.scheme" },
-	_console{ this, &_gui, "layouts/console.layout"},
-
-	/* TEST: Work with bullet physics */
-	_btConfig{ new btDefaultCollisionConfiguration() },
-	_btDispatcher{ new btCollisionDispatcher(_btConfig) },
-	_btBroadphase{ new btDbvtBroadphase() },
-	_btSolver{ new btSequentialImpulseConstraintSolver() },
-	_btWorld{ new btDiscreteDynamicsWorld(_btDispatcher, _btBroadphase, _btSolver, _btConfig) }
-
+	_console{ this, &_gui, "layouts/console.layout" }
 {
-	_btWorld->setGravity(btVector3{ 0.0f, -9.8f, 0.0f });
-
 	_index = SCREEN_INDEX_APP;
 	RayTriangle::start();
 
-	/* Create the scene elements: */
-	int prefix = 1;
-	for (int i = -3; i < 3; i++) {
-		prefix = (prefix == 1) ? -1 : 1;
-		for (int j = 1; j < 7; j++) {
-			std::string parentName = "Cube" + std::to_string(i) + "/" + std::to_string(j);
-			//std::string childName = "Cuboid" + std::to_string(i) + "/" + std::to_string(j);
-			//std::string child2Name = "SmallCuboid" + std::to_string(i) + "/" + std::to_string(j);
-
-			_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ prefix * i * 4.0, j * 4.0f, i * 4.0 }, parentName);
-			
-			
-			//_scene[parentName]->addPhysics(40.0f);
-			//_scene[parentName]->transform.scale(glm::vec3{ 2.0f, 2.0f, 2.0f });
-			//_scene.addChild(new Cuboid{ "xml/cubeSmall.xml" }, glm::vec3{ 3.0, 0.0f, 3.0 }, childName, parentName);
-			//_scene[childName]->addPhysics(5.0f);
-			//_scene.addChild(new Cuboid{ "xml/cubeSmall.xml" }, glm::vec3{ 0.0, prefix * 3.0f, 0.0 }, child2Name, childName);
-			//_scene[child2Name]->addPhysics(5.0f);
-			//_scene[child2Name]->transform.scale(glm::vec3{ 0.6f, 0.6f, 0.6f });
-		}
-	}
+	/* create some scene elements: */
 	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ 0.0f, 2.0f, -1.0f }, "Cuboid");
-	btTransform ct;
-	ct.setIdentity();
-	ct.setOrigin(btVector3{ 0.0f, 2.0f, -1.0f });
-	btBoxShape* cShape = new btBoxShape(btVector3{ 0.5f, 0.5f, 0.5f });
-	btMotionState* cState = new btDefaultMotionState(ct);
-	btVector3 inertia;
-	cShape->calculateLocalInertia(10.0f, inertia);
-	btRigidBody::btRigidBodyConstructionInfo cInfo = { btScalar(10.0f), cState, cShape, inertia };
-	btRigidBody* cBody = new btRigidBody{ cInfo };
-	_btWorld->addRigidBody(cBody);
-	_btBodies.insert(std::make_pair("Cuboid", cBody));
-
-	//_scene["Cuboid"]->addPhysics(10.0f);
-
-	/*_scene.addChild(new Model{ "Models/Old House/Old House 2 3D Models.obj", &_cam, false }, "Shark");
-	_scene["Shark"]->transform.scale(glm::vec3{ 0.05f, 0.05f, 0.05f });
-	_scene["Shark"]->transform.setPos(glm::vec3{ -5.0f, 0.0f, -5.0f });*/
-	//_scene["Shark"]->addPhysics(10.0f);
-	//_scene["Shark"]->removePhysics();
-
+	/* TO DO: physics does not scale yet: */
+	//_scene["Cuboid"]->transform.scale(glm::vec3{ 3.0f, 3.0f, 3.0f });
+	_scene["Cuboid"]->addPhysics(BodyType::cuboid, 10.0f);
 
 	_scene.addChild(new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ -3.0f, -3.0f, -3.0f }, "Floor");
-	//_scene["Floor"]->addPhysics(10000.0f);
-	btTransform t;
-	t.setIdentity();
-	t.setOrigin(btVector3{ -0.0f, -0.0f, -0.0f });
-	btStaticPlaneShape* floor = new btStaticPlaneShape(btVector3{ 0.0f, 1.0f, 0.0f }, btScalar(0.0f));
-	btMotionState* motion = new btDefaultMotionState(t);
-	btRigidBody::btRigidBodyConstructionInfo info{ btScalar(0.0f), motion, floor };
-	btRigidBody* floorBody = new btRigidBody(info);
-	_btWorld->addRigidBody(floorBody);
-	_btBodies.insert(std::make_pair("Floor", floorBody));
-	//_scene["Floor"]->physics()->setG(false);
+	_scene["Floor"]->addPhysics(BodyType::plane, 0.0f, glm::vec3{ 0.0f, 1.0f, 0.0f });
 
 	_scene.addChild(new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ 20.0f, 7.0f, -3.0f }, "Wall");
-	//_scene["Wall"]->addPhysics(10000.0f);
-	//_scene["Wall"]->physics()->setG(true);
-	SceneNode* swall = _scene.findByName("Wall");
-	swall->transform.rotate(90.0f, glm::vec3{ 0.0f, 0.0f, 1.0f });
+	_scene["Wall"]->transform.rotate(90.0f, glm::vec3{ 0.0f, 0.0f, 1.0f });
+	_scene["Wall"]->addPhysics(BodyType::plane, 0.0f, glm::vec3{ 0.0f, 1.0f, 0.0f });
 
-	btTransform wt;
-	wt.setIdentity();
-	wt.setOrigin(btVector3{ 20.0f, 7.0f, -3.0f });
-	btQuaternion btO = glmQuatToBtQuat(swall->transform.orientation());
-	wt.setRotation(btO);
-	btStaticPlaneShape* wall = new btStaticPlaneShape(btVector3{ 0.0f, 1.0f, 0.0f }, btScalar(0.0f));
-	btMotionState* wmotion = new btDefaultMotionState(wt);
-	btRigidBody::btRigidBodyConstructionInfo winfo{ btScalar(0.0f), wmotion, wall };
-	btRigidBody* wallBody = new btRigidBody(winfo);
-	_btWorld->addRigidBody(wallBody);
-	_btBodies.insert(std::make_pair("Wall", wallBody));
-
-
+	/* add a directional and a point light: */
 	_scene.addChild(new dLight{ "dlight", glm::vec3{ 0.5f, -1.0f, -0.5f } }, "dlight");
 	_scene.setShadowcaster("dlight");
 
@@ -122,7 +51,7 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	_scene.addChild(plight, "plight");
 	_scene.setShadowcaster("plight");
 
-	/* Skybox: */
+	/* add Skybox: */
 	std::vector<std::string> faces;
 	faces.push_back("Textures/Skybox/right.jpg");
 	faces.push_back("Textures/Skybox/left.jpg");
@@ -134,13 +63,6 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	_scene.addChild(skybox, "Skybox");
 
 	_scene.addCamera(&_cam);
-
-	pLight* plight2 = new pLight{ &_cam };
-	plight2->setProperty(lightProps::pos, glm::vec3{ 0.0f, 20.0f, 20.0f });
-	plight2->setProperty(lightProps::diffuse, glm::vec3{ 10.0f, 5.0f, 0.0f });
-	plight2->setProperty(lightProps::specular, glm::vec3{ 20.0f, 10.0f, 0.0f });
-
-	_scene.addChild(plight2, "plight2");
 
 	_cam.setPos(glm::vec3{ -4.0f, 8.0f, -5.0f });
 	_cam.setTarget(glm::vec3{ 0.0f, 0.0f, 0.0f });
@@ -173,48 +95,22 @@ void AppScreen::update() {
 	_console.setText(fps);
 	_gui.update(frameTime);
 
-	/*
-	for (int i = -5; i < 4; i++) {
-		for (int j = 1; j < 5; j++) {
-			std::string parent = "Cube" + std::to_string(i) + "/" + std::to_string(j);
-			std::string child = "Cuboid" + std::to_string(i) + "/" + std::to_string(j);
-			std::string child2 = "SmallCuboid" + std::to_string(i) + "/" + std::to_string(j);
-
-			auto temp = _scene[parent];
-			temp->rotate(float(frameTime) / (20.0f * i + 5), glm::vec3{ 0.0f, 1.0f, 0.0f });
-
-			temp = _scene[child];
-			temp->rotate(float(frameTime) * j / (10.0f * i + 5), glm::vec3{ 0.0f, 0.0f, 1.0f });
-
-			temp = _scene[child2];
-			temp->rotate(float(frameTime) * j/ (5.0f * i  + 5), glm::vec3{ 0.0f, 1.0f, 0.0f });
-		}
-	}*/
-	/*
-	Model* temp = static_cast<Model*>(_scene["Shark"]);
-	if (_rotate) 
-		temp->transform.rotate(float(frameTime) / (20.0f), glm::vec3{ 0.0f, 1.0f, 0.0f });*/
-
 	/* update all components: */
 	updateInput();
-	_btWorld->stepSimulation(1.0f / 60.0f);
-	
-	
+	Physics::instance()->update(frameTime);
+
 	//PhysicEngine::instance()->update(frameTime);
 
 	//DEBUG: Track the cube
-	vitiGEO::DebugInfo::instance()->addLine(glm::vec4{ _cam.pos() + _cam.dir(), 0.05f }, glm::vec4{ _scene["Cuboid"]->transform.pos(), 0.05f });
-	
+	DebugInfo::instance()->addLine(glm::vec4{ _cam.pos() + _cam.dir(), 0.05f }, glm::vec4{ _scene["Cuboid"]->transform.pos(), 0.05f });
+
 	_scene.update(frameTime);
 	_cam.update();
 	_gui.update(frameTime);
-
 }
 
 void AppScreen::draw() {
 	_drender.draw();
-
-	PhysicEngine::instance()->drawDebug();
 	_gui.draw();
 }
 
@@ -228,7 +124,7 @@ int AppScreen::previous() const {
 
 /* very simple command parser for console input: */
 std::string AppScreen::command(const std::string & input) {
-	
+
 	/* we need a lot of string manipulation here... */
 	std::string::size_type commandEnd = input.find(" ", 1);
 	std::string command = input.substr(0, commandEnd);
@@ -319,67 +215,63 @@ void AppScreen::updateInput() {
 			case SDLK_d:
 				_cam.move(Move::right);
 				break;
-			
-			/* DEBUG: Control the cube :*/
+
+				/* DEBUG: Control the cube :*/
 			case SDLK_KP_8:
-				_btBodies["Cuboid"]->applyCentralImpulse(btVector3{ 0.0f, 0.0f, 100.0f });
+				//_btBodies["Cuboid"]->applyCentralImpulse(btVector3{ 0.0f, 0.0f, 100.0f });
 				break;
 			case SDLK_KP_2:
-				_btBodies["Cuboid"]->applyCentralImpulse(btVector3{ 0.0f, 0.0f, -100.0f });
+				//_btBodies["Cuboid"]->applyCentralImpulse(btVector3{ 0.0f, 0.0f, -100.0f });
 				break;
 			case SDLK_KP_4:
-				_btBodies["Cuboid"]->applyCentralImpulse(btVector3{ -100.0f, 0.0f, 0.0f });
+				//_btBodies["Cuboid"]->applyCentralImpulse(btVector3{ -100.0f, 0.0f, 0.0f });
 				break;
 			case SDLK_KP_6:
-				_btBodies["Cuboid"]->applyCentralImpulse(btVector3{ 100.0f, 0.0f, 0.0f });
+				//_btBodies["Cuboid"]->applyCentralImpulse(btVector3{ 100.0f, 0.0f, 0.0f });
 				break;
 			case SDLK_KP_7:
-				_btBodies["Cuboid"]->applyCentralImpulse(btVector3{ 0.0f, 100.0f, 0.0f });
+				//_btBodies["Cuboid"]->applyCentralImpulse(btVector3{ 0.0f, 100.0f, 0.0f });
 				break;
 			case SDLK_KP_1:
-				_btBodies["Cuboid"]->applyCentralImpulse(btVector3{ 0.0f, -100.0f, 0.0f });
+				//_btBodies["Cuboid"]->applyCentralImpulse(btVector3{ 0.0f, -100.0f, 0.0f });
 				break;
 			case SDLK_KP_9:
-				_btBodies["Cuboid"]->applyTorque(btVector3{ 0.0f, 10.0f, 0.0f });
+				//_btBodies["Cuboid"]->applyTorque(btVector3{ 0.0f, 10.0f, 0.0f });
 				break;
 			case SDLK_KP_3:
-				_btBodies["Cuboid"]->applyTorque(btVector3{ 0.0f, -10.0f, 0.0f });
+				//_btBodies["Cuboid"]->applyTorque(btVector3{ 0.0f, -10.0f, 0.0f });
 				break;
 			case SDLK_KP_5:
-				_scene["Cuboid"]->transform.setWorldMatrix(glm::mat4{});
+				//_scene["Cuboid"]->transform.setWorldMatrix(glm::mat4{});
 				break;
 			case SDLK_SPACE:
-			{
-				btRigidBody* temp = addCube(10.0f, _cam.pos());
-				glm::vec3 dir = _cam.dir() * 10.0f;
-				temp->setLinearVelocity(btVector3{ dir.x, dir.y, dir.z });
-			}
+				addCube(10.0f, _cam.pos());
 				break;
 			case SDLK_F1:
-				_console.setVisible(_console.isVisible()? false : true);
+				_console.setVisible(_console.isVisible() ? false : true);
 				break;
-			//debug:
+				//debug:
 			case SDLK_F2:
 				_scene.switchCull();
 				break;
 			case SDLK_g:
 				_drender.gramSchmidt();
 				break;
+				break;
+			case SDLK_F3:
+			{
+				pLight* light = _scene.findPLight("plight");
+				glm::vec3 pos = light->pos();
+				light->setProperty(lightProps::pos, glm::vec3{ pos.x + 1.0f, pos.y + 1.0f, pos.z + 1.0f });
+			}
 			break;
-				case SDLK_F3:
-				{
-					pLight* light = _scene.findPLight("plight");
-					glm::vec3 pos = light->pos();
-					light->setProperty(lightProps::pos, glm::vec3{ pos.x + 1.0f, pos.y + 1.0f, pos.z + 1.0f });
-				}
-				break;
-				case SDLK_F4:
-				{
-					pLight* light = _scene.findPLight("plight");
-					glm::vec3 pos = light->pos();
-					light->setProperty(lightProps::pos, glm::vec3{ pos.x - 1.0f, pos.y - 1.0f, pos.z -1.0f });
-				}
-				break;
+			case SDLK_F4:
+			{
+				pLight* light = _scene.findPLight("plight");
+				glm::vec3 pos = light->pos();
+				light->setProperty(lightProps::pos, glm::vec3{ pos.x - 1.0f, pos.y - 1.0f, pos.z - 1.0f });
+			}
+			break;
 			case SDLK_F5:
 				break;
 			case SDLK_F6:
@@ -408,9 +300,9 @@ void AppScreen::updateInput() {
 			break;
 		case SDL_MOUSEBUTTONDOWN:
 		{
-			/* TEMPORARY DEBUG CODE - TEST RAY-OBJECT COLLISION DETECTION 
-			
-				this is messy and just here to see if we get correct results */
+			/* TEMPORARY DEBUG CODE - TEST RAY-OBJECT COLLISION DETECTION
+
+			this is messy and just here to see if we get correct results */
 
 			//_scene.addChild(new Cuboid{ "xml/cubeSmall.xml" }, _cam.pos() + 30.0f * _cam.dir(), sqrt(1.0f));
 
@@ -424,66 +316,64 @@ void AppScreen::updateInput() {
 			float f{ 0.0f };
 
 			if (aabb->rayIntersection(ray, intersection, f)) {*/
-				//_scene.addChild(new Octahedron{ "xml/cube.xml" }, intersection, sqrt(2.0f));
+			//_scene.addChild(new Octahedron{ "xml/cube.xml" }, intersection, sqrt(2.0f));
 
-				
-				/* test for detailed collision with the mesh: 
-				glm::vec3 tuv{};
-				std::vector<glm::vec3> vertices = temp->vertices().at(2);
-				for (int i = 0; i < vertices.size();) {
-					std::vector<glm::vec3> triangle;
-					for (int j = 0; j < 3; j++) {
-						glm::vec4 vertex = { vertices[i].x, vertices[i].y, vertices[i].z, 1.0f };
-						vertex = temp->posMatrix() * vertex;
-						triangle.push_back(glm::vec3{ vertex.x, vertex.y, vertex.z });
-						i++;
-					}
-					if (ray.rayTriangleIntersect(triangle, tuv)) {
-						std::cout << "---------------------------- HIT THE MESH!\n";
-						std::cout << "Ray delta factor: " << tuv.x << std::endl;
-						std::cout << "UV: " << tuv.y << "/" << tuv.z << std::endl;
 
-						glm::vec3 hitPoint = ray._origin + glm::normalize(ray._delta) * tuv.x;
+			/* test for detailed collision with the mesh:
+			glm::vec3 tuv{};
+			std::vector<glm::vec3> vertices = temp->vertices().at(2);
+			for (int i = 0; i < vertices.size();) {
+			std::vector<glm::vec3> triangle;
+			for (int j = 0; j < 3; j++) {
+			glm::vec4 vertex = { vertices[i].x, vertices[i].y, vertices[i].z, 1.0f };
+			vertex = temp->posMatrix() * vertex;
+			triangle.push_back(glm::vec3{ vertex.x, vertex.y, vertex.z });
+			i++;
+			}
+			if (ray.rayTriangleIntersect(triangle, tuv)) {
+			std::cout << "---------------------------- HIT THE MESH!\n";
+			std::cout << "Ray delta factor: " << tuv.x << std::endl;
+			std::cout << "UV: " << tuv.y << "/" << tuv.z << std::endl;
 
-						_scene.addChild(new Cuboid{ "xml/cubeSmall.xml" }, hitPoint, sqrt(1.0f));
-					}
-				}*/
+			glm::vec3 hitPoint = ray._origin + glm::normalize(ray._delta) * tuv.x;
 
-				/* TEST: USE TRANSFORM FEEDBACK: 
-				auto i = temp->childrenBegin() + 2;
-				
-				Mesh* mesh = static_cast<Mesh*>((*i)->obj());
-
-				std::vector<glm::vec3> output;
-				RayTriangle::update(mesh, &ray, output);
-				std::cout << "GPU HIT DETECTION RESULTS ----------------------\n";
-				for (int i = 0; i < output.size(); i++) {
-					std::cout << "Factor t: " << output[i].x << std::endl;
-					std::cout << "uv: " << output[i].y << "/" << output[i].z << std::endl;
-
-					//test drawing: 
-					glm::vec3 hitPoint = ray._origin + glm::normalize(ray._delta) * output[i].x;
-					_scene.addChild(new Cuboid{ "xml/cubeSmall.xml" }, hitPoint);
-				}
+			_scene.addChild(new Cuboid{ "xml/cubeSmall.xml" }, hitPoint, sqrt(1.0f));
+			}
 			}*/
-			
+
+			/* TEST: USE TRANSFORM FEEDBACK:
+			auto i = temp->childrenBegin() + 2;
+
+			Mesh* mesh = static_cast<Mesh*>((*i)->obj());
+
+			std::vector<glm::vec3> output;
+			RayTriangle::update(mesh, &ray, output);
+			std::cout << "GPU HIT DETECTION RESULTS ----------------------\n";
+			for (int i = 0; i < output.size(); i++) {
+			std::cout << "Factor t: " << output[i].x << std::endl;
+			std::cout << "uv: " << output[i].y << "/" << output[i].z << std::endl;
+
+			//test drawing:
+			glm::vec3 hitPoint = ray._origin + glm::normalize(ray._delta) * output[i].x;
+			_scene.addChild(new Cuboid{ "xml/cubeSmall.xml" }, hitPoint);
+			}
+			}*/
+
 			/* END OF DEBUG CODE */
-			
+
 		}
-			break;
+		break;
 		}
 	}
 }
 
 
-btRigidBody* AppScreen::addCube(float mass, const glm::vec3 pos) {
+void AppScreen::addCube(float mass, const glm::vec3 pos) {
 	static int i = 0;
 	std::string name = "Cube" + std::to_string(i++);
 
-	_scene.addChild(new Cuboid{ "xml/cube.xml" }, pos, name);
-	_scene[name]->addPhysics(10.0f);
-	_btWorld->addRigidBody(_scene[name]->physics());
-	_btBodies.insert(std::make_pair(name, _scene[name]->physics()));
+	glm::vec3 v = _cam.dir() * 10.0f;
 
-	return _scene[name]->physics();
+	_scene.addChild(new Cuboid{ "xml/cube.xml" }, pos, name);
+	_scene[name]->addPhysics(BodyType::cuboid, 10.0f, v);
 }

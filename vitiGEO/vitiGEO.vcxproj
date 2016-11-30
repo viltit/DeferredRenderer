@@ -146,32 +146,22 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AABB.hpp" />
-    <ClInclude Include="Collidor.hpp" />
-    <ClInclude Include="Constraint.hpp" />
     <ClInclude Include="DebugInfo.hpp" />
     <ClInclude Include="Frustum.hpp" />
     <ClInclude Include="Geometry.hpp" />
-    <ClInclude Include="Hull.hpp" />
-    <ClInclude Include="Manifold.hpp" />
     <ClInclude Include="Math.hpp" />
-    <ClInclude Include="PhysicEngine.hpp" />
     <ClInclude Include="PhysicObject.hpp" />
-    <ClInclude Include="PhysicShape.hpp" />
+    <ClInclude Include="Physics.hpp" />
     <ClInclude Include="Ray.hpp" />
     <ClInclude Include="Transform.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AABB.cpp" />
-    <ClCompile Include="Collidor.cpp" />
-    <ClCompile Include="Constraint.cpp" />
     <ClCompile Include="Frustum.cpp" />
     <ClCompile Include="Geometry.cpp" />
-    <ClCompile Include="Hull.cpp" />
-    <ClCompile Include="Manifold.cpp" />
     <ClCompile Include="Math.cpp" />
-    <ClCompile Include="PhysicEngine.cpp" />
     <ClCompile Include="PhysicObject.cpp" />
-    <ClCompile Include="PhysicShape.cpp" />
+    <ClCompile Include="Physics.cpp" />
     <ClCompile Include="Ray.cpp" />
     <ClCompile Include="Transform.cpp" />
   </ItemGroup>

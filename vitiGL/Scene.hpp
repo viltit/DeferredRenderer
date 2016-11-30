@@ -51,8 +51,11 @@ public:
 
 	virtual void remove();
 
-	/* add physics component to this element: */
-	void addPhysics(float mass);
+	/*	add physics component to this element:
+	@f : the mass for cuboids, the distance for planes
+	@v : the velocity for cuboids, the normal for planes
+	*/
+	void addPhysics(vitiGEO::BodyType type, float f, const glm::vec3& v = { 0.0f, 0.0f, 0.0f });
 	void removePhysics();
 
 	/*	getters and setters: */
@@ -64,7 +67,7 @@ public:
 	ObjType		type() { return _obj->type(); }
 
 	IGameObject* obj() { return _obj; }
-	btRigidBody* physics() { return _physics; }
+	vitiGEO::PhysicObject* physics() { return _physics; }
 
 	/* get an iterator to the childrens vector: */
 	auto		childrenBegin() { return _children.begin(); }
@@ -78,7 +81,7 @@ protected:
 	SceneNode() {}
 
 	IGameObject* _obj;
-	btRigidBody* _physics;
+	vitiGEO::PhysicObject* _physics;
 
 	SceneNode*	_parent;
 	std::vector<SceneNode*> _children;

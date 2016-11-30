@@ -6,6 +6,8 @@
 #include "Mesh.hpp"
 #include "Model.hpp"
 
+#include <PhysicObject.hpp>
+
 #include <iostream>
 #include <assert.h>
 
@@ -60,18 +62,6 @@ SceneNode::~SceneNode() {
 }
 
 void SceneNode::update(const Uint32 & deltaTime) {
-	/* get the new position and rotation from bullet physics: */
-	if (_physics) {
-		btTransform t;
-		_physics->getMotionState()->getWorldTransform(t);
-
-		glm::vec3 pos = btVecToGlmVec(_physics->getCenterOfMassPosition());
-		glm::quat o1 = transform.orientation();
-		glm::quat o2 = btQuatToGlmQuat(t.getRotation());
-
-		transform.setPos(pos);
-		transform.rotate(o2 * glm::inverse(o1));
-	}
 
 	/* tell transform to adapt parents matrix, if there is a parent: */
 	if (_parent)  transform.setWorldMatrix(_parent->transform.worldMatrix() * transform.localMatrix());
@@ -131,7 +121,7 @@ void SceneNode::remove() {
 }
 
 /* this only adds cuboids - need a more flexible solution for planes etc. */
-void SceneNode::addPhysics(float mass) {
+void SceneNode::addPhysics(BodyType type, float mass, const glm::vec3& initialVelocity) {
 	/* only mesh and shape objects supported: */
 	bool doIt = true;
 	if (!_obj || (_obj->type() != ObjType::mesh && _obj->type() != ObjType::shape))
@@ -140,27 +130,20 @@ void SceneNode::addPhysics(float mass) {
 	/* create a new btPhysic object: */
 	if (doIt) {
 		Shape* s = static_cast<Shape*>(_obj);
-		btTransform t;
-
-		t.setIdentity();
-		t.setOrigin(glmVecToBtVec(transform.pos()));
-		t.setRotation(glmQuatToBtQuat(transform.orientation()));
-
-		btBoxShape* shape = new btBoxShape(glmVecToBtVec(s->getAABB()->dimension() / 2.0f)); /* we assume everything is a box */
-
-		btVector3 inertia;
-		shape->calculateLocalInertia(mass, inertia);
-
-		btMotionState* motion = new btDefaultMotionState(t);
-
-		btRigidBody* body = new btRigidBody{ btScalar(mass), motion, shape, inertia };
-		_physics = body;
+		switch (type) {
+		case BodyType::cuboid:
+			_physics = new CuboidObject{ &transform, mass, s->getAABB()->dimension(), initialVelocity };
+			break;
+			/* !! be aware: we use velocity as the planes normal and mass as its distance !!*/
+		case BodyType::plane:
+			_physics = new PlaneObject{ &transform, mass, initialVelocity };
+		}
 	}
 
-	/* WIP: add all children: */
+	/* WIP: add all children: 
 	for (auto& C : _children) {
 		C->addPhysics(mass);
-	}
+	}*/
 }
 
 void SceneNode::removePhysics() {

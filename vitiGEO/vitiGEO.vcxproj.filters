@@ -42,28 +42,13 @@
     <ClInclude Include="Transform.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Collidor.hpp">
-      <Filter>Header Files\Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="Constraint.hpp">
-      <Filter>Header Files\Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="PhysicEngine.hpp">
-      <Filter>Header Files\Physics</Filter>
+    <ClInclude Include="DebugInfo.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PhysicObject.hpp">
-      <Filter>Header Files\Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="PhysicShape.hpp">
-      <Filter>Header Files\Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="Hull.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Manifold.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DebugInfo.hpp">
+    <ClInclude Include="Physics.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -83,28 +68,13 @@
     <ClCompile Include="Math.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Hull.cpp">
+    <ClCompile Include="Transform.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Collidor.cpp">
-      <Filter>Source Files\Physics</Filter>
-    </ClCompile>
-    <ClCompile Include="Constraint.cpp">
-      <Filter>Source Files\Physics</Filter>
-    </ClCompile>
-    <ClCompile Include="PhysicEngine.cpp">
-      <Filter>Source Files\Physics</Filter>
     </ClCompile>
     <ClCompile Include="PhysicObject.cpp">
-      <Filter>Source Files\Physics</Filter>
-    </ClCompile>
-    <ClCompile Include="PhysicShape.cpp">
-      <Filter>Source Files\Physics</Filter>
-    </ClCompile>
-    <ClCompile Include="Manifold.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Transform.cpp">
+    <ClCompile Include="Physics.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

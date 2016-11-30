@@ -81,10 +81,8 @@ public:
 	glm::quat orientation() const {
 		if (!_validW) {
 			_M = setTranslation(_M, _pos);
-			_W = _M * _W;
-			_validW = true;
 		}
-		return glm::quat(_W);
+		return glm::quat(_M);
 	}
 
 private:
