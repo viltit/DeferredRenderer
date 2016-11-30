@@ -36,6 +36,7 @@ protected:
 
 	void addCube(float mass, const glm::vec3 pos);
 
+	vitiGL::Window*		_window;
 	vitiGL::Scene		_scene;
 	vitiGL::Camera		_cam;
 	vitiGL::glRenderer  _renderer;

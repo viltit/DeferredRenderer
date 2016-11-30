@@ -17,6 +17,7 @@ using namespace vitiGEO;
 
 AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	: IAppScreen{ app },
+	_window{ window },
 	_cam{ float(window->width()) / float(window->height()) },
 	_renderer{ window, &_scene, &_cam },
 	_drender{ window, &_scene, &_cam },
@@ -299,70 +300,43 @@ void AppScreen::updateInput() {
 			_cam.zoom(input.wheel.y);
 			break;
 		case SDL_MOUSEBUTTONDOWN:
-		{
-			/* TEMPORARY DEBUG CODE - TEST RAY-OBJECT COLLISION DETECTION
+			switch (input.button.button) {
+			case SDL_BUTTON_LEFT:
+			{
+				int dx, dy;
+				SDL_GetMouseState(&dx, &dy);
+				glm::vec4 rayS{
+					((float)dx / float(_window->width()) - 0.5f) * 2.0f,
+					((float)dy / float(_window->height()) - 0.5f) * 2.0f,
+					-1.0f,
+					1.0f };
+				glm::vec4 rayE{
+					((float)dx / float(_window->width()) - 0.5f) * 2.0f,
+					((float)dy / float(_window->height()) - 0.5f) * 2.0f,
+					0.0f,
+					1.0f };
 
-			this is messy and just here to see if we get correct results */
+				CamInfo cam = _cam.getMatrizes();
+				glm::mat4 iP = glm::inverse(cam.P);
+				glm::mat4 iV = glm::inverse(cam.V);
 
-			//_scene.addChild(new Cuboid{ "xml/cubeSmall.xml" }, _cam.pos() + 30.0f * _cam.dir(), sqrt(1.0f));
+				rayS = iP * rayS;
+				rayS /= rayS.w;
+				rayS = iV * rayS;
+				rayS /= rayS.w;
 
-			/*
-			vitiGEO::Ray ray{ _cam.pos(), _cam.dir() * 30.0f };
+				rayE = iP * rayE;
+				rayE /= rayE.w;
+				rayE = iV * rayE;
+				rayE/= rayE.w;
 
-			Model* temp = static_cast<Model*>(_scene.findByName("Shark"));
-			vitiGEO::AABB* aabb = temp->aabb().at(2);
-
-			glm::vec3 intersection;
-			float f{ 0.0f };
-
-			if (aabb->rayIntersection(ray, intersection, f)) {*/
-			//_scene.addChild(new Octahedron{ "xml/cube.xml" }, intersection, sqrt(2.0f));
-
-
-			/* test for detailed collision with the mesh:
-			glm::vec3 tuv{};
-			std::vector<glm::vec3> vertices = temp->vertices().at(2);
-			for (int i = 0; i < vertices.size();) {
-			std::vector<glm::vec3> triangle;
-			for (int j = 0; j < 3; j++) {
-			glm::vec4 vertex = { vertices[i].x, vertices[i].y, vertices[i].z, 1.0f };
-			vertex = temp->posMatrix() * vertex;
-			triangle.push_back(glm::vec3{ vertex.x, vertex.y, vertex.z });
-			i++;
+				}
 			}
-			if (ray.rayTriangleIntersect(triangle, tuv)) {
-			std::cout << "---------------------------- HIT THE MESH!\n";
-			std::cout << "Ray delta factor: " << tuv.x << std::endl;
-			std::cout << "UV: " << tuv.y << "/" << tuv.z << std::endl;
-
-			glm::vec3 hitPoint = ray._origin + glm::normalize(ray._delta) * tuv.x;
-
-			_scene.addChild(new Cuboid{ "xml/cubeSmall.xml" }, hitPoint, sqrt(1.0f));
+				break;
+			case SDL_BUTTON_RIGHT:
+				std::cout << "right\n";
+				break;
 			}
-			}*/
-
-			/* TEST: USE TRANSFORM FEEDBACK:
-			auto i = temp->childrenBegin() + 2;
-
-			Mesh* mesh = static_cast<Mesh*>((*i)->obj());
-
-			std::vector<glm::vec3> output;
-			RayTriangle::update(mesh, &ray, output);
-			std::cout << "GPU HIT DETECTION RESULTS ----------------------\n";
-			for (int i = 0; i < output.size(); i++) {
-			std::cout << "Factor t: " << output[i].x << std::endl;
-			std::cout << "uv: " << output[i].y << "/" << output[i].z << std::endl;
-
-			//test drawing:
-			glm::vec3 hitPoint = ray._origin + glm::normalize(ray._delta) * output[i].x;
-			_scene.addChild(new Cuboid{ "xml/cubeSmall.xml" }, hitPoint);
-			}
-			}*/
-
-			/* END OF DEBUG CODE */
-
-		}
-		break;
 		}
 	}
 }
