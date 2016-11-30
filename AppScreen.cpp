@@ -28,17 +28,17 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	RayTriangle::start();
 
 	/* create some scene elements: */
-	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ 0.0f, 200.0f, -1.0f }, "Cuboid");
+	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ 0.0f, 5.0f, -1.0f }, "Cuboid");
 	/* TO DO: physics does not scale yet: */
-	//_scene["Cuboid"]->transform.setScale(glm::vec3{ 3.0f, 3.0f, 3.0f });
-	_scene["Cuboid"]->addPhysics(BodyType::cuboid, 10.0f);
+	_scene["Cuboid"]->transform.setScale(glm::vec3{ 1.0f, 10.0f, 0.5f });
+	//_scene["Cuboid"]->addPhysics(BodyType::cuboid, 10.0f);
 
 	_scene.addChild(new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ 0.0f, 1.0f, 0.0f }, "Floor");
 	_scene["Floor"]->addPhysics(BodyType::plane, 1.0f, glm::vec3{ 0.0f, 1.0f, 0.0f });
 
-	_scene.addChild(new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ 0.0f, 7.0f, -3.0f }, "Wall");
+	_scene.addChild(new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ 0.0f, 7.0f, 0.0f }, "Wall");
 	_scene["Wall"]->transform.rotateTo(90.0f, glm::vec3{ 0.0f, 0.0f, 1.0f });
-	_scene["Wall"]->addPhysics(BodyType::plane, 7.0f, glm::vec3{ 0.0f, 1.0f, 0.0f });
+	_scene["Wall"]->addPhysics(BodyType::plane, 7.0f, glm::vec3{ 0.0f, -1.0f, 0.0f });
 
 	/* add a directional and a point light: */
 	_scene.addChild(new dLight{ "dlight", glm::vec3{ 0.5f, -1.0f, -0.5f } }, "dlight");
@@ -355,5 +355,6 @@ void AppScreen::addCube(float mass, const glm::vec3 pos) {
 	glm::vec3 v = _cam.dir() * 10.0f;
 
 	_scene.addChild(new Cuboid{ "xml/cube.xml" }, pos, name);
+	_scene[name]->transform.setScale(glm::vec3{ 1.0f, 2.0f, 0.5f });
 	_scene[name]->addPhysics(BodyType::cuboid, 10.0f, v);
 }

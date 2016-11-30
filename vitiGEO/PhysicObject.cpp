@@ -30,7 +30,7 @@ CuboidObject::CuboidObject(Transform * transform, float mass,
 	t.setOrigin(glmVecToBtVec(transform->pos()));
 	t.setRotation(glmQuatToBtQuat(transform->orientation()));
 
-	btBoxShape* shape = new btBoxShape(glmVecToBtVec(dimensions / 2.0f));
+	btBoxShape* shape = new btBoxShape(glmVecToBtVec(_transform->scale() * dimensions / 2.0f));
 
 	btVector3 inertia;
 	shape->calculateLocalInertia(mass, inertia);
