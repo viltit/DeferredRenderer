@@ -38,7 +38,8 @@ public:
 	void	move(const glm::vec3& distance) { _pos += distance; }
 
 	void	rotate(float angle, const glm::vec3& axis) {
-		_o = glm::normalize(glm::quat(glm::radians(angle), axis) * _o);
+		_o = glm::rotate(_o, glm::radians(angle), axis);
+		_o = glm::normalize(_o);
 	}
 
 	void	rotate(const glm::quat& q) {
@@ -47,7 +48,8 @@ public:
 
 	void	rotateTo(const glm::quat& q)		{ _o = q; }
 	void	rotateTo(float angle, const glm::vec3& axis) {
-		_o = glm::quat(glm::radians(angle), axis);
+		_o = glm::rotate(_o, glm::radians(angle), axis);
+		_o = glm::normalize(_o);
 	}
 
 	void	setScale(const glm::vec3& scale)	{ _scale = scale; }

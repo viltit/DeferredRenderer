@@ -31,21 +31,21 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ 0.0f, 5.0f, -1.0f }, "Cuboid");
 	/* TO DO: physics does not scale yet: */
 	_scene["Cuboid"]->transform.setScale(glm::vec3{ 1.0f, 10.0f, 0.5f });
-	//_scene["Cuboid"]->addPhysics(BodyType::cuboid, 10.0f);
+	_scene["Cuboid"]->addPhysics(BodyType::cuboid, 10.0f);
 
 	_scene.addChild(new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ 0.0f, 1.0f, 0.0f }, "Floor");
 	_scene["Floor"]->addPhysics(BodyType::plane, 1.0f, glm::vec3{ 0.0f, 1.0f, 0.0f });
 
-	_scene.addChild(new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ 0.0f, 7.0f, 0.0f }, "Wall");
+	_scene.addChild(new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ 7.0f, 7.0f, 0.0f }, "Wall");
 	_scene["Wall"]->transform.rotateTo(90.0f, glm::vec3{ 0.0f, 0.0f, 1.0f });
-	_scene["Wall"]->addPhysics(BodyType::plane, 7.0f, glm::vec3{ 0.0f, -1.0f, 0.0f });
+	_scene["Wall"]->addPhysics(BodyType::plane, -7.0f, glm::vec3{ 0.0f, 1.0f, 0.0f });
 
 	/* add a directional and a point light: */
 	_scene.addChild(new dLight{ "dlight", glm::vec3{ 0.5f, -1.0f, -0.5f } }, "dlight");
 	_scene.setShadowcaster("dlight");
 
 	pLight* plight = new pLight{ &_cam };
-	plight->setProperty(lightProps::pos, glm::vec3{ 0.0f, 2.0f, 0.0f });
+	plight->setProperty(lightProps::pos, glm::vec3{ 0.0f, 12.0f, 0.0f });
 	plight->setProperty(lightProps::diffuse, glm::vec3{ 10.0f, 5.0f, 0.0f });
 	plight->setProperty(lightProps::specular, glm::vec3{ 20.0f, 10.0f, 0.0f });
 
