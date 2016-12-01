@@ -28,12 +28,22 @@ public:
 		_linesEnd.push_back(lineEnd);
 	}
 
+	void addStaticLine(const glm::vec4& lineStart, const glm::vec4& lineEnd) {
+		_sLinesStart.push_back(lineStart);
+		_sLinesEnd.push_back(lineEnd);
+	}
+
 	std::vector<glm::vec4>& points()		{ return _points; }
 	std::vector<glm::vec4>& linesStart()	{ return _linesStart; }
 	std::vector<glm::vec4>& linesEnd()		{ return _linesEnd; }
+	std::vector<glm::vec4> sLinesStart()	{ return _sLinesStart; }
+	std::vector<glm::vec4> sLinesEnd()		{ return _sLinesEnd;  }
 
 private:
 	DebugInfo() {}
+
+	std::vector<glm::vec4> _sLinesStart;
+	std::vector<glm::vec4> _sLinesEnd;
 
 	std::vector<glm::vec4> _points;
 	std::vector<glm::vec4> _linesStart;

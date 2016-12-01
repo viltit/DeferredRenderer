@@ -42,6 +42,8 @@ CuboidObject::CuboidObject(Transform * transform, float mass,
 
 	/* set velocity: */
 	_body->setLinearVelocity(glmVecToBtVec(initVelocity));
+	_body->setLinearFactor(btVector3{ 0.8f, 0.8f, 0.8f });
+	_body->setCollisionFlags(_body->getCollisionFlags() | btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK);
 
 	Physics::instance()->addObject(this);
 }

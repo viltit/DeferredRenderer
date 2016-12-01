@@ -35,6 +35,15 @@ void glRendererDebug::draw(const Camera & cam) {
 	std::vector<glm::vec4> linesEnd = vitiGEO::DebugInfo::instance()->linesEnd();
 	std::vector<glm::vec4> points = vitiGEO::DebugInfo::instance()->points();
 
+	std::vector<glm::vec4> slS = vitiGEO::DebugInfo::instance()->sLinesStart();
+	std::vector<glm::vec4> slE = vitiGEO::DebugInfo::instance()->sLinesEnd();
+
+	for (size_t i = 0; i < slS.size(); i++) {
+		linesStart.push_back(slS[i]);
+		linesEnd.push_back(slE[i]);
+	}
+
+
 	for (size_t i = 0; i < linesStart.size(); i++) {
 		addThickLine(glm::vec3{ linesStart[i] }, glm::vec3{ linesEnd[i] }, linesStart[i].w);
 	}

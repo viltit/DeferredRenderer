@@ -12,8 +12,16 @@
 #include "vitiGL/RayTriangle.hpp"
 #include "vitiGEO/Physics.hpp"
 
+#include <bt/btBulletCollisionCommon.h>
+
 using namespace vitiGL;
 using namespace vitiGEO;
+
+bool collisionCallback(btManifoldPoint& pt, const btCollisionObjectWrapper* obj0, int id0, int index0,
+	const btCollisionObjectWrapper* obj1, int id1, int index1) {
+	std::cout << "Collision\n";
+	return false;
+}
 
 AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	: IAppScreen{ app },
@@ -24,6 +32,9 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	_gui{ "GUI", "TaharezLook.scheme" },
 	_console{ this, &_gui, "layouts/console.layout" }
 {
+
+	gContactAddedCallback = collisionCallback;
+
 	_index = SCREEN_INDEX_APP;
 	RayTriangle::start();
 
@@ -89,8 +100,6 @@ void AppScreen::onExit() {
 }
 
 void AppScreen::update() {
-	std::cout << "Plane2 scale: " << _scene["Wall"]->transform.scale() << std::endl;
-
 	Uint32 frameTime = _timer.frame_time();
 	Uint32 time = _timer.get_time();
 
@@ -219,10 +228,10 @@ void AppScreen::updateInput() {
 				_cam.move(Move::right);
 				break;
 			case SDLK_r:
-				_scene["Wall"]->transform.rotate(20.0f, glm::vec3{ 0.0f, 0.0f, 1.0f });
+				_scene["Cuboid"]->physics()->addImpulse(glm::vec3{ 100.0f, 100.0f, 100.0f });
 				break;
 			case SDLK_t:
-				_scene["Wall"]->transform.rotateTo(0.0f, glm::vec3{ 0.0f, 0.0f, 1.0f });
+				//_scene["Wall"]->transform.rotateTo(0.0f, glm::vec3{ 0.0f, 0.0f, 1.0f });
 				break;
 				/* DEBUG: Control the cube :*/
 			case SDLK_KP_8:
@@ -310,34 +319,13 @@ void AppScreen::updateInput() {
 			switch (input.button.button) {
 			case SDL_BUTTON_LEFT:
 			{
-				int dx, dy;
-				SDL_GetMouseState(&dx, &dy);
-				glm::vec4 rayS{
-					((float)dx / float(_window->width()) - 0.5f) * 2.0f,
-					((float)dy / float(_window->height()) - 0.5f) * 2.0f,
-					-1.0f,
-					1.0f };
-				glm::vec4 rayE{
-					((float)dx / float(_window->width()) - 0.5f) * 2.0f,
-					((float)dy / float(_window->height()) - 0.5f) * 2.0f,
-					0.0f,
-					1.0f };
+				/* get the world space position of the mouse: */
+				std::cout << "left\n";
+				glm::vec3 rayS = _cam.pos();
+				glm::vec3 rayDir = _cam.dir();
 
-				CamInfo cam = _cam.getMatrizes();
-				glm::mat4 iP = glm::inverse(cam.P);
-				glm::mat4 iV = glm::inverse(cam.V);
-
-				rayS = iP * rayS;
-				rayS /= rayS.w;
-				rayS = iV * rayS;
-				rayS /= rayS.w;
-
-				rayE = iP * rayE;
-				rayE /= rayE.w;
-				rayE = iV * rayE;
-				rayE/= rayE.w;
-
-				}
+				DebugInfo::instance()->addStaticLine(glm::vec4{ rayS, 0.1f }, glm::vec4{ rayDir * 100.0f , 0.1f });
+				Physics::instance()->rayPick(rayS, rayDir);
 			}
 				break;
 			case SDL_BUTTON_RIGHT:
@@ -346,7 +334,7 @@ void AppScreen::updateInput() {
 			}
 		}
 	}
-
+}
 
 void AppScreen::addCube(float mass, const glm::vec3 pos) {
 	static int i = 0;

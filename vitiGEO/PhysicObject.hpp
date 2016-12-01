@@ -23,6 +23,11 @@ public:
 	virtual void remove();
 	virtual void update() = 0;
 
+	void setVelocity(const glm::vec3& v)			{ _body->setLinearVelocity(glmVecToBtVec(v)); }
+	void setAngularVelocity(const glm::vec3& av)	{ _body->setAngularVelocity(glmVecToBtVec(av)); }
+	void addImpulse(const glm::vec3& I) { _body->applyCentralImpulse(glmVecToBtVec(I)); }
+
+
 	btRigidBody* body() { return _body; }
 
 protected:

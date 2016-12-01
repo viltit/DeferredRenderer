@@ -38,6 +38,8 @@ namespace vitiGEO {
 		/* setters: */
 		void setGravity(const glm::vec3& g);
 
+		void rayPick(const glm::vec3& rayStart, const glm::vec3& rayEnd);
+
 	protected:
 		Physics();
 

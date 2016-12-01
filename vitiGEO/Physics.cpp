@@ -54,4 +54,17 @@ namespace vitiGEO {
 		_world->setGravity(glmVecToBtVec(g));
 	}
 
+	void Physics::rayPick(const glm::vec3& rayStart, const glm::vec3& rayDir) {
+		btVector3 rayS = glmVecToBtVec(rayStart);
+		btVector3 rayE = rayS + glmVecToBtVec(rayDir) * 100.0f;
+
+		btCollisionWorld::ClosestRayResultCallback rayCallback(rayS, rayE);
+		_world->rayTest(rayS, rayE, rayCallback);
+
+		if (rayCallback.hasHit()) {
+			std::cout << "HIT!\n";
+		}
+		else std::cout << "no hit...\n";
+	}
+
 }
