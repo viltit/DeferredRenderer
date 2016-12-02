@@ -4,6 +4,7 @@
 
 #include "PhysicObject.hpp"
 #include "Transform.hpp"
+#include "Picker.hpp"
 
 #include <algorithm>
 
@@ -34,7 +35,12 @@ namespace vitiGEO {
 	}
 
 	void Physics::update(unsigned int deltaTime) {
-		_world->stepSimulation(btScalar(deltaTime) / btScalar(60.0f));
+		_world->stepSimulation(btScalar(deltaTime) / btScalar(1000.0f));
+
+		/* wip: get collision pairs... */
+		for (size_t i = 0; i < _world->getNumCollisionObjects(); i++) {
+			btRigidBody* body{ btRigidBody::upcast(_world->getCollisionObjectArray()[i]) };
+		}
 
 		/*	give the new positions and orientations to transform: */
 		for (auto& B : _bodies) B->update();
@@ -54,17 +60,8 @@ namespace vitiGEO {
 		_world->setGravity(glmVecToBtVec(g));
 	}
 
-	void Physics::rayPick(const glm::vec3& rayStart, const glm::vec3& rayDir) {
-		btVector3 rayS = glmVecToBtVec(rayStart);
-		btVector3 rayE = rayS + glmVecToBtVec(rayDir) * 100.0f;
-
-		btCollisionWorld::ClosestRayResultCallback rayCallback(rayS, rayE);
-		_world->rayTest(rayS, rayE, rayCallback);
-
-		if (rayCallback.hasHit()) {
-			std::cout << "HIT!\n";
-		}
-		else std::cout << "no hit...\n";
+	void Physics::picker(const glm::vec3& rayStart, const glm::vec3& rayDir) {
+		_picker = new Picker{ _world, rayStart, rayDir };
 	}
 
 }

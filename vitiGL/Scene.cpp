@@ -128,11 +128,11 @@ void SceneNode::addPhysics(BodyType type, float mass, const glm::vec3& initialVe
 		Shape* s = static_cast<Shape*>(_obj);
 		switch (type) {
 		case BodyType::cuboid:
-			_physics = new CuboidObject{ &transform, mass, s->getAABB()->dimension(), initialVelocity };
+			_physics = new CuboidObject{ &transform, this, mass, s->getAABB()->dimension(), initialVelocity };
 			break;
 			/* !! be aware: we use velocity as the planes normal and mass as its distance !!*/
 		case BodyType::plane:
-			_physics = new PlaneObject{ &transform, mass, initialVelocity };
+			_physics = new PlaneObject{ &transform, this, mass, initialVelocity };
 		}
 	}
 

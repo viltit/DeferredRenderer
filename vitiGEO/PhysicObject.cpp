@@ -17,7 +17,9 @@ void PhysicObject::remove() {
 
 
 /* Cuboid ------------------------------------------------------------------------------------ */
-CuboidObject::CuboidObject(Transform * transform, float mass,
+CuboidObject::CuboidObject(Transform * transform, 
+	const void* node,
+	float mass,
 	const glm::vec3& dimensions,
 	const glm::vec3 & initVelocity)
 
@@ -44,6 +46,7 @@ CuboidObject::CuboidObject(Transform * transform, float mass,
 	_body->setLinearVelocity(glmVecToBtVec(initVelocity));
 	_body->setLinearFactor(btVector3{ 0.8f, 0.8f, 0.8f });
 	_body->setCollisionFlags(_body->getCollisionFlags() | btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK);
+	_body->setUserPointer((void*)node);
 
 	Physics::instance()->addObject(this);
 }
@@ -71,6 +74,7 @@ void CuboidObject::update() {
 
 /* Plane ------------------------------------------------------------------------------------ */
 PlaneObject::PlaneObject(Transform * transform,
+	const void* node,
 	float d,
 	const glm::vec3 & normal)
 
@@ -89,6 +93,7 @@ PlaneObject::PlaneObject(Transform * transform,
 
 	/* create the rigid body: */
 	_body = new btRigidBody{ btScalar(0.0f), motion, shape };
+
 
 	Physics::instance()->addObject(this);
 }

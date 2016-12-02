@@ -38,6 +38,7 @@ protected:
 class CuboidObject : public PhysicObject {
 public:
 	CuboidObject(Transform* transform,
+		const void* node,
 		float mass,
 		const glm::vec3& dimensions,
 		const glm::vec3& initVelocity = { 0.0f, 0.0f, 0.0f });
@@ -53,6 +54,7 @@ private:
 class PlaneObject : public PhysicObject {
 public:
 	PlaneObject(Transform* transform,
+		const void* node,
 		float planeD,
 		const glm::vec3 & planeNormal);
 

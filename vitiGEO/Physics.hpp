@@ -19,10 +19,12 @@ class PhysicObject
 #include <glm/glm.hpp>
 #include <bt/btBulletDynamicsCommon.h>
 
+
 namespace vitiGEO {
 
 	class PhysicObject;
 	class Transform;
+	class Picker;
 
 	class Physics {
 	public:
@@ -38,7 +40,7 @@ namespace vitiGEO {
 		/* setters: */
 		void setGravity(const glm::vec3& g);
 
-		void rayPick(const glm::vec3& rayStart, const glm::vec3& rayEnd);
+		void picker(const glm::vec3& rayStart, const glm::vec3& rayEnd);
 
 	protected:
 		Physics();
@@ -50,5 +52,7 @@ namespace vitiGEO {
 		btDiscreteDynamicsWorld*			_world;
 
 		std::vector<PhysicObject*>			_bodies;
+
+		Picker*								_picker;
 	};
 }

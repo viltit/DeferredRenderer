@@ -152,6 +152,7 @@
     <ClInclude Include="Math.hpp" />
     <ClInclude Include="PhysicObject.hpp" />
     <ClInclude Include="Physics.hpp" />
+    <ClInclude Include="Picker.hpp" />
     <ClInclude Include="Ray.hpp" />
     <ClInclude Include="Transform.hpp" />
   </ItemGroup>
@@ -162,6 +163,7 @@
     <ClCompile Include="Math.cpp" />
     <ClCompile Include="PhysicObject.cpp" />
     <ClCompile Include="Physics.cpp" />
+    <ClCompile Include="Picker.cpp" />
     <ClCompile Include="Ray.cpp" />
     <ClCompile Include="Transform.cpp" />
   </ItemGroup>

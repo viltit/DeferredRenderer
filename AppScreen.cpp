@@ -17,11 +17,6 @@
 using namespace vitiGL;
 using namespace vitiGEO;
 
-bool collisionCallback(btManifoldPoint& pt, const btCollisionObjectWrapper* obj0, int id0, int index0,
-	const btCollisionObjectWrapper* obj1, int id1, int index1) {
-	std::cout << "Collision\n";
-	return false;
-}
 
 AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	: IAppScreen{ app },
@@ -32,9 +27,6 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	_gui{ "GUI", "TaharezLook.scheme" },
 	_console{ this, &_gui, "layouts/console.layout" }
 {
-
-	gContactAddedCallback = collisionCallback;
-
 	_index = SCREEN_INDEX_APP;
 	RayTriangle::start();
 
@@ -48,8 +40,8 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	_scene["Floor"]->addPhysics(BodyType::plane, 1.0f, glm::vec3{ 0.0f, 1.0f, 0.0f });
 
 	_scene.addChild(new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ 7.0f, 7.0f, 0.0f }, "Wall");
-	_scene["Wall"]->transform.rotateTo(90.0f, glm::vec3{ 0.0f, 0.0f, 1.0f });
-	_scene["Wall"]->addPhysics(BodyType::plane, -7.0f, glm::vec3{ 0.0f, 1.0f, 0.0f });
+	_scene["Wall"]->transform.rotateTo(45.0f, glm::vec3{ 0.0f, 0.0f, 1.0f });
+	_scene["Wall"]->addPhysics(BodyType::plane, 0.0f, glm::vec3{ 0.0f, 1.0f, 0.0f });
 
 	/* add a directional and a point light: */
 	_scene.addChild(new dLight{ "dlight", glm::vec3{ 0.5f, -1.0f, -0.5f } }, "dlight");
@@ -325,7 +317,7 @@ void AppScreen::updateInput() {
 				glm::vec3 rayDir = _cam.dir();
 
 				DebugInfo::instance()->addStaticLine(glm::vec4{ rayS, 0.1f }, glm::vec4{ rayDir * 100.0f , 0.1f });
-				Physics::instance()->rayPick(rayS, rayDir);
+				Physics::instance()->picker(rayS, rayDir);
 			}
 				break;
 			case SDL_BUTTON_RIGHT:
