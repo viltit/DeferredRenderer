@@ -103,8 +103,6 @@ void AppScreen::update() {
 	updateInput();
 	Physics::instance()->update(frameTime);
 
-	//PhysicEngine::instance()->update(frameTime);
-
 	//DEBUG: Track the cube
 	DebugInfo::instance()->addLine(glm::vec4{ _cam.pos() + _cam.dir(), 0.05f }, glm::vec4{ _scene["Cuboid"]->transform.pos(), 0.05f });
 
@@ -198,6 +196,10 @@ void AppScreen::updateInput() {
 	SDL_Event input;
 	while (SDL_PollEvent(&input)) {
 		_gui.onSDLEvent(input);
+
+		//temporary solution:
+		Physics::instance()->update(_cam.pos(), _cam.dir(), input);
+
 		switch (input.type) {
 		case SDL_QUIT:
 			_state = ScreenState::exit;

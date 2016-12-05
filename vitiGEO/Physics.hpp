@@ -19,6 +19,8 @@ class PhysicObject
 #include <glm/glm.hpp>
 #include <bt/btBulletDynamicsCommon.h>
 
+#include <SDL2/SDL.h>
+
 
 namespace vitiGEO {
 
@@ -33,6 +35,7 @@ namespace vitiGEO {
 		virtual ~Physics();
 
 		void update(unsigned int deltaTime);
+		void update(const glm::vec3& camPos, const glm::vec3& camDir, const SDL_Event& input);
 
 		void addObject(PhysicObject* obj);
 		void removeObject(PhysicObject* obj);

@@ -46,6 +46,15 @@ namespace vitiGEO {
 		for (auto& B : _bodies) B->update();
 	}
 
+	void Physics::update(const glm::vec3& camPos, const glm::vec3& camDir, const SDL_Event& input) {
+		if (_picker) {
+			if (!_picker->onMouseMove(camPos, camDir, input)) {
+				delete _picker;
+				_picker = nullptr;
+			}
+		}
+	}
+
 	void Physics::addObject(PhysicObject* obj) {
 		_world->addRigidBody(obj->body());
 		_bodies.push_back(obj);
@@ -62,6 +71,10 @@ namespace vitiGEO {
 
 	void Physics::picker(const glm::vec3& rayStart, const glm::vec3& rayDir) {
 		_picker = new Picker{ _world, rayStart, rayDir };
+		if (!_picker->hasBody()) {
+			delete _picker;
+			_picker = nullptr;
+		}
 	}
 
 }
