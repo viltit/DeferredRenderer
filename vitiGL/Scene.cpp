@@ -133,6 +133,13 @@ void SceneNode::addPhysics(BodyType type, float mass, const glm::vec3& initialVe
 			/* !! be aware: we use velocity as the planes normal and mass as its distance !!*/
 		case BodyType::plane:
 			_physics = new PlaneObject{ &transform, this, mass, initialVelocity };
+			break;
+		case BodyType::convexHull:
+		{
+			Shape* shape = static_cast<Shape*>(_obj);
+			_physics = new ConvexHullObject{ &transform, shape->vertices(), this, mass, initialVelocity };
+		}
+			break;
 		}
 	}
 

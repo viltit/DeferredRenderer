@@ -8,7 +8,6 @@ namespace vitiGEO {
 Picker::Picker(btDynamicsWorld* world, const glm::vec3& rayStart, const glm::vec3& rayDir)
 	:	_world{ world },
 		_p2p  { nullptr },
-		_hinge { nullptr },
 		_picked{ nullptr }
 {
 	assert(_world);
@@ -31,14 +30,9 @@ Picker::Picker(btDynamicsWorld* world, const glm::vec3& rayStart, const glm::vec
 				btVector3 pickPosLocal{ body->getCenterOfMassTransform().inverse() * pickPos };
 				_p2p = new btPoint2PointConstraint(*body, pickPosLocal);
 				_world->addConstraint(_p2p, true);
-				_p2p->m_setting.m_impulseClamp = 20.f;
+				_p2p->m_setting.m_impulseClamp = 3.f;
 				_p2p->m_setting.m_tau = 0.001f;
 				_p2p->m_setting.m_damping = 0.8f;
-
-				/* also add a hinge constraint to limit rotation: 
-				_hinge = new btHingeConstraint(*body, pickPosLocal, btVector3{ 0.0f, 1.0f, 0.0f });
-				_hinge->setLimit(-10.0f, 10.0f);
-				_world->addConstraint(_hinge);*/
 			}
 		}
 		_pickDist = (pickPos - rayS).length();
@@ -78,14 +72,6 @@ void Picker::remove() {
 		_picked = nullptr;
 		_state = 0;
 	}
-
-	/*
-	if (_hinge) {
-		_world->removeConstraint(_hinge);
-		delete _hinge;
-		_hinge = nullptr;
-	}*/
-
 	if (_p2p) {
 		_world->removeConstraint(_p2p);
 		delete _p2p;

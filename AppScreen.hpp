@@ -34,7 +34,8 @@ protected:
 	void initGUI();
 	void updateInput();
 
-	void addCube(float mass, const glm::vec3 pos);
+	void addCube(float mass, const glm::vec3& pos);
+	void addOctahedron(float mass, const glm::vec3& pos);
 
 	vitiGL::Window*		_window;
 	vitiGL::Scene		_scene;

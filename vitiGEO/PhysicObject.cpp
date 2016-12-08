@@ -106,5 +106,71 @@ PlaneObject::~PlaneObject() {
 }
 
 void PlaneObject::update() {
+	/* no update needed since its a static object */
+}
+
+
+/* */
+ConvexHullObject::ConvexHullObject(
+	Transform * transform, 
+	const std::vector<glm::vec3>& points,
+	const void * node, float mass, 
+	const glm::vec3 & initialVelocity)
+	
+	: PhysicObject{ transform }
+{
+	/* adapt orientation and position: */
+	btTransform t;
+
+	t.setIdentity();
+	t.setOrigin(glmVecToBtVec(transform->pos()));
+	t.setRotation(glmQuatToBtQuat(transform->orientation()));
+
+	/* transform glm vectors to bt scalars: */
+	std::vector<btScalar> btPoints;
+	for (const auto& point : points) {
+		btPoints.push_back(point.x);
+		btPoints.push_back(point.y);
+		btPoints.push_back(point.z);
+	}
+
+	btConvexHullShape* shape = new btConvexHullShape(btPoints.data(), points.size(), 3);
+
+	btVector3 inertia;
+	shape->calculateLocalInertia(mass, inertia);
+
+	btMotionState* motion = new btDefaultMotionState(t);
+
+	/* create the rigid body: */
+	_body = new btRigidBody{ btScalar(mass), motion, shape, inertia };
+
+	/* set velocity: */
+	_body->setLinearVelocity(glmVecToBtVec(initialVelocity));
+	_body->setLinearFactor(btVector3{ 0.8f, 0.8f, 0.8f });
+	_body->setCollisionFlags(_body->getCollisionFlags() | btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK);
+	_body->setUserPointer((void*)node);
+
+	Physics::instance()->addObject(this);
+}
+
+ConvexHullObject::~ConvexHullObject() {
+	if (_body) {
+		delete _body;
+		_body = nullptr;
+	}
+}
+
+void ConvexHullObject::update() {
+	btTransform t;
+	_body->getMotionState()->getWorldTransform(t);
+
+	/* adapt position: */
+	glm::vec3 pos = btVecToGlmVec(_body->getCenterOfMassPosition());
+	_transform->setPos(pos);
+
+	/* adapt orientation: */
+	//glm::quat o1 = _transform->orientation();
+	glm::quat o2 = btQuatToGlmQuat(t.getRotation());
+	_transform->rotateTo(o2);
 }
 }

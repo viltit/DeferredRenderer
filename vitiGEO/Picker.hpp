@@ -25,7 +25,6 @@ private:
 
 	btDynamicsWorld*			_world;
 	btPoint2PointConstraint*	_p2p;
-	btHingeConstraint*			_hinge;
 
 	/* store the picked body and its state for proper release: */
 	int							_state;

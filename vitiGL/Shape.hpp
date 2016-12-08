@@ -49,7 +49,7 @@ public:
 	/* get a pointer to the objects aabb: */
 	vitiGEO::AABB* getAABB() { return &aabb; }
 
-	std::vector<glm::vec3> vertices() { return _vertices; }
+	std::vector<glm::vec3>& vertices() { return _vertices; }
 
 	bool srgbOn()	{ sRGB = true; }
 	bool srgbOff()	{ sRGB = false; }

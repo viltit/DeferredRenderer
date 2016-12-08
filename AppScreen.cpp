@@ -258,6 +258,9 @@ void AppScreen::updateInput() {
 			case SDLK_SPACE:
 				addCube(10.0f, _cam.pos());
 				break;
+			case SDLK_LSHIFT:
+				addOctahedron(10.0f, _cam.pos());
+				break;
 			case SDLK_F1:
 				_console.setVisible(_console.isVisible() ? false : true);
 				break;
@@ -330,7 +333,7 @@ void AppScreen::updateInput() {
 	}
 }
 
-void AppScreen::addCube(float mass, const glm::vec3 pos) {
+void AppScreen::addCube(float mass, const glm::vec3& pos) {
 	static int i = 0;
 	std::string name = "Cube" + std::to_string(i++);
 
@@ -339,4 +342,13 @@ void AppScreen::addCube(float mass, const glm::vec3 pos) {
 	_scene.addChild(new Cuboid{ "xml/cube.xml" }, pos, name);
 	_scene[name]->transform.setScale(glm::vec3{ 1.0f, 2.0f, 0.5f });
 	_scene[name]->addPhysics(BodyType::cuboid, 10.0f, v);
+}
+
+void AppScreen::addOctahedron(float mass, const glm::vec3 & pos) {
+	static int i = 0;
+	std::string name = "Octahedron" + std::to_string(i++);
+	glm::vec3 v = _cam.dir() * 10.0f;
+
+	_scene.addChild(new Octahedron{ "xml/cubeSmall.xml" }, pos, name);
+	_scene[name]->addPhysics(BodyType::convexHull, mass, v);
 }
