@@ -19,7 +19,8 @@ namespace vitiGEO {
 		_broadphase{ new btDbvtBroadphase() },
 		_solver{ new btSequentialImpulseConstraintSolver() },
 		_world{ new btDiscreteDynamicsWorld(_dispatcher, _broadphase, _solver, _config) }
-	{}
+	{
+	}
 
 	Physics * Physics::instance() {
 		static Physics instance{};
@@ -37,13 +38,18 @@ namespace vitiGEO {
 	void Physics::update(unsigned int deltaTime) {
 		_world->stepSimulation(btScalar(deltaTime) / btScalar(1000.0f));
 
-		/* wip: get collision pairs... */
+		/* wip: get collision pairs... 
 		for (size_t i = 0; i < _world->getNumCollisionObjects(); i++) {
 			btRigidBody* body{ btRigidBody::upcast(_world->getCollisionObjectArray()[i]) };
-		}
+		}*/
 
 		/*	give the new positions and orientations to transform: */
 		for (auto& B : _bodies) B->update();
+		for (auto& B : _bodies) {
+			btTransform t;
+			B->body()->getMotionState()->getWorldTransform(t);
+			_world->debugDrawObject(t, B->body()->getCollisionShape(), btVector3{ 1.0f, 0.0f, 0.0f });
+		}
 	}
 
 	void Physics::update(const glm::vec3& camPos, const glm::vec3& camDir, const SDL_Event& input) {

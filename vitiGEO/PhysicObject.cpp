@@ -1,6 +1,7 @@
 #include "PhysicObject.hpp"
 
 #include "Physics.hpp"
+#include "DebugInfo.hpp"
 
 namespace vitiGEO {
 
@@ -134,7 +135,7 @@ ConvexHullObject::ConvexHullObject(
 		btPoints.push_back(point.z);
 	}
 
-	btConvexHullShape* shape = new btConvexHullShape(btPoints.data(), points.size(), 3);
+	btConvexHullShape* shape = new btConvexHullShape(btPoints.data(), points.size(), 3 * sizeof(btScalar));
 
 	btVector3 inertia;
 	shape->calculateLocalInertia(mass, inertia);

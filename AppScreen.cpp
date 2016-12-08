@@ -27,6 +27,8 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	_gui{ "GUI", "TaharezLook.scheme" },
 	_console{ this, &_gui, "layouts/console.layout" }
 {
+	Physics::instance()->setDebugRenderer(glRendererBTDebug::instance());
+
 	_index = SCREEN_INDEX_APP;
 	RayTriangle::start();
 
@@ -104,7 +106,7 @@ void AppScreen::update() {
 	Physics::instance()->update(frameTime);
 
 	//DEBUG: Track the cube
-	DebugInfo::instance()->addLine(glm::vec4{ _cam.pos() + _cam.dir(), 0.05f }, glm::vec4{ _scene["Cuboid"]->transform.pos(), 0.05f });
+	//DebugInfo::instance()->addLine(glm::vec4{ _cam.pos() + _cam.dir(), 0.05f }, glm::vec4{ _scene["Cuboid"]->transform.pos(), 0.05f });
 
 	_scene.update(frameTime);
 	_cam.update();
@@ -259,7 +261,10 @@ void AppScreen::updateInput() {
 				addCube(10.0f, _cam.pos());
 				break;
 			case SDLK_LSHIFT:
-				addOctahedron(10.0f, _cam.pos());
+				addOctahedron(5.0f, _cam.pos());
+				break;
+			case SDLK_LALT:
+				addTetrahedron(3.0, _cam.pos());
 				break;
 			case SDLK_F1:
 				_console.setVisible(_console.isVisible() ? false : true);
@@ -350,5 +355,14 @@ void AppScreen::addOctahedron(float mass, const glm::vec3 & pos) {
 	glm::vec3 v = _cam.dir() * 10.0f;
 
 	_scene.addChild(new Octahedron{ "xml/cubeSmall.xml" }, pos, name);
+	_scene[name]->addPhysics(BodyType::convexHull, mass, v);
+}
+
+void AppScreen::addTetrahedron(float mass, const glm::vec3& pos) {
+	static int i = 0;
+	std::string name = "Tetrahedron" + std::to_string(i++);
+	glm::vec3 v = _cam.dir() * 10.0f;
+
+	_scene.addChild(new Tetrahedron{ "xml/cubeTiny.xml" }, pos, name);
 	_scene[name]->addPhysics(BodyType::convexHull, mass, v);
 }

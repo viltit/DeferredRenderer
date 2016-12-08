@@ -3,6 +3,8 @@
 #include <iostream>
 #include <DebugInfo.hpp>
 
+#include <Transform.hpp>
+
 namespace vitiGL {
 
 glRendererDebug * glRendererDebug::instance() {
@@ -133,6 +135,18 @@ glRendererDebug::glRendererDebug()
 
 	glGenVertexArrays(1, &_vao);
 	glGenBuffers(1, &_vbo);
+}
+
+
+
+
+glRendererBTDebug * glRendererBTDebug::instance() {
+	static glRendererBTDebug instance;
+	return &instance;
+}
+
+void glRendererBTDebug::drawLine(const btVector3 & from, const btVector3 & to, const btVector3 & color) {
+	glRendererDebug::instance()->addThickLine(vitiGEO::btVecToGlmVec(from), vitiGEO::btVecToGlmVec(to), 0.05f);
 }
 
 }

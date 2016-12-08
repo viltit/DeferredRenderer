@@ -9,6 +9,8 @@
 #include "Shader.hpp"
 #include "Camera.hpp"
 
+#include <bt/btBulletDynamicsCommon.h>
+
 namespace vitiGL {
 
 class glRendererDebug {
@@ -34,6 +36,26 @@ protected:
 
 	GLuint _vao;
 	GLuint _vbo;
+};
+
+class glRendererBTDebug : public btIDebugDraw {
+public:
+	static glRendererBTDebug* instance();
+
+	void drawLine(const btVector3& from, const btVector3& to, const btVector3& color) override;
+	void drawContactPoint(const btVector3& PointOnB, const btVector3& normalOnB, btScalar distance, int lifeTime, const btVector3& color) override {  };
+
+	void setDebugMode(int mode) override { _mode = mode; }
+	int getDebugMode() const override { return _mode; }
+	void	reportErrorWarning(const char* warningString) {}
+
+	void	draw3dText(const btVector3& location, const char* textString) {}
+
+
+private:
+	glRendererBTDebug() { _mode = DBG_DrawWireframe | DBG_DrawAabb; };
+	
+	int _mode;
 };
 
 }
