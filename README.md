@@ -2,7 +2,6 @@ a work-in-Progress Renderer for OpenGL, written mainly for learning purposes
 
 To Do:
 <ul>
-<li><b>Physics:</b> To solve the problem with the floor: Make PhysicObject the parent class of subclasses, ie RigidObject, FloorObject for now. Once a collision is detected, handle it depening on what type of objects collided.</li>
 <li><b>rework Scene manager. Its messy! </b></li>
 <li>reduce dir shadow acne</li>
 <li>Transparent objects, Scene Manager: Use the center of the aabb for distance comparing - <b>done</b></li>
