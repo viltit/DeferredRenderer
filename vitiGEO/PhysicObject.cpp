@@ -54,6 +54,7 @@ CuboidObject::CuboidObject(Transform * transform,
 
 CuboidObject::~CuboidObject() {
 	if (_body) {
+		Physics::instance()->removeObject(this);
 		delete _body;
 		_body = nullptr;
 	}
@@ -101,6 +102,7 @@ PlaneObject::PlaneObject(Transform * transform,
 
 PlaneObject::~PlaneObject() {
 	if (_body) {
+		Physics::instance()->removeObject(this);
 		delete _body;
 		_body = nullptr;
 	}
@@ -156,12 +158,65 @@ ConvexHullObject::ConvexHullObject(
 
 ConvexHullObject::~ConvexHullObject() {
 	if (_body) {
+		Physics::instance()->removeObject(this);
 		delete _body;
 		_body = nullptr;
 	}
 }
 
 void ConvexHullObject::update() {
+	btTransform t;
+	_body->getMotionState()->getWorldTransform(t);
+
+	/* adapt position: */
+	glm::vec3 pos = btVecToGlmVec(_body->getCenterOfMassPosition());
+	_transform->setPos(pos);
+
+	/* adapt orientation: */
+	//glm::quat o1 = _transform->orientation();
+	glm::quat o2 = btQuatToGlmQuat(t.getRotation());
+	_transform->rotateTo(o2);
+}
+
+SphereObject::SphereObject(Transform * transform, const void * node, float mass, float radius, const glm::vec3& initialVelocity)
+	: PhysicObject{ transform }
+{
+	/* adapt orientation and position: */
+	btTransform t;
+
+	t.setIdentity();
+	t.setOrigin(glmVecToBtVec(transform->pos()));
+	t.setRotation(glmQuatToBtQuat(transform->orientation()));
+
+	/* we assume x y and z scale are identical since it is a sphere: */
+	btSphereShape* shape = new btSphereShape(radius * _transform->scale().x);
+
+	btVector3 inertia;
+	shape->calculateLocalInertia(mass, inertia);
+
+	btMotionState* motion = new btDefaultMotionState(t);
+
+	/* create the rigid body: */
+	_body = new btRigidBody{ btScalar(mass), motion, shape, inertia };
+
+	/* set velocity: */
+	_body->setLinearVelocity(glmVecToBtVec(initialVelocity));
+	_body->setLinearFactor(btVector3{ 0.8f, 0.8f, 0.8f });
+	_body->setCollisionFlags(_body->getCollisionFlags() | btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK);
+	_body->setUserPointer((void*)node);
+
+	Physics::instance()->addObject(this);
+}
+
+SphereObject::~SphereObject() {
+	if (_body) {
+		Physics::instance()->removeObject(this);
+		delete _body;
+		_body = nullptr;
+	}
+}
+
+void SphereObject::update() {
 	btTransform t;
 	_body->getMotionState()->getWorldTransform(t);
 

@@ -225,6 +225,7 @@ void AppScreen::updateInput() {
 				break;
 			case SDLK_r:
 				_scene["Cuboid"]->physics()->addImpulse(glm::vec3{ 100.0f, 100.0f, 100.0f });
+				_scene["Cuboid"]->physics()->addTorque(glm::vec3{ 100.0f, 100.0f, 100.0f });
 				break;
 			case SDLK_t:
 				//_scene["Wall"]->transform.rotateTo(0.0f, glm::vec3{ 0.0f, 0.0f, 1.0f });
@@ -261,7 +262,7 @@ void AppScreen::updateInput() {
 				addCube(10.0f, _cam.pos());
 				break;
 			case SDLK_LSHIFT:
-				addOctahedron(5.0f, _cam.pos());
+				addIcosahedron(5.0f, _cam.pos());
 				break;
 			case SDLK_LALT:
 				addTetrahedron(3.0, _cam.pos());
@@ -365,4 +366,15 @@ void AppScreen::addTetrahedron(float mass, const glm::vec3& pos) {
 
 	_scene.addChild(new Tetrahedron{ "xml/cubeTiny.xml" }, pos, name);
 	_scene[name]->addPhysics(BodyType::convexHull, mass, v);
+}
+
+void AppScreen::addIcosahedron(float mass, const glm::vec3 & pos) {
+	static int i = 0;
+	std::string name = "Icosahedron" + std::to_string(i++);
+	glm::vec3 v = _cam.dir() * 10.0f;
+
+	_scene.addChild(new Icosahedron{ "xml/cubeTiny.xml" }, pos, name);
+	_scene[name]->transform.setScale(glm::vec3{ 2.0f, 2.0f, 2.0f });
+	_scene[name]->addPhysics(BodyType::sphere, mass, v);
+	_scene[name]->physics()->setRollingFriction(0.3f);
 }

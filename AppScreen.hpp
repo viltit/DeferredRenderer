@@ -36,7 +36,8 @@ protected:
 
 	void addCube(float mass, const glm::vec3& pos);
 	void addOctahedron(float mass, const glm::vec3& pos);
-	void AppScreen::addTetrahedron(float mass, const glm::vec3& pos);
+	void addTetrahedron(float mass, const glm::vec3& pos);
+	void addIcosahedron(float mass, const glm::vec3& pos);
 
 	vitiGL::Window*		_window;
 	vitiGL::Scene		_scene;
