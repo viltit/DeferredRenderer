@@ -25,6 +25,7 @@ class PhysicObject
 namespace vitiGEO {
 
 	class PhysicObject;
+	class Constraint;
 	class Transform;
 	class Picker;
 
@@ -39,6 +40,9 @@ namespace vitiGEO {
 
 		void addObject(PhysicObject* obj);
 		void removeObject(PhysicObject* obj);
+
+		void addConstraint(Constraint* c);
+		void removeConstraint(Constraint* c);
 
 		/* setters: */
 		void setGravity(const glm::vec3& g);

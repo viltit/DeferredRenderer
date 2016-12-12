@@ -54,6 +54,9 @@
     <ClInclude Include="Picker.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Constraints.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AABB.cpp">
@@ -81,6 +84,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Picker.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Constraints.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

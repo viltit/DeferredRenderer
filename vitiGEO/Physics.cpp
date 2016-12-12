@@ -3,6 +3,7 @@
 #include "Physics.hpp"
 
 #include "PhysicObject.hpp"
+#include "Constraints.hpp"
 #include "Transform.hpp"
 #include "Picker.hpp"
 
@@ -69,6 +70,14 @@ namespace vitiGEO {
 	void Physics::removeObject(PhysicObject* obj) {
 		_world->removeRigidBody(obj->body());
 		_bodies.erase(std::remove(_bodies.begin(), _bodies.end(), obj), _bodies.end());
+	}
+
+	void Physics::addConstraint(Constraint * c) {
+		_world->addConstraint(c->obj());
+	}
+
+	void Physics::removeConstraint(Constraint * c) {
+		_world->removeConstraint(c->obj());
 	}
 
 	void Physics::setGravity(const glm::vec3 & g) {

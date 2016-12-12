@@ -11,6 +11,7 @@
 #include "vitiGEO/DebugInfo.hpp"
 #include "vitiGL/RayTriangle.hpp"
 #include "vitiGEO/Physics.hpp"
+#include "vitiGEO/Constraints.hpp"
 
 #include <bt/btBulletCollisionCommon.h>
 
@@ -52,6 +53,16 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 			}
 		}
 	}
+
+	/* constraint tests: */
+	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ -20.0f, 1.5f, 11.0f}, "CCube1");
+	_scene["CCube1"]->addPhysics(BodyType::cuboid, 10.0f);
+	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ -20.0f, 1.5f, 9.0f }, "CCube2");
+	_scene["CCube2"]->addPhysics(BodyType::cuboid, 10.0f);
+	vitiGEO::Constraint* c = new vitiGEO::Constraint{ 
+		ConstraintType::p2p, _scene["CCube1"]->physics(), glm::vec3{ -20.0f, 1.5f, 10.5f },
+		_scene["CCube2"]->physics(), glm::vec3{ -20.0f, 1.5f, 9.5f }
+	};
 
 	_scene.addChild(new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ 0.0f, 1.0f, 0.0f }, "Floor");
 	_scene["Floor"]->addPhysics(BodyType::cuboid, 0.0f);
@@ -243,8 +254,8 @@ void AppScreen::updateInput() {
 				_cam.move(Move::right);
 				break;
 			case SDLK_r:
-				_scene["Cuboid"]->physics()->addImpulse(glm::vec3{ 100.0f, 100.0f, 100.0f });
-				_scene["Cuboid"]->physics()->addTorque(glm::vec3{ 100.0f, 100.0f, 100.0f });
+				_scene["CCube1"]->physics()->addImpulse(glm::vec3{ 100.0f, 100.0f, 100.0f });
+				_scene["CCube1"]->physics()->addTorque(glm::vec3{ 100.0f, 100.0f, 100.0f });
 				break;
 			case SDLK_t:
 				//_scene["Wall"]->transform.rotateTo(0.0f, glm::vec3{ 0.0f, 0.0f, 1.0f });

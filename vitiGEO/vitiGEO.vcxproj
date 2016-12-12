@@ -150,6 +150,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AABB.hpp" />
+    <ClInclude Include="Constraints.hpp" />
     <ClInclude Include="DebugInfo.hpp" />
     <ClInclude Include="Frustum.hpp" />
     <ClInclude Include="Geometry.hpp" />
@@ -162,6 +163,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AABB.cpp" />
+    <ClCompile Include="Constraints.cpp" />
     <ClCompile Include="Frustum.cpp" />
     <ClCompile Include="Geometry.cpp" />
     <ClCompile Include="Math.cpp" />

@@ -57,7 +57,7 @@ public:
 	float		damping() const							{ return _body->getLinearDamping(); }
 	float		angularDamping() const					{ return _body->getAngularDamping(); }
 
-	btRigidBody* body() { return _body; }
+	btRigidBody* body() const { return _body; }
 
 protected:
 	Transform*		_transform;
