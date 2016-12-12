@@ -4,6 +4,8 @@
 			look at class Physics for more details							
 			-> follows the maker pattern
 
+	Hints:	set mass to 0 to make a static object;
+
 	Gets called from SceneNode::AddPhysics and should not be used directly from
 	the main code
 */
@@ -20,7 +22,7 @@
 namespace vitiGEO {
 
 enum class BodyType {
-	plane,
+	plane,	/* static object */
 	cuboid,
 	convexHull,
 	sphere
@@ -60,6 +62,7 @@ public:
 protected:
 	Transform*		_transform;
 	btRigidBody*	_body;
+	btCollisionShape* _shape;
 };
 
 
@@ -79,7 +82,7 @@ public:
 private:
 };
 
-/*	STATIC PLANE -------------------------------------------------------------------- */
+/*	STATIC, INFINITE PLANE ----------------------------------------------------------------- */
 class PlaneObject : public PhysicObject {
 public:
 	PlaneObject(Transform* transform,
@@ -95,7 +98,8 @@ public:
 private:
 };
 
-/*	CONVEX HULL -------------------------------------------------------------------- */
+
+/*	CONVEX HULL ------------------------------------------------------------------------- */
 class ConvexHullObject : public PhysicObject {
 public:
 	ConvexHullObject(Transform* transform,
@@ -124,7 +128,7 @@ public:
 
 	virtual void update() override;
 
-	private:
+private:
 };
 
 }

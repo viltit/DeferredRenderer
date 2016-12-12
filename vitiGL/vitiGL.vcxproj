@@ -74,8 +74,8 @@
     <LibraryPath>$(SolutionDir)Debug/;$(SolutionDir)../dependencies/libs;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>$(SolutionDir)../dependencies/includes;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)../dependencies/libs/release/;$(SolutionDir)../dependencies/libs/;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)vitiGEO/;$(SolutionDir)../dependencies/includes;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)Release/;$(SolutionDir)../dependencies/libs/release/;$(SolutionDir)../dependencies/libs/;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -123,7 +123,7 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>SDL2.lib;openGL32.lib;glew32.lib;SOIL.lib;CEGUIBase-0.lib;CEGUIOpenGLRenderer-0.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>vitiGEO.lib;SDL2.lib;openGL32.lib;glew32.lib;SOIL.lib;CEGUIBase-0.lib;CEGUIOpenGLRenderer-0.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

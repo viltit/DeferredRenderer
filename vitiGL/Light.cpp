@@ -28,22 +28,20 @@ dLight::dLight(const std::string& uniformName, const glm::vec3& dir,
 dLight::~dLight() {
 }
 
-void dLight::setProperty(lightProps property, const glm::vec3 & value, const Shader& shader) {
-	shader.on();
+void dLight::setProperty(lightProps property, const glm::vec3 & value) {
 	switch (property) {
 	case lightProps::dir:
 		_dir = glm::normalize(value);
-		glUniform3f(shader.getUniform(_uniform + ".dir"), _dir.x, _dir.y, _dir.z);
 		break;
 	case lightProps::ambient:
 		_ambient = value;
 		//glUniform3f(shader.getUniform(_uniform + ".ambient"), _ambient.r, _ambient.g, _ambient.b);
 		break;
 	case lightProps::diffuse:
-		glUniform3f(shader.getUniform(_uniform + ".diffuse"), _diffuse.r, _diffuse.g, _diffuse.b);
+		_diffuse = value;
 		break;
 	case lightProps::specular:
-		glUniform3f(shader.getUniform(_uniform + ".specular"), _specular.r, _specular.g, _specular.b);
+		_specular = value;
 		break;
 	default:
 #ifdef CONSOLE_LOG
@@ -51,7 +49,6 @@ void dLight::setProperty(lightProps property, const glm::vec3 & value, const Sha
 #endif
 		break;
 	}
-	shader.off();
 }
 
 void dLight::setUniforms(const Shader& shader) const {

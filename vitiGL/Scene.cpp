@@ -135,10 +135,7 @@ void SceneNode::addPhysics(BodyType type, float mass, const glm::vec3& initialVe
 			_physics = new PlaneObject{ &transform, this, mass, initialVelocity };
 			break;
 		case BodyType::convexHull:
-		{
-			Shape* shape = static_cast<Shape*>(_obj);
-			_physics = new ConvexHullObject{ &transform, shape->vertices(), this, mass, initialVelocity };
-		}
+			_physics = new ConvexHullObject{ &transform, s->vertices(), this, mass, initialVelocity };
 			break;
 		case BodyType::sphere:
 			_physics = new SphereObject{ &transform, this, mass, s->getAABB()->radius() / 2.0f, initialVelocity };

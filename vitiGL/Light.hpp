@@ -45,7 +45,7 @@ public:
 	{}
 	virtual ~Light() {}
 
-	virtual void setProperty(lightProps property, const glm::vec3& value, const Shader& shader) = 0;
+	virtual void setProperty(lightProps property, const glm::vec3& value) = 0;
 	virtual void setUniforms(const Shader& shader) const = 0;
 
 protected:
@@ -61,7 +61,7 @@ public:
 			 const glm::vec3& specular = { 1.0f, 1.0f, 1.0f });
 	~dLight();
 
-	void setProperty(lightProps property, const glm::vec3& value, const Shader& shader);
+	void setProperty(lightProps property, const glm::vec3& value) override;
 	void setUniforms(const Shader& shader) const override;
 
 	/* inherited from IDrawable: */
@@ -99,7 +99,7 @@ public:
 	//~pLight();
 
 	void setProperty(lightProps property, const glm::vec3& value, const Shader& shader);
-	void setProperty(lightProps property, const glm::vec3& value);
+	void setProperty(lightProps property, const glm::vec3& value) override;
 	void setUniforms(const Shader& shader) const override;
 
 	//inherited from IDrawable

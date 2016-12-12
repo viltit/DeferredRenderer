@@ -33,15 +33,15 @@ CuboidObject::CuboidObject(Transform * transform,
 	t.setOrigin(glmVecToBtVec(transform->pos()));
 	t.setRotation(glmQuatToBtQuat(transform->orientation()));
 
-	btBoxShape* shape = new btBoxShape(glmVecToBtVec(_transform->scale() * dimensions / 2.0f));
+	_shape = new btBoxShape(glmVecToBtVec(_transform->scale() * dimensions / 2.0f));
 
 	btVector3 inertia;
-	shape->calculateLocalInertia(mass, inertia);
+	_shape->calculateLocalInertia(mass, inertia);
 
 	btMotionState* motion = new btDefaultMotionState(t);
 
 	/* create the rigid body: */
-	_body = new btRigidBody{ btScalar(mass), motion, shape, inertia };
+	_body = new btRigidBody{ btScalar(mass), motion, _shape, inertia };
 
 	/* set velocity: */
 	_body->setLinearVelocity(glmVecToBtVec(initVelocity));
@@ -57,6 +57,10 @@ CuboidObject::~CuboidObject() {
 		Physics::instance()->removeObject(this);
 		delete _body;
 		_body = nullptr;
+	}
+	if (_shape) {
+		delete _shape;
+		_shape = nullptr;
 	}
 }
 
@@ -90,12 +94,11 @@ PlaneObject::PlaneObject(Transform * transform,
 	//t.setOrigin(glmVecToBtVec(transform->pos()));
 	t.setRotation(glmQuatToBtQuat(transform->orientation()));
 
-	btStaticPlaneShape* shape = new btStaticPlaneShape(glmVecToBtVec(normal), d);
+	_shape = new btStaticPlaneShape(glmVecToBtVec(normal), d);
 	btMotionState* motion = new btDefaultMotionState(t);
 
 	/* create the rigid body: */
-	_body = new btRigidBody{ btScalar(0.0f), motion, shape };
-
+	_body = new btRigidBody{ btScalar(0.0f), motion, _shape };
 
 	Physics::instance()->addObject(this);
 }
@@ -105,6 +108,10 @@ PlaneObject::~PlaneObject() {
 		Physics::instance()->removeObject(this);
 		delete _body;
 		_body = nullptr;
+	}
+	if (_shape) {
+		delete _shape;
+		_shape = nullptr;
 	}
 }
 
@@ -137,15 +144,15 @@ ConvexHullObject::ConvexHullObject(
 		btPoints.push_back(point.z);
 	}
 
-	btConvexHullShape* shape = new btConvexHullShape(btPoints.data(), points.size(), 3 * sizeof(btScalar));
+	_shape = new btConvexHullShape(btPoints.data(), points.size(), 3 * sizeof(btScalar));
 
 	btVector3 inertia;
-	shape->calculateLocalInertia(mass, inertia);
+	_shape->calculateLocalInertia(mass, inertia);
 
 	btMotionState* motion = new btDefaultMotionState(t);
 
 	/* create the rigid body: */
-	_body = new btRigidBody{ btScalar(mass), motion, shape, inertia };
+	_body = new btRigidBody{ btScalar(mass), motion, _shape, inertia };
 
 	/* set velocity: */
 	_body->setLinearVelocity(glmVecToBtVec(initialVelocity));
@@ -161,6 +168,10 @@ ConvexHullObject::~ConvexHullObject() {
 		Physics::instance()->removeObject(this);
 		delete _body;
 		_body = nullptr;
+	}
+	if (_shape) {
+		delete _shape;
+		_shape = nullptr;
 	}
 }
 
@@ -189,15 +200,15 @@ SphereObject::SphereObject(Transform * transform, const void * node, float mass,
 	t.setRotation(glmQuatToBtQuat(transform->orientation()));
 
 	/* we assume x y and z scale are identical since it is a sphere: */
-	btSphereShape* shape = new btSphereShape(radius * _transform->scale().x);
+	_shape = new btSphereShape(radius * _transform->scale().x);
 
 	btVector3 inertia;
-	shape->calculateLocalInertia(mass, inertia);
+	_shape->calculateLocalInertia(mass, inertia);
 
 	btMotionState* motion = new btDefaultMotionState(t);
 
 	/* create the rigid body: */
-	_body = new btRigidBody{ btScalar(mass), motion, shape, inertia };
+	_body = new btRigidBody{ btScalar(mass), motion, _shape, inertia };
 
 	/* set velocity: */
 	_body->setLinearVelocity(glmVecToBtVec(initialVelocity));
@@ -213,6 +224,10 @@ SphereObject::~SphereObject() {
 		Physics::instance()->removeObject(this);
 		delete _body;
 		_body = nullptr;
+	}
+	if (_shape) {
+		delete _shape;
+		_shape = nullptr;
 	}
 }
 

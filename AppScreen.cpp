@@ -33,26 +33,45 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	RayTriangle::start();
 
 	/* create some scene elements: */
-	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ 0.0f, 5.0f, -1.0f }, "Cuboid");
-	/* TO DO: physics does not scale yet: */
-	_scene["Cuboid"]->transform.setScale(glm::vec3{ 1.0f, 10.0f, 0.5f });
-	_scene["Cuboid"]->addPhysics(BodyType::cuboid, 10.0f);
+	for (int x = 0; x < 7; x++) {
+		for (int y = 0; y < 14; y++) {
+			for (int z = 0; z < 7; z++) {
+				std::string name = "Cuboid" + std::to_string(x) + std::to_string(y) + std::to_string(z);
+				_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ -10.f + x, 1.5f + y, -1.0f + z}, name);
+				_scene[name]->addPhysics(BodyType::cuboid, 10.0f);
+			}
+		}
+	}
+	/* create more scene elements: */
+	for (int x = 0; x < 7; x++) {
+		for (int y = 0; y < 14; y++) {
+			for (int z = 0; z < 7; z++) {
+				std::string name = "CuboidX" + std::to_string(x) + std::to_string(y) + std::to_string(z);
+				_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ -10.f + x, 1.5f + y, 11.0f + z }, name);
+				_scene[name]->addPhysics(BodyType::cuboid, 10.0f);
+			}
+		}
+	}
 
 	_scene.addChild(new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ 0.0f, 1.0f, 0.0f }, "Floor");
-	_scene["Floor"]->addPhysics(BodyType::plane, 1.0f, glm::vec3{ 0.0f, 1.0f, 0.0f });
+	_scene["Floor"]->addPhysics(BodyType::cuboid, 0.0f);
 
 	_scene.addChild(new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ 7.0f, 7.0f, 0.0f }, "Wall");
 	_scene["Wall"]->transform.rotateTo(45.0f, glm::vec3{ 0.0f, 0.0f, 1.0f });
-	_scene["Wall"]->addPhysics(BodyType::plane, 0.0f, glm::vec3{ 0.0f, 1.0f, 0.0f });
+	_scene["Wall"]->addPhysics(BodyType::cuboid, 0.0f);
 
 	/* add a directional and a point light: */
-	_scene.addChild(new dLight{ "dlight", glm::vec3{ 0.5f, -1.0f, -0.5f } }, "dlight");
+	dLight* dlight = new dLight{ "dlight", glm::vec3{ 0.5f, -1.0f, -0.5f } };
+	dlight->setProperty(lightProps::diffuse, glm::vec3{ 0.8f, 0.1f, 0.0f });
+	dlight->setProperty(lightProps::specular, glm::vec3{ 1.f, 0.0f, 0.0f });
+	_scene.addChild(dlight, "dlight");
 	_scene.setShadowcaster("dlight");
 
 	pLight* plight = new pLight{ &_cam };
-	plight->setProperty(lightProps::pos, glm::vec3{ 0.0f, 12.0f, 0.0f });
+	plight->setProperty(lightProps::pos, glm::vec3{ 0.0f, 15.0f, 10.0f });
 	plight->setProperty(lightProps::diffuse, glm::vec3{ 10.0f, 5.0f, 0.0f });
 	plight->setProperty(lightProps::specular, glm::vec3{ 20.0f, 10.0f, 0.0f });
+	plight->setProperty(lightProps::attenuation, Attenuation::r160);
 
 	_scene.addChild(plight, "plight");
 	_scene.setShadowcaster("plight");
@@ -71,7 +90,7 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	_scene.addCamera(&_cam);
 
 	_cam.setPos(glm::vec3{ -4.0f, 8.0f, -5.0f });
-	_cam.setTarget(glm::vec3{ 0.0f, 0.0f, 0.0f });
+	_cam.setTarget(_scene["Cuboid000"]->transform.pos());
 
 	initGUI();
 	_timer.on();
@@ -272,7 +291,7 @@ void AppScreen::updateInput() {
 				break;
 				//debug:
 			case SDLK_F2:
-				_scene.switchCull();
+				_cam.setTarget(_scene["Cuboid000"]->transform.pos());;
 				break;
 			case SDLK_g:
 				_drender.gramSchmidt();
