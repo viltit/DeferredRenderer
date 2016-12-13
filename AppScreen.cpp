@@ -55,17 +55,22 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	}
 
 	/* constraint tests: */
-	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ -20.0f, 1.5f, 11.0f}, "CCube1");
+	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ -20.0f, 5.0f, 11.0f}, "CCube1");
+	_scene["CCube1"]->transform.setScale(glm::vec3{ 2.0f, 5.0f, 0.1f });
 	_scene["CCube1"]->addPhysics(BodyType::cuboid, 10.0f);
+	_scene["CCube1"]->physics()->body()->setGravity(btVector3{ 0.0f, 0.0f, 0.0f });
+	vitiGEO::HingeConstraint* c = new vitiGEO::HingeConstraint {
+		_scene["CCube1"]->physics(), glm::vec3{ 1.1f, 0.0f, 0.0f }, glm::vec3{ 0.0f, 1.0f, 0.0f } };
+	c->setMinMax(-3.1416 / 4.0f, 3.1416 / 4.0f);
+
 	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ -20.0f, 1.5f, 9.0f }, "CCube2");
 	_scene["CCube2"]->addPhysics(BodyType::cuboid, 10.0f);
-	vitiGEO::Constraint* c = new vitiGEO::Constraint{ 
-		ConstraintType::p2p, _scene["CCube1"]->physics(), glm::vec3{ -20.0f, 1.5f, 10.5f },
-		_scene["CCube2"]->physics(), glm::vec3{ -20.0f, 1.5f, 9.5f }
-	};
 
 	_scene.addChild(new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ 0.0f, 1.0f, 0.0f }, "Floor");
 	_scene["Floor"]->addPhysics(BodyType::cuboid, 0.0f);
+
+	_scene.addChild(new Cuboid{ "xml/cube_floorBig.xml" }, glm::vec3{ 0.0f, -10.0f, 0.0f }, "Floor2");
+	_scene["Floor2"]->addPhysics(BodyType::cuboid, 0.0f);
 
 	_scene.addChild(new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ 7.0f, 7.0f, 0.0f }, "Wall");
 	_scene["Wall"]->transform.rotateTo(45.0f, glm::vec3{ 0.0f, 0.0f, 1.0f });

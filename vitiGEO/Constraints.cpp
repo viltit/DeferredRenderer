@@ -6,24 +6,6 @@
 
 namespace vitiGEO {
 
-Constraint::Constraint(ConstraintType type, const PhysicObject* objA, const glm::vec3& pivotA,
-					   const PhysicObject* objB, const glm::vec3& pivotB) 
-	: _constraint{ nullptr }
-{
-	btVector3 pivot1 = glmVecToBtVec(pivotA);
-	btVector3 pivot2 = glmVecToBtVec(pivotB);
-
-	switch (type) {
-	case ConstraintType::p2p:
-		if (objA && !objB) makeSingleP2P(objA, pivot1);
-		else if (objA && objB) makeP2P(objA, pivot1, objB, pivot2);
-		break;
-	}
-}
-
-Constraint::~Constraint() { 
-	remove();
-}
 
 void Constraint::remove() {
 	if (_constraint) {
@@ -33,16 +15,91 @@ void Constraint::remove() {
 	}
 }
 
-void Constraint::makeP2P(const PhysicObject * objA, const btVector3& pivotA, const PhysicObject * objB, const btVector3& pivotB) {
-	btPoint2PointConstraint* p2p = new btPoint2PointConstraint(*objA->body(), *objB->body(), pivotA, pivotB);
-	_constraint = p2p;
+/* Point to Point -------------------------------------------------------- */
+P2PConstraint::P2PConstraint(const PhysicObject * objA, const glm::vec3 & pivotA, 
+							 const PhysicObject * objB, const glm::vec3 & pivotB) 
+{
+	assert(objA);
+
+	btVector3 pointOnA = glmVecToBtVec(pivotA);
+	btVector3 pointOnB = glmVecToBtVec(pivotB);
+
+	if (objA && !objB) {
+		_constraint = new btPoint2PointConstraint(*objA->body(), pointOnA);
+		Physics::instance()->addConstraint(this);
+	}
+
+	else if (objA && objB) {
+		_constraint = new btPoint2PointConstraint(*objA->body(), *objB->body(), pointOnA, pointOnB);
+		Physics::instance()->addConstraint(this);
+	}
+}
+
+P2PConstraint::~P2PConstraint() {
+	remove();
+}
+
+
+/* Slider ----------------------------------------------------------------- */
+SliderConstraint::SliderConstraint(const PhysicObject * objA, const PhysicObject * objB,
+								   float minDist, float maxDist) {
+	btTransform inA{ btTransform::getIdentity() };
+	btTransform inB{ btTransform::getIdentity() };
+	
+	_constraint = new btSliderConstraint{ *objA->body(), *objB->body(), inA, inB, true };
+
+	Physics::instance()->addConstraint(this);
+
+	setMinMaxLinear(minDist, maxDist);
+}
+
+SliderConstraint::SliderConstraint(const PhysicObject * objA, float minDist, float maxDist) {
+	btTransform inA{ btTransform::getIdentity() };
+	inA.setOrigin(btVector3{ 30.0f, 0.5f, 30.0f });
+
+	_constraint = new btSliderConstraint{ *objA->body(), inA, false };
+
+	Physics::instance()->addConstraint(this);
+
+	setMinMaxLinear(minDist, maxDist);
+}
+
+SliderConstraint::~SliderConstraint() {
+	remove();
+}
+
+void SliderConstraint::setMinMaxAngle(float minAngle, float maxAngle) {
+	btSliderConstraint* c = static_cast<btSliderConstraint*>(_constraint);
+	c->setLowerAngLimit(minAngle);
+	c->setUpperAngLimit(maxAngle);
+}
+
+void SliderConstraint::setMinMaxLinear(float min, float max) {
+	btSliderConstraint* c = static_cast<btSliderConstraint*>(_constraint);
+	c->setLowerLinLimit(min);
+	c->setUpperLinLimit(max);
+}
+
+
+/* Hinge ----------------------------------------------------------------- */
+HingeConstraint::HingeConstraint(const PhysicObject * obj, const glm::vec3 pivot, const glm::vec3 axis) {
+	btVector3 pivotA = glmVecToBtVec(pivot);
+	btVector3 axisA = glmVecToBtVec(axis);
+	_constraint = new btHingeConstraint{ *obj->body(), pivotA, axisA };
 	Physics::instance()->addConstraint(this);
 }
 
-void Constraint::makeSingleP2P(const PhysicObject * objA, const btVector3& pivotPoint) {
-	btPoint2PointConstraint* p2p = new btPoint2PointConstraint(*objA->body(), pivotPoint);
-	_constraint = p2p;
-	Physics::instance()->addConstraint(this);
+HingeConstraint::~HingeConstraint() {
+}
+
+void HingeConstraint::setMinMax(float min, float max) {
+	btHingeConstraint* c = static_cast<btHingeConstraint*>(_constraint);
+	c->setLimit(min, max);
+}
+
+void HingeConstraint::setSoftness(float soft) {
+	btHingeConstraint* c = static_cast<btHingeConstraint*>(_constraint);
+	c->setLimit(c->getLowerLimit(), c->getUpperLimit(), soft);
 }
 
 }

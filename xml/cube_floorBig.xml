@@ -1,0 +1,24 @@
+<SHAPE>
+	<TEXTURE>
+		<DIFFUSE>
+		Textures/planks_Diffuse.png
+		</DIFFUSE>
+		<SPECULAR>
+		Textures/planks_Specular.png
+		</SPECULAR>
+		<NORMAL>
+		Textures/planks_Normal.png
+		</NORMAL>
+	</TEXTURE>
+	<DIMENSION>
+		<SIZE>
+			100.0
+			0.06
+			100.0
+		</SIZE>
+		<UV>
+			60.0
+			60.0
+		</UV>
+	</DIMENSION>
+</SHAPE>
