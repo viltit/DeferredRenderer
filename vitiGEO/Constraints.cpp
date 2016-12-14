@@ -86,6 +86,7 @@ HingeConstraint::HingeConstraint(const PhysicObject * obj, const glm::vec3 pivot
 	btVector3 pivotA = glmVecToBtVec(pivot);
 	btVector3 axisA = glmVecToBtVec(axis);
 	_constraint = new btHingeConstraint{ *obj->body(), pivotA, axisA };
+
 	Physics::instance()->addConstraint(this);
 }
 
@@ -100,6 +101,20 @@ void HingeConstraint::setMinMax(float min, float max) {
 void HingeConstraint::setSoftness(float soft) {
 	btHingeConstraint* c = static_cast<btHingeConstraint*>(_constraint);
 	c->setLimit(c->getLowerLimit(), c->getUpperLimit(), soft);
+}
+
+void HingeConstraint::addMotor(float targetVelocity, float maxImpulse) {
+	static_cast<btHingeConstraint*>(_constraint)->enableAngularMotor(
+		true, targetVelocity, maxImpulse
+	);
+}
+
+void HingeConstraint::motorOff() {
+	static_cast<btHingeConstraint*>(_constraint)->enableMotor(false);
+}
+
+void HingeConstraint::motorOn() {
+	static_cast<btHingeConstraint*>(_constraint)->enableMotor(true);
 }
 
 }

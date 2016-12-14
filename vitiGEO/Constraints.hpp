@@ -66,6 +66,10 @@ public:
 	void setMinMax(float min, float max);
 	void setSoftness(float soft);
 
+	void addMotor(float targetVelocity, float maxImpulse);
+	void motorOff();
+	void motorOn();
+
 private:
 
 };

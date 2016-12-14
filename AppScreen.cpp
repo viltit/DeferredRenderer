@@ -34,25 +34,44 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	RayTriangle::start();
 
 	/* create some scene elements: */
-	for (int x = 0; x < 7; x++) {
-		for (int y = 0; y < 14; y++) {
-			for (int z = 0; z < 7; z++) {
-				std::string name = "Cuboid" + std::to_string(x) + std::to_string(y) + std::to_string(z);
-				_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ -10.f + x, 1.5f + y, -1.0f + z}, name);
-				_scene[name]->addPhysics(BodyType::cuboid, 10.0f);
+	bool reverse = false;
+	float y0 = 1.0f + 0.25f + 0.03f;
+	for (int y = 0; y < 14; y++) {
+		if (!reverse) {
+			for (int x = 0; x < 4; x++) {
+				for (int z = 0; z < 8; z++) {
+					std::string name = "Cuboid" + std::to_string(x) + std::to_string(y) + std::to_string(z);
+					_scene.addChild(new Cuboid{ "xml/block.xml" }, glm::vec3{ -15.f + 2.f * x, y0 + 0.5f * y, -1.f + 1. * z }, name);
+					_scene[name]->addPhysics(BodyType::cuboid, 10.0f);
+					//_scene[name]->physics()->body()->setGravity(btVector3(0.0f, 0.0f, 0.f));
+				}
 			}
 		}
+		else {
+			
+			for (int x = 0; x < 8; x++) {
+				for (int z = 0; z < 4; z++) {
+					std::string name = "Cuboid" + std::to_string(x) + std::to_string(y) + std::to_string(z);
+					_scene.addChild(new Cuboid{ "xml/block.xml" }, glm::vec3{ -15.5f + 1.f * x, y0 + 0.5f * y, -.5f + 2. * z }, name);
+					_scene[name]->transform.rotate(90.0f, glm::vec3{ 0.0f, 1.0f, 0.0f });
+					_scene[name]->addPhysics(BodyType::cuboid, 10.0f);
+					//_scene[name]->physics()->body()->setGravity(btVector3(0.0f, 0.0f, 0.f));
+				}
+			}
+		}
+		reverse = reverse == true ? false : true;
 	}
-	/* create more scene elements: */
+
+	/* create more scene elements: 
 	for (int x = 0; x < 7; x++) {
 		for (int y = 0; y < 14; y++) {
 			for (int z = 0; z < 7; z++) {
 				std::string name = "CuboidX" + std::to_string(x) + std::to_string(y) + std::to_string(z);
-				_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ -10.f + x, 1.5f + y, 11.0f + z }, name);
+				_scene.addChild(new Cuboid{ "xml/block.xml" }, glm::vec3{ -10.f + x, 1.5f + y, 11.0f + z }, name);
 				_scene[name]->addPhysics(BodyType::cuboid, 10.0f);
 			}
 		}
-	}
+	}*/
 
 	/* constraint tests: */
 	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ -20.0f, 5.0f, 11.0f}, "CCube1");
@@ -61,10 +80,13 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	_scene["CCube1"]->physics()->body()->setGravity(btVector3{ 0.0f, 0.0f, 0.0f });
 	vitiGEO::HingeConstraint* c = new vitiGEO::HingeConstraint {
 		_scene["CCube1"]->physics(), glm::vec3{ 1.1f, 0.0f, 0.0f }, glm::vec3{ 0.0f, 1.0f, 0.0f } };
-	c->setMinMax(-3.1416 / 4.0f, 3.1416 / 4.0f);
+	c->addMotor(3.0f, 20.0f);
+	//c->setMinMax(-3.1416 / 4.0f, 3.1416 / 4.0f);
 
 	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ -20.0f, 1.5f, 9.0f }, "CCube2");
 	_scene["CCube2"]->addPhysics(BodyType::cuboid, 10.0f);
+
+	//SliderConstraint* c = new SliderConstraint{ _scene["CCube1"]->physics(), _scene["CCube2"]->physics(), 0.0f, 10.0f };
 
 	_scene.addChild(new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ 0.0f, 1.0f, 0.0f }, "Floor");
 	_scene["Floor"]->addPhysics(BodyType::cuboid, 0.0f);
