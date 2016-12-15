@@ -80,6 +80,10 @@
     <IncludePath>$(SolutionDir)vitiGL/;$(SolutionDir)vitiGEO/;$(SolutionDir)../dependencies/includes;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)Release/;$(SolutionDir)../dependencies/libs/release/;$(SolutionDir)../dependencies/libs/;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>$(SolutionDir)vitiGL/;$(SolutionDir)vitiGEO/;$(SolutionDir)../dependencies.x64/includes/;$(IncludePath);$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <LibraryPath>$(SolutionDir)x64/release/;$(SolutionDir)../dependencies.x64/release/libs/;$(LibraryPath);$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -125,6 +129,7 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>SDL2.lib;openGL32.lib;glew32.lib;SOIL.lib;CEGUIBase-0.lib;CEGUIOpenGLRenderer-0.lib;vitiGL.lib;vitiGEO.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

@@ -77,6 +77,10 @@
     <IncludePath>$(SolutionDir)vitiGEO/;$(SolutionDir)../dependencies/includes;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)Release/;$(SolutionDir)../dependencies/libs/release/;$(SolutionDir)../dependencies/libs/;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>$(SolutionDir)vitiGEO/;$(SolutionDir)../dependencies.x64/includes;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)x64/Release/;$(SolutionDir)../dependencies.x64/release/libs/;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <PrecompiledHeader>

@@ -5,6 +5,8 @@
 
 #include <conio.h>
 
+#include <glm/glm.hpp>
+
 #include "vitiGEO/Ray.hpp"
 #include "vitiGEO/AABB.hpp"
 #include "vitiGL/AABBShape.hpp"
