@@ -80,6 +80,19 @@ void SliderConstraint::setMinMaxLinear(float min, float max) {
 	c->setUpperLinLimit(max);
 }
 
+void SliderConstraint::addMotor(float desiredVelocity, float maxForce) {
+	static_cast<btSliderConstraint*>(_constraint)->setTargetLinMotorVelocity(desiredVelocity);
+	static_cast<btSliderConstraint*>(_constraint)->setMaxLinMotorForce(maxForce);
+}
+
+void SliderConstraint::motorOn() {
+	static_cast<btSliderConstraint*>(_constraint)->setPoweredLinMotor(true);
+}
+
+void SliderConstraint::motorOff() {
+	static_cast<btSliderConstraint*>(_constraint)->setPoweredLinMotor(true);
+}
+
 
 /* Hinge ----------------------------------------------------------------- */
 HingeConstraint::HingeConstraint(const PhysicObject * obj, const glm::vec3 pivot, const glm::vec3 axis) {

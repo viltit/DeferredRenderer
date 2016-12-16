@@ -58,6 +58,12 @@ public:
 	void addPhysics(vitiGEO::BodyType type, float f, const glm::vec3& v = { 0.0f, 0.0f, 0.0f });
 	void removePhysics();
 
+	/*	merge several objects into a physics compund shape 
+		! we take the btCubeShape for every part right now ! */
+	void addCompundPhysics(const std::vector<SceneNode*>& objects, 
+						   float mass,
+						   const glm::vec3& velocity = {});
+
 	/*	getters and setters: */
 	float		radius() const { return _radius; }
 

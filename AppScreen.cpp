@@ -38,7 +38,7 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	/* create some scene elements: */
 	bool reverse = false;
 	float y0 = 1.0f + 0.25f + 0.03f;
-	for (int y = 0; y < 14; y++) {
+	for (int y = 0; y < 24; y++) {
 		if (!reverse) {
 			for (int x = 0; x < 4; x++) {
 				for (int z = 0; z < 8; z++) {
@@ -77,16 +77,29 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 
 	/* constraint tests: */
 	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ -20.0f, 5.0f, 11.0f}, "CCube1");
-	_scene["CCube1"]->transform.setScale(glm::vec3{ 2.0f, 5.0f, 0.1f });
-	_scene["CCube1"]->addPhysics(BodyType::cuboid, 10.0f);
-	_scene["CCube1"]->physics()->body()->setGravity(btVector3{ 0.0f, 0.0f, 0.0f });
-	vitiGEO::HingeConstraint* c = new vitiGEO::HingeConstraint {
-		_scene["CCube1"]->physics(), glm::vec3{ 1.1f, 0.0f, 0.0f }, glm::vec3{ 0.0f, 1.0f, 0.0f } };
-	c->addMotor(3.0f, 20.0f);
+	//_scene["CCube1"]->transform.setScale(glm::vec3{ 2.0f, 5.0f, 0.1f });
+	//_scene["CCube1"]->addPhysics(BodyType::cuboid, 10.0f);
+	//_scene["CCube1"]->physics()->body()->setGravity(btVector3{ 0.0f, 0.0f, 0.0f });
+	//vitiGEO::HingeConstraint* c = new vitiGEO::HingeConstraint {
+	//	_scene["CCube1"]->physics(), glm::vec3{ 1.1f, 0.0f, 0.0f }, glm::vec3{ 0.0f, 1.0f, 0.0f } };
+	//c->addMotor(3.0f, 20.0f);
 	//c->setMinMax(-3.1416 / 4.0f, 3.1416 / 4.0f);
 
-	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ -20.0f, 1.5f, 9.0f }, "CCube2");
-	_scene["CCube2"]->addPhysics(BodyType::cuboid, 10.0f);
+	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ -20.0f, 6.0f, 11.0f }, "CCube2");
+	//_scene["CCube2"]->addPhysics(BodyType::cuboid, 10.0f);
+
+	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ -19.0f, 6.0f, 11.0f }, "CCube3");
+
+	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ -18.0f, 5.0f, 11.0f }, "CCube4");
+	_scene["CCube4"]->addPhysics(BodyType::cuboid, 10.0f);
+
+	std::vector<SceneNode*> nodes;
+	nodes.push_back(_scene["CCube1"]);
+	nodes.push_back(_scene["CCube2"]);
+	nodes.push_back(_scene["CCube3"]);
+
+	_scene["CCube1"]->addCompundPhysics(nodes, 30.0f);
+
 
 	//SliderConstraint* c = new SliderConstraint{ _scene["CCube1"]->physics(), _scene["CCube2"]->physics(), 0.0f, 10.0f };
 
@@ -321,10 +334,10 @@ void AppScreen::updateInput() {
 				addCube(10.0f, _cam.pos());
 				break;
 			case SDLK_LSHIFT:
-				addIcosahedron(5.0f, _cam.pos());
+				addIcosahedron(4.0f, _cam.pos());
 				break;
 			case SDLK_LALT:
-				addTetrahedron(3.0, _cam.pos());
+				addTetrahedron(1.0, _cam.pos());
 				break;
 			case SDLK_F1:
 				_console.setVisible(_console.isVisible() ? false : true);

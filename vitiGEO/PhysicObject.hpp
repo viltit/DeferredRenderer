@@ -25,7 +25,8 @@ enum class BodyType {
 	plane,	/* static object */
 	cuboid,
 	convexHull,
-	sphere
+	sphere,
+	mulitBody	/* consists of several other bodies */
 };
 
 /*	ABSTRACT BASE CLASS -------------------------------------------------------------------- */
@@ -57,7 +58,9 @@ public:
 	float		damping() const							{ return _body->getLinearDamping(); }
 	float		angularDamping() const					{ return _body->getAngularDamping(); }
 
-	btRigidBody* body() const { return _body; }
+	btRigidBody* body() const							{ return _body; }
+	btCollisionShape* shape() const						{ return _shape; }
+	Transform* transform() const						{ return _transform; }
 
 protected:
 	Transform*		_transform;
@@ -129,6 +132,25 @@ public:
 	virtual void update() override;
 
 private:
+};
+
+
+/*	MULIT-BODY --------------------------------------------------------------------- */
+class MultiBody : public PhysicObject {
+public:
+	MultiBody(Transform* transform,
+			  const void* node,
+			  float mass);
+	~MultiBody();
+
+	void addCuboidBody(	Transform* transform,
+						float mass,
+						const glm::vec3& dimensions);
+
+	virtual void update() override;
+
+private:
+	std::vector<Transform*> _transforms;
 };
 
 }

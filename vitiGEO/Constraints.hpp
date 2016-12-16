@@ -53,6 +53,11 @@ public:
 	void setMinMaxAngle(float minAngle, float maxAngle);
 	void setMinMaxLinear(float min, float max);
 
+	void addMotor(float desiredVelocity, float maxForce);
+
+	void motorOn();
+	void motorOff();
+
 private:
 };
 

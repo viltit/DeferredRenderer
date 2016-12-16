@@ -244,4 +244,84 @@ void SphereObject::update() {
 	glm::quat o2 = btQuatToGlmQuat(t.getRotation());
 	_transform->rotateTo(o2);
 }
+
+/*	MULIT-BODY --------------------------------------------------------------------- */
+
+MultiBody::MultiBody(Transform* transform, const void* node, float mass)
+	: PhysicObject{ transform }
+{
+	/* adapt orientation and position: */
+	btTransform t;
+
+	t.setIdentity();
+	t.setOrigin(glmVecToBtVec(transform->pos()));
+	t.setRotation(glmQuatToBtQuat(transform->orientation()));
+
+	/* this is an empty shape for now: */
+	_shape = new btCompoundShape();
+
+	btVector3 inertia;
+	_shape->calculateLocalInertia(mass, inertia);
+
+	btMotionState* motion = new btDefaultMotionState(t);
+
+	/* create the rigid body: */
+	_body = new btRigidBody{ btScalar(mass), motion, _shape, inertia };
+
+	_body->setLinearFactor(btVector3{ 0.8f, 0.8f, 0.8f });
+	_body->setCollisionFlags(_body->getCollisionFlags() | btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK);
+	_body->setUserPointer((void*)node);
+
+	Physics::instance()->addObject(this);
+}
+
+MultiBody::~MultiBody() {
+}
+
+void MultiBody::addCuboidBody(Transform* transform,
+							float mass,
+							const glm::vec3& dimensions) 
+{
+	_transforms.push_back(transform);
+
+	/* adapt orientation and position: */
+	btTransform t;
+
+	t.setIdentity();
+	t.setOrigin(glmVecToBtVec(transform->pos()));
+	t.setRotation(glmQuatToBtQuat(transform->orientation()));
+
+	btBoxShape* child = new btBoxShape(glmVecToBtVec(transform->scale() * dimensions / 2.0f));
+
+	btVector3 inertia;
+	child->calculateLocalInertia(mass, inertia);
+
+	btMotionState* motion = new btDefaultMotionState(t);
+
+	static_cast<btCompoundShape*>(_shape)->addChildShape(t, child);
+}
+
+void MultiBody::update() {
+
+	size_t numChildren = static_cast<btCompoundShape*>(_shape)->getNumChildShapes();
+
+	assert(_transforms.size() == numChildren);
+
+	for (size_t i = 0; i < numChildren; i++) {
+		btTransform t = static_cast<btCompoundShape*>(_shape)->getChildTransform(i);
+		glm::vec3 pos = btVecToGlmVec(t.getOrigin() + _body->getCenterOfMassPosition());
+		glm::quat o = btQuatToGlmQuat(t.getRotation());
+
+		/* THIS IS WRONG 
+			-> position is off
+			-> rotation does not happen
+		*/
+		std::cout << "Multi-Object child[" << i << "] :\n";
+		std::cout << "Pos: " << pos.x << "/" << pos.y << "/" << pos.z << std::endl;
+		std::cout << "O: " << o.w << "/" << o.x << "/" << o.y << "/" << o.z << std::endl;
+
+		_transforms[i]->setPos(pos);
+		_transforms[i]->rotateTo(o);
+	}
+}
 }
