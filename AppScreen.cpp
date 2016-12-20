@@ -76,7 +76,7 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	}*/
 
 	/* constraint tests: */
-	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ -20.0f, 5.0f, 11.0f}, "CCube1");
+	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ -0.0f, 0.0f, 0.0f}, "CCube1");
 	//_scene["CCube1"]->transform.setScale(glm::vec3{ 2.0f, 5.0f, 0.1f });
 	//_scene["CCube1"]->addPhysics(BodyType::cuboid, 10.0f);
 	//_scene["CCube1"]->physics()->body()->setGravity(btVector3{ 0.0f, 0.0f, 0.0f });
@@ -85,20 +85,20 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	//c->addMotor(3.0f, 20.0f);
 	//c->setMinMax(-3.1416 / 4.0f, 3.1416 / 4.0f);
 
-	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ -20.0f, 6.0f, 11.0f }, "CCube2");
+	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ -0.0f, 1.0f, 0.0f }, "CCube2");
 	//_scene["CCube2"]->addPhysics(BodyType::cuboid, 10.0f);
 
-	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ -19.0f, 6.0f, 11.0f }, "CCube3");
-
-	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ -18.0f, 5.0f, 11.0f }, "CCube4");
-	_scene["CCube4"]->addPhysics(BodyType::cuboid, 10.0f);
+	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ -0.0f, 1.0f, 1.0f }, "CCube3");
 
 	std::vector<SceneNode*> nodes;
 	nodes.push_back(_scene["CCube1"]);
 	nodes.push_back(_scene["CCube2"]);
 	nodes.push_back(_scene["CCube3"]);
+	
+	std::vector<float> mass{ 10.0f, 10.0f, 10.0f };
 
-	_scene["CCube1"]->addCompundPhysics(nodes, 30.0f);
+
+	_scene["CCube1"]->addCompoundPhysics(nodes, mass, glm::vec3{ - 10.0f, 10.0f, 10.0f });
 
 
 	//SliderConstraint* c = new SliderConstraint{ _scene["CCube1"]->physics(), _scene["CCube2"]->physics(), 0.0f, 10.0f };
@@ -179,6 +179,11 @@ void AppScreen::update() {
 
 	//DEBUG: Track the cube
 	//DebugInfo::instance()->addLine(glm::vec4{ _cam.pos() + _cam.dir(), 0.05f }, glm::vec4{ _scene["Cuboid"]->transform.pos(), 0.05f });
+
+	//debug: add coordinate system axes:
+	glRendererDebug::instance()->addLine(glm::vec3{ 0.0f, 0.0f, 0.0f }, glm::vec3{ 10.0f, 0.0f, 0.0f }, glm::vec4{ 1.0f, 0.0f, 0.0f, 0.5f });
+	glRendererDebug::instance()->addLine(glm::vec3{ 0.0f, 0.0f, 0.0f }, glm::vec3{ 0.0f, 10.0f, 0.0f }, glm::vec4{ 0.0f, 1.0f, 0.0f, 0.5f });
+	glRendererDebug::instance()->addLine(glm::vec3{ 0.0f, 0.0f, 0.0f }, glm::vec3{ 0.0f, 0.0f, 10.0f }, glm::vec4{ 0.0f, 0.0f, 1.0f, 0.5f });
 
 	_scene.update(frameTime);
 	_cam.update();

@@ -138,19 +138,18 @@ private:
 /*	MULIT-BODY --------------------------------------------------------------------- */
 class MultiBody : public PhysicObject {
 public:
-	MultiBody(Transform* transform,
+	MultiBody(Transform* mainTransform, std::vector<Transform*> localTransform,
+			  std::vector<glm::vec3> localDimensions,
 			  const void* node,
-			  float mass);
+			  std::vector<float> masses,
+			  glm::vec3 initialVelocity = {});
 	~MultiBody();
-
-	void addCuboidBody(	Transform* transform,
-						float mass,
-						const glm::vec3& dimensions);
 
 	virtual void update() override;
 
 private:
 	std::vector<Transform*> _transforms;
+	std::vector<float> _masses;
 };
 
 }

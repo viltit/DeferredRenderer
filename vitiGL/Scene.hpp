@@ -60,8 +60,9 @@ public:
 
 	/*	merge several objects into a physics compund shape 
 		! we take the btCubeShape for every part right now ! */
-	void addCompundPhysics(const std::vector<SceneNode*>& objects, 
-						   float mass,
+	void addCompoundPhysics(const std::vector<SceneNode*>& objects, 
+						   const std::vector<float>& masses,
+						   const glm::vec3& pos,
 						   const glm::vec3& velocity = {});
 
 	/*	getters and setters: */

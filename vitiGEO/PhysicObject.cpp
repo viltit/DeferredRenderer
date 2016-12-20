@@ -247,30 +247,51 @@ void SphereObject::update() {
 
 /*	MULIT-BODY --------------------------------------------------------------------- */
 
-MultiBody::MultiBody(Transform* transform, const void* node, float mass)
-	: PhysicObject{ transform }
+MultiBody::MultiBody(Transform* mainTransform, 
+					 std::vector<Transform*> transforms, 
+					 std::vector<glm::vec3> localDimensions,
+					 const void* node, 
+					 std::vector<float> mass,
+					 glm::vec3 initialVelocity)
+
+	:	PhysicObject	{ mainTransform },
+		_transforms		{ transforms },
+		_masses			{ mass }
 {
-	/* adapt orientation and position: */
-	btTransform t;
+	assert(transforms.size() == mass.size() == localDimensions.size());
 
-	t.setIdentity();
-	t.setOrigin(glmVecToBtVec(transform->pos()));
-	t.setRotation(glmQuatToBtQuat(transform->orientation()));
+	btCompoundShape* shape = new btCompoundShape{};
+	float massSum{ 0.0f };
 
-	/* this is an empty shape for now: */
-	_shape = new btCompoundShape();
+	for (size_t i = 0; i < transforms.size(); i++) {
+		btBoxShape* child = new btBoxShape{ glmVecToBtVec( transforms[i]->scale() * localDimensions[i] / 2.0f ) };
+		child->setMargin(0.01f);
+
+		btTransform t;
+		t.setIdentity();
+		t.setOrigin(glmVecToBtVec(transforms[i]->pos()));
+		t.setRotation(glmQuatToBtQuat(transforms[i]->orientation()));
+
+		shape->addChildShape(t, child);
+
+		massSum += mass[i];
+	}
 
 	btVector3 inertia;
-	_shape->calculateLocalInertia(mass, inertia);
+	btTransform principal;
 
-	btMotionState* motion = new btDefaultMotionState(t);
+	shape->calculatePrincipalAxisTransform(mass.data(), principal, inertia);
 
-	/* create the rigid body: */
-	_body = new btRigidBody{ btScalar(mass), motion, _shape, inertia };
+	btMotionState* motion = new btDefaultMotionState(principal);
+
+	_shape = shape;
+
+	_body = new btRigidBody{ massSum, motion, _shape, inertia };
 
 	_body->setLinearFactor(btVector3{ 0.8f, 0.8f, 0.8f });
 	_body->setCollisionFlags(_body->getCollisionFlags() | btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK);
 	_body->setUserPointer((void*)node);
+	_body->setLinearVelocity(glmVecToBtVec(initialVelocity));
 
 	Physics::instance()->addObject(this);
 }
@@ -278,28 +299,6 @@ MultiBody::MultiBody(Transform* transform, const void* node, float mass)
 MultiBody::~MultiBody() {
 }
 
-void MultiBody::addCuboidBody(Transform* transform,
-							float mass,
-							const glm::vec3& dimensions) 
-{
-	_transforms.push_back(transform);
-
-	/* adapt orientation and position: */
-	btTransform t;
-
-	t.setIdentity();
-	t.setOrigin(glmVecToBtVec(transform->pos()));
-	t.setRotation(glmQuatToBtQuat(transform->orientation()));
-
-	btBoxShape* child = new btBoxShape(glmVecToBtVec(transform->scale() * dimensions / 2.0f));
-
-	btVector3 inertia;
-	child->calculateLocalInertia(mass, inertia);
-
-	btMotionState* motion = new btDefaultMotionState(t);
-
-	static_cast<btCompoundShape*>(_shape)->addChildShape(t, child);
-}
 
 void MultiBody::update() {
 
@@ -307,21 +306,27 @@ void MultiBody::update() {
 
 	assert(_transforms.size() == numChildren);
 
+	btCompoundShape* shape = static_cast<btCompoundShape*>(_shape);
+
 	for (size_t i = 0; i < numChildren; i++) {
+
+		/*	->	t.getOrigin gets the original position
+			->	getCenterOfMassPosition: adds the translation that happened since the obj was first
+				set to origin
+		*/
 		btTransform t = static_cast<btCompoundShape*>(_shape)->getChildTransform(i);
 		glm::vec3 pos = btVecToGlmVec(t.getOrigin() + _body->getCenterOfMassPosition());
-		glm::quat o = btQuatToGlmQuat(t.getRotation());
 
-		/* THIS IS WRONG 
-			-> position is off
-			-> rotation does not happen
-		*/
-		std::cout << "Multi-Object child[" << i << "] :\n";
-		std::cout << "Pos: " << pos.x << "/" << pos.y << "/" << pos.z << std::endl;
-		std::cout << "O: " << o.w << "/" << o.x << "/" << o.y << "/" << o.z << std::endl;
+		btTransform parent;
+		_body->getMotionState()->getWorldTransform(parent);
+
+		/* rotation is wrong */
+		glm::quat childR = btQuatToGlmQuat(t.getRotation());
+		glm::quat parentR = glm::normalize(btQuatToGlmQuat(parent.getRotation() * t.getRotation()));
+
 
 		_transforms[i]->setPos(pos);
-		_transforms[i]->rotateTo(o);
+		_transforms[i]->rotateTo(parentR);
 	}
 }
 }

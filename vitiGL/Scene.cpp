@@ -160,13 +160,25 @@ void SceneNode::removePhysics() {
 	}
 }
 
-void SceneNode::addCompundPhysics(const std::vector<SceneNode*>& objects, float mass, const glm::vec3 & velocity) {
-
-	MultiBody* physics = new MultiBody{ &transform, this, mass };
-
+void SceneNode::addCompoundPhysics(
+	const std::vector<SceneNode*>& objects, 
+	const std::vector<float>& masses, 
+	const glm::vec3& pos,
+	const glm::vec3 & velocity) 
+{
+	std::vector<Transform*> transforms;
+	std::vector<glm::vec3> dimensions;
 	for (const auto& o : objects) {
 		Shape* s = static_cast<Shape*>(o->_obj);
-		physics->addCuboidBody(&(o->transform), mass, s->getAABB()->dimension());
+		transforms.push_back(&o->transform);
+		dimensions.push_back(s->getAABB()->dimension());
+	}
+
+	Transform* mainT = new Transform{ pos };
+
+	MultiBody* physics = new MultiBody{ mainT, transforms, dimensions, this, masses, velocity };
+
+	for (const auto& o : objects) {
 		o->_physics = physics;
 	}
 
