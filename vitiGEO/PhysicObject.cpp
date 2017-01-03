@@ -258,7 +258,7 @@ MultiBody::MultiBody(Transform* mainTransform,
 		_transforms		{ transforms },
 		_masses			{ mass }
 {
-	assert(transforms.size() == mass.size() == localDimensions.size());
+	//assert(transforms.size() == mass.size() == localDimensions.size());
 
 	btCompoundShape* shape = new btCompoundShape{};
 	float massSum{ 0.0f };
@@ -282,7 +282,20 @@ MultiBody::MultiBody(Transform* mainTransform,
 
 	shape->calculatePrincipalAxisTransform(mass.data(), principal, inertia);
 
-	btMotionState* motion = new btDefaultMotionState(principal);
+	/* we need to update all child transforms with the inverse of the principal: */
+	for (size_t i = 0; i < transforms.size(); i++) {
+		btTransform newChildTransform = principal.inverse()*shape->getChildTransform(i);
+		shape->updateChildTransform(i, newChildTransform);
+	}
+
+
+	//btMotionState* motion = new btDefaultMotionState(principal);
+	btTransform t;
+	t.setIdentity();
+	t.setOrigin(glmVecToBtVec(mainTransform->pos()));
+	t.setRotation(glmQuatToBtQuat(mainTransform->orientation()));
+
+	btMotionState* motion = new btDefaultMotionState{ t };
 
 	_shape = shape;
 
@@ -308,25 +321,40 @@ void MultiBody::update() {
 
 	btCompoundShape* shape = static_cast<btCompoundShape*>(_shape);
 
+	btVector3 inertia;
+	btTransform principal;
+
+	shape->calculatePrincipalAxisTransform(_masses.data(), principal, inertia);
+
+	/* we need to update all child transforms with the inverse of the principal: */
+	for (size_t i = 0; i < _transforms.size(); i++) {
+		btTransform newChildTransform = principal.inverse()*shape->getChildTransform(i);
+
+		glm::quat r = btQuatToGlmQuat(newChildTransform.getRotation());
+		std::cout << "Child rot: " << r.w << "/" << r.x << "/" << r.y << "/" << r.z << std::endl;
+
+		shape->updateChildTransform(i, newChildTransform);
+	}
+
 	for (size_t i = 0; i < numChildren; i++) {
 
 		/*	->	t.getOrigin gets the original position
 			->	getCenterOfMassPosition: adds the translation that happened since the obj was first
 				set to origin
 		*/
-		btTransform t = static_cast<btCompoundShape*>(_shape)->getChildTransform(i);
-		glm::vec3 pos = btVecToGlmVec(t.getOrigin() + _body->getCenterOfMassPosition());
 
+		btTransform child = static_cast<btCompoundShape*>(_shape)->getChildTransform(i);
 		btTransform parent;
 		_body->getMotionState()->getWorldTransform(parent);
 
-		/* rotation is wrong */
-		glm::quat childR = btQuatToGlmQuat(t.getRotation());
-		glm::quat parentR = glm::normalize(btQuatToGlmQuat(parent.getRotation() * t.getRotation()));
+		glm::vec3 pos = btVecToGlmVec(parent.getOrigin() + child.getOrigin());
+		glm::quat rot = btQuatToGlmQuat(parent.getRotation() * child.getRotation());
 
+		/* rotation is wrong */
+		//glm::quat parentR = btQuatToGlmQuat(parent.getRotation());
 
 		_transforms[i]->setPos(pos);
-		_transforms[i]->rotateTo(parentR);
+		_transforms[i]->rotateTo(rot);
 	}
 }
 }

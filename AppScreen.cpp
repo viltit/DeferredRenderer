@@ -64,17 +64,6 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 		reverse = reverse == true ? false : true;
 	}
 
-	/* create more scene elements: 
-	for (int x = 0; x < 7; x++) {
-		for (int y = 0; y < 14; y++) {
-			for (int z = 0; z < 7; z++) {
-				std::string name = "CuboidX" + std::to_string(x) + std::to_string(y) + std::to_string(z);
-				_scene.addChild(new Cuboid{ "xml/block.xml" }, glm::vec3{ -10.f + x, 1.5f + y, 11.0f + z }, name);
-				_scene[name]->addPhysics(BodyType::cuboid, 10.0f);
-			}
-		}
-	}*/
-
 	/* constraint tests: */
 	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ -0.0f, 0.0f, 0.0f}, "CCube1");
 	//_scene["CCube1"]->transform.setScale(glm::vec3{ 2.0f, 5.0f, 0.1f });
@@ -98,7 +87,8 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	std::vector<float> mass{ 10.0f, 10.0f, 10.0f };
 
 
-	_scene["CCube1"]->addCompoundPhysics(nodes, mass, glm::vec3{ - 10.0f, 10.0f, 10.0f });
+	_scene["CCube1"]->addCompoundPhysics(nodes, mass, glm::vec3{ - 10.0f, 100.0f, -10.0f });
+	_scene["CCube1"]->physics()->body()->setGravity(btVector3{ 0.0f, 0.0f, 0.0f });
 
 
 	//SliderConstraint* c = new SliderConstraint{ _scene["CCube1"]->physics(), _scene["CCube2"]->physics(), 0.0f, 10.0f };
