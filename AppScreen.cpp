@@ -86,9 +86,9 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	
 	std::vector<float> mass{ 10.0f, 10.0f, 10.0f };
 
+	_scene.addChild(nullptr, glm::vec3{}, "Compound");
 
-	_scene["CCube1"]->addCompoundPhysics(nodes, mass, glm::vec3{ - 10.0f, 100.0f, -10.0f });
-	_scene["CCube1"]->physics()->body()->setGravity(btVector3{ 0.0f, 0.0f, 0.0f });
+	_scene["Compound"]->addCompoundPhysics(nodes, mass, glm::vec3{ - 10.0f, 100.0f, -10.0f });
 
 
 	//SliderConstraint* c = new SliderConstraint{ _scene["CCube1"]->physics(), _scene["CCube2"]->physics(), 0.0f, 10.0f };

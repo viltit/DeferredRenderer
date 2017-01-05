@@ -326,16 +326,6 @@ void MultiBody::update() {
 
 	shape->calculatePrincipalAxisTransform(_masses.data(), principal, inertia);
 
-	/* we need to update all child transforms with the inverse of the principal: */
-	for (size_t i = 0; i < _transforms.size(); i++) {
-		btTransform newChildTransform = principal.inverse()*shape->getChildTransform(i);
-
-		glm::quat r = btQuatToGlmQuat(newChildTransform.getRotation());
-		std::cout << "Child rot: " << r.w << "/" << r.x << "/" << r.y << "/" << r.z << std::endl;
-
-		shape->updateChildTransform(i, newChildTransform);
-	}
-
 	for (size_t i = 0; i < numChildren; i++) {
 
 		/*	->	t.getOrigin gets the original position

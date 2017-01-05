@@ -178,8 +178,11 @@ void SceneNode::addCompoundPhysics(
 
 	MultiBody* physics = new MultiBody{ mainT, transforms, dimensions, this, masses, velocity };
 
+	/* for a compound object, we need a parent-child relation. The parent has no _obj, but a Transform
+	   with the position on the center of mass calculated by the Physics-Engine */
 	for (const auto& o : objects) {
-		o->_physics = physics;
+		o->_parent = this;
+		this->addChild(o);
 	}
 
 	_physics = physics;
