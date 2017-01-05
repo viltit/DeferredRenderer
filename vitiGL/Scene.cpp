@@ -519,9 +519,17 @@ pLight * Scene::findPLight(const std::string & name) {
 
 void Scene::updateCullingList(vitiGEO::Frustum & frustum, SceneNode* from) {
 	for (auto& S : _shapes) {
-		glm::vec3 pos = _scene[S.first]->transform.pos();
+		SceneNode* node{ _scene[S.first] };
+		glm::vec3 pos{};
+		if (node->parent()) {
+			pos = node->parent()->transform.pos() + node->transform.pos();
+		}
+		else {
+			pos = node->transform.pos();
+		}
+
 		float radius = _scene[S.first]->radius();
-		/*if (frustum.isInside(pos, radius))*/ _cullingList.push_back(_scene[S.first]);
+		if (frustum.isInside(pos, radius)) _cullingList.push_back(_scene[S.first]);
 	}
 }
 }

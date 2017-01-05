@@ -282,11 +282,11 @@ namespace vitiGEO {
 
 		shape->calculatePrincipalAxisTransform(mass.data(), principal, inertia);
 
-		/* we need to update all child transforms with the inverse of the principal:
-		for (size_t i = 0; i < transforms.size(); i++) {
-		btTransform newChildTransform = principal.inverse()*shape->getChildTransform(i);
-		shape->updateChildTransform(i, newChildTransform);
-		}*/
+		/* we need to update all child transforms with the inverse of the principal:*/
+		for (size_t i = 0; i < children.size(); i++) {
+			btTransform newChildTransform = principal.inverse()*shape->getChildTransform(i);
+			shape->updateChildTransform(i, newChildTransform);
+		}
 
 		btTransform t;
 		t.setIdentity();

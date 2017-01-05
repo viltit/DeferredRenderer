@@ -74,19 +74,25 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	//c->addMotor(3.0f, 20.0f);
 	//c->setMinMax(-3.1416 / 4.0f, 3.1416 / 4.0f);
 
-	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ -0.0f, 1.0f, 0.0f }, "CCube2");
-	//_scene["CCube2"]->addPhysics(BodyType::cuboid, 10.0f);
 
+	/* compound object test: */
+	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ -0.0f, 1.0f, 0.0f }, "CCube2");
 	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ -0.0f, 1.0f, 1.0f }, "CCube3");
+	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ -0.0f, 1.0f, 2.0f }, "CCube4");
+	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ -0.0f, 1.0f, -1.0f }, "CCube5");
+	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ -0.0f, 1.0f, -2.0f }, "CCube6");
 
 	std::vector<SceneNode*> nodes;
 	nodes.push_back(_scene["CCube1"]);
 	nodes.push_back(_scene["CCube2"]);
 	nodes.push_back(_scene["CCube3"]);
+	nodes.push_back(_scene["CCube4"]);
+	nodes.push_back(_scene["CCube5"]);
+	nodes.push_back(_scene["CCube6"]);
 	
-	std::vector<float> mass{ 10.0f, 10.0f, 10.0f };
+	std::vector<float> mass{ 10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f };
 
-	_scene.addChild(nullptr, glm::vec3{}, "Compound");
+	_scene.addChild(nullptr, glm::vec3{- 10.0f, 10.0f, -10.0f}, "Compound");
 
 	_scene["Compound"]->addCompoundPhysics(nodes, mass, glm::vec3{ - 10.0f, 100.0f, -10.0f });
 

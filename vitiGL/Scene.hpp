@@ -78,6 +78,7 @@ public:
 	vitiGEO::PhysicObject* physics() { return _physics; }
 
 	/* get an iterator to the childrens vector: */
+	SceneNode*	parent()		{ return _parent; }
 	auto		childrenBegin() { return _children.begin(); }
 	auto		childrenEnd()	{ return _children.end(); }
 
