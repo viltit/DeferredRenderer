@@ -291,8 +291,6 @@ void AppScreen::updateInput() {
 				_cam.move(Move::right);
 				break;
 			case SDLK_r:
-				_scene["CCube1"]->physics()->addImpulse(glm::vec3{ 100.0f, 100.0f, 100.0f });
-				_scene["CCube1"]->physics()->addTorque(glm::vec3{ 100.0f, 100.0f, 100.0f });
 				break;
 			case SDLK_t:
 				//_scene["Wall"]->transform.rotateTo(0.0f, glm::vec3{ 0.0f, 0.0f, 1.0f });

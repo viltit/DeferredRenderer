@@ -48,6 +48,7 @@ public:
 	virtual void drawChilds(const Shader& shader) const;
 
 	virtual void addChild(SceneNode* s);
+	virtual void removeChild(SceneNode* s); //should make this a private function?
 
 	virtual void remove();
 

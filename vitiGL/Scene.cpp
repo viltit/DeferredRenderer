@@ -9,6 +9,7 @@
 #include <PhysicObject.hpp>
 
 #include <iostream>
+#include <algorithm>
 #include <assert.h>
 
 namespace vitiGL {
@@ -53,6 +54,7 @@ SceneNode::~SceneNode() {
         delete _physics;
 		_physics = nullptr;
 	}
+
 	for (auto& C : _children) {
 		if (C) {
 			delete C;
@@ -100,6 +102,10 @@ void SceneNode::drawChilds(const Shader & shader) const {
 void SceneNode::addChild(SceneNode * s) {
 	_children.push_back(s);
 	s->_parent = this;
+}
+
+void SceneNode::removeChild(SceneNode * s) {
+	_children.erase(std::remove(_children.begin(), _children.end(), s), _children.end());
 }
 
 void SceneNode::remove() {
@@ -174,13 +180,12 @@ void SceneNode::addCompoundPhysics(
 		dimensions.push_back(s->getAABB()->dimension());
 	}
 
-	Transform* mainT = new Transform{ pos };
-
-	MultiBody* physics = new MultiBody{ mainT, transforms, dimensions, this, masses, velocity };
+	MultiBody* physics = new MultiBody{ &transform, transforms, dimensions, this, masses, velocity };
 
 	/* for a compound object, we need a parent-child relation. The parent has no _obj, but a Transform
 	   with the position on the center of mass calculated by the Physics-Engine */
 	for (const auto& o : objects) {
+		o->_parent->removeChild(o);
 		o->_parent = this;
 		this->addChild(o);
 	}
@@ -516,7 +521,7 @@ void Scene::updateCullingList(vitiGEO::Frustum & frustum, SceneNode* from) {
 	for (auto& S : _shapes) {
 		glm::vec3 pos = _scene[S.first]->transform.pos();
 		float radius = _scene[S.first]->radius();
-		if (frustum.isInside(pos, radius)) _cullingList.push_back(_scene[S.first]);
+		/*if (frustum.isInside(pos, radius))*/ _cullingList.push_back(_scene[S.first]);
 	}
 }
 }

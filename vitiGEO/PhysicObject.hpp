@@ -138,7 +138,7 @@ private:
 /*	MULIT-BODY --------------------------------------------------------------------- */
 class MultiBody : public PhysicObject {
 public:
-	MultiBody(Transform* mainTransform, std::vector<Transform*> localTransform,
+	MultiBody(Transform* parent, std::vector<Transform*> children,
 			  std::vector<glm::vec3> localDimensions,
 			  const void* node,
 			  std::vector<float> masses,
