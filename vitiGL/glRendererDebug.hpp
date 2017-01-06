@@ -53,7 +53,7 @@ public:
 
 
 private:
-	glRendererBTDebug() { _mode = DBG_DrawWireframe | DBG_DrawAabb; };
+	glRendererBTDebug() { _mode = DBG_DrawWireframe | DBG_DrawAabb | DBG_DrawConstraints; };
 	
 	int _mode;
 };

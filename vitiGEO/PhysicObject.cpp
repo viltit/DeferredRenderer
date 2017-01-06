@@ -295,6 +295,7 @@ namespace vitiGEO {
 
 		btMotionState* motion = new btDefaultMotionState{ t };
 
+
 		_shape = shape;
 
 		_body = new btRigidBody{ massSum, motion, _shape, inertia };
@@ -303,6 +304,7 @@ namespace vitiGEO {
 		_body->setCollisionFlags(_body->getCollisionFlags() | btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK);
 		_body->setUserPointer((void*)node);
 		_body->setLinearVelocity(glmVecToBtVec(initialVelocity));
+
 
 		Physics::instance()->addObject(this);
 	}
@@ -339,7 +341,6 @@ namespace vitiGEO {
 
 		/* get the local transforms of all children: */
 		for (size_t i = 0; i < numChildren; i++) {
-
 			btTransform child = static_cast<btCompoundShape*>(_shape)->getChildTransform(i);
 
 			glm::vec3 pos = btVecToGlmVec(child.getOrigin());

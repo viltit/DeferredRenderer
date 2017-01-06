@@ -60,6 +60,7 @@ namespace vitiGEO {
 		btDiscreteDynamicsWorld*			_world;
 
 		std::vector<PhysicObject*>			_bodies;
+		std::vector<Constraint*>			_constraints;
 
 		Picker*								_picker;
 	};

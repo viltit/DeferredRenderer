@@ -51,6 +51,10 @@ void Physics::update(unsigned int deltaTime) {
 		B->body()->getMotionState()->getWorldTransform(t);
 		_world->debugDrawObject(t, B->body()->getCollisionShape(), btVector3{ 1.0f, 0.0f, 0.0f });
 	}
+	for (auto& C : _constraints) {
+		std::cout << "Debug drawing constraint...\n";
+		_world->debugDrawConstraint(C->obj());
+	}
 }
 
 void Physics::update(const glm::vec3& camPos, const glm::vec3& camDir, const SDL_Event& input) {
@@ -74,10 +78,12 @@ void Physics::removeObject(PhysicObject* obj) {
 
 void Physics::addConstraint(Constraint * c) {
 	_world->addConstraint(c->obj());
+	_constraints.push_back(c);
 }
 
 void Physics::removeConstraint(Constraint * c) {
 	_world->removeConstraint(c->obj());
+	_constraints.erase(std::remove(_constraints.begin(), _constraints.end(), c), _constraints.end());
 }
 
 void Physics::setGravity(const glm::vec3 & g) {

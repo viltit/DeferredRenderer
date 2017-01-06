@@ -138,15 +138,14 @@ glRendererDebug::glRendererDebug()
 }
 
 
-
-
 glRendererBTDebug * glRendererBTDebug::instance() {
 	static glRendererBTDebug instance;
 	return &instance;
 }
 
 void glRendererBTDebug::drawLine(const btVector3 & from, const btVector3 & to, const btVector3 & color) {
-	glRendererDebug::instance()->addThickLine(vitiGEO::btVecToGlmVec(from), vitiGEO::btVecToGlmVec(to), 0.05f);
+	glm::vec4 gcolor{ color.getX(), color.getY(), color.getZ(), 0.5f };
+	glRendererDebug::instance()->addThickLine(vitiGEO::btVecToGlmVec(from), vitiGEO::btVecToGlmVec(to), 0.05f, gcolor);
 }
 
 }

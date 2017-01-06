@@ -46,7 +46,16 @@ SliderConstraint::SliderConstraint(const PhysicObject * objA, const PhysicObject
 	btTransform inA{ btTransform::getIdentity() };
 	btTransform inB{ btTransform::getIdentity() };
 	
+	inA.setOrigin(btVector3{ 0.0f, 2.0f, 0.0f });
+	inB.setOrigin(btVector3{ 0.0f, 0.0f, 2.0f });
+	inA.getBasis().setEulerZYX(0.f, 0.f, -M_PI * 0.5f);
+	inB.getBasis().setEulerZYX(0.f, 0.f, M_PI * 0.5f);
+
 	_constraint = new btSliderConstraint{ *objA->body(), *objB->body(), inA, inB, true };
+	btSliderConstraint* c = static_cast<btSliderConstraint*>(_constraint);
+	c->setPoweredLinMotor(true);
+	c->setTargetLinMotorVelocity(10.0f);
+	c->setMaxLinMotorForce(10.0f);
 
 	Physics::instance()->addConstraint(this);
 

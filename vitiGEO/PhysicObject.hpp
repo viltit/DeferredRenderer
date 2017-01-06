@@ -52,6 +52,8 @@ public:
 	float		friction() const						{ return _body->getFriction(); }
 	void		setRollingFriction(float f)				{ _body->setRollingFriction(f); }
 	float		rollingFriction()						{ return _body->getRollingFriction(); }
+	void		setSpinningFriction(float f)			{ _body->setSpinningFriction(f); }
+	float		getSpinningFriction()					{ return _body->getSpinningFriction(); }
 
 	void		setDamping(float d)						{ _body->setDamping(d, _body->getAngularDamping()); }
 	void		setAngularDamping(float d)				{ _body->setDamping(_body->getLinearDamping(), d); }

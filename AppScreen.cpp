@@ -35,7 +35,7 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	_index = SCREEN_INDEX_APP;
 	RayTriangle::start();
 
-	/* create some scene elements: */
+	/* create some scene elements: 
 	bool reverse = false;
 	float y0 = 1.0f + 0.25f + 0.03f;
 	for (int y = 0; y < 24; y++) {
@@ -62,7 +62,7 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 			}
 		}
 		reverse = reverse == true ? false : true;
-	}
+	}*/
 
 	/* constraint tests: */
 	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ -0.0f, 0.0f, 0.0f}, "CCube1");
@@ -94,10 +94,12 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 
 	_scene.addChild(nullptr, glm::vec3{- 10.0f, 10.0f, -10.0f}, "Compound");
 
-	_scene["Compound"]->addCompoundPhysics(nodes, mass, glm::vec3{ - 10.0f, 100.0f, -10.0f });
+	_scene["Compound"]->addCompoundPhysics(nodes, mass, glm::vec3{ - 10.0f, 10.0f, -10.0f });
 
-
-	//SliderConstraint* c = new SliderConstraint{ _scene["CCube1"]->physics(), _scene["CCube2"]->physics(), 0.0f, 10.0f };
+	/* add two cubes with slider constraints on top of the compound: */
+	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ -10.f, 12.0f, 12.0f }, "Slider1");
+	_scene["Slider1"]->addPhysics(BodyType::cuboid, 10.0f);
+	P2PConstraint* c = new P2PConstraint{ _scene["Compound"]->physics(), glm::vec3{ 0.0f, 1.0f, 2.0f}, _scene["Slider1"]->physics(), glm::vec3{0.0f, 0.0f, 0.5f} };
 
 	_scene.addChild(new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ 0.0f, 1.0f, 0.0f }, "Floor");
 	_scene["Floor"]->addPhysics(BodyType::cuboid, 0.0f);
@@ -139,7 +141,7 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	_scene.addCamera(&_cam);
 
 	_cam.setPos(glm::vec3{ -4.0f, 8.0f, -5.0f });
-	_cam.setTarget(_scene["Cuboid000"]->transform.pos());
+	//_cam.setTarget(_scene["Cuboid000"]->transform.pos());
 
 	initGUI();
 	_timer.on();
