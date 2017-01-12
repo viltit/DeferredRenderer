@@ -7,6 +7,8 @@
 
 #include <glm/glm.hpp>
 
+#include <vector>
+
 namespace vitiGEO {
 
 class PhysicObject;
@@ -77,6 +79,16 @@ public:
 
 private:
 
+};
+
+/* Chain -------------------------------------------------------------------- */
+class Chain {
+public:
+	Chain(const std::vector<PhysicObject*> objects, float distance);
+	~Chain();
+
+protected:
+	std::vector<P2PConstraint*> _p2p;
 };
 
 

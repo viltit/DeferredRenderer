@@ -30,7 +30,7 @@ Picker::Picker(btDynamicsWorld* world, const glm::vec3& rayStart, const glm::vec
 				btVector3 pickPosLocal{ body->getCenterOfMassTransform().inverse() * pickPos };
 				_p2p = new btPoint2PointConstraint(*body, pickPosLocal);
 				_world->addConstraint(_p2p, true);
-				_p2p->m_setting.m_impulseClamp = 3.f;
+				_p2p->m_setting.m_impulseClamp = 12.f;
 				_p2p->m_setting.m_tau = 0.001f;
 				_p2p->m_setting.m_damping = 0.8f;
 			}

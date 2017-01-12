@@ -60,6 +60,8 @@ public:
 	float		damping() const							{ return _body->getLinearDamping(); }
 	float		angularDamping() const					{ return _body->getAngularDamping(); }
 
+	void		setGravity(glm::vec3 g)					{ _body->setGravity(glmVecToBtVec(g)); }
+
 	btRigidBody* body() const							{ return _body; }
 	btCollisionShape* shape() const						{ return _shape; }
 	Transform* transform() const						{ return _transform; }

@@ -96,10 +96,38 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 
 	_scene["Compound"]->addCompoundPhysics(nodes, mass, glm::vec3{ - 10.0f, 10.0f, -10.0f });
 
-	/* add two cubes with slider constraints on top of the compound: */
+	/* add two cubes with slider constraints on top of the compound: DOES NOT WORK AS I WANT ...*/
 	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ -10.f, 12.0f, 12.0f }, "Slider1");
 	_scene["Slider1"]->addPhysics(BodyType::cuboid, 10.0f);
-	P2PConstraint* c = new P2PConstraint{ _scene["Compound"]->physics(), glm::vec3{ 0.0f, 1.0f, 2.0f}, _scene["Slider1"]->physics(), glm::vec3{0.0f, 0.0f, 0.5f} };
+	SliderConstraint* c = new SliderConstraint{ 
+		_scene["Compound"]->physics(), _scene["Slider1"]->physics(), 0.0f, 5.0f 
+	};
+
+	/* test: make a chain: */
+	_scene.addChild(new Tetrahedron{ "xml/cubeTiny.xml" }, glm::vec3{ -1.0f, 1.0f, -1.0f }, "tetra1");
+	_scene["tetra1"]->transform.setScale(glm::vec3{ 2.0f, 2.0f, 2.0f });
+	_scene["tetra1"]->addPhysics(BodyType::convexHull, 3);
+	_scene.addChild(new Tetrahedron{ "xml/cubeTiny.xml" }, glm::vec3{ -2.0f, 1.0f, -1.0f }, "tetra2");
+	_scene["tetra2"]->addPhysics(BodyType::convexHull, 3);
+	_scene.addChild(new Tetrahedron{ "xml/cubeTiny.xml" }, glm::vec3{ -3.0f, 1.0f, -1.0f }, "tetra3");
+	_scene["tetra3"]->addPhysics(BodyType::convexHull, 3);
+	_scene.addChild(new Tetrahedron{ "xml/cubeTiny.xml" }, glm::vec3{ -4.0f, 1.0f, -1.0f }, "tetra4");
+	_scene["tetra4"]->addPhysics(BodyType::convexHull, 3);
+	_scene.addChild(new Tetrahedron{ "xml/cubeTiny.xml" }, glm::vec3{ -5.0f, 1.0f, -1.0f }, "tetra5");
+	_scene["tetra5"]->addPhysics(BodyType::convexHull, 3);
+	_scene.addChild(new Tetrahedron{ "xml/cubeTiny.xml" }, glm::vec3{ -6.0f, 1.0f, -1.0f }, "tetra6");
+	_scene["tetra6"]->addPhysics(BodyType::convexHull, 3);
+
+	std::vector<PhysicObject*> chainObjs;
+	chainObjs.push_back(_scene["tetra1"]->physics());
+	chainObjs.push_back(_scene["tetra2"]->physics());
+	chainObjs.push_back(_scene["tetra3"]->physics());
+	chainObjs.push_back(_scene["tetra4"]->physics());
+	chainObjs.push_back(_scene["tetra5"]->physics());
+	chainObjs.push_back(_scene["tetra6"]->physics());
+
+	Chain* chain = new Chain{ chainObjs, 1.0f };
+	
 
 	_scene.addChild(new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ 0.0f, 1.0f, 0.0f }, "Floor");
 	_scene["Floor"]->addPhysics(BodyType::cuboid, 0.0f);

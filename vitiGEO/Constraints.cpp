@@ -46,16 +46,13 @@ SliderConstraint::SliderConstraint(const PhysicObject * objA, const PhysicObject
 	btTransform inA{ btTransform::getIdentity() };
 	btTransform inB{ btTransform::getIdentity() };
 	
-	inA.setOrigin(btVector3{ 0.0f, 2.0f, 0.0f });
-	inB.setOrigin(btVector3{ 0.0f, 0.0f, 2.0f });
-	inA.getBasis().setEulerZYX(0.f, 0.f, -M_PI * 0.5f);
-	inB.getBasis().setEulerZYX(0.f, 0.f, M_PI * 0.5f);
+	inA.setOrigin(btVector3{ 0.0f, 0.0f, 0.0f });
+	inB.setOrigin(btVector3{ -1.f, 0.0f, -1.0f });
+	inA.getBasis().setEulerZYX(0.f, 0.f, 0);
+	inB.getBasis().setEulerZYX(M_PI * 0.5, 0.f, 0.f);
 
 	_constraint = new btSliderConstraint{ *objA->body(), *objB->body(), inA, inB, true };
 	btSliderConstraint* c = static_cast<btSliderConstraint*>(_constraint);
-	c->setPoweredLinMotor(true);
-	c->setTargetLinMotorVelocity(10.0f);
-	c->setMaxLinMotorForce(10.0f);
 
 	Physics::instance()->addConstraint(this);
 
@@ -137,6 +134,32 @@ void HingeConstraint::motorOff() {
 
 void HingeConstraint::motorOn() {
 	static_cast<btHingeConstraint*>(_constraint)->enableMotor(true);
+}
+
+/* Chain -------------------------------------------------------------------- */
+Chain::Chain(const std::vector<PhysicObject*> objects, float distance) {
+	assert(objects.size() > 1);
+
+	for (size_t i = 0; i < objects.size() - 1; i++) {
+		PhysicObject* objA = objects[i];
+		PhysicObject* objB = objects[i + 1];
+
+		/*	crude approximation of pivot point */
+		glm::vec3 pivotInA = distance * glm::normalize(objB->transform()->pos() - objA->transform()->pos());
+		glm::vec3 pivotInB = distance * glm::normalize(objA->transform()->pos() - objB->transform()->pos());
+
+		P2PConstraint* p2p = new P2PConstraint{objA, pivotInA, objB, pivotInB };
+		_p2p.push_back(p2p);
+	}
+}
+
+Chain::~Chain() {
+	for (auto& c : _p2p) {
+		if (c == nullptr) {
+			delete c;
+			c = nullptr;
+		}
+	}
 }
 
 }
