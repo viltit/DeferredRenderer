@@ -52,7 +52,6 @@ void Physics::update(unsigned int deltaTime) {
 		_world->debugDrawObject(t, B->body()->getCollisionShape(), btVector3{ 1.0f, 0.0f, 0.0f });
 	}
 	for (auto& C : _constraints) {
-		std::cout << "Debug drawing constraint...\n";
 		_world->debugDrawConstraint(C->obj());
 	}
 }

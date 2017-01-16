@@ -65,7 +65,7 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	}*/
 
 	/* constraint tests: */
-	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ -0.0f, 0.0f, 0.0f}, "CCube1");
+	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ 0.0f, 3.0f, 0.0f}, "CCube1");
 	//_scene["CCube1"]->transform.setScale(glm::vec3{ 2.0f, 5.0f, 0.1f });
 	//_scene["CCube1"]->addPhysics(BodyType::cuboid, 10.0f);
 	//_scene["CCube1"]->physics()->body()->setGravity(btVector3{ 0.0f, 0.0f, 0.0f });
@@ -76,11 +76,11 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 
 
 	/* compound object test: */
-	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ -0.0f, 1.0f, 0.0f }, "CCube2");
-	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ -0.0f, 1.0f, 1.0f }, "CCube3");
-	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ -0.0f, 1.0f, 2.0f }, "CCube4");
-	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ -0.0f, 1.0f, -1.0f }, "CCube5");
-	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ -0.0f, 1.0f, -2.0f }, "CCube6");
+	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ 0.0f, 3.0f, -1.f }, "CCube2");
+	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ -1.0f, 3.0f, -1.0f }, "CCube3");
+	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ -2.0f, 3.0f, -1.0f }, "CCube4");
+	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ 1.0f, 3.0f, -1.0f }, "CCube5");
+	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ 2.0f, 3.0f, -1.0f }, "CCube6");
 
 	std::vector<SceneNode*> nodes;
 	nodes.push_back(_scene["CCube1"]);
@@ -92,43 +92,36 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	
 	std::vector<float> mass{ 10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f };
 
-	_scene.addChild(nullptr, glm::vec3{- 10.0f, 10.0f, -10.0f}, "Compound");
+	_scene.addChild(nullptr, glm::vec3{- 0.0f, 3.0f, -0.0f}, "Compound");
 
 	_scene["Compound"]->addCompoundPhysics(nodes, mass, glm::vec3{ - 10.0f, 10.0f, -10.0f });
 
 	/* add two cubes with slider constraints on top of the compound: DOES NOT WORK AS I WANT ...*/
-	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ -10.f, 12.0f, 12.0f }, "Slider1");
+	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ -2.f, 3.0f, -3.0f }, "Slider1");
 	_scene["Slider1"]->addPhysics(BodyType::cuboid, 10.0f);
-	SliderConstraint* c = new SliderConstraint{ 
-		_scene["Compound"]->physics(), _scene["Slider1"]->physics(), 0.0f, 5.0f 
+
+	glm::vec3 inA { 0.0f, 0.0f, -1.8f };
+	glm::vec3 inB { -0.5f, 0.0f, -0.5f };
+
+	SliderConstraint* c1 = new SliderConstraint{ 
+		_scene["Compound"]->physics(), inA, _scene["Slider1"]->physics(), inB, -2.0f, -0.0f 
 	};
 
+	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ 2.f, 3.0f, -3.0f }, "Slider2");
+	_scene["Slider2"]->addPhysics(BodyType::cuboid, 10.0f);
+
+	inA = glm::vec3{ 0.0f, 0.0f, -1.8f };
+	inB = glm::vec3{ 0.5f, 0.0f, -0.5f };
+
+	SliderConstraint* c2 = new SliderConstraint{
+		_scene["Compound"]->physics(), inA, _scene["Slider2"]->physics(), inB, 0.0f, 2.0f
+	};
+
+
 	/* test: make a chain: */
-	_scene.addChild(new Tetrahedron{ "xml/cubeTiny.xml" }, glm::vec3{ -1.0f, 1.0f, -1.0f }, "tetra1");
-	_scene["tetra1"]->transform.setScale(glm::vec3{ 2.0f, 2.0f, 2.0f });
-	_scene["tetra1"]->addPhysics(BodyType::convexHull, 3);
-	_scene.addChild(new Tetrahedron{ "xml/cubeTiny.xml" }, glm::vec3{ -2.0f, 1.0f, -1.0f }, "tetra2");
-	_scene["tetra2"]->addPhysics(BodyType::convexHull, 3);
-	_scene.addChild(new Tetrahedron{ "xml/cubeTiny.xml" }, glm::vec3{ -3.0f, 1.0f, -1.0f }, "tetra3");
-	_scene["tetra3"]->addPhysics(BodyType::convexHull, 3);
-	_scene.addChild(new Tetrahedron{ "xml/cubeTiny.xml" }, glm::vec3{ -4.0f, 1.0f, -1.0f }, "tetra4");
-	_scene["tetra4"]->addPhysics(BodyType::convexHull, 3);
-	_scene.addChild(new Tetrahedron{ "xml/cubeTiny.xml" }, glm::vec3{ -5.0f, 1.0f, -1.0f }, "tetra5");
-	_scene["tetra5"]->addPhysics(BodyType::convexHull, 3);
-	_scene.addChild(new Tetrahedron{ "xml/cubeTiny.xml" }, glm::vec3{ -6.0f, 1.0f, -1.0f }, "tetra6");
-	_scene["tetra6"]->addPhysics(BodyType::convexHull, 3);
+	addChain(glm::vec3{ 0.0f - 5.f, 20.0f, 0.0f - 5.f }, 8, 0.01f);
 
-	std::vector<PhysicObject*> chainObjs;
-	chainObjs.push_back(_scene["tetra1"]->physics());
-	chainObjs.push_back(_scene["tetra2"]->physics());
-	chainObjs.push_back(_scene["tetra3"]->physics());
-	chainObjs.push_back(_scene["tetra4"]->physics());
-	chainObjs.push_back(_scene["tetra5"]->physics());
-	chainObjs.push_back(_scene["tetra6"]->physics());
-
-	Chain* chain = new Chain{ chainObjs, 1.0f };
 	
-
 	_scene.addChild(new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ 0.0f, 1.0f, 0.0f }, "Floor");
 	_scene["Floor"]->addPhysics(BodyType::cuboid, 0.0f);
 
@@ -345,14 +338,24 @@ void AppScreen::updateInput() {
 				//_btBodies["Cuboid"]->applyCentralImpulse(btVector3{ 100.0f, 0.0f, 0.0f });
 				break;
 			case SDLK_KP_7:
-				//_btBodies["Cuboid"]->applyCentralImpulse(btVector3{ 0.0f, 100.0f, 0.0f });
+			{
+				int i =_scene["Slider1"]->physics()->body()->getNumConstraintRefs();
+				std::cout << "Slider1 has " << i << " constraints attached\n";
+				btSliderConstraint* c = static_cast<btSliderConstraint*>(_scene["Slider1"]->physics()->body()->getConstraintRef(0));
+
+				c->setPoweredLinMotor(true);
+				c->setTargetLinMotorVelocity(5.0f);
+				c->setMaxLinMotorForce(20.f);
 				break;
+			}
 			case SDLK_KP_1:
 				//_btBodies["Cuboid"]->applyCentralImpulse(btVector3{ 0.0f, -100.0f, 0.0f });
 				break;
 			case SDLK_KP_9:
-				//_btBodies["Cuboid"]->applyTorque(btVector3{ 0.0f, 10.0f, 0.0f });
+			{
+				btSliderConstraint* c = static_cast<btSliderConstraint*>(_scene["Slider2"]->physics()->body()->getConstraintRef(0));
 				break;
+			}
 			case SDLK_KP_3:
 				//_btBodies["Cuboid"]->applyTorque(btVector3{ 0.0f, -10.0f, 0.0f });
 				break;
@@ -475,7 +478,33 @@ void AppScreen::addIcosahedron(float mass, const glm::vec3 & pos) {
 	glm::vec3 v = _cam.dir() * 10.0f;
 
 	_scene.addChild(new Icosahedron{ "xml/cubeTiny.xml" }, pos, name);
-	_scene[name]->transform.setScale(glm::vec3{ 2.0f, 2.0f, 2.0f });
+	_scene[name]->transform.setScale(glm::vec3{ 2.0f, 2.0f, 2.0f }
+	);
 	_scene[name]->addPhysics(BodyType::sphere, mass, v);
 	_scene[name]->physics()->setRollingFriction(0.3f);
+}
+
+void AppScreen::addChain(const glm::vec3 & startPos, int counter, float distance, const glm::vec3& scale) {
+	static int j{ 0 };
+	j++;
+
+	/* create the cubes and add them to the scene: */
+	std::vector<PhysicObject*> objs;
+
+	for (size_t i = 0; i < counter; i++) {
+		float mass;
+		mass = (i == 0) ? 0.0f : 5.0f;
+
+		std::string name = "ChainCube" + std::to_string(j) + "/" + std::to_string(i);
+		glm::vec3 pos = { startPos.x, startPos.y - (i * scale.y + distance), startPos.z };
+
+		_scene.addChild(new Cuboid{ "xml/cube.xml" }, pos, name, "root");
+		_scene[name]->transform.setScale(scale);
+		_scene[name]->addPhysics(BodyType::cuboid, mass);
+		objs.push_back(_scene[name]->physics());
+	}
+
+	/* now make the chain: */
+	CuboidChain* chain = new CuboidChain{ objs, distance };
+
 }

@@ -3,6 +3,8 @@
 #include "Physics.hpp"
 #include "DebugInfo.hpp"
 
+#include <algorithm>
+
 namespace vitiGEO {
 
 	PhysicObject::PhysicObject(Transform* transform)
@@ -15,7 +17,6 @@ namespace vitiGEO {
 	void PhysicObject::remove() {
 		Physics::instance()->removeObject(this);
 	}
-
 
 	/* Cuboid ------------------------------------------------------------------------------------ */
 	CuboidObject::CuboidObject(Transform * transform,
@@ -136,7 +137,7 @@ namespace vitiGEO {
 		t.setOrigin(glmVecToBtVec(transform->pos()));
 		t.setRotation(glmQuatToBtQuat(transform->orientation()));
 
-		/* transform glm vectors to bt scalars: */
+		/* transform glm vectors to bt scalars: */ 
 		std::vector<btScalar> btPoints;
 		for (const auto& point : points) {
 			btPoints.push_back(point.x);

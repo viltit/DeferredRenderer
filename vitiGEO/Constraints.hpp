@@ -44,7 +44,8 @@ private:
 /* Slider ----------------------------------------------------------------- */
 class SliderConstraint : public Constraint {
 public:
-	SliderConstraint(const PhysicObject* objA, const PhysicObject* objB, 
+	SliderConstraint(const PhysicObject* objA, const glm::vec3& pivotInA,
+					 const PhysicObject* objB, const glm::vec3& pivotInB,
 					 float minDist = 0.0f, float maxDist = 10.0f);
 
 	/* this constructor does not work properly yet: */
@@ -91,6 +92,16 @@ protected:
 	std::vector<P2PConstraint*> _p2p;
 };
 
+/* Chain for cuboid shapes with two P2P Constraints each --------------------- */
+class CuboidChain {
+public:
+	CuboidChain(const std::vector<PhysicObject*> objects, float distance);
+	~CuboidChain();
+
+protected:
+	std::vector<P2PConstraint*> _p2p;
+
+};
 
 }
 

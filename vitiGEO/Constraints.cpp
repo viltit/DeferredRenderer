@@ -26,6 +26,7 @@ P2PConstraint::P2PConstraint(const PhysicObject * objA, const glm::vec3 & pivotA
 
 	if (objA && !objB) {
 		_constraint = new btPoint2PointConstraint(*objA->body(), pointOnA);
+		objA->body()->addConstraintRef(_constraint);
 		Physics::instance()->addConstraint(this);
 	}
 
@@ -41,15 +42,14 @@ P2PConstraint::~P2PConstraint() {
 
 
 /* Slider ----------------------------------------------------------------- */
-SliderConstraint::SliderConstraint(const PhysicObject * objA, const PhysicObject * objB,
+SliderConstraint::SliderConstraint(const PhysicObject * objA, const glm::vec3& pivotInA, 
+								   const PhysicObject * objB, const glm::vec3& pivotInB,
 								   float minDist, float maxDist) {
 	btTransform inA{ btTransform::getIdentity() };
 	btTransform inB{ btTransform::getIdentity() };
-	
-	inA.setOrigin(btVector3{ 0.0f, 0.0f, 0.0f });
-	inB.setOrigin(btVector3{ -1.f, 0.0f, -1.0f });
-	inA.getBasis().setEulerZYX(0.f, 0.f, 0);
-	inB.getBasis().setEulerZYX(M_PI * 0.5, 0.f, 0.f);
+
+	inA.setOrigin(glmVecToBtVec(pivotInA));
+	inB.setOrigin(glmVecToBtVec(pivotInB));
 
 	_constraint = new btSliderConstraint{ *objA->body(), *objB->body(), inA, inB, true };
 	btSliderConstraint* c = static_cast<btSliderConstraint*>(_constraint);
@@ -162,4 +162,49 @@ Chain::~Chain() {
 	}
 }
 
+/*	Chain for cuboid shapes with two P2P Constraints each --------------------- 
+	We construct the chain from top to bottom along the y-Axis
+*/
+
+CuboidChain::CuboidChain(const std::vector<PhysicObject*> objects, float distance) {
+	assert(objects.size() > 1);
+
+	glm::vec3 startPos = objects[0]->transform()->pos();
+
+	/* get the dimensions: */
+	btVector3 min, max;
+	objects[0]->body()->getAabb(min, max);
+
+	glm::vec3 dimensions = btVecToGlmVec(max - min) * 0.5f;
+	
+	float yStep = -dimensions.y - distance * 0.5f;
+	float xStep = dimensions.x * 0.9f;
+
+	for (size_t i = 0; i < objects.size() - 1; i++) {
+		PhysicObject* objA = objects[i];
+		PhysicObject* objB = objects[i + 1];
+		
+		glm::vec3 pivotInA_1 = { xStep, yStep, 0.0f };
+		glm::vec3 pivotInA_2 = { -xStep, yStep, 0.0f };
+
+		glm::vec3 pivotInB_1 = { xStep, -yStep, 0.0f };
+		glm::vec3 pivotInB_2 = { -xStep, -yStep, 0.0f };
+
+
+		P2PConstraint* p2p_1 = new P2PConstraint{ objA, pivotInA_1, objB, pivotInB_1 };
+		P2PConstraint* p2p_2 = new P2PConstraint{ objA, pivotInA_2, objB, pivotInB_2 };
+
+		_p2p.push_back(p2p_1);
+		_p2p.push_back(p2p_2);
+	}
+}
+
+CuboidChain::~CuboidChain() {
+	for (auto& c : _p2p) {
+		if (c == nullptr) {
+			delete c;
+			c = nullptr;
+		}
+	}
+}
 }

@@ -39,6 +39,8 @@ protected:
 	void addTetrahedron(float mass, const glm::vec3& pos);
 	void addIcosahedron(float mass, const glm::vec3& pos);
 
+	void addChain(const glm::vec3& startPos, int counter, float distance, const glm::vec3& scale = { 1.0f, 1.0f, 1.0f });
+
 	vitiGL::Window*		_window;
 	vitiGL::Scene		_scene;
 	vitiGL::Camera		_cam;
