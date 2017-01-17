@@ -16,7 +16,7 @@ class PhysicObject;
 /* abstract base class -------------------------------------------------- */
 class Constraint {
 public:
-	Constraint() {};
+	Constraint();
 	virtual ~Constraint() {};
 
 	void remove();
@@ -28,6 +28,9 @@ public:
 
 protected:
 	btTypedConstraint* _constraint;
+
+	const PhysicObject*		_objA;
+	const PhysicObject*		_objB;
 };
 
 

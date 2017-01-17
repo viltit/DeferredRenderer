@@ -20,8 +20,7 @@ Physics::Physics() :
 	_broadphase{ new btDbvtBroadphase() },
 	_solver{ new btSequentialImpulseConstraintSolver() },
 	_world{ new btDiscreteDynamicsWorld(_dispatcher, _broadphase, _solver, _config) }
-{
-}
+{ }
 
 Physics * Physics::instance() {
 	static Physics instance{};

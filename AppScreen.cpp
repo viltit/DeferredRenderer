@@ -117,7 +117,6 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 		_scene["Compound"]->physics(), inA, _scene["Slider2"]->physics(), inB, 0.0f, 2.0f
 	};
 
-
 	/* test: make a chain: */
 	addChain(glm::vec3{ 0.0f - 5.f, 20.0f, 0.0f - 5.f }, 8, 0.01f);
 
@@ -339,13 +338,10 @@ void AppScreen::updateInput() {
 				break;
 			case SDLK_KP_7:
 			{
-				int i =_scene["Slider1"]->physics()->body()->getNumConstraintRefs();
-				std::cout << "Slider1 has " << i << " constraints attached\n";
-				btSliderConstraint* c = static_cast<btSliderConstraint*>(_scene["Slider1"]->physics()->body()->getConstraintRef(0));
-
+				btSliderConstraint* c = static_cast<btSliderConstraint*>(_scene["Slider1"]->physics()->constraint(0)->obj());
 				c->setPoweredLinMotor(true);
-				c->setTargetLinMotorVelocity(5.0f);
-				c->setMaxLinMotorForce(20.f);
+				c->setTargetLinMotorVelocity(100.0f);
+				c->setMaxLinMotorForce(200.f);
 				break;
 			}
 			case SDLK_KP_1:
@@ -353,7 +349,10 @@ void AppScreen::updateInput() {
 				break;
 			case SDLK_KP_9:
 			{
-				btSliderConstraint* c = static_cast<btSliderConstraint*>(_scene["Slider2"]->physics()->body()->getConstraintRef(0));
+				btSliderConstraint* c = static_cast<btSliderConstraint*>(_scene["Slider2"]->physics()->constraint(0)->obj());
+				c->setPoweredLinMotor(true);
+				c->setTargetLinMotorVelocity(100.0f);
+				c->setMaxLinMotorForce(200.f);
 				break;
 			}
 			case SDLK_KP_3:

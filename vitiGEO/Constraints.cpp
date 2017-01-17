@@ -8,12 +8,24 @@ namespace vitiGEO {
 
 
 void Constraint::remove() {
+	if (_objA) {
+		_objA->removeConstraint(this);
+	}
+	if (_objB) {
+		_objB->removeConstraint(this);
+	}
 	if (_constraint) {
 		Physics::instance()->removeConstraint(this);
 		delete _constraint;
 		_constraint = nullptr;
 	}
 }
+
+Constraint::Constraint() 
+	:	_objA	{ nullptr },
+		_objB	{ nullptr },
+		_constraint { nullptr }
+{}
 
 /* Point to Point -------------------------------------------------------- */
 P2PConstraint::P2PConstraint(const PhysicObject * objA, const glm::vec3 & pivotA, 
@@ -26,13 +38,21 @@ P2PConstraint::P2PConstraint(const PhysicObject * objA, const glm::vec3 & pivotA
 
 	if (objA && !objB) {
 		_constraint = new btPoint2PointConstraint(*objA->body(), pointOnA);
+		_objA = objA;
+
 		objA->body()->addConstraintRef(_constraint);
 		Physics::instance()->addConstraint(this);
+		objA->addConstraint(this);
 	}
 
 	else if (objA && objB) {
 		_constraint = new btPoint2PointConstraint(*objA->body(), *objB->body(), pointOnA, pointOnB);
+		_objA = objA;
+		_objB = objB;
+
 		Physics::instance()->addConstraint(this);
+		objA->addConstraint(this);
+		objB->addConstraint(this);
 	}
 }
 
@@ -44,7 +64,8 @@ P2PConstraint::~P2PConstraint() {
 /* Slider ----------------------------------------------------------------- */
 SliderConstraint::SliderConstraint(const PhysicObject * objA, const glm::vec3& pivotInA, 
 								   const PhysicObject * objB, const glm::vec3& pivotInB,
-								   float minDist, float maxDist) {
+								   float minDist, float maxDist) 
+{
 	btTransform inA{ btTransform::getIdentity() };
 	btTransform inB{ btTransform::getIdentity() };
 
@@ -52,9 +73,12 @@ SliderConstraint::SliderConstraint(const PhysicObject * objA, const glm::vec3& p
 	inB.setOrigin(glmVecToBtVec(pivotInB));
 
 	_constraint = new btSliderConstraint{ *objA->body(), *objB->body(), inA, inB, true };
-	btSliderConstraint* c = static_cast<btSliderConstraint*>(_constraint);
+	_objA = objA;
+	_objB = objB;
 
 	Physics::instance()->addConstraint(this);
+	objA->addConstraint(this);
+	objB->addConstraint(this);
 
 	setMinMaxLinear(minDist, maxDist);
 }
@@ -64,8 +88,10 @@ SliderConstraint::SliderConstraint(const PhysicObject * objA, float minDist, flo
 	inA.setOrigin(btVector3{ 30.0f, 0.5f, 30.0f });
 
 	_constraint = new btSliderConstraint{ *objA->body(), inA, false };
+	_objA = objA;
 
 	Physics::instance()->addConstraint(this);
+	objA->addConstraint(this);
 
 	setMinMaxLinear(minDist, maxDist);
 }
@@ -104,12 +130,16 @@ void SliderConstraint::motorOff() {
 HingeConstraint::HingeConstraint(const PhysicObject * obj, const glm::vec3 pivot, const glm::vec3 axis) {
 	btVector3 pivotA = glmVecToBtVec(pivot);
 	btVector3 axisA = glmVecToBtVec(axis);
+
 	_constraint = new btHingeConstraint{ *obj->body(), pivotA, axisA };
+	_objA = obj;
 
 	Physics::instance()->addConstraint(this);
+	obj->addConstraint(this);
 }
 
 HingeConstraint::~HingeConstraint() {
+	remove();
 }
 
 void HingeConstraint::setMinMax(float min, float max) {

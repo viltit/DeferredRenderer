@@ -16,7 +16,9 @@
 #include <bt/btBulletDynamicsCommon.h>
 
 #include <vector>
+#include <algorithm>
 
+#include "Constraints.hpp"
 #include "Transform.hpp"
 
 namespace vitiGEO {
@@ -62,14 +64,30 @@ public:
 
 	void		setGravity(glm::vec3 g)					{ _body->setGravity(glmVecToBtVec(g)); }
 
+	/* access to btRigidBody, btCollisionShape and the Transform Class: */
 	btRigidBody* body() const							{ return _body; }
 	btCollisionShape* shape() const						{ return _shape; }
 	Transform* transform() const						{ return _transform; }
+
+	/* keep track of the Constraints attached to this body: */
+	int			numConstraints()						{ return _constraints.size(); }
+	Constraint* constraint(int index) {
+		if (index >=_constraints.size() || index < 0) return nullptr;
+		else return _constraints[index];
+	}
+
+	/* add and remove Constraints (used by the Constraint class): */
+	void addConstraint(Constraint* c) const					{ _constraints.push_back(c); }
+	void removeConstraint(Constraint* c) const { 
+		_constraints.erase(std::remove(_constraints.begin(), _constraints.end(), c), _constraints.end()); 
+	}
 
 protected:
 	Transform*		_transform;
 	btRigidBody*	_body;
 	btCollisionShape* _shape;
+
+	mutable std::vector<Constraint*> _constraints;
 };
 
 
