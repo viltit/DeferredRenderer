@@ -135,11 +135,13 @@
   <ItemGroup>
     <ClInclude Include="App.hpp" />
     <ClInclude Include="AppScreen.hpp" />
+    <ClInclude Include="Fork.hpp" />
     <ClInclude Include="MenuScreen.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp" />
     <ClCompile Include="AppScreen.cpp" />
+    <ClCompile Include="Fork.cpp" />
     <ClCompile Include="MenuScreen.cpp" />
     <ClCompile Include="Source.cpp" />
   </ItemGroup>

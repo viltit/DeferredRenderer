@@ -28,7 +28,8 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	_renderer{ window, &_scene, &_cam },
 	_drender{ window, &_scene, &_cam },
 	_gui{ "GUI", "TaharezLook.scheme" },
-	_console{ this, &_gui, "layouts/console.layout" }
+	_console{ this, &_gui, "layouts/console.layout" },
+	_fork{ &_scene }
 {
 	Physics::instance()->setDebugRenderer(glRendererBTDebug::instance());
 
@@ -74,48 +75,6 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	//c->addMotor(3.0f, 20.0f);
 	//c->setMinMax(-3.1416 / 4.0f, 3.1416 / 4.0f);
 
-
-	/* compound object test: */
-	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ 0.0f, 3.0f, -1.f }, "CCube2");
-	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ -1.0f, 3.0f, -1.0f }, "CCube3");
-	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ -2.0f, 3.0f, -1.0f }, "CCube4");
-	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ 1.0f, 3.0f, -1.0f }, "CCube5");
-	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ 2.0f, 3.0f, -1.0f }, "CCube6");
-
-	std::vector<SceneNode*> nodes;
-	nodes.push_back(_scene["CCube1"]);
-	nodes.push_back(_scene["CCube2"]);
-	nodes.push_back(_scene["CCube3"]);
-	nodes.push_back(_scene["CCube4"]);
-	nodes.push_back(_scene["CCube5"]);
-	nodes.push_back(_scene["CCube6"]);
-	
-	std::vector<float> mass{ 10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f };
-
-	_scene.addChild(nullptr, glm::vec3{- 0.0f, 3.0f, -0.0f}, "Compound");
-
-	_scene["Compound"]->addCompoundPhysics(nodes, mass, glm::vec3{ - 10.0f, 10.0f, -10.0f });
-
-	/* add two cubes with slider constraints on top of the compound: DOES NOT WORK AS I WANT ...*/
-	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ -2.f, 3.0f, -3.0f }, "Slider1");
-	_scene["Slider1"]->addPhysics(BodyType::cuboid, 10.0f);
-
-	glm::vec3 inA { 0.0f, 0.0f, -1.8f };
-	glm::vec3 inB { -0.5f, 0.0f, -0.5f };
-
-	SliderConstraint* c1 = new SliderConstraint{ 
-		_scene["Compound"]->physics(), inA, _scene["Slider1"]->physics(), inB, -2.0f, -0.0f 
-	};
-
-	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ 2.f, 3.0f, -3.0f }, "Slider2");
-	_scene["Slider2"]->addPhysics(BodyType::cuboid, 10.0f);
-
-	inA = glm::vec3{ 0.0f, 0.0f, -1.8f };
-	inB = glm::vec3{ 0.5f, 0.0f, -0.5f };
-
-	SliderConstraint* c2 = new SliderConstraint{
-		_scene["Compound"]->physics(), inA, _scene["Slider2"]->physics(), inB, 0.0f, 2.0f
-	};
 
 	/* test: make a chain: */
 	addChain(glm::vec3{ 0.0f - 5.f, 20.0f, 0.0f - 5.f }, 8, 0.01f);

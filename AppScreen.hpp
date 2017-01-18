@@ -2,9 +2,11 @@
 
 #include "IAppScreen.hpp"
 #include "vitiGL.hpp"
+#include "Fork.hpp"
 
 #include <string>
 #include <map>
+
 
 
 class App;
@@ -51,6 +53,8 @@ protected:
 	vitiGL::Console		_console;
 
 	vitiGL::Timer		_timer;
+
+	Fork				_fork;
 
 	bool				_rotate;
 };
