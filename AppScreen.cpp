@@ -29,9 +29,11 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	_drender{ window, &_scene, &_cam },
 	_gui{ "GUI", "TaharezLook.scheme" },
 	_console{ this, &_gui, "layouts/console.layout" },
-	_fork{ &_scene }
+	_fork{ _scene }
 {
 	Physics::instance()->setDebugRenderer(glRendererBTDebug::instance());
+	_fork.init();
+
 
 	_index = SCREEN_INDEX_APP;
 	RayTriangle::start();
@@ -66,7 +68,6 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	}*/
 
 	/* constraint tests: */
-	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ 0.0f, 3.0f, 0.0f}, "CCube1");
 	//_scene["CCube1"]->transform.setScale(glm::vec3{ 2.0f, 5.0f, 0.1f });
 	//_scene["CCube1"]->addPhysics(BodyType::cuboid, 10.0f);
 	//_scene["CCube1"]->physics()->body()->setGravity(btVector3{ 0.0f, 0.0f, 0.0f });
@@ -74,6 +75,8 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	//	_scene["CCube1"]->physics(), glm::vec3{ 1.1f, 0.0f, 0.0f }, glm::vec3{ 0.0f, 1.0f, 0.0f } };
 	//c->addMotor(3.0f, 20.0f);
 	//c->setMinMax(-3.1416 / 4.0f, 3.1416 / 4.0f);
+
+	/* compound object test: */
 
 
 	/* test: make a chain: */
@@ -252,6 +255,7 @@ void AppScreen::updateInput() {
 	SDL_Event input;
 	while (SDL_PollEvent(&input)) {
 		_gui.onSDLEvent(input);
+
 
 		//temporary solution:
 		Physics::instance()->update(_cam.pos(), _cam.dir(), input);
