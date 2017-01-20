@@ -43,6 +43,7 @@ public:
 
 	/* wrapper functions accessing btRigidBody Methods: */
 	void		setVelocity(const glm::vec3& v)			{ _body->setLinearVelocity(glmVecToBtVec(v)); }
+	void		addVelocity(const glm::vec3& dv)		{ _body->setLinearVelocity(_body->getLinearVelocity() + glmVecToBtVec(dv)); }
 	glm::vec3	velocity() const						{ return btVecToGlmVec(_body->getLinearVelocity()); }
 	void		setAngularVelocity(const glm::vec3& av) { _body->setAngularVelocity(glmVecToBtVec(av)); }
 	glm::vec3	angularVelocity() const					{ return btVecToGlmVec(_body-> getAngularVelocity()); }

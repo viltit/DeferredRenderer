@@ -255,9 +255,9 @@ void AppScreen::updateInput() {
 	SDL_Event input;
 	while (SDL_PollEvent(&input)) {
 		_gui.onSDLEvent(input);
+		_fork.onSDLEvent(input, _cam);
 
-
-		//temporary solution:
+		//temporary solution for object picking:
 		Physics::instance()->update(_cam.pos(), _cam.dir(), input);
 
 		switch (input.type) {
@@ -285,19 +285,6 @@ void AppScreen::updateInput() {
 				break;
 			case SDLK_t:
 				//_scene["Wall"]->transform.rotateTo(0.0f, glm::vec3{ 0.0f, 0.0f, 1.0f });
-				break;
-				/* DEBUG: Control the cube :*/
-			case SDLK_KP_8:
-				//_btBodies["Cuboid"]->applyCentralImpulse(btVector3{ 0.0f, 0.0f, 100.0f });
-				break;
-			case SDLK_KP_2:
-				//_btBodies["Cuboid"]->applyCentralImpulse(btVector3{ 0.0f, 0.0f, -100.0f });
-				break;
-			case SDLK_KP_4:
-				//_btBodies["Cuboid"]->applyCentralImpulse(btVector3{ -100.0f, 0.0f, 0.0f });
-				break;
-			case SDLK_KP_6:
-				//_btBodies["Cuboid"]->applyCentralImpulse(btVector3{ 100.0f, 0.0f, 0.0f });
 				break;
 			case SDLK_KP_7:
 			{

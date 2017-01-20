@@ -7,18 +7,20 @@ using namespace vitiGL;
 using namespace vitiGEO;
 
 Fork::Fork(Scene& scene)
-	: _scene{ scene }
+	:	 _scene		{ scene },
+		_motorOn	{ false }
 {}
 
 void Fork::init() {
 
-	/* construct the forks static elements */
 	std::vector<float> masses;
-	for (size_t i = 0; i <= 6; i++) {
+	/* construct the forks static elements */
+
+	for (size_t i = 0; i < 6; i++) {
 		std::string name = "ForkCube" + std::to_string(i);
 		_scene.addChild(new Cuboid{ "xml/cube.xml" }, _positions[i], name);
 		_nodes.push_back(_scene[name]);
-		masses.push_back(10.0f);
+		masses.push_back(100.0f);
 	}
 
 	/* make a btCompoundShape out of this elements: */
@@ -73,5 +75,65 @@ Fork::~Fork() {
 }
 
 
-void Fork::onSDLEvent(SDL_Event & input) {
+void Fork::onSDLEvent(SDL_Event & input, Camera& cam) {
+	_fork->physics()->body()->forceActivationState(1);
+	glm::mat3 V = glm::inverse(glm::mat3(cam.getMatrizes().V));
+	switch (input.type) {
+	case SDL_KEYDOWN:
+		switch (input.key.keysym.sym) {
+		case SDLK_KP_8:
+			_fork->physics()->addVelocity(V * glm::vec3{ 0.0f, 0.0f, -_speed });
+			break;
+		case SDLK_KP_2:
+			_fork->physics()->addVelocity(V * glm::vec3{ 0.0f, 0.0f, _speed });
+			break;
+		case SDLK_KP_4:
+			_fork->physics()->addVelocity(V * glm::vec3{ -_speed, 0.0f, 0.0f });
+			break;
+		case SDLK_KP_6:
+			_fork->physics()->addVelocity(V * glm::vec3{ _speed, 0.0f, 0.0f });
+			break;
+		case SDLK_KP_DIVIDE:
+			_fork->physics()->addVelocity(V * glm::vec3{ 0.0f, _speed, 0.0f });
+			break;
+		case SDLK_KP_MULTIPLY:
+			_fork->physics()->addVelocity(V * glm::vec3{ 0.0f, -_speed, 0.0f });
+			break;
+		case SDLK_KP_7:
+			_fork->physics()->setAngularVelocity(glm::vec3{ 0.0f, 0.0f, -_rotSpeed });
+			break;
+		case SDLK_KP_9:
+			_fork->physics()->setAngularVelocity(glm::vec3{ 0.0f, 0.0f, _rotSpeed });
+			break;
+		case SDLK_KP_1:
+			_fork->physics()->setAngularVelocity(glm::vec3{ -_rotSpeed, 0.0f, 0.0f });
+			break;
+		case SDLK_KP_3:
+			_fork->physics()->setAngularVelocity(glm::vec3{ _rotSpeed, 0.0f, 0.0f });
+			break;
+		case SDLK_KP_5:
+			_fork->physics()->setVelocity(glm::vec3{ 0.0f, 0.0f, 0.0f });
+			_fork->physics()->setAngularVelocity(glm::vec3{ 0.0f, 0.0f, 0.0f });
+			break;
+
+		case SDLK_KP_0:
+			if (_motorOn) {
+				_c1->addMotor(10.0f, 1000.0f);
+				_c2->addMotor(-10.0f, 1000.0f);
+
+				_motorOn = false;
+				std::cout << "Motor off\n";
+			}
+			else {
+				_c1->motorOn();
+				_c1->addMotor(-10.0f, 1000.0f);
+				_c2->motorOn();
+				_c2->addMotor(10.0f, 1000.0f);
+				_motorOn = true;
+				std::cout << "Motor on\n";
+			}
+			break;
+		}
+		break;
+	}
 }

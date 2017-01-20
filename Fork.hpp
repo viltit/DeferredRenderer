@@ -11,7 +11,7 @@ public:
 	Fork(vitiGL::Scene& scene);
 
 	void init();
-	void onSDLEvent(SDL_Event& input);
+	void onSDLEvent(SDL_Event& input, vitiGL::Camera& cam);
 
 	~Fork();
 
@@ -23,6 +23,11 @@ private:
 	vitiGEO::SliderConstraint*		_c2;
 
 	vitiGL::Scene&					_scene;
+
+	bool _motorOn;
+
+	const float _speed = 2.f;
+	const float _rotSpeed = 0.5f;
 
 	const glm::vec3 _positions[6] = {
 		glm::vec3{ 0.0f, 3.0f, 0.0f },
