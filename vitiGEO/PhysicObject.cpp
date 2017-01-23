@@ -8,7 +8,9 @@
 namespace vitiGEO {
 
 	PhysicObject::PhysicObject(Transform* transform)
-		: _transform{ transform }
+		: _transform{ transform },
+		  _body{ nullptr },
+		  _shape{ nullptr }
 	{}
 
 	PhysicObject::~PhysicObject() {
@@ -404,6 +406,7 @@ namespace vitiGEO {
 	}
 
 	void CylinderObject::update() {
+
 		btTransform t;
 		_body->getMotionState()->getWorldTransform(t);
 

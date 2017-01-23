@@ -84,8 +84,10 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 
 	/* test: load cylinder obj model: */
 	_scene.addChild(new Model("Models/cylinder/cylinder.obj", &_cam), "Cylinder");
+	_scene["Cylinder"]->transform.setScale(glm::vec3{ 1.0f, 1.5f, 1.0f });
 	_scene["Cylinder"]->transform.setPos(glm::vec3{ -5.f, 3.0f, -5.0f });
 	_scene["Cylinder"]->addPhysics(BodyType::cylinder, 10.0f);
+	_scene["Cylinder"]->physics()->setGravity(glm::vec3{ 0.0f, 0.0f, 0.f });
 	
 	_scene.addChild(new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ 0.0f, 1.0f, 0.0f }, "Floor");
 	_scene["Floor"]->addPhysics(BodyType::cuboid, 0.0f);

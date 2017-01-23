@@ -145,15 +145,23 @@ Model::Model(const std::string& filePath, Camera* cam, bool textureFolder)
 
 		}
 
-		/* make another scene node with a vitiGL::Mesh as its object: */
-		Mesh* mesh = new Mesh{ vertices, indices, textures, cam };
-		std::string meshName = shape.name;
-		if (meshName == "") meshName = "Mesh_" + std::to_string(++id);
-		else meshName += "_" + std::to_string(++id);
+		/* if we only have obe mesh, the model directly contains the mesh: */
+		if (!hasChildren) {
+			Mesh* mesh = new Mesh{ vertices, indices, textures, cam };
+			_obj = mesh;
+		}
 
-		SceneNode* child = new SceneNode{ meshName, mesh, glm::vec3{} };
+		else {
+			/* if we have several meshes, they are children of the model: */
+			Mesh* mesh = new Mesh{ vertices, indices, textures, cam };
+			std::string meshName = shape.name;
+			if (meshName == "") meshName = "Mesh_" + std::to_string(++id);
+			else meshName += "_" + std::to_string(++id);
 
-		addChild(child);
+			SceneNode* child = new SceneNode{ meshName, mesh, glm::vec3{} };
+
+			addChild(child);
+		}
 	}
 	std::cout << "END PROCESSING OBJ FILE " << filePath << std::endl << std::endl;
 }
