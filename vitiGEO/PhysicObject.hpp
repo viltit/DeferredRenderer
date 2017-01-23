@@ -26,6 +26,7 @@ namespace vitiGEO {
 enum class BodyType {
 	plane,	/* static object */
 	cuboid,
+	cylinder,
 	convexHull,
 	sphere,
 	mulitBody	/* consists of several other bodies */
@@ -102,6 +103,22 @@ public:
 				const glm::vec3& initVelocity = { 0.0f, 0.0f, 0.0f });
 
 	~CuboidObject();
+
+	virtual void update() override;
+
+private:
+};
+
+/*	Cylinder -------------------------------------------------------------------- */
+class CylinderObject : public PhysicObject {
+public:
+	CylinderObject(Transform* transform,
+		const void* node,
+		float mass,
+		const glm::vec3& dimensions,
+		const glm::vec3& initVelocity = { 0.0f, 0.0f, 0.0f });
+
+	~CylinderObject();
 
 	virtual void update() override;
 

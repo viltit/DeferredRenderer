@@ -126,8 +126,9 @@ void SceneNode::remove() {
 void SceneNode::addPhysics(BodyType type, float mass, const glm::vec3& initialVelocity) {
 	/* only mesh and shape objects supported: */
 	bool doIt = true;
-	if (!_obj || (_obj->type() != ObjType::mesh && _obj->type() != ObjType::shape))
+	if (!_obj || (_obj->type() != ObjType::mesh && _obj->type() != ObjType::shape)) {
 		doIt = false;
+	}
 
 	/* create a new btPhysic object: */
 	if (doIt) {
@@ -135,6 +136,9 @@ void SceneNode::addPhysics(BodyType type, float mass, const glm::vec3& initialVe
 		switch (type) {
 		case BodyType::cuboid:
 			_physics = new CuboidObject{ &transform, this, mass, s->getAABB()->dimension(), initialVelocity };
+			break;
+		case BodyType::cylinder:
+			_physics = new CylinderObject{ &transform, this, mass, s->getAABB()->dimension(), initialVelocity };
 			break;
 			/* !! be aware: we use velocity as the planes normal and mass as its distance !!*/
 		case BodyType::plane:
@@ -146,12 +150,14 @@ void SceneNode::addPhysics(BodyType type, float mass, const glm::vec3& initialVe
 		case BodyType::sphere:
 			_physics = new SphereObject{ &transform, this, mass, s->getAABB()->radius() / 2.0f, initialVelocity };
 			break;
+		default:
+			std::cout << "<Scene::AddPhysics> Could not add Physics to object named " << _name << std::endl;
 		}
 	}
 
-	/* WIP: add all children: 
+	/*WIP: add all children: 
 	for (auto& C : _children) {
-		C->addPhysics(mass);
+		C->addPhysics(type, mass);
 	}*/
 }
 

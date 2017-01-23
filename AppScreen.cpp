@@ -82,6 +82,10 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	/* test: make a chain: */
 	addChain(glm::vec3{ 0.0f - 5.f, 20.0f, 0.0f - 5.f }, 8, 0.01f);
 
+	/* test: load cylinder obj model: */
+	_scene.addChild(new Model("Models/cylinder/cylinder.obj", &_cam), "Cylinder");
+	_scene["Cylinder"]->transform.setPos(glm::vec3{ -5.f, 3.0f, -5.0f });
+	_scene["Cylinder"]->addPhysics(BodyType::cylinder, 10.0f);
 	
 	_scene.addChild(new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ 0.0f, 1.0f, 0.0f }, "Floor");
 	_scene["Floor"]->addPhysics(BodyType::cuboid, 0.0f);

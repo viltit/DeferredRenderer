@@ -42,6 +42,10 @@ Model::Model(const std::string& filePath, Camera* cam, bool textureFolder)
 	if (!error.empty()) std::cout << error << std::endl;
 	if (!ret) throw vitiError(("<Mesh::Mesh>TinyObjLoader failed to load object " + filePath).c_str());
 
+	/* mark if we have one or several meshes in the object: */
+	bool hasChildren = true;
+	if (shapes.size() == 1) hasChildren = false;
+
 	/*	create a vitiGL::Mesh for each tinyobj::shape: */
 	for (const auto& shape : shapes) {
 		std::cout << "Processing a shape named " << shape.name << std::endl;

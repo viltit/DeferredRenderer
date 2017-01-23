@@ -351,4 +351,70 @@ namespace vitiGEO {
 			_transforms[i]->rotateTo(rot);
 		}
 	}
+
+	/*	CYLINDER --------------------------------------------------------------------- */
+
+	CylinderObject::CylinderObject(
+		Transform * transform, 
+		const void * node, 
+		float mass, 
+		const glm::vec3 & dimensions, 
+		const glm::vec3 & initVelocity)
+
+		: PhysicObject(transform)
+
+	{
+		/* adapt orientation and position: */
+		btTransform t;
+
+		t.setIdentity();
+		t.setOrigin(glmVecToBtVec(transform->pos()));
+		t.setRotation(glmQuatToBtQuat(transform->orientation()));
+
+		_shape = new btCylinderShape(glmVecToBtVec(_transform->scale() * dimensions / 2.0f));
+
+		btVector3 inertia;
+		_shape->calculateLocalInertia(mass, inertia);
+
+		btMotionState* motion = new btDefaultMotionState(t);
+
+		/* create the rigid body: */
+		_body = new btRigidBody{ btScalar(mass), motion, _shape, inertia };
+
+		/* set velocity: */
+		_body->setLinearVelocity(glmVecToBtVec(initVelocity));
+		_body->setLinearFactor(btVector3{ 0.8f, 0.8f, 0.8f });
+		_body->setCollisionFlags(_body->getCollisionFlags() | btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK);
+		_body->setUserPointer((void*)node);
+
+		Physics::instance()->addObject(this);
+	}
+
+
+	CylinderObject::~CylinderObject() {
+		if (_body) {
+			Physics::instance()->removeObject(this);
+			delete _body;
+			_body = nullptr;
+		}
+		if (_shape) {
+			delete _shape;
+			_shape = nullptr;
+		}
+	}
+
+	void CylinderObject::update() {
+		btTransform t;
+		_body->getMotionState()->getWorldTransform(t);
+
+		/* adapt position: */
+		glm::vec3 pos = btVecToGlmVec(_body->getCenterOfMassPosition());
+		_transform->setPos(pos);
+
+		/* adapt orientation: */
+		//glm::quat o1 = _transform->orientation();
+		glm::quat o2 = btQuatToGlmQuat(t.getRotation());
+		_transform->rotateTo(o2);
+	}
+
 }
