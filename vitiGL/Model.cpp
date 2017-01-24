@@ -145,7 +145,7 @@ Model::Model(const std::string& filePath, Camera* cam, bool textureFolder)
 
 		}
 
-		/* if we only have obe mesh, the model directly contains the mesh: */
+		/* if we only have one mesh, the model directly contains the mesh: */
 		if (!hasChildren) {
 			Mesh* mesh = new Mesh{ vertices, indices, textures, cam };
 			_obj = mesh;
@@ -170,23 +170,6 @@ Model::Model(const std::string& filePath, Camera* cam, bool textureFolder)
 Model::~Model() {
 }
 
-/* because we have an aabb, we need to update it too: */
-void Model::update(const Uint32& deltaTime)  {
-	/* calculate new position: */
-	if (_parent && _obj)  _obj->setModelMatrix(_parent->transform.worldMatrix() * transform.worldMatrix());
-	else if (_obj) _obj->setModelMatrix(transform.worldMatrix());
-
-	/* update all children: */
-	for (auto& C : _children) C->update(deltaTime);
-
-	/* update the aabb: */
-	for (auto& C : _children) {
-		if (C->obj()) {
-			Mesh* mesh = static_cast<Mesh*>(C->obj());
-			mesh->updateAABB();
-		}
-	}
-}
 
 void Model::drawAABB() {
 	for (auto& C : _children) {

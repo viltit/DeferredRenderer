@@ -182,8 +182,19 @@ public:
 
 	//debug:
 	void print() {
+		std::cout << "--------------- SCENE NODES:\n";
 		for (auto& S : _scene) {
 			std::cout << "scene node name: " << S.first << "\t\tMemory address: " << S.second << std::endl;
+		}
+
+		std::cout << "--------------- SHAPE LIST:\n";
+		for (auto& S : _shapes) {
+			std::cout << S.first << "\t\tMemory address: " << S.second << std::endl;
+		}
+
+		std::cout << "--------------- TRANSPARENT LIST:\n";
+		for (auto& S : _transparent) {
+			std::cout << S.first << "\t\tMemory address: " << S.second << std::endl;
 		}
 	}
 

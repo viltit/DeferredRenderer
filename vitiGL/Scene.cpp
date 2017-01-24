@@ -28,8 +28,12 @@ SceneNode::SceneNode(const std::string& name, IGameObject* object, glm::vec3 pos
 
 	/* if the attached object has an aabb, get its "radius": */
 	if (_obj) {
-		if (_obj->type() == ObjType::mesh || _obj->type() == ObjType::shape) {
+		if (_obj->type() == ObjType::shape) {
 			Shape* s = static_cast<Shape*>(_obj);
+			_radius = s->getAABB()->diameter() * 0.5f;
+		}
+		else if (_obj->type() == ObjType::mesh) {
+			ShapeI* s = static_cast<ShapeI*>(_obj);
 			_radius = s->getAABB()->diameter() * 0.5f;
 		}
 		else _radius = 1.0f;
@@ -70,8 +74,13 @@ void SceneNode::update(const Uint32 & deltaTime) {
 
 	if (_obj) {
 		/* update aabb and radius: */
-		if (_obj->type() == ObjType::shape || _obj->type() == ObjType::mesh) {
+		if (_obj->type() == ObjType::shape) {
 			vitiGEO::AABB* aabb = static_cast<Shape*>(_obj)->getAABB();
+			aabb->transform(transform.worldMatrix());
+			_radius = aabb->diameter() * 0.5f;
+		}
+		else if (_obj->type() == ObjType::mesh) {
+			vitiGEO::AABB* aabb = static_cast<ShapeI*>(_obj)->getAABB();
 			aabb->transform(transform.worldMatrix());
 			_radius = aabb->diameter() * 0.5f;
 		}
@@ -82,7 +91,9 @@ void SceneNode::update(const Uint32 & deltaTime) {
 }
 
 void SceneNode::draw(const Shader & shader) const {
-	if (_obj) _obj->draw(shader);
+	if (_obj) {
+		_obj->draw(shader);
+	}
 #ifdef CONSOLE_LOG
 	else {
 		std::cout << "<SceneNode::Draw>SceneNode named " << _name << " has no drawable object attached\n";
@@ -122,7 +133,7 @@ void SceneNode::remove() {
 	}
 }
 
-/* this only adds cuboids - need a more flexible solution for planes etc. */
+
 void SceneNode::addPhysics(BodyType type, float mass, const glm::vec3& initialVelocity) {
 	/* only mesh and shape objects supported: */
 	bool doIt = true;
@@ -131,24 +142,35 @@ void SceneNode::addPhysics(BodyType type, float mass, const glm::vec3& initialVe
 	}
 
 	/* create a new btPhysic object: */
+	/* due to bad code design, we need to distinct between Shape and ShapeI here: */
 	if (doIt) {
-		Shape* s = static_cast<Shape*>(_obj);
+		glm::vec3 dim;
+		std::vector<glm::vec3> vertices;
+		if (_obj->type() == ObjType::shape) {
+			dim = static_cast<Shape*>(_obj)->getAABB()->dimension();
+			vertices = static_cast<Shape*>(_obj)->vertices();
+		}
+		else if (_obj->type() == ObjType::mesh) {
+			dim = static_cast<ShapeI*>(_obj)->getAABB()->dimension();
+			vertices = static_cast<ShapeI*>(_obj)->vertices();
+		}
+
 		switch (type) {
 		case BodyType::cuboid:
-			_physics = new CuboidObject{ &transform, this, mass, s->getAABB()->dimension(), initialVelocity };
+			_physics = new CuboidObject{ &transform, this, mass, dim, initialVelocity };
 			break;
 		case BodyType::cylinder:
-			_physics = new CylinderObject{ &transform, this, mass, s->getAABB()->dimension(), initialVelocity };
+			_physics = new CylinderObject{ &transform, this, mass, dim, initialVelocity };
 			break;
 			/* !! be aware: we use velocity as the planes normal and mass as its distance !!*/
 		case BodyType::plane:
 			_physics = new PlaneObject{ &transform, this, mass, initialVelocity };
 			break;
 		case BodyType::convexHull:
-			_physics = new ConvexHullObject{ &transform, s->vertices(), this, mass, initialVelocity };
+			_physics = new ConvexHullObject{ &transform, vertices, this, mass, initialVelocity };
 			break;
 		case BodyType::sphere:
-			_physics = new SphereObject{ &transform, this, mass, s->getAABB()->radius() / 2.0f, initialVelocity };
+			_physics = new SphereObject{ &transform, this, mass, dim.x / 2.0f, initialVelocity };
 			break;
 		default:
 			std::cout << "<Scene::AddPhysics> Could not add Physics to object named " << _name << std::endl;
@@ -181,9 +203,16 @@ void SceneNode::addCompoundPhysics(
 	std::vector<Transform*> transforms;
 	std::vector<glm::vec3> dimensions;
 	for (const auto& o : objects) {
-		Shape* s = static_cast<Shape*>(o->_obj);
-		transforms.push_back(&o->transform);
-		dimensions.push_back(s->getAABB()->dimension());
+		if (o->_obj->type() == ObjType::shape) {
+			Shape* s = static_cast<Shape*>(o->_obj);
+			transforms.push_back(&o->transform);
+			dimensions.push_back(s->getAABB()->dimension());
+		}
+		else if (o->_obj->type() == ObjType::mesh) {
+			ShapeI* s = static_cast<ShapeI*>(o->_obj);
+			transforms.push_back(&o->transform);
+			dimensions.push_back(s->getAABB()->dimension());
+		}
 	}
 
 	MultiBody* physics = new MultiBody{ &transform, transforms, dimensions, this, masses, velocity };
@@ -260,8 +289,9 @@ void Scene::addChild(SceneNode * node, const std::string& name, const std::strin
 	std::string nodeName = name;
 	if (name == "") {
 		nodeName = "Node[" + std::to_string(++_counter) + "]";
-		node->setName(nodeName);
 	}
+	node->setName(nodeName);
+
 
 #ifdef CONSOLE_LOG
 	std::cout << "<Scene::addChild>Adding a Scene Node with the name " << nodeName << " and the parent " << parentName << std::endl;
@@ -306,11 +336,14 @@ void Scene::addToList(SceneNode* node) {
 		break;
 		case ObjType::mesh: 
 		{
-			Mesh* s = static_cast<Mesh*>(object);
+			std::cout << "<Scene::addToList> Adding a mesh...\n";
+			ShapeI* s = static_cast<ShapeI*>(object);
 			if (s->isTransparent()) {
+				std::cout << "Added mesh in transparent list.\n";
 				_transparent.insert(std::make_pair(nodeName, s));
 			}
 			else {
+				std::cout << "Added mesh in shape list\n";
 				_shapes.insert(std::make_pair(nodeName, s));
 			}
 		}
@@ -333,11 +366,11 @@ void Scene::addToList(SceneNode* node) {
 			throw vitiError("<Scene::addChild>Unknown Object type.");
 		}
 
-		/* make sure the node is in the scene list */
+		/* make sure the node is in the scene list 
 		if (_scene[node->name()] == nullptr) {
 			_scene.erase(node->name()); //this line should NOT be necessary, but it is atm -> see scene.print(), we have nullptrs
 			_scene.insert(std::make_pair(node->name(), node));
-		}
+		}*/
 	}
 	/* recursivly visit all children: */
 	for (auto i = node->childrenBegin(); i < node->childrenEnd(); i++) {

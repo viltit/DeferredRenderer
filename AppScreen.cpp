@@ -88,6 +88,7 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	_scene["Cylinder"]->transform.setPos(glm::vec3{ -5.f, 3.0f, -5.0f });
 	_scene["Cylinder"]->addPhysics(BodyType::cylinder, 10.0f);
 	_scene["Cylinder"]->physics()->setGravity(glm::vec3{ 0.0f, 0.0f, 0.f });
+
 	
 	_scene.addChild(new Cuboid{ "xml/cube_floor.xml" }, glm::vec3{ 0.0f, 1.0f, 0.0f }, "Floor");
 	_scene["Floor"]->addPhysics(BodyType::cuboid, 0.0f);
@@ -133,6 +134,9 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 
 	initGUI();
 	_timer.on();
+
+	/* debug: */
+	_scene.print();
 }
 
 
@@ -453,9 +457,10 @@ void AppScreen::addChain(const glm::vec3 & startPos, int counter, float distance
 		std::string name = "ChainCube" + std::to_string(j) + "/" + std::to_string(i);
 		glm::vec3 pos = { startPos.x, startPos.y - (i * scale.y + distance), startPos.z };
 
-		_scene.addChild(new Cuboid{ "xml/cube.xml" }, pos, name, "root");
+		_scene.addChild(new Model{ "Models/cylinder/cylinder.obj", &_cam }, name, "root");
+		_scene[name]->transform.setPos(pos);
 		_scene[name]->transform.setScale(scale);
-		_scene[name]->addPhysics(BodyType::cuboid, mass);
+		_scene[name]->addPhysics(BodyType::cylinder, mass);
 		objs.push_back(_scene[name]->physics());
 	}
 
