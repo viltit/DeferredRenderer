@@ -21,8 +21,7 @@ class Mesh : public ShapeI {
 public:
 	Mesh	(std::vector<Vertex>& vertices, 
 			 std::vector<GLuint> indices, 
-			 std::vector<std::pair<int, GLuint>>& textures,
-			 Camera* cam);
+			 std::vector<std::pair<int, GLuint>>& textures);
 
 	/* copy constructor: */
 	Mesh(const Mesh& m);
@@ -32,16 +31,11 @@ public:
 
 	~Mesh();
 
-	void updateAABB() { aabb.transform(_M); _aabbShape->update(&aabb); }
-
-	/* debug function: draw aaabb */
-	void drawAABB() const { _aabbShape->draw(); }
+	void updateAABB() { aabb.transform(_M); }
 
 protected:
 	// Inherited via Shape (obsolete in this case...)
 	virtual void initVertices(std::vector<Vertex>& vertices) override;
-
-	AABBShape* _aabbShape;
 
 	glm::vec3 size;
 	glm::vec2 uv;

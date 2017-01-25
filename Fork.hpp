@@ -16,6 +16,8 @@ public:
 	~Fork();
 
 private:
+	void makeChain(const glm::vec3 & startPos, int counter, float distance, const glm::vec3& scale);
+
 	std::vector<vitiGL::SceneNode*>	_nodes;
 	vitiGL::SceneNode* _fork;
 	

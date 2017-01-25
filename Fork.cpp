@@ -74,6 +74,32 @@ Fork::~Fork() {
 	}
 }
 
+void Fork::makeChain(const glm::vec3 & startPos, int counter, float distance, const glm::vec3 & scale) {
+	static int j{ 0 };
+	j++;
+
+	/* create the cubes and add them to the scene: */
+	std::vector<PhysicObject*> objs;
+
+	for (size_t i = 0; i < counter; i++) {
+		float mass;
+		mass = (i == 0) ? 0.0f : 5.0f;
+
+		std::string name = "ChainCube" + std::to_string(j) + "/" + std::to_string(i);
+		glm::vec3 pos = { startPos.x, startPos.y - (i * scale.y + distance), startPos.z };
+
+		_scene.addChild(new Model{ "Models/cylinder.obj" }, name, "root");
+		_scene[name]->transform.setPos(pos);
+		_scene[name]->transform.setScale(scale);
+		_scene[name]->addPhysics(BodyType::cylinder, mass);
+		objs.push_back(_scene[name]->physics());
+	}
+
+	/* now make the chain: */
+	CuboidChain* chain = new CuboidChain{ objs, distance };
+
+}
+
 
 void Fork::onSDLEvent(SDL_Event & input, Camera& cam) {
 	_fork->physics()->body()->forceActivationState(1);

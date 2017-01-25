@@ -17,7 +17,7 @@ namespace vitiGL {
 
 int Model::id = 0;
 
-Model::Model(const std::string& filePath, Camera* cam, bool textureFolder)
+Model::Model(const std::string& filePath, bool textureFolder)
 {
 #ifdef CONSOLE_LOG
 	std::cout << "\nSTART PROCESSING OBJ FILE " << filePath << std::endl;
@@ -147,13 +147,13 @@ Model::Model(const std::string& filePath, Camera* cam, bool textureFolder)
 
 		/* if we only have one mesh, the model directly contains the mesh: */
 		if (!hasChildren) {
-			Mesh* mesh = new Mesh{ vertices, indices, textures, cam };
+			Mesh* mesh = new Mesh{ vertices, indices, textures };
 			_obj = mesh;
 		}
 
 		else {
 			/* if we have several meshes, they are children of the model: */
-			Mesh* mesh = new Mesh{ vertices, indices, textures, cam };
+			Mesh* mesh = new Mesh{ vertices, indices, textures };
 			std::string meshName = shape.name;
 			if (meshName == "") meshName = "Mesh_" + std::to_string(++id);
 			else meshName += "_" + std::to_string(++id);
@@ -168,14 +168,6 @@ Model::Model(const std::string& filePath, Camera* cam, bool textureFolder)
 
 
 Model::~Model() {
-}
-
-
-void Model::drawAABB() {
-	for (auto& C : _children) {
-			Mesh* mesh = static_cast<Mesh*>(C->obj());
-			mesh->drawAABB();
-	}
 }
 
 std::vector<vitiGEO::AABB*> Model::aabb() {

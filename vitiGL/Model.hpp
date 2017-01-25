@@ -19,12 +19,10 @@ class Camera;
 class Model : public SceneNode {
 public:
 	Model	(const std::string& filePath,
-			 Camera* cam,
 			 bool textureFolder = true);
 	~Model();
 
 	/* wip, debug: */
-	void drawAABB();
 	std::vector<vitiGEO::AABB*> aabb();
 	std::vector<std::vector<glm::vec3>> vertices();
 
