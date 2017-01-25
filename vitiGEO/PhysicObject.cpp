@@ -20,6 +20,19 @@ namespace vitiGEO {
 		Physics::instance()->removeObject(this);
 	}
 
+	void PhysicObject::update() {
+		btTransform t;
+		_body->getMotionState()->getWorldTransform(t);
+
+		/* adapt position: */
+		glm::vec3 pos = btVecToGlmVec(_body->getCenterOfMassPosition());
+		_transform->setPos(pos);
+
+		/* adapt orientation: */
+		glm::quat o2 = btQuatToGlmQuat(t.getRotation());
+		_transform->rotateTo(o2);
+	}
+
 	/* Cuboid ------------------------------------------------------------------------------------ */
 	CuboidObject::CuboidObject(Transform * transform,
 		const void* node,
@@ -67,19 +80,6 @@ namespace vitiGEO {
 		}
 	}
 
-	void CuboidObject::update() {
-		btTransform t;
-		_body->getMotionState()->getWorldTransform(t);
-
-		/* adapt position: */
-		glm::vec3 pos = btVecToGlmVec(_body->getCenterOfMassPosition());
-		_transform->setPos(pos);
-
-		/* adapt orientation: */
-		//glm::quat o1 = _transform->orientation();
-		glm::quat o2 = btQuatToGlmQuat(t.getRotation());
-		_transform->rotateTo(o2);
-	}
 
 	/* Plane ------------------------------------------------------------------------------------ */
 	PlaneObject::PlaneObject(Transform * transform,
@@ -178,20 +178,6 @@ namespace vitiGEO {
 		}
 	}
 
-	void ConvexHullObject::update() {
-		btTransform t;
-		_body->getMotionState()->getWorldTransform(t);
-
-		/* adapt position: */
-		glm::vec3 pos = btVecToGlmVec(_body->getCenterOfMassPosition());
-		_transform->setPos(pos);
-
-		/* adapt orientation: */
-		//glm::quat o1 = _transform->orientation();
-		glm::quat o2 = btQuatToGlmQuat(t.getRotation());
-		_transform->rotateTo(o2);
-	}
-
 	SphereObject::SphereObject(Transform * transform, const void * node, float mass, float radius, const glm::vec3& initialVelocity)
 		: PhysicObject{ transform }
 	{
@@ -232,20 +218,6 @@ namespace vitiGEO {
 			delete _shape;
 			_shape = nullptr;
 		}
-	}
-
-	void SphereObject::update() {
-		btTransform t;
-		_body->getMotionState()->getWorldTransform(t);
-
-		/* adapt position: */
-		glm::vec3 pos = btVecToGlmVec(_body->getCenterOfMassPosition());
-		_transform->setPos(pos);
-
-		/* adapt orientation: */
-		//glm::quat o1 = _transform->orientation();
-		glm::quat o2 = btQuatToGlmQuat(t.getRotation());
-		_transform->rotateTo(o2);
 	}
 
 	/*	MULIT-BODY --------------------------------------------------------------------- */
@@ -405,19 +377,41 @@ namespace vitiGEO {
 		}
 	}
 
-	void CylinderObject::update() {
+	ConeObject::ConeObject(
+		Transform * transform, 
+		const void * node, 
+		float mass, 
+		const glm::vec3 & dimensions, 
+		const glm::vec3 & initVelocity)
 
+		: PhysicObject(transform)
+	{
+		/* adapt orientation and position: */
 		btTransform t;
-		_body->getMotionState()->getWorldTransform(t);
 
-		/* adapt position: */
-		glm::vec3 pos = btVecToGlmVec(_body->getCenterOfMassPosition());
-		_transform->setPos(pos);
+		t.setIdentity();
+		t.setOrigin(glmVecToBtVec(transform->pos()));
+		t.setRotation(glmQuatToBtQuat(transform->orientation()));
 
-		/* adapt orientation: */
-		//glm::quat o1 = _transform->orientation();
-		glm::quat o2 = btQuatToGlmQuat(t.getRotation());
-		_transform->rotateTo(o2);
+		_shape = new btConeShape(transform->scale().x * dimensions.x * 0.5f, transform->scale().y * dimensions.y);
+
+		btVector3 inertia;
+		_shape->calculateLocalInertia(mass, inertia);
+
+		btMotionState* motion = new btDefaultMotionState(t);
+
+		/* create the rigid body: */
+		_body = new btRigidBody{ btScalar(mass), motion, _shape, inertia };
+
+		/* set velocity: */
+		_body->setLinearVelocity(glmVecToBtVec(initVelocity));
+		_body->setLinearFactor(btVector3{ 0.8f, 0.8f, 0.8f });
+		_body->setCollisionFlags(_body->getCollisionFlags() | btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK);
+		_body->setUserPointer((void*)node);
+
+		Physics::instance()->addObject(this);
 	}
 
+	ConeObject::~ConeObject() {
+	}
 }

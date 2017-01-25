@@ -26,6 +26,7 @@ namespace vitiGEO {
 enum class BodyType {
 	plane,	/* static object */
 	cuboid,
+	cone,
 	cylinder,
 	convexHull,
 	sphere,
@@ -40,7 +41,7 @@ public:
 	virtual ~PhysicObject();
 
 	virtual void remove();
-	virtual void update() = 0;
+	virtual void update();
 
 	/* wrapper functions accessing btRigidBody Methods: */
 	void		setVelocity(const glm::vec3& v)			{ _body->setLinearVelocity(glmVecToBtVec(v)); }
@@ -104,8 +105,6 @@ public:
 
 	~CuboidObject();
 
-	virtual void update() override;
-
 private:
 };
 
@@ -120,7 +119,19 @@ public:
 
 	~CylinderObject();
 
-	virtual void update() override;
+private:
+};
+
+/*	Cone -------------------------------------------------------------------- */
+class ConeObject : public PhysicObject {
+public:
+	ConeObject(Transform* transform,
+		const void* node,
+		float mass,
+		const glm::vec3& dimensions,
+		const glm::vec3& initVelocity = { 0.0f, 0.0f, 0.0f });
+
+	~ConeObject();
 
 private:
 };
@@ -153,8 +164,6 @@ public:
 
 	~ConvexHullObject();
 
-	virtual void update() override;
-
 private:
 };
 
@@ -168,8 +177,6 @@ public:
 				const glm::vec3& initialVelocity = { 0.0f, 0.0f, 0.0f });
 
 	~SphereObject();
-
-	virtual void update() override;
 
 private:
 };

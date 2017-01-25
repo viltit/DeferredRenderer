@@ -162,6 +162,9 @@ void SceneNode::addPhysics(BodyType type, float mass, const glm::vec3& initialVe
 		case BodyType::cylinder:
 			_physics = new CylinderObject{ &transform, this, mass, dim, initialVelocity };
 			break;
+		case BodyType::cone:
+			_physics = new ConeObject{ &transform, this, mass, dim, initialVelocity };
+			break;
 			/* !! be aware: we use velocity as the planes normal and mass as its distance !!*/
 		case BodyType::plane:
 			_physics = new PlaneObject{ &transform, this, mass, initialVelocity };
