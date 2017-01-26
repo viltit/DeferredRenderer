@@ -79,9 +79,6 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	/* compound object test: */
 
 
-	/* test: make a chain: */
-	addChain(glm::vec3{ -5.f, 20.0f,  5.f }, 8, 0.01f, glm::vec3{ 0.2f, 0.5f, 0.2f });
-
 	/* test: load cylinder obj model: */
 	_scene.addChild(new Model("Models/cylinder.obj"), "Cylinder");
 	_scene["Cylinder"]->transform.setScale(glm::vec3{ 1.0f, 1.5f, 1.0f });
@@ -341,7 +338,7 @@ void AppScreen::updateInput() {
 				break;
 				//debug:
 			case SDLK_F2:
-				_cam.setTarget(_scene["Cuboid000"]->transform.pos());;
+				Physics::instance()->drawDebug();
 				break;
 			case SDLK_g:
 				_drender.gramSchmidt();

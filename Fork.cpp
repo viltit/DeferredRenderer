@@ -7,62 +7,40 @@ using namespace vitiGL;
 using namespace vitiGEO;
 
 Fork::Fork(Scene& scene)
-	:	 _scene		{ scene },
-		_motorOn	{ false }
+	:	_scene		{ scene },
+		_motorOn	{ false },
+		_chain		{ nullptr },
+		_fork		{ nullptr },
+		_c1			{ nullptr },
+		_c2			{ nullptr }
 {}
 
 void Fork::init() {
+	makeChain(glm::vec3{ -3.0f, 15.0f, -3.0f }, 8, 0.1f, glm::vec3{ 0.2f, 0.5f, 0.2f });
+	_scene.addChild(new Model{ "Models/arch.obj" }, "Arch");
+	_scene["Arch"]->transform.setPos(glm::vec3{ -12.f, 4.f, -12.f });
+	_scene["Arch"]->addPhysics(BodyType::convexHull, 50.0f);
+	_scene["Arch"]->physics()->body()->setDamping(0.1f, 0.1f);
 
-	std::vector<float> masses;
-	/* construct the forks static elements */
+	Constraint* archConstraint1 = new P2PConstraint(
+		_chain->last(), glm::vec3{ -0.2f, -0.4f, 0.0f },
+		_scene["Arch"]->physics(), glm::vec3{ -0.2f, 0.8f, 0.0f });
 
-	for (size_t i = 0; i < 6; i++) {
-		std::string name = "ForkCube" + std::to_string(i);
-		_scene.addChild(new Cuboid{ "xml/cube.xml" }, _positions[i], name);
-		_nodes.push_back(_scene[name]);
-		masses.push_back(100.0f);
-	}
-
-	/* make a btCompoundShape out of this elements: */
-	_scene.addChild(nullptr, glm::vec3{ -0.0f, 3.0f, -0.0f }, "Fork");
-	_fork = _scene["Fork"];
-
-	_scene["Fork"]->addCompoundPhysics(_nodes, masses, glm::vec3{ -10.0f, 10.0f, -10.0f });
-	_scene["Fork"]->physics()->setGravity(glm::vec3{ 0.0f, 0.0f, 0.0f });
-
-	/* add two cubes with slider constraints on top of the compound: DOES NOT WORK AS I WANT ...*/
-	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ -2.f, 3.0f, -3.0f }, "Slider1");
-	_scene["Slider1"]->addPhysics(BodyType::cuboid, 10.0f);
-	_scene["Slider1"]->physics()->setGravity(glm::vec3{ 0.0f, 0.0f, 0.0f });
-
-	glm::vec3 inA{ 0.0f, 0.0f, -1.8f };
-	glm::vec3 inB{ -0.5f, 0.0f, -0.5f };
-
-	_c1 = new SliderConstraint{
-		_scene["Fork"]->physics(), inA, _scene["Slider1"]->physics(), inB, -2.0f, -0.0f
-	};
-
-	_scene.addChild(new Cuboid{ "xml/cube.xml" }, glm::vec3{ 2.f, 3.0f, -3.0f }, "Slider2");
-	_scene["Slider2"]->addPhysics(BodyType::cuboid, 10.0f);
-	_scene["Slider2"]->physics()->setGravity(glm::vec3{ 0.0f, 0.0f, 0.0f });
-
-	inA = glm::vec3{ 0.0f, 0.0f, -1.8f };
-	inB = glm::vec3{ 0.5f, 0.0f, -0.5f };
-
-	_c2 = new SliderConstraint{
-		_scene["Fork"]->physics(), inA, _scene["Slider2"]->physics(), inB, 0.0f, 2.0f
-	};
+	Constraint* archConstraint2 = new P2PConstraint(
+		_chain->last(), glm::vec3{ 0.2f, -0.4f, 0.0f },
+		_scene["Arch"]->physics(), glm::vec3{ 0.2f, 0.8f, 0.0f });
 }
 
 Fork::~Fork() {
-	for (size_t i = 0; i < 0; i++) {
-		std::string name = "ForkCube" + std::to_string(i);
-		_scene.remove(name);
+	if (_fork) {
+		_scene.remove("Fork");
+		_fork = nullptr;
 	}
-	_scene.remove("Fork");
-	
-	_nodes.clear();
-	_fork = nullptr;
+
+	if (_chain) {
+		delete _chain;
+		_chain = nullptr;
+	}
 
 	if (_c1) {
 		delete _c2;
@@ -78,7 +56,7 @@ void Fork::makeChain(const glm::vec3 & startPos, int counter, float distance, co
 	static int j{ 0 };
 	j++;
 
-	/* create the cubes and add them to the scene: */
+	/* create the cylinders objects for the chain and add them to the scene: */
 	std::vector<PhysicObject*> objs;
 
 	for (size_t i = 0; i < counter; i++) {
@@ -92,54 +70,60 @@ void Fork::makeChain(const glm::vec3 & startPos, int counter, float distance, co
 		_scene[name]->transform.setPos(pos);
 		_scene[name]->transform.setScale(scale);
 		_scene[name]->addPhysics(BodyType::cylinder, mass);
+		_scene[name]->physics()->body()->setDamping(0.1f, 0.1f);
 		objs.push_back(_scene[name]->physics());
 	}
 
 	/* now make the chain: */
-	CuboidChain* chain = new CuboidChain{ objs, distance };
-
+	_chain = new CuboidChain{ objs, distance };
 }
 
 
 void Fork::onSDLEvent(SDL_Event & input, Camera& cam) {
-	_fork->physics()->body()->forceActivationState(1);
 	glm::mat3 V = glm::inverse(glm::mat3(cam.getMatrizes().V));
 	switch (input.type) {
 	case SDL_KEYDOWN:
+		_chain->first()->body()->forceActivationState(1);
+		glm::vec3 dv{};
 		switch (input.key.keysym.sym) {
 		case SDLK_KP_8:
-			_fork->physics()->addVelocity(V * glm::vec3{ 0.0f, 0.0f, -_speed });
+			dv = V * glm::vec3{ 0.0f, 0.0f, -_speed };
+			dv.y = 0.0f; //we dont want movment in the z-Axis
+			_chain->first()->addVelocity(dv);
 			break;
 		case SDLK_KP_2:
-			_fork->physics()->addVelocity(V * glm::vec3{ 0.0f, 0.0f, _speed });
+			dv = V * glm::vec3{ 0.0f, 0.0f, _speed };
+			dv.y = 0.0;
+			_chain->first()->addVelocity(dv);
 			break;
 		case SDLK_KP_4:
-			_fork->physics()->addVelocity(V * glm::vec3{ -_speed, 0.0f, 0.0f });
+			dv = V * glm::vec3{ -_speed, 0.0f, 0.0f };
+			dv.y = 0.0f;
+			_chain->first()->addVelocity(dv);
 			break;
 		case SDLK_KP_6:
-			_fork->physics()->addVelocity(V * glm::vec3{ _speed, 0.0f, 0.0f });
+			dv = V * glm::vec3{ _speed, 0.0f, 0.0f };
+			dv.y = 0.0f;
+			_chain->first()->addVelocity(dv);
 			break;
 		case SDLK_KP_DIVIDE:
-			_fork->physics()->addVelocity(V * glm::vec3{ 0.0f, _speed, 0.0f });
+			dv.y = _speed;
+			_chain->first()->addVelocity(dv);
 			break;
 		case SDLK_KP_MULTIPLY:
-			_fork->physics()->addVelocity(V * glm::vec3{ 0.0f, -_speed, 0.0f });
+			dv.y = -_speed;
+			_chain->first()->addVelocity(dv);
 			break;
 		case SDLK_KP_7:
-			_fork->physics()->setAngularVelocity(glm::vec3{ 0.0f, 0.0f, -_rotSpeed });
+			_chain->first()->setAngularVelocity(glm::vec3{ 0.0f, 0.0f, -_rotSpeed });
 			break;
 		case SDLK_KP_9:
-			_fork->physics()->setAngularVelocity(glm::vec3{ 0.0f, 0.0f, _rotSpeed });
-			break;
-		case SDLK_KP_1:
-			_fork->physics()->setAngularVelocity(glm::vec3{ -_rotSpeed, 0.0f, 0.0f });
-			break;
-		case SDLK_KP_3:
-			_fork->physics()->setAngularVelocity(glm::vec3{ _rotSpeed, 0.0f, 0.0f });
+			_chain->first()->setAngularVelocity(glm::vec3{ 0.0f, 0.0f, _rotSpeed });
 			break;
 		case SDLK_KP_5:
-			_fork->physics()->setVelocity(glm::vec3{ 0.0f, 0.0f, 0.0f });
-			_fork->physics()->setAngularVelocity(glm::vec3{ 0.0f, 0.0f, 0.0f });
+			_chain->first()->body()->clearForces();
+			_chain->first()->setVelocity(glm::vec3{ 0.0f, 0.0f, 0.0f });
+			_chain->first()->setAngularVelocity(glm::vec3{ 0.0f, 0.0f, 0.0f });
 			break;
 
 		case SDLK_KP_0:

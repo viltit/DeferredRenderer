@@ -95,13 +95,18 @@ protected:
 	std::vector<P2PConstraint*> _p2p;
 };
 
-/* Chain for cuboid shapes with two P2P Constraints each --------------------- */
+/* Chain  with two P2P Constraints each ------------------------------------- */
 class CuboidChain {
 public:
 	CuboidChain(const std::vector<PhysicObject*> objects, float distance);
 	~CuboidChain();
 
+	/* getters and setters: */
+	PhysicObject* first() const		{ return _objects[0]; }
+	PhysicObject* last() const		{ return _objects[_objects.size() - 1]; }
+
 protected:
+	std::vector<PhysicObject*>	_objects;
 	std::vector<P2PConstraint*> _p2p;
 
 };

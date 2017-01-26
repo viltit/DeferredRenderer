@@ -44,11 +44,13 @@ namespace vitiGEO {
 		void addConstraint(Constraint* c);
 		void removeConstraint(Constraint* c);
 
+		void picker(const glm::vec3& rayStart, const glm::vec3& rayEnd);
+
 		/* setters: */
 		void setGravity(const glm::vec3& g);
 		void setDebugRenderer(btIDebugDraw* renderer) { _world->setDebugDrawer(renderer); }
 
-		void picker(const glm::vec3& rayStart, const glm::vec3& rayEnd);
+		void drawDebug()	{ _drawDebug = (_drawDebug) ? false : true; }
 
 	protected:
 		Physics();
@@ -63,5 +65,7 @@ namespace vitiGEO {
 		std::vector<Constraint*>			_constraints;
 
 		Picker*								_picker;
+
+		bool _drawDebug;
 	};
 }

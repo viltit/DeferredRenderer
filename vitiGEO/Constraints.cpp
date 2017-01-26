@@ -54,6 +54,9 @@ P2PConstraint::P2PConstraint(const PhysicObject * objA, const glm::vec3 & pivotA
 		objA->addConstraint(this);
 		objB->addConstraint(this);
 	}
+
+
+	//static_cast<btPoint2PointConstraint*>(_constraint)->m_setting.m_damping = 0.2f;
 }
 
 P2PConstraint::~P2PConstraint() {
@@ -198,6 +201,8 @@ Chain::~Chain() {
 
 CuboidChain::CuboidChain(const std::vector<PhysicObject*> objects, float distance) {
 	assert(objects.size() > 1);
+
+	_objects = objects;
 
 	glm::vec3 startPos = objects[0]->transform()->pos();
 

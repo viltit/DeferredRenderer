@@ -14,12 +14,13 @@
 namespace vitiGEO {
 
 
-Physics::Physics() :
-	_config{ new btDefaultCollisionConfiguration() },
-	_dispatcher{ new btCollisionDispatcher(_config) },
-	_broadphase{ new btDbvtBroadphase() },
-	_solver{ new btSequentialImpulseConstraintSolver() },
-	_world{ new btDiscreteDynamicsWorld(_dispatcher, _broadphase, _solver, _config) }
+	Physics::Physics() :
+		_config{ new btDefaultCollisionConfiguration() },
+		_dispatcher{ new btCollisionDispatcher(_config) },
+		_broadphase{ new btDbvtBroadphase() },
+		_solver{ new btSequentialImpulseConstraintSolver() },
+		_world{ new btDiscreteDynamicsWorld(_dispatcher, _broadphase, _solver, _config) },
+		_drawDebug(false)
 { }
 
 Physics * Physics::instance() {
@@ -45,13 +46,15 @@ void Physics::update(unsigned int deltaTime) {
 
 	/*	give the new positions and orientations to transform: */
 	for (auto& B : _bodies) B->update();
-	for (auto& B : _bodies) {
-		btTransform t;
-		B->body()->getMotionState()->getWorldTransform(t);
-		_world->debugDrawObject(t, B->body()->getCollisionShape(), btVector3{ 1.0f, 0.0f, 0.0f });
-	}
-	for (auto& C : _constraints) {
-		_world->debugDrawConstraint(C->obj());
+	if (_drawDebug) {
+		for (auto& B : _bodies) {
+			btTransform t;
+			B->body()->getMotionState()->getWorldTransform(t);
+			_world->debugDrawObject(t, B->body()->getCollisionShape(), btVector3{ 1.0f, 0.0f, 0.0f });
+		}
+		for (auto& C : _constraints) {
+			_world->debugDrawConstraint(C->obj());
+		}
 	}
 }
 
