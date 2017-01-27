@@ -20,8 +20,6 @@ public:
 	virtual int next() const override;
 	virtual int previous() const override;
 
-	virtual std::string command(const std::string& command) override { return ""; }
-
 private:
 	void updateInput();
 

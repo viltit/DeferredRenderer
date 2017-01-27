@@ -114,9 +114,6 @@
     <ClCompile Include="material.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Console.cpp">
-      <Filter>Source Files\GUI</Filter>
-    </ClCompile>
     <ClCompile Include="Skybox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -223,9 +220,6 @@
     </ClInclude>
     <ClInclude Include="Material.hpp">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Console.hpp">
-      <Filter>Header Files\GUI</Filter>
     </ClInclude>
     <ClInclude Include="Skybox.hpp">
       <Filter>Header Files</Filter>

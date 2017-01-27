@@ -154,7 +154,6 @@
     <ClCompile Include="AABBShape.cpp" />
     <ClCompile Include="Cache.cpp" />
     <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="Console.cpp" />
     <ClCompile Include="DrawNormals.cpp" />
     <ClCompile Include="Error.cpp" />
     <ClCompile Include="Framebuffer.cpp" />
@@ -187,7 +186,6 @@
     <ClInclude Include="AABBShape.hpp" />
     <ClInclude Include="Cache.hpp" />
     <ClInclude Include="Camera.hpp" />
-    <ClInclude Include="Console.hpp" />
     <ClInclude Include="DrawNormals.hpp" />
     <ClInclude Include="Error.hpp" />
     <ClInclude Include="Framebuffer.hpp" />

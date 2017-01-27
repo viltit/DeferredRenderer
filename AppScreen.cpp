@@ -28,7 +28,6 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	_renderer{ window, &_scene, &_cam },
 	_drender{ window, &_scene, &_cam },
 	_gui{ "GUI", "TaharezLook.scheme" },
-	_console{ this, &_gui, "layouts/console.layout" },
 	_fork{ _scene }
 {
 	Physics::instance()->setDebugRenderer(glRendererBTDebug::instance());
@@ -163,7 +162,6 @@ void AppScreen::update() {
 	Uint32 time = _timer.get_time();
 
 	std::string fps = "FPS: " + std::to_string(_timer.fps());
-	_console.setText(fps);
 	_gui.update(frameTime);
 
 	/* update all components: */
@@ -194,68 +192,6 @@ int AppScreen::next() const {
 
 int AppScreen::previous() const {
 	return SCREEN_INDEX_MENU;
-}
-
-/* very simple command parser for console input: */
-std::string AppScreen::command(const std::string & input) {
-
-	/* we need a lot of string manipulation here... */
-	std::string::size_type commandEnd = input.find(" ", 1);
-	std::string command = input.substr(0, commandEnd);
-	std::string argument = input.substr(commandEnd + 1, input.length() - commandEnd + 1);
-
-	float value = atof(argument.c_str());
-
-	std::cout << "Command: " << command << " /Value: " << argument << std::endl;
-
-	/* convert command to lower-case: */
-	for (size_t i = 0; i < command.size(); i++) {
-		command[i] = tolower(command[i]);
-	}
-
-	/* process command: */
-	if (command == "exit" || command == "quit") {
-		_state = ScreenState::exit;
-		return "Exiting app";
-	}
-	if (command == "setgamma") {
-		_drender.setGamma(value);
-		return "Setting gamma correction to " + std::to_string(value);
-	}
-	if (command == "getgamma") {
-		return std::to_string(_drender.gamma());
-	}
-	if (command == "setexposure") {
-		_drender.setExposure(value);
-		return "Setting hdr exposure to " + std::to_string(value);
-	}
-	if (command == "getexposure") {
-		return std::to_string(_drender.exposure());
-	}
-	if (command == "setbloom") {
-		_drender.setBloomTreshold(value);
-		return "Setting bloom treshold to " + std::to_string(value);
-	}
-	if (command == "getbloom") {
-		return std::to_string(_drender.bloomTreshold());
-	}
-	if (command == "glerror") {
-		return std::to_string(glGetError());
-	}
-	if (command == "setwireframe") {
-		_drender.setDrawMode();
-		return "Switching between wireframe and normal drawing...";
-	}
-	if (command == "drawnormals") {
-		_drender.drawNormals(true);
-		return "Drawing objects vertex normals.";
-	}
-	if (command == "hidenormals") {
-		_drender.drawNormals(false);
-		return "Hiding objects vertex normals.";
-	}
-
-	return "";
 }
 
 void AppScreen::initGUI() {
@@ -334,7 +270,6 @@ void AppScreen::updateInput() {
 				addTetrahedron(1.0, _cam.pos());
 				break;
 			case SDLK_F1:
-				_console.setVisible(_console.isVisible() ? false : true);
 				break;
 				//debug:
 			case SDLK_F2:

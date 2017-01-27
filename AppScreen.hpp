@@ -27,8 +27,6 @@ public:
 	virtual int next() const override;
 	virtual int previous() const override;
 
-	virtual std::string command(const std::string& command) override;
-
 	//get the latest screen content:
 	GLuint	texture() const { return _drender.texture(); }
 
@@ -52,7 +50,6 @@ protected:
 	vitiGL::glRendererDeferred _drender; //test
 
 	vitiGL::GUI			_gui;
-	vitiGL::Console		_console;
 
 	vitiGL::Timer		_timer;
 
