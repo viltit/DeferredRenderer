@@ -393,10 +393,10 @@ void AppScreen::updateInput() {
 				addTetrahedron(1.0, _cam.pos());
 				break;
 			case SDLK_F1:
+				_drender.setBloomTreshold(_drender.bloomTreshold() + 0.1f);
 				break;
-				//debug:
 			case SDLK_F2:
-				Physics::instance()->drawDebug();
+				_drender.setBloomTreshold(_drender.bloomTreshold() - 0.1f);
 				break;
 			case SDLK_g:
 				_drender.gramSchmidt();
