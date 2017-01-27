@@ -37,7 +37,7 @@ public:
 
 	GLuint texture() const { return _framebuffer.copyTexture(); } //to get the latest on-screen picture
 
-	/* getters and setters: */
+	/* renderer Settings: */
 	void gammaPlus(float value);
 	void gammaMinus(float value);
 	void setGamma(float value);
@@ -49,9 +49,12 @@ public:
 	void setExposure(float value);
 	float exposure() { return _exposure; }
 
-	void setDrawMode() { _glDrawMode = (_glDrawMode == GL_FILL)? GL_LINE : GL_FILL; }
-
-	void drawNormals(bool draw) { _drawNormals = draw;  }
+	void setDrawMode()	{ _glDrawMode = (_glDrawMode == GL_FILL)? GL_LINE : GL_FILL; }
+	void drawNormals()	{ _drawNormals = _drawNormals? false : true;  }
+	void drawDebugWin() { _drawDebugWin = _drawDebugWin ? false : true; }
+	void drawDShadow()	{ _drawDShadow = _drawDShadow ? false : true; }
+	void drawPShadow()	{ _drawPShadow = _drawPShadow ? false : true; }
+	void applyBloom()	{ _applyBloom = _applyBloom ? false : true; }
 
 	//debug:
 	void gramSchmidt();
@@ -124,12 +127,17 @@ protected:
 
 	glm::vec2	_texelSize;
 
+	/* renderer settings: */
 	float		_gamma;
 	float		_bloomTreshold;
 	float		_exposure;
 
 	bool		_gramm;
 	bool		_drawNormals;
+	bool		_drawDebugWin;
+	bool		_drawDShadow;
+	bool		_drawPShadow;
+	bool		_applyBloom;
 
 	int			_glDrawMode;
 };

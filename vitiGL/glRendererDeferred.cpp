@@ -14,25 +14,33 @@ namespace vitiGL {
 
 	glRendererDeferred::glRendererDeferred(Window* window, Scene* scene, Camera* camera)
 		: IRenderer{ window, scene, camera },
+		/* Shaders: */
 		_gshader	{ "Shaders/DeferredRenderer/geo.vert.glsl", "Shaders/DeferredRenderer/geo.frag.glsl" },
 		_lshader	{ "Shaders/DeferredRenderer/light.vert.glsl", "Shaders/DeferredRenderer/light.frag.glsl" },
 		_fshader	{ "Shaders/DeferredRenderer/final.vert.glsl", "Shaders/DeferredRenderer/final.frag.glsl" },
 		_dshader	{ "Shaders/simple.vert.glsl", "Shaders/simple.frag.glsl" },
 		_sbshader	{ "Shaders/Skybox/Skybox.vert.glsl", "Shaders/Skybox/skybox.frag.glsl" },
 		_tshader	{ "Shaders/DeferredRenderer/vertex.glsl", "Shaders/DeferredRenderer/fragment.glsl" },
+		/* Debug Windows: */
 		_debug		{ QuadPos::topRight },
 		_debug2		{ QuadPos::aboveMiddleRight },
 		_debug3		{ QuadPos::belowMiddleRight },
 		_debug4		{ QuadPos::bottomRight },
+		/* Framebuffer and Gaussian Blur: */
 		_framebuffer{ globals::window_w, globals::window_h,
 						"Shaders/DeferredRenderer/pp.vert.glsl", "Shaders/DeferredRenderer/pp.frag.glsl" },
+		_gauss{ _window->width() / 4, _window->height() / 4 },
+		/* renderer Settings: */
 		_gamma		{ 1.2f },
 		_bloomTreshold{ 1.0f },
 		_exposure	{ 0.4f },
-		_gauss		{ _window->width() / 4, _window->height() / 4 },
 		_normals	{ camera, scene },
 		_glDrawMode { GL_FILL },
-		_drawNormals { false }
+		_drawNormals { false },
+		_drawDebugWin{ false },
+		_drawDShadow { true },
+		_drawPShadow { true },
+		_applyBloom	 { true }
 {
 	if (_window == nullptr) throw initError("<glRendererDeferred::glRendererDeferred> Window is a nullptr");
 
@@ -63,15 +71,15 @@ void glRendererDeferred::draw() {
 	_frustum.update(VP);
 
 	/* draw shadowmaps: */
-	_scene->drawDShadows(cam, _frustum);
-	_scene->drawPShadows(cam);
+	if (_drawDShadow) _scene->drawDShadows(cam, _frustum);
+	if (_drawPShadow) _scene->drawPShadows(cam);
 
 	/* draw deferred passes: */
 	drawGeo();
 	drawLight();
 	drawFinal();
 
-	/* turn framebuffer on, draw forward and apply pp-effects: */
+	/* apply pp-effects: */
 	_framebuffer.on();
 	_quad.draw(_dshader, _tbo[finalCol]);
 
@@ -80,18 +88,23 @@ void glRendererDeferred::draw() {
 
 	_framebuffer.off();
 
-	Shader* s = _framebuffer.shader();
-	s->on();
-	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_2D, _tbo[bloom]);
-	glUniform1i(s->getUniform("bloom"), 2);
+	if (_applyBloom) {
+		Shader* s = _framebuffer.shader();
+		s->on();
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, _tbo[bloom]);
+		glUniform1i(s->getUniform("bloom"), 2);
+	}
 
+	/* draw the final image on the screen: */
 	_framebuffer.draw();
 
-	_debug.draw(_dshader, _scene->pShadowTex());
-	_debug2.draw(_dshader, _scene->dShadowTex());
-	_debug3.draw(_dshader, _tbo[color]);
-	_debug4.draw(_dshader, _tbo[normal]);
+	if (_drawDebugWin) {
+		_debug.draw(_dshader, _scene->pShadowTex());
+		_debug2.draw(_dshader, _scene->dShadowTex());
+		_debug3.draw(_dshader, _tbo[color]);
+		_debug4.draw(_dshader, _tbo[normal]);
+	}
 }
 
 void glRendererDeferred::gammaPlus(float value) {

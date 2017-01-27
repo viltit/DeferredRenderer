@@ -31,7 +31,16 @@ public:
 	GLuint	texture() const { return _drender.texture(); }
 
 protected:
+	//gui related: 
 	void initGUI();
+	void onPhysicsToggled();
+	void onNormalsToggled();
+	void onWireframeToggled();
+	void onDebugWinToggled();
+	void onPShadowToggled();
+	void onDShadowToggled();
+	void onBloomToggled();
+
 	void updateInput();
 
 	void addCube(float mass, const glm::vec3& pos);
