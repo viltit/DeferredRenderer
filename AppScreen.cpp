@@ -294,7 +294,7 @@ void AppScreen::initGUI() {
 
 	 auto physicsLabel = static_cast<CEGUI::DefaultWindow*>(
 		 _gui.createWidget(glm::vec4{ pos.x + sizeA.x, pos.y, sizeB }, glm::vec4{}, "AlfiskoSkin/Label", "physicsLabel"));
-	 physicsLabel->setText("Draw Physics Debug");
+	 physicsLabel->setText("Draw Physics Wireframe");
 	 labels.push_back(physicsLabel);
 
 

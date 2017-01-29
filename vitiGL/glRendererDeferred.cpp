@@ -38,8 +38,8 @@ namespace vitiGL {
 		_glDrawMode { GL_FILL },
 		_drawNormals { false },
 		_drawDebugWin{ false },
-		_drawDShadow { false },
-		_drawPShadow { false },
+		_drawDShadow { true },
+		_drawPShadow { true },
 		_applyBloom	 { true }
 {
 	if (_window == nullptr) throw initError("<glRendererDeferred::glRendererDeferred> Window is a nullptr");
@@ -51,10 +51,6 @@ namespace vitiGL {
 	_lshader.on();
 	glUniform2f(_lshader.getUniform("texelSize"), _texelSize.x, _texelSize.y); // to do: not needed every frame!
 	_lshader.off();
-
-	//turn shadows on:
-	drawDShadow();
-	drawPShadow();
 
 	initGeoBuffer();
 	initLightBuffer();
