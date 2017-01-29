@@ -195,8 +195,6 @@ int AppScreen::previous() const {
 
 void AppScreen::initGUI() {
 	/* this would maybe better be done in an cegui-layout xml-file */
-
-	_gui.setScheme("TaharezLook.scheme");
 	_gui.setFont("DejaVuSans-10");
 	_gui.setMouseCursor("AlfiskoSkin/MouseArrow");
 

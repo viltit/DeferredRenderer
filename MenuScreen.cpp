@@ -5,7 +5,7 @@ using namespace vitiGL;
 
 MenuScreen::MenuScreen(App* app, vitiGL::Window* window) 
 	:	IAppScreen	{ app },
-		_gui		{ "GUI", "TaharezLook.scheme" },
+		_gui		{ "GUI", "AlfiskoSkin.scheme" },
 		_shader		{ "Shaders/simple.vert.glsl", "Shaders/simple.frag.glsl" }
 {
 	_index = SCREEN_INDEX_MENU;
