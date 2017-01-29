@@ -64,6 +64,6 @@ protected:
 
 	Fork				_fork;
 
-	bool				_rotate;
+	bool				_menu;
 };
 

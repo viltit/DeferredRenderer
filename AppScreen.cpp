@@ -28,7 +28,8 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	_renderer{ window, &_scene, &_cam },
 	_drender{ window, &_scene, &_cam },
 	_gui{ "GUI", "AlfiskoSkin.scheme" },
-	_fork{ _scene }
+	_fork{ _scene },
+	_menu{ false }
 {
 	Physics::instance()->setDebugRenderer(glRendererBTDebug::instance());
 	_fork.init();
@@ -153,31 +154,29 @@ void AppScreen::onEntry() {
 
 void AppScreen::onExit() {
 	globals::screenshot = _drender.texture();
-
 	_timer.pause();
 }
 
 void AppScreen::update() {
 	Uint32 frameTime = _timer.frame_time();
-	Uint32 time = _timer.get_time();
+	if (!_menu) {
+		Uint32 time = _timer.get_time();
 
-	std::string fps = "FPS: " + std::to_string(_timer.fps());
-	_gui.update(frameTime);
+		std::string fps = "FPS: " + std::to_string(_timer.fps());
+		_gui.update(frameTime);
 
-	/* update all components: */
+		/* update all components: */
+		Physics::instance()->update(frameTime);
+		_cam.update();
+
+		//debug: add coordinate system axes:
+		glRendererDebug::instance()->addLine(glm::vec3{ 0.0f, 0.0f, 0.0f }, glm::vec3{ 10.0f, 0.0f, 0.0f }, glm::vec4{ 1.0f, 0.0f, 0.0f, 0.5f });
+		glRendererDebug::instance()->addLine(glm::vec3{ 0.0f, 0.0f, 0.0f }, glm::vec3{ 0.0f, 10.0f, 0.0f }, glm::vec4{ 0.0f, 1.0f, 0.0f, 0.5f });
+		glRendererDebug::instance()->addLine(glm::vec3{ 0.0f, 0.0f, 0.0f }, glm::vec3{ 0.0f, 0.0f, 10.0f }, glm::vec4{ 0.0f, 0.0f, 1.0f, 0.5f });
+	}
+
 	updateInput();
-	Physics::instance()->update(frameTime);
-
-	//DEBUG: Track the cube
-	//DebugInfo::instance()->addLine(glm::vec4{ _cam.pos() + _cam.dir(), 0.05f }, glm::vec4{ _scene["Cuboid"]->transform.pos(), 0.05f });
-
-	//debug: add coordinate system axes:
-	glRendererDebug::instance()->addLine(glm::vec3{ 0.0f, 0.0f, 0.0f }, glm::vec3{ 10.0f, 0.0f, 0.0f }, glm::vec4{ 1.0f, 0.0f, 0.0f, 0.5f });
-	glRendererDebug::instance()->addLine(glm::vec3{ 0.0f, 0.0f, 0.0f }, glm::vec3{ 0.0f, 10.0f, 0.0f }, glm::vec4{ 0.0f, 1.0f, 0.0f, 0.5f });
-	glRendererDebug::instance()->addLine(glm::vec3{ 0.0f, 0.0f, 0.0f }, glm::vec3{ 0.0f, 0.0f, 10.0f }, glm::vec4{ 0.0f, 0.0f, 1.0f, 0.5f });
-
 	_scene.update(frameTime);
-	_cam.update();
 	_gui.update(frameTime);
 }
 
@@ -350,7 +349,8 @@ void AppScreen::updateInput() {
 		case SDL_KEYDOWN:
 			switch (input.key.keysym.sym) {
 			case SDLK_ESCAPE:
-				_state = ScreenState::previous;
+				//_state = ScreenState::previous;
+				_menu = _menu ? false : true; //wip, put menus in menuScreen
 				break;
 			case SDLK_w:
 				_cam.move(Move::forward);
