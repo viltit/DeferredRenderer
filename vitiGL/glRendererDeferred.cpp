@@ -38,8 +38,8 @@ namespace vitiGL {
 		_glDrawMode { GL_FILL },
 		_drawNormals { false },
 		_drawDebugWin{ false },
-		_drawDShadow { true },
-		_drawPShadow { true },
+		_drawDShadow { false },
+		_drawPShadow { false },
 		_applyBloom	 { true }
 {
 	if (_window == nullptr) throw initError("<glRendererDeferred::glRendererDeferred> Window is a nullptr");
@@ -51,6 +51,10 @@ namespace vitiGL {
 	_lshader.on();
 	glUniform2f(_lshader.getUniform("texelSize"), _texelSize.x, _texelSize.y); // to do: not needed every frame!
 	_lshader.off();
+
+	//turn shadows on:
+	drawDShadow();
+	drawPShadow();
 
 	initGeoBuffer();
 	initLightBuffer();
@@ -146,6 +150,14 @@ void glRendererDeferred::setExposure(float value) {
 	s->off();
 }
 
+void glRendererDeferred::drawDShadow() {
+	_drawDShadow = _drawDShadow ? false : true;
+}
+
+void glRendererDeferred::drawPShadow() {
+	_drawPShadow = _drawPShadow ? false : true;
+}
+
 void glRendererDeferred::gramSchmidt() {
 	_gramm = (_gramm)? false : true;
 	_gshader.on();
@@ -205,9 +217,22 @@ void glRendererDeferred::drawLight() {
 	glBindTexture(GL_TEXTURE_2D, _scene->dShadowTex());
 	glUniform1i(_lshader.getUniform("shadowmap"), 3);
 
-	/* set subroutine uniform: */
-	GLuint dlightPass = glGetSubroutineIndex(_lshader.program(), GL_FRAGMENT_SHADER, "updateDlight");
-	glUniformSubroutinesuiv(GL_FRAGMENT_SHADER, 1, &dlightPass);
+	/* set subroutine uniforms: */
+	std::vector<GLuint> subroutines;
+	subroutines.push_back(glGetSubroutineIndex(_lshader.program(), GL_FRAGMENT_SHADER, "updateDlight"));
+	if (_drawDShadow) {
+		subroutines.push_back(glGetSubroutineIndex(_lshader.program(), GL_FRAGMENT_SHADER, "getDShadowOn"));
+	}
+	else {
+		subroutines.push_back(glGetSubroutineIndex(_lshader.program(), GL_FRAGMENT_SHADER, "getDShadowOff"));
+	}
+	if (_drawPShadow) {
+		subroutines.push_back(glGetSubroutineIndex(_lshader.program(), GL_FRAGMENT_SHADER, "getPShadowOn"));
+	}
+	else {
+		subroutines.push_back(glGetSubroutineIndex(_lshader.program(), GL_FRAGMENT_SHADER, "getPShadowOff"));
+	}
+	glUniformSubroutinesuiv(GL_FRAGMENT_SHADER, 3, subroutines.data());
 
 	/* set model and VP-Matrix uniform (which are both the identity matrix for directional lights) */
 	glUniformMatrix4fv(_lshader.getUniform("M"), 1, GL_FALSE, glm::value_ptr(M));
@@ -218,8 +243,9 @@ void glRendererDeferred::drawLight() {
 
 	/* POINT LIGHTS: ------------------------------------- */
 	/* override subroutine uniform: */
-	GLuint plightPass = glGetSubroutineIndex(_lshader.program(), GL_FRAGMENT_SHADER, "updatePlight");
-	glUniformSubroutinesuiv(GL_FRAGMENT_SHADER, 1, &plightPass);
+	subroutines.clear();
+	subroutines[0] = glGetSubroutineIndex(_lshader.program(), GL_FRAGMENT_SHADER, "updatePlight");
+	glUniformSubroutinesuiv(GL_FRAGMENT_SHADER, 3, subroutines.data());
 
 	/* set view-perspective matrix: */
 	_camera->setVPUniform(_lshader);

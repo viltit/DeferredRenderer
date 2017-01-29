@@ -32,6 +32,6 @@ void main() {
 		brightColor = vec4(fcolor.rgb, 1.0f);
 	}
 	else {
-		brightColor = vec4(0.0f, 0.0f, 0.0f, 1.0f);
+		brightColor = vec4(0.0f, 0.0f, 0.0f, 0.0f);
 	}
 }

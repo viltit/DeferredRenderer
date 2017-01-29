@@ -7,7 +7,7 @@ Shader for lightning pass in deferred rendering
 
 --------------------------------------------------------------------------- */
 
-#version 400 core
+#version 450 core
 
 /* light structures: ------------------------------------------------------ */
 struct DLight {
@@ -30,9 +30,18 @@ struct Light {
 	vec3 specular;
 };
 
-/* Subroutines to switch between point lights and dir lights via uniform: */
+/*	Subroutines to switch between point lights and dir lights via uniform: 
+	(more complicated than an if branch but better for performance)
+*/
 subroutine Light UpdateLight(vec3 worldPos, vec3 worldNorm, vec2 uv);
 subroutine uniform UpdateLight updateLight;
+
+/* Subroutines for getting the shadow (for shadows on and off) */
+subroutine float getDShadow(vec2 uv);
+subroutine uniform getDShadow getDirShadow;
+
+subroutine float getPShadow(vec2 uv);
+subroutine uniform getPShadow getPointShadow;
 
 /* texture output of this shader: ---------------------------------------- */
 layout (location = 0) out vec4 ldiffuse;
@@ -76,7 +85,7 @@ void main() {
 	lspecular = vec4(light.specular, 1.0f);
 }
 
-/* Functions ------------------------------------------------------------- */
+/* SUBROUTINE: DLIGHT  ------------------------------------------------------- */
 subroutine (UpdateLight)
 Light updateDlight(vec3 worldPos, vec3 normal, vec2 uv) {
 	vec3 ldir		= normalize(-dlight.dir);
@@ -87,7 +96,7 @@ Light updateDlight(vec3 worldPos, vec3 normal, vec2 uv) {
 	float spec		= pow(clamp(dot(normal, halfway), 0.0f, 1.0f), 22.0f);	//TO DO: 22.0f needs to be a variable !
 
 	/* shadow: */
-	float shadow = 1.0f - texture(shadowmap, uv).r;
+	float shadow = getDirShadow(uv);
 
 	Light light;
 
@@ -98,6 +107,8 @@ Light updateDlight(vec3 worldPos, vec3 normal, vec2 uv) {
 	return light;
 }
 
+
+/* SUBROUTINE: PLIGHT  -------------------------------------------------------- */
 subroutine (UpdateLight)
 Light updatePlight(vec3 worldPos, vec3 normal, vec2 uv) {
 	/* Check the distance from fragment to light source: */
@@ -115,7 +126,7 @@ Light updatePlight(vec3 worldPos, vec3 normal, vec2 uv) {
 	float spec		= pow(clamp(dot(normal, halfway), 0.0f, 1.0f), 22.0f);	//TO DO: 22.0f needs to be a variable !
 
 	/* shadow: */
-	float shadow = 1.0f - texture(shadowcube, uv).r / 2.0f;
+	float shadow = getPointShadow(uv);
 
 	Light light;
 
@@ -129,4 +140,25 @@ Light updatePlight(vec3 worldPos, vec3 normal, vec2 uv) {
 	light.specular = attenuation * vec3(1.0f, 0.0f, 0.0f);*/
 
 	return light;
+}
+
+/* GET SHADOW VALUE -------------------------------------------- */
+subroutine (getDShadow)
+float getDShadowOn(vec2 uv) {
+	return 1.0f - texture(shadowmap, uv).r;;
+}
+
+subroutine (getDShadow)
+float getDShadowOff(vec2 uv) {
+	return 1.0f;
+}
+
+subroutine (getPShadow)
+float getPShadowOn(vec2 uv) {
+	return 1.0f - texture(shadowcube, uv).r / 2.0f;
+}
+
+subroutine (getPShadow)
+float getPShadowOff(vec2 uv) {
+	return 1.0f;
 }
