@@ -301,6 +301,14 @@ void AppScreen::initGUI() {
 		 L->setProperty("HorzFormatting", "LeftAligned");
 		 L->setProperty("NormalTextColour", "ffaaaaaa");
 	 }
+
+	 /* add sliders: */
+	 auto gammaSlider = static_cast<CEGUI::Slider*>(
+		 _gui.createWidget(glm::vec4{ pos.x, pos.y += 2.f*sizeA.y, sizeA }, glm::vec4{}, "AlfiskoSkin/HorizontalSlider", "gammaSlider"));
+
+	 auto gammaLabel = static_cast<CEGUI::DefaultWindow*>(
+		 _gui.createWidget(glm::vec4{ pos.x + sizeA.x, pos.y, sizeB }, glm::vec4{}, "AlfiskoSkin/Label", "gammaLabel"));
+	 gammaLabel->setText("Gamma adjustment");
 }
 
 void AppScreen::onPhysicsToggled() {
