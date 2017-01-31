@@ -2,6 +2,7 @@
 #include "IAppScreen.hpp"
 
 #include "vitiGL.hpp"
+#include <map>
 
 class App;
 class AppScreen;
@@ -23,6 +24,9 @@ public:
 
 private:
 	void initGUI();
+	glm::vec2 initRadioButtons(const glm::vec2& startPos, const glm::vec2& buttonSize, const glm::vec2& textSize);
+	glm::vec2 initRGBInputs(const glm::vec2& startPos, const glm::vec2& buttonSize, const glm::vec2& textSize);
+
 	void updateInput();
 
 	/* event handlers: */
@@ -37,15 +41,25 @@ private:
 	void onDShadowToggled();
 	void onBloomToggled();
 
+	void onDLightDiffuse();
+
+	/* Convert Cegui-String from editbox to an int: */
+	int getInt(const std::string& widgetName);
+
 	AppScreen*			_appScreen;
 	vitiGL::GUI			_gui;
-	vitiGL::sQuad		_screenQuad;
-	vitiGL::Shader		_shader;
 	vitiGL::Timer		_timer;
+
+	/* this maps stores all editboxes that can change the scenes values: */
+	std::map<std::string, CEGUI::Editbox*> _values;
 
 	CEGUI::Slider*		_bloomSlider;
 	CEGUI::Slider*		_gammaSlider;
 
-	//std::vector<CEGUI::PushButton*> _buttons;
+	enum editValues {
+		dlightDiffuseR,
+		dlightDiffuseG,
+		dlightDiffuseB
+	};
 };
 

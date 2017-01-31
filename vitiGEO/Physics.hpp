@@ -50,7 +50,9 @@ namespace vitiGEO {
 		void setGravity(const glm::vec3& g);
 		void setDebugRenderer(btIDebugDraw* renderer) { _world->setDebugDrawer(renderer); }
 
-		void drawDebug()	{ _drawDebug = (_drawDebug) ? false : true; }
+		void drawDebug()		{ _drawDebug = (_drawDebug) ? false : true; }
+		void stopSimulation()	{ _isOn = false;  }
+		void startSimulation()	{ _isOn = true; }
 
 	protected:
 		Physics();
@@ -67,5 +69,6 @@ namespace vitiGEO {
 		Picker*								_picker;
 
 		bool _drawDebug;
+		bool _isOn; //only draw debug shapes if physics is off
 	};
 }

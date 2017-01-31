@@ -3,6 +3,7 @@
 #include "App.hpp"
 #include "AppScreen.hpp"
 
+#include <sstream>
 #include <Physics.hpp>
 
 using namespace vitiGL;
@@ -11,8 +12,7 @@ using namespace vitiGEO;
 MenuScreen::MenuScreen(App* app, AppScreen* appScreen, vitiGL::Window* window) 
 	:	IAppScreen	{ app },
 		_appScreen  { appScreen },
-		_gui		{ "GUI", "AlfiskoSkin.scheme" },
-		_shader		{ "Shaders/simple.vert.glsl", "Shaders/simple.frag.glsl" }
+		_gui		{ "GUI", "AlfiskoSkin.scheme" }
 {
 	assert(_appScreen);
 
@@ -33,18 +33,27 @@ MenuScreen::~MenuScreen() {
 }
 
 void MenuScreen::onEntry() {
-	std::cout << "MenuScreen::onEntry\n";
+	/* get lights RGB values and other data: */
+	dLight* light = _appScreen->_scene.findDLight("dlight");
+
+	if (light) {
+		glm::vec3 color = light->diffuse();
+		std::cout << color << std::endl;
+		std::cout << int(color.r * 255.f) << std::endl;
+		std::cout << std::to_string(int(color.r * 255.f)) << std::endl;
+		_values["dlightDiffuseR"]->setText(CEGUI::String(std::to_string(int(color.r * 255.f))));
+		_values["dlightDiffuseG"]->setText(CEGUI::String(std::to_string(int(color.g * 255.f))));
+		_values["dlightDiffuseB"]->setText(CEGUI::String(std::to_string(int(color.b * 255.f))));
+	}
 }
 
 void MenuScreen::onExit() {
-	std::cout << "MenuScreen::onExit\n";
 }
 
 void MenuScreen::update() {
 	updateInput();
 	_appScreen->updateFreezed();
 	_gui.update(_timer.frame_time());
-	std::cout << "MenuScreen::update\n";
 }
 
 void MenuScreen::draw() {
@@ -61,14 +70,16 @@ int MenuScreen::previous() const {
 }
 
 void MenuScreen::initGUI() {
-	/* this would maybe better be done in an cegui-layout xml-file */
-	_gui.setFont("DejaVuSans-10");
-	_gui.setMouseCursor("AlfiskoSkin/MouseArrow");
+	glm::vec2 pos{};
+	pos = initRadioButtons(glm::vec2{ 0.02f, 0.03f }, glm::vec2{ 0.02f, 0.02f }, glm::vec2{ 0.15f, 0.02f });
+	pos.y += 0.1f;
+	pos = initRGBInputs(pos, glm::vec2{ 0.04f, 0.04f }, glm::vec2{ 0.15f, 0.02f });
+}
 
-	/* initialize widgets: */
-	glm::vec2 pos{ 0.02, 0.03 };
-	glm::vec2 sizeA{ 0.02f, 0.02f };
-	glm::vec2 sizeB{ 0.15, 0.02f };
+glm::vec2 MenuScreen::initRadioButtons(const glm::vec2& startPos, const glm::vec2& buttonSize, const glm::vec2& textSize) {
+	glm::vec2 pos = startPos;
+	glm::vec2 sizeA = buttonSize;
+	glm::vec2 sizeB = textSize;
 	std::vector<CEGUI::DefaultWindow*> labels;
 
 	/* dir Shadow Checker with Label */
@@ -162,7 +173,6 @@ void MenuScreen::initGUI() {
 	physicsLabel->setText("Draw Physics Wireframe");
 	labels.push_back(physicsLabel);
 
-
 	/* set Formatting and color for all labels: */
 	for (auto& L : labels) {
 		L->setProperty("HorzFormatting", "LeftAligned");
@@ -177,9 +187,58 @@ void MenuScreen::initGUI() {
 	_gui.createWidget(glm::vec4{ pos.x + sizeA.x, pos.y, sizeB }, glm::vec4{}, "AlfiskoSkin/Label", "gammaLabel"));
 	gammaLabel->setText("Gamma adjustment");*/
 
-	/* add sliders: */
-	auto dLightR = static_cast<CEGUI::Editbox*>(
-		_gui.createWidget(glm::vec4{ pos.x, pos.y += 2.f*sizeA.y, sizeA }, glm::vec4{}, "AlfiskoSkin/Editbox", "dLightR"));
+	return pos;
+}
+
+glm::vec2 MenuScreen::initRGBInputs(const glm::vec2& startPos, const glm::vec2& buttonSize, const glm::vec2& textSize) {
+	glm::vec2 pos = startPos;
+	glm::vec2 sizeA = buttonSize;
+	glm::vec2 sizeB = textSize;
+	std::vector<CEGUI::DefaultWindow*> labels;
+
+	/* Direction lights Diffuse Color: */
+	auto dLightDiffuseLabel = static_cast<CEGUI::DefaultWindow*>(
+		_gui.createWidget(glm::vec4{ pos.x, pos.y = pos.y + buttonSize.y, sizeB }, glm::vec4{}, "AlfiskoSkin/Label", "dLightDiffuseLabel"));
+	dLightDiffuseLabel->setText("Directional Light Diffuse Color:");
+	labels.push_back(dLightDiffuseLabel);
+
+	auto dlightDiffuseR = static_cast<CEGUI::Editbox*>(
+		_gui.createWidget(
+			glm::vec4{ pos.x, pos.y = pos.y + textSize.y, sizeA.x, sizeA.y },
+			glm::vec4{}, "AlfiskoSkin/Editbox", "dLightDiffuseR"));
+	dlightDiffuseR->subscribeEvent(
+		CEGUI::Editbox::EventTextChanged,
+		CEGUI::Event::Subscriber(&MenuScreen::onDLightDiffuse, this));
+	_values.insert(std::make_pair("dlightDiffuseR", dlightDiffuseR));
+
+	auto dlightDiffuseG = static_cast<CEGUI::Editbox*>(
+		_gui.createWidget(
+			glm::vec4{ pos.x + buttonSize.x, pos.y = pos.y, sizeA.x, sizeA.y },
+			glm::vec4{}, "AlfiskoSkin/Editbox", "dLightDiffuseG"));
+	dlightDiffuseG->subscribeEvent(
+		CEGUI::Editbox::EventTextChanged,
+		CEGUI::Event::Subscriber(&MenuScreen::onDLightDiffuse, this));
+	_values.insert(std::make_pair("dlightDiffuseG", dlightDiffuseG));
+
+	auto dlightDiffuseB = static_cast<CEGUI::Editbox*>(
+		_gui.createWidget(
+			glm::vec4{ pos.x + 2.f*buttonSize.x, pos.y = pos.y, sizeA.x, sizeA.y },
+			glm::vec4{}, "AlfiskoSkin/Editbox", "dLightDiffuseB"));
+	dlightDiffuseB->subscribeEvent(
+		CEGUI::Editbox::EventTextChanged,
+		CEGUI::Event::Subscriber(&MenuScreen::onDLightDiffuse, this));
+	_values.insert(std::make_pair("dlightDiffuseB", dlightDiffuseB));
+
+	/* Directional Lights Direction: */
+
+
+	/* set Formatting and color for all labels: */
+	for (auto& L : labels) {
+		L->setProperty("HorzFormatting", "CenterAligned");
+		L->setProperty("NormalTextColour", "ffaaaaaa");
+	}
+
+	return pos;
 }
 
 void MenuScreen::updateInput() {
@@ -236,4 +295,35 @@ void MenuScreen::onDShadowToggled() {
 
 void MenuScreen::onBloomToggled() {
 	_appScreen->_drender.applyBloom();
+}
+
+void MenuScreen::onDLightDiffuse() {
+	dLight* light = _appScreen->_scene.findDLight("dlight");
+	if (!light) return;
+
+	glm::vec3 color{ light->diffuse() };
+	int red		{ getInt("dlightDiffuseR") };
+	int green	{ getInt("dlightDiffuseG") };
+	int blue	{ getInt("dlightDiffuseB") };
+
+	if (red >= 0) color.r = float(red) / 255.f;
+	if (green >= 0) color.g = float(green) / 255.f;
+	if (blue >= 0) color.b = float(blue) / 255.f;
+		
+	light->setProperty(lightProps::diffuse, color);
+
+}
+
+int MenuScreen::getInt(const std::string & widgetName) {
+	assert(_values.find(widgetName) != _values.end());
+
+	std::string input = _values[widgetName]->getText().c_str();
+	std::istringstream iss{ input };
+	int value{};
+
+	if (iss >> value) {		//we have an int
+		return value;
+	}
+
+	return -1;
 }

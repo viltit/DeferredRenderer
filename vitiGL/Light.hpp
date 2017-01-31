@@ -68,7 +68,10 @@ public:
 	void draw(const Shader& shader) const override;
 
 	/* getters and setters: */
-	glm::vec3 dir() const	{ return _dir; }
+	glm::vec3 dir() const		{ return _dir; }
+	glm::vec3 diffuse() const	{ return _diffuse; }
+	glm::vec3 specular() const	{ return _specular; }
+	glm::vec3 ambient() const	{ return _ambient; }
 
 private:
 	std::string		_uniform;

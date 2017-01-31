@@ -145,12 +145,12 @@ AppScreen::~AppScreen() {
 
 void AppScreen::onEntry() {
 	SDL_ShowCursor(0);
-
+	Physics::instance()->startSimulation();
 	if (_timer.is_paused()) _timer.unpause();
 }
 
 void AppScreen::onExit() {
-	globals::screenshot = _drender.texture();
+	Physics::instance()->stopSimulation();
 	_timer.pause();
 }
 
@@ -174,6 +174,7 @@ void AppScreen::update() {
 
 void AppScreen::updateFreezed() {
 	Uint32 frameTime = _timer.frame_time();
+	Physics::instance()->update(frameTime);
 	updateInput();
 	_scene.update(frameTime);
 }

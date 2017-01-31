@@ -20,7 +20,8 @@ Physics::Physics() :
 	_broadphase{ new btDbvtBroadphase() },
 	_solver{ new btSequentialImpulseConstraintSolver() },
 	_world{ new btDiscreteDynamicsWorld(_dispatcher, _broadphase, _solver, _config) },
-	_drawDebug(false)
+	_drawDebug(false),
+	_isOn { true }
 { }
 
 Physics * Physics::instance() {
@@ -37,7 +38,9 @@ Physics::~Physics() {
 }
 
 void Physics::update(unsigned int deltaTime) {
-	_world->stepSimulation(btScalar(deltaTime) / btScalar(1000.0f));
+	if (_isOn) {
+		_world->stepSimulation(btScalar(deltaTime) / btScalar(1000.0f));
+	
 
 	/* wip: get collision pairs... 
 	for (size_t i = 0; i < _world->getNumCollisionObjects(); i++) {
@@ -45,7 +48,9 @@ void Physics::update(unsigned int deltaTime) {
 	}*/
 
 	/*	give the new positions and orientations to transform: */
-	for (auto& B : _bodies) B->update();
+		for (auto& B : _bodies) B->update();
+	}
+
 	if (_drawDebug) {
 		for (auto& B : _bodies) {
 			btTransform t;
