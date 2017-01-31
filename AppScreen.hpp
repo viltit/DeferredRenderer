@@ -14,6 +14,9 @@ class vitiGL::Window;
 
 class AppScreen : public vitiGL::IAppScreen {
 public:
+	// the one time we use a friend class (for the menu's callback functions):
+	friend class MenuScreen;
+
 	AppScreen(App* app, vitiGL::Window* window);
 	~AppScreen();
 
@@ -31,17 +34,9 @@ public:
 	GLuint	texture() const { return _drender.texture(); }
 
 protected:
-	//gui related: 
-	void initGUI();
-	void onPhysicsToggled();
-	void onNormalsToggled();
-	void onWireframeToggled();
-	void onDebugWinToggled();
-	void onPShadowToggled();
-	void onDShadowToggled();
-	void onBloomToggled();
-
 	void updateInput();
+
+	void updateFreezed();	//called from MenuScreen
 
 	void addCube(float mass, const glm::vec3& pos);
 	void addOctahedron(float mass, const glm::vec3& pos);
@@ -58,12 +53,8 @@ protected:
 	vitiGL::glRenderer  _renderer;
 	vitiGL::glRendererDeferred _drender; //test
 
-	vitiGL::GUI			_gui;
-
 	vitiGL::Timer		_timer;
 
 	Fork				_fork;
-
-	bool				_menu;
 };
 

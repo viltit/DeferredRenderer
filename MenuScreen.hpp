@@ -4,10 +4,11 @@
 #include "vitiGL.hpp"
 
 class App;
+class AppScreen;
 
 class MenuScreen : public vitiGL::IAppScreen {
 public:
-	MenuScreen(App* app, vitiGL::Window* window);
+	MenuScreen(App* app, AppScreen* appScreen, vitiGL::Window* window);
 	~MenuScreen();
 
 	// Inherited via IAppScreen
@@ -21,16 +22,22 @@ public:
 	virtual int previous() const override;
 
 private:
+	void initGUI();
 	void updateInput();
 
 	/* event handlers: */
 	bool MenuScreen::onExitClicked(const CEGUI::EventArgs& e);
 	bool MenuScreen::onContinueClicked(const CEGUI::EventArgs& e);
 
-	bool onBloomSlider();
-	bool onGammaSlider();
+	void onPhysicsToggled();
+	void onNormalsToggled();
+	void onWireframeToggled();
+	void onDebugWinToggled();
+	void onPShadowToggled();
+	void onDShadowToggled();
+	void onBloomToggled();
 
-	//vitiGL::glRenderer  _renderer; no need for this?
+	AppScreen*			_appScreen;
 	vitiGL::GUI			_gui;
 	vitiGL::sQuad		_screenQuad;
 	vitiGL::Shader		_shader;

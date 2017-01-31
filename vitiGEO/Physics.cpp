@@ -14,13 +14,13 @@
 namespace vitiGEO {
 
 
-	Physics::Physics() :
-		_config{ new btDefaultCollisionConfiguration() },
-		_dispatcher{ new btCollisionDispatcher(_config) },
-		_broadphase{ new btDbvtBroadphase() },
-		_solver{ new btSequentialImpulseConstraintSolver() },
-		_world{ new btDiscreteDynamicsWorld(_dispatcher, _broadphase, _solver, _config) },
-		_drawDebug(false)
+Physics::Physics() :
+	_config{ new btDefaultCollisionConfiguration() },
+	_dispatcher{ new btCollisionDispatcher(_config) },
+	_broadphase{ new btDbvtBroadphase() },
+	_solver{ new btSequentialImpulseConstraintSolver() },
+	_world{ new btDiscreteDynamicsWorld(_dispatcher, _broadphase, _solver, _config) },
+	_drawDebug(false)
 { }
 
 Physics * Physics::instance() {

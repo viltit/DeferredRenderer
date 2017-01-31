@@ -19,11 +19,12 @@ void App::onExit() {
 }
 
 void App::addScreens() {
-	_menu = new MenuScreen{ this, _window };
-	_screenList->add(_menu);
-
 	_screen = new AppScreen(this, _window);
+	_menu = new MenuScreen{ this, _screen, _window };
+
+	_screenList->add(_menu);
 	_screenList->add(_screen);
 
 	_screenList->set(_screen->index());
+	//_screenList->set(_menu->index());
 }

@@ -27,9 +27,7 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	_cam{ float(window->width()) / float(window->height()) },
 	_renderer{ window, &_scene, &_cam },
 	_drender{ window, &_scene, &_cam },
-	_gui{ "GUI", "AlfiskoSkin.scheme" },
-	_fork{ _scene },
-	_menu{ false }
+	_fork{ _scene }
 {
 	Physics::instance()->setDebugRenderer(glRendererBTDebug::instance());
 	_fork.init();
@@ -135,7 +133,6 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	_cam.setPos(glm::vec3{ -4.0f, 8.0f, -5.0f });
 	//_cam.setTarget(_scene["Cuboid000"]->transform.pos());
 
-	initGUI();
 	_timer.on();
 
 	/* debug: */
@@ -159,30 +156,30 @@ void AppScreen::onExit() {
 
 void AppScreen::update() {
 	Uint32 frameTime = _timer.frame_time();
-	if (!_menu) {
-		Uint32 time = _timer.get_time();
+	Uint32 time = _timer.get_time();
 
-		std::string fps = "FPS: " + std::to_string(_timer.fps());
-		_gui.update(frameTime);
+	std::string fps = "FPS: " + std::to_string(_timer.fps());
 
-		/* update all components: */
-		Physics::instance()->update(frameTime);
-		_cam.update();
+	/* update all components: */
+	Physics::instance()->update(frameTime);
+	_cam.update();
 
-		//debug: add coordinate system axes:
-		glRendererDebug::instance()->addLine(glm::vec3{ 0.0f, 0.0f, 0.0f }, glm::vec3{ 10.0f, 0.0f, 0.0f }, glm::vec4{ 1.0f, 0.0f, 0.0f, 0.5f });
-		glRendererDebug::instance()->addLine(glm::vec3{ 0.0f, 0.0f, 0.0f }, glm::vec3{ 0.0f, 10.0f, 0.0f }, glm::vec4{ 0.0f, 1.0f, 0.0f, 0.5f });
-		glRendererDebug::instance()->addLine(glm::vec3{ 0.0f, 0.0f, 0.0f }, glm::vec3{ 0.0f, 0.0f, 10.0f }, glm::vec4{ 0.0f, 0.0f, 1.0f, 0.5f });
-	}
+	//debug: add coordinate system axes:
+	glRendererDebug::instance()->addLine(glm::vec3{ 0.0f, 0.0f, 0.0f }, glm::vec3{ 10.0f, 0.0f, 0.0f }, glm::vec4{ 1.0f, 0.0f, 0.0f, 0.5f });
+	glRendererDebug::instance()->addLine(glm::vec3{ 0.0f, 0.0f, 0.0f }, glm::vec3{ 0.0f, 10.0f, 0.0f }, glm::vec4{ 0.0f, 1.0f, 0.0f, 0.5f });
 
 	updateInput();
 	_scene.update(frameTime);
-	_gui.update(frameTime);
+}
+
+void AppScreen::updateFreezed() {
+	Uint32 frameTime = _timer.frame_time();
+	updateInput();
+	_scene.update(frameTime);
 }
 
 void AppScreen::draw() {
 	_drender.draw();
-	_gui.draw();
 }
 
 int AppScreen::next() const {
@@ -193,156 +190,9 @@ int AppScreen::previous() const {
 	return SCREEN_INDEX_MENU;
 }
 
-void AppScreen::initGUI() {
-	/* this would maybe better be done in an cegui-layout xml-file */
-	_gui.setFont("DejaVuSans-10");
-	_gui.setMouseCursor("AlfiskoSkin/MouseArrow");
-
-	/* initialize widgets: */
-	glm::vec2 pos{ 0.02, 0.03 };
-	glm::vec2 sizeA{ 0.02f, 0.02f };
-	glm::vec2 sizeB{ 0.15, 0.02f };
-	std::vector<CEGUI::DefaultWindow*> labels;
-
-	/* dir Shadow Checker with Label */
-	 auto dirShadowChecker = static_cast<CEGUI::ToggleButton*>(
-		_gui.createWidget(glm::vec4{ pos.x, pos.y, sizeA }, glm::vec4{}, "AlfiskoSkin/Checkbox", "dirShadow"));
-	 dirShadowChecker->setSelected(true);
-	 dirShadowChecker->subscribeEvent(
-		 CEGUI::ToggleButton::EventSelectStateChanged,
-		 CEGUI::Event::Subscriber(&AppScreen::onDShadowToggled, this));
-
-	auto dirShadowLabel = static_cast<CEGUI::DefaultWindow*>(
-		_gui.createWidget(glm::vec4{ pos.x + sizeA.x, pos.y, sizeB }, glm::vec4{}, "AlfiskoSkin/Label", "dirShadowLabel"));
-	dirShadowLabel->setText("Directional Light Shadows");
-	labels.push_back(dirShadowLabel);
-
-	 /* point Shadow Checker */
-	 auto pointShadowChecker = static_cast<CEGUI::ToggleButton*>(
-		 _gui.createWidget(glm::vec4{ pos.x, pos.y += 2.f*sizeA.y, sizeA }, glm::vec4{}, "AlfiskoSkin/Checkbox", "pointShadow"));
-	 pointShadowChecker->setSelected(true);
-	 pointShadowChecker->subscribeEvent(
-		 CEGUI::ToggleButton::EventSelectStateChanged,
-		 CEGUI::Event::Subscriber(&AppScreen::onPShadowToggled, this));
-
-	 auto pointShadowLabel = static_cast<CEGUI::DefaultWindow*>(
-		 _gui.createWidget(glm::vec4{ pos.x + sizeA.x, pos.y, sizeB }, glm::vec4{}, "AlfiskoSkin/Label", "pointShadowLabel"));
-	 pointShadowLabel->setText("Point Light Shadows");
-	 labels.push_back(pointShadowLabel);
-
-	 /* bloom Checker --> needs rework in the renderer for performance gain when its off */
-	 auto bloomChecker = static_cast<CEGUI::ToggleButton*>(
-		 _gui.createWidget(glm::vec4{ pos.x, pos.y += 2.f*sizeA.y, sizeA }, glm::vec4{}, "AlfiskoSkin/Checkbox", "bloom"));
-	 bloomChecker->setSelected(true);
-	 bloomChecker->subscribeEvent(
-		 CEGUI::ToggleButton::EventSelectStateChanged,
-		 CEGUI::Event::Subscriber(&AppScreen::onBloomToggled, this));
-
-	 auto bloomLabel = static_cast<CEGUI::DefaultWindow*>(
-		 _gui.createWidget(glm::vec4{ pos.x + sizeA.x, pos.y, sizeB }, glm::vec4{}, "AlfiskoSkin/Label", "bloomLabel"));
-	 bloomLabel->setText("Bloom");
-	 labels.push_back(bloomLabel);
-
-	 /* Debug window checker: */
-	 auto debugChecker = static_cast<CEGUI::ToggleButton*>(
-		 _gui.createWidget(glm::vec4{ pos.x, pos.y += 2.f*sizeA.y, sizeA }, glm::vec4{}, "AlfiskoSkin/Checkbox", "debugChecker"));
-	 debugChecker->setSelected(false);
-	 debugChecker->subscribeEvent(
-		 CEGUI::ToggleButton::EventSelectStateChanged,
-		 CEGUI::Event::Subscriber(&AppScreen::onDebugWinToggled, this));
-
-	 auto debugLabel = static_cast<CEGUI::DefaultWindow*>(
-		 _gui.createWidget(glm::vec4{ pos.x + sizeA.x, pos.y, sizeB }, glm::vec4{}, "AlfiskoSkin/Label", "debugLabel"));
-	 debugLabel->setText("Debug Windows");
-	 labels.push_back(debugLabel);
-
-	 /* Wireframe checker: */
-	 auto wireframeChecker = static_cast<CEGUI::ToggleButton*>(
-		 _gui.createWidget(glm::vec4{ pos.x, pos.y += 2.f*sizeA.y, sizeA }, glm::vec4{}, "AlfiskoSkin/Checkbox", "wireframeChecker"));
-	 wireframeChecker->setSelected(false);
-	 wireframeChecker->subscribeEvent(
-		 CEGUI::ToggleButton::EventSelectStateChanged,
-		 CEGUI::Event::Subscriber(&AppScreen::onWireframeToggled, this));
-
-	 auto wireframeLabel = static_cast<CEGUI::DefaultWindow*>(
-		 _gui.createWidget(glm::vec4{ pos.x + sizeA.x, pos.y, sizeB }, glm::vec4{}, "AlfiskoSkin/Label", "wireframeLabel"));
-	 wireframeLabel->setText("Draw Wireframes");
-	 labels.push_back(wireframeLabel);
-
-	 /* Normals checker: */
-	 auto normalsChecker = static_cast<CEGUI::ToggleButton*>(
-		 _gui.createWidget(glm::vec4{ pos.x, pos.y += 2.f*sizeA.y, sizeA }, glm::vec4{}, "AlfiskoSkin/Checkbox", "normalsChecker"));
-	 normalsChecker->setSelected(false);
-	 normalsChecker->subscribeEvent(
-		 CEGUI::ToggleButton::EventSelectStateChanged,
-		 CEGUI::Event::Subscriber(&AppScreen::onNormalsToggled, this));
-
-	 auto normalsLabel = static_cast<CEGUI::DefaultWindow*>(
-		 _gui.createWidget(glm::vec4{ pos.x + sizeA.x, pos.y, sizeB }, glm::vec4{}, "AlfiskoSkin/Label", "normalsLabel"));
-	 normalsLabel->setText("Draw Normals");
-	 labels.push_back(normalsLabel);
-
-	 /* Physics checker: */
-	 auto physicsChecker = static_cast<CEGUI::ToggleButton*>(
-		 _gui.createWidget(glm::vec4{ pos.x, pos.y += 2.f*sizeA.y, sizeA }, glm::vec4{}, "AlfiskoSkin/Checkbox", "physicsChecker"));
-	 physicsChecker->setSelected(false);
-	 physicsChecker->subscribeEvent(
-		 CEGUI::ToggleButton::EventSelectStateChanged,
-		 CEGUI::Event::Subscriber(&AppScreen::onPhysicsToggled, this));
-
-	 auto physicsLabel = static_cast<CEGUI::DefaultWindow*>(
-		 _gui.createWidget(glm::vec4{ pos.x + sizeA.x, pos.y, sizeB }, glm::vec4{}, "AlfiskoSkin/Label", "physicsLabel"));
-	 physicsLabel->setText("Draw Physics Wireframe");
-	 labels.push_back(physicsLabel);
-
-
-	 /* set Formatting and color for all labels: */
-	 for (auto& L : labels) {
-		 L->setProperty("HorzFormatting", "LeftAligned");
-		 L->setProperty("NormalTextColour", "ffaaaaaa");
-	 }
-
-	 /* add sliders: */
-	 auto gammaSlider = static_cast<CEGUI::Slider*>(
-		 _gui.createWidget(glm::vec4{ pos.x, pos.y += 2.f*sizeA.y, sizeA }, glm::vec4{}, "AlfiskoSkin/HorizontalSlider", "gammaSlider"));
-
-	 auto gammaLabel = static_cast<CEGUI::DefaultWindow*>(
-		 _gui.createWidget(glm::vec4{ pos.x + sizeA.x, pos.y, sizeB }, glm::vec4{}, "AlfiskoSkin/Label", "gammaLabel"));
-	 gammaLabel->setText("Gamma adjustment");
-}
-
-void AppScreen::onPhysicsToggled() {
-	Physics::instance()->drawDebug();
-}
-
-void AppScreen::onNormalsToggled() {
-	_drender.drawNormals();
-}
-
-void AppScreen::onWireframeToggled() {
-	_drender.setDrawMode();
-}
-
-void AppScreen::onDebugWinToggled() {
-	_drender.drawDebugWin();
-}
-
-void AppScreen::onPShadowToggled() {
-	_drender.drawPShadow();
-}
-
-void AppScreen::onDShadowToggled() {
-	_drender.drawDShadow();
-}
-
-void AppScreen::onBloomToggled() {
-	_drender.applyBloom();
-}
-
 void AppScreen::updateInput() {
 	SDL_Event input;
 	while (SDL_PollEvent(&input)) {
-		_gui.onSDLEvent(input);
 		_fork.onSDLEvent(input, _cam);
 
 		//temporary solution for object picking:
@@ -355,8 +205,7 @@ void AppScreen::updateInput() {
 		case SDL_KEYDOWN:
 			switch (input.key.keysym.sym) {
 			case SDLK_ESCAPE:
-				//_state = ScreenState::previous;
-				_menu = _menu ? false : true; //wip, put menus in menuScreen
+				_state = ScreenState::previous;
 				break;
 			case SDLK_w:
 				_cam.move(Move::forward);
