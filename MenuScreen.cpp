@@ -74,6 +74,14 @@ void MenuScreen::initGUI() {
 	pos = initRadioButtons(glm::vec2{ 0.02f, 0.03f }, glm::vec2{ 0.02f, 0.02f }, glm::vec2{ 0.15f, 0.02f });
 	pos.y += 0.1f;
 	pos = initRGBInputs(pos, glm::vec2{ 0.04f, 0.04f }, glm::vec2{ 0.15f, 0.02f });
+
+	//Add a Quit Button
+	auto quitButton = static_cast<CEGUI::PushButton*>(
+		_gui.createWidget(glm::vec4{ 0.8f, 0.8f, 0.1f, 0.05f }, glm::vec4{}, "AlfiskoSkin/Button", "quitButton"));
+	quitButton->setText(CEGUI::String("Quit"));
+	quitButton->subscribeEvent(
+		CEGUI::PushButton::EventClicked,
+		CEGUI::Event::Subscriber(&MenuScreen::onExitClicked, this));
 }
 
 glm::vec2 MenuScreen::initRadioButtons(const glm::vec2& startPos, const glm::vec2& buttonSize, const glm::vec2& textSize) {
@@ -207,7 +215,7 @@ glm::vec2 MenuScreen::initRGBInputs(const glm::vec2& startPos, const glm::vec2& 
 			glm::vec4{ pos.x, pos.y = pos.y + textSize.y, sizeA.x, sizeA.y },
 			glm::vec4{}, "AlfiskoSkin/Editbox", "dLightDiffuseR"));
 	dlightDiffuseR->subscribeEvent(
-		CEGUI::Editbox::EventTextChanged,
+		CEGUI::Editbox::EventTextAccepted,
 		CEGUI::Event::Subscriber(&MenuScreen::onDLightDiffuse, this));
 	_values.insert(std::make_pair("dlightDiffuseR", dlightDiffuseR));
 

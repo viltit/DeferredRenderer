@@ -55,11 +55,5 @@ private:
 
 	CEGUI::Slider*		_bloomSlider;
 	CEGUI::Slider*		_gammaSlider;
-
-	enum editValues {
-		dlightDiffuseR,
-		dlightDiffuseG,
-		dlightDiffuseB
-	};
 };
 
