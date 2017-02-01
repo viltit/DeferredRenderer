@@ -41,10 +41,14 @@ private:
 	void onDShadowToggled();
 	void onBloomToggled();
 
+	void onDLightAmbient();
 	void onDLightDiffuse();
+	void onDLightSpecular();
+	void onDLightVector();
 
 	/* Convert Cegui-String from editbox to an int: */
 	int getInt(const std::string& widgetName);
+	float round(float num);
 
 	AppScreen*			_appScreen;
 	vitiGL::GUI			_gui;

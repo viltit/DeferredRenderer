@@ -4,6 +4,7 @@
 #include "AppScreen.hpp"
 
 #include <sstream>
+#include <iomanip>
 #include <Physics.hpp>
 
 using namespace vitiGL;
@@ -37,13 +38,25 @@ void MenuScreen::onEntry() {
 	dLight* light = _appScreen->_scene.findDLight("dlight");
 
 	if (light) {
-		glm::vec3 color = light->diffuse();
-		std::cout << color << std::endl;
-		std::cout << int(color.r * 255.f) << std::endl;
-		std::cout << std::to_string(int(color.r * 255.f)) << std::endl;
+		glm::vec3 color = light->ambient();
+		_values["dlightAmbientR"]->setText(CEGUI::String(std::to_string(int(color.r * 255.f))));
+		_values["dlightAmbientG"]->setText(CEGUI::String(std::to_string(int(color.g * 255.f))));
+		_values["dlightAmbientB"]->setText(CEGUI::String(std::to_string(int(color.b * 255.f))));
+
+		color = light->diffuse();
 		_values["dlightDiffuseR"]->setText(CEGUI::String(std::to_string(int(color.r * 255.f))));
 		_values["dlightDiffuseG"]->setText(CEGUI::String(std::to_string(int(color.g * 255.f))));
 		_values["dlightDiffuseB"]->setText(CEGUI::String(std::to_string(int(color.b * 255.f))));
+
+		color = light->specular();
+		_values["dlightSpecularR"]->setText(CEGUI::String(std::to_string(int(color.r * 255.f))));
+		_values["dlightSpecularG"]->setText(CEGUI::String(std::to_string(int(color.g * 255.f))));
+		_values["dlightSpecularB"]->setText(CEGUI::String(std::to_string(int(color.b * 255.f))));
+
+		color = light->dir();
+		_values["dlightVectorX"]->setText(CEGUI::String(std::to_string(round(color.r))));
+		_values["dlightVectorY"]->setText(CEGUI::String(std::to_string(round(color.g))));
+		_values["dlightVectorZ"]->setText(CEGUI::String(std::to_string(round(color.b))));
 	}
 }
 
@@ -73,7 +86,7 @@ void MenuScreen::initGUI() {
 	glm::vec2 pos{};
 	pos = initRadioButtons(glm::vec2{ 0.02f, 0.03f }, glm::vec2{ 0.02f, 0.02f }, glm::vec2{ 0.15f, 0.02f });
 	pos.y += 0.1f;
-	pos = initRGBInputs(pos, glm::vec2{ 0.04f, 0.04f }, glm::vec2{ 0.15f, 0.02f });
+	pos = initRGBInputs(pos, glm::vec2{ 0.03f, 0.03f }, glm::vec2{ 0.15f, 0.02f });
 
 	//Add a Quit Button
 	auto quitButton = static_cast<CEGUI::PushButton*>(
@@ -204,42 +217,62 @@ glm::vec2 MenuScreen::initRGBInputs(const glm::vec2& startPos, const glm::vec2& 
 	glm::vec2 sizeB = textSize;
 	std::vector<CEGUI::DefaultWindow*> labels;
 
-	/* Direction lights Diffuse Color: */
-	auto dLightDiffuseLabel = static_cast<CEGUI::DefaultWindow*>(
-		_gui.createWidget(glm::vec4{ pos.x, pos.y = pos.y + buttonSize.y, sizeB }, glm::vec4{}, "AlfiskoSkin/Label", "dLightDiffuseLabel"));
-	dLightDiffuseLabel->setText("Directional Light Diffuse Color:");
-	labels.push_back(dLightDiffuseLabel);
+	/* Store this somewhere else, maybe in a textfile? */
+	std::vector<std::string> labelNames = {
+		"dLightAmbientLabel",
+		"dLightDiffuseLabel",
+		"dLightSpecularLabel",
+		"dLightVectorLabel"
+	};
+	std::vector<std::string> labelText = {
+		"Direction Light Ambient Color",
+		"Directional Light Diffuse Color",
+		"Directional Light Specular Color",
+		"Directional Lights Vector"
+	};
 
-	auto dlightDiffuseR = static_cast<CEGUI::Editbox*>(
-		_gui.createWidget(
-			glm::vec4{ pos.x, pos.y = pos.y + textSize.y, sizeA.x, sizeA.y },
-			glm::vec4{}, "AlfiskoSkin/Editbox", "dLightDiffuseR"));
-	dlightDiffuseR->subscribeEvent(
-		CEGUI::Editbox::EventTextAccepted,
-		CEGUI::Event::Subscriber(&MenuScreen::onDLightDiffuse, this));
-	_values.insert(std::make_pair("dlightDiffuseR", dlightDiffuseR));
+	std::vector<std::function<void()>> callbacks = {
+		std::bind(&MenuScreen::onDLightAmbient, this),
+		std::bind(&MenuScreen::onDLightDiffuse, this),
+		std::bind(&MenuScreen::onDLightSpecular, this),
+		std::bind(&MenuScreen::onDLightVector, this)
+	};
 
-	auto dlightDiffuseG = static_cast<CEGUI::Editbox*>(
-		_gui.createWidget(
-			glm::vec4{ pos.x + buttonSize.x, pos.y = pos.y, sizeA.x, sizeA.y },
-			glm::vec4{}, "AlfiskoSkin/Editbox", "dLightDiffuseG"));
-	dlightDiffuseG->subscribeEvent(
-		CEGUI::Editbox::EventTextChanged,
-		CEGUI::Event::Subscriber(&MenuScreen::onDLightDiffuse, this));
-	_values.insert(std::make_pair("dlightDiffuseG", dlightDiffuseG));
+	std::vector<std::string> editboxes = {
+		"dlightAmbientR",
+		"dlightAmbientG",
+		"dlightAmbientB",
+		"dlightDiffuseR",
+		"dlightDiffuseG",
+		"dlightDiffuseB",
+		"dlightSpecularR",
+		"dlightSpecularG",
+		"dlightSpecularB",
+		"dlightVectorX",
+		"dlightVectorY",
+		"dlightVectorZ"
+	};
 
-	auto dlightDiffuseB = static_cast<CEGUI::Editbox*>(
-		_gui.createWidget(
-			glm::vec4{ pos.x + 2.f*buttonSize.x, pos.y = pos.y, sizeA.x, sizeA.y },
-			glm::vec4{}, "AlfiskoSkin/Editbox", "dLightDiffuseB"));
-	dlightDiffuseB->subscribeEvent(
-		CEGUI::Editbox::EventTextChanged,
-		CEGUI::Event::Subscriber(&MenuScreen::onDLightDiffuse, this));
-	_values.insert(std::make_pair("dlightDiffuseB", dlightDiffuseB));
+	for (size_t i = 0; i < labelNames.size(); i++) {
+		auto label = static_cast<CEGUI::DefaultWindow*>(
+			_gui.createWidget(glm::vec4{ pos.x, pos.y = pos.y + buttonSize.y, sizeB }, glm::vec4{}, "AlfiskoSkin/Label", labelNames[i]));
+		label->setText(labelText[i]);
+		labels.push_back(label);
+		pos.y += textSize.y;
 
-	/* Directional Lights Direction: */
-
-
+		glm::vec2 rowPos = pos;
+		for (int j = 3 * i; j < 3 * i + 3; j++) {
+			auto dlightDiffuseR = static_cast<CEGUI::Editbox*>(
+				_gui.createWidget(
+					glm::vec4{ rowPos.x, pos.y = pos.y, sizeA.x, sizeA.y },
+					glm::vec4{}, "AlfiskoSkin/Editbox", editboxes[j]));
+			dlightDiffuseR->subscribeEvent(
+				CEGUI::Editbox::EventTextChanged,
+				CEGUI::Event::Subscriber(callbacks[i]));
+			_values.insert(std::make_pair(editboxes[j], dlightDiffuseR));
+			rowPos.x += buttonSize.x;
+		}
+	}
 	/* set Formatting and color for all labels: */
 	for (auto& L : labels) {
 		L->setProperty("HorzFormatting", "CenterAligned");
@@ -305,6 +338,22 @@ void MenuScreen::onBloomToggled() {
 	_appScreen->_drender.applyBloom();
 }
 
+void MenuScreen::onDLightAmbient() {
+	dLight* light = _appScreen->_scene.findDLight("dlight");
+	if (!light) return;
+
+	glm::vec3 color{ light->ambient() };
+	int red{ getInt("dlightAmbientR") };
+	int green{ getInt("dlightAmbientG") };
+	int blue{ getInt("dlightAmbientB") };
+
+	if (red >= 0) color.r = float(red) / 255.f;
+	if (green >= 0) color.g = float(green) / 255.f;
+	if (blue >= 0) color.b = float(blue) / 255.f;
+
+	light->setProperty(lightProps::ambient, color);
+}
+
 void MenuScreen::onDLightDiffuse() {
 	dLight* light = _appScreen->_scene.findDLight("dlight");
 	if (!light) return;
@@ -319,7 +368,42 @@ void MenuScreen::onDLightDiffuse() {
 	if (blue >= 0) color.b = float(blue) / 255.f;
 		
 	light->setProperty(lightProps::diffuse, color);
+}
 
+void MenuScreen::onDLightSpecular() {
+	dLight* light = _appScreen->_scene.findDLight("dlight");
+	if (!light) return;
+
+	glm::vec3 color{ light->specular() };
+	int red{ getInt("dlightSpecularR") };
+	int green{ getInt("dlightSpecularG") };
+	int blue{ getInt("dlightSpecularB") };
+
+	if (red >= 0) color.r = float(red) / 255.f;
+	if (green >= 0) color.g = float(green) / 255.f;
+	if (blue >= 0) color.b = float(blue) / 255.f;
+
+	light->setProperty(lightProps::specular, color);
+}
+
+void MenuScreen::onDLightVector() {
+	dLight* light = _appScreen->_scene.findDLight("dlight");
+	if (!light) return;
+
+	glm::vec3 dir{ light->dir() };
+	int x{ getInt("dlightVectorX") };
+	int y{ getInt("dlightVectorY") };
+	int z{ getInt("dlightVectorZ") };
+
+	if (x > -100000) dir.x = float(x);
+	if (y > -100000) dir.y = float(y);
+	if (z > -100000) dir.z = float(z);
+
+	dir = glm::normalize(dir);
+
+	std::cout << "Setting light dir to " << dir << std::endl;
+
+	light->setProperty(lightProps::dir, dir);
 }
 
 int MenuScreen::getInt(const std::string & widgetName) {
@@ -333,5 +417,9 @@ int MenuScreen::getInt(const std::string & widgetName) {
 		return value;
 	}
 
-	return -1;
+	return -100000;
+}
+
+float MenuScreen::round(float num) {
+	return floor(num * 100 + 0.5) / 100;
 }

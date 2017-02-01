@@ -35,7 +35,7 @@ void dLight::setProperty(lightProps property, const glm::vec3 & value) {
 		break;
 	case lightProps::ambient:
 		_ambient = value;
-		//glUniform3f(shader.getUniform(_uniform + ".ambient"), _ambient.r, _ambient.g, _ambient.b);
+
 		break;
 	case lightProps::diffuse:
 		_diffuse = value;
