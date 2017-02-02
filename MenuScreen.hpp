@@ -25,6 +25,7 @@ public:
 private:
 	void initGUI();
 	glm::vec2 initRadioButtons(const glm::vec2& startPos, const glm::vec2& buttonSize, const glm::vec2& textSize);
+	glm::vec2 initSliders(const glm::vec2& startPos, const glm::vec2& sliderSize, const glm::vec2& textSize);
 	glm::vec2 initRGBInputs(const glm::vec2& startPos, const glm::vec2& buttonSize, const glm::vec2& textSize);
 
 	void updateInput();
@@ -45,10 +46,17 @@ private:
 	void onDLightDiffuse();
 	void onDLightSpecular();
 	void onDLightVector();
+	void onPLightDiffuse();
+	void onPLightSpecular();
+	void onPLightPosition();
+
+	void onGammaChanged();
+	void onBloomChanged();
+	void onHdrChanged();
 
 	/* Convert Cegui-String from editbox to an int: */
 	int getInt(const std::string& widgetName);
-	float round(float num);
+	float getFloat(const std::string& widgetName);
 
 	AppScreen*			_appScreen;
 	vitiGL::GUI			_gui;
@@ -57,7 +65,9 @@ private:
 	/* this maps stores all editboxes that can change the scenes values: */
 	std::map<std::string, CEGUI::Editbox*> _values;
 
-	CEGUI::Slider*		_bloomSlider;
-	CEGUI::Slider*		_gammaSlider;
+	/* this map stores all sliders: */
+	std::map<std::string, CEGUI::Slider*> _sliders;
+
+	CEGUI::PushButton*	_quitButton;
 };
 

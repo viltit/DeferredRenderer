@@ -54,10 +54,32 @@ void MenuScreen::onEntry() {
 		_values["dlightSpecularB"]->setText(CEGUI::String(std::to_string(int(color.b * 255.f))));
 
 		color = light->dir();
-		_values["dlightVectorX"]->setText(CEGUI::String(std::to_string(round(color.r))));
-		_values["dlightVectorY"]->setText(CEGUI::String(std::to_string(round(color.g))));
-		_values["dlightVectorZ"]->setText(CEGUI::String(std::to_string(round(color.b))));
+		_values["dlightVectorX"]->setText(CEGUI::String(std::to_string(color.r)));
+		_values["dlightVectorY"]->setText(CEGUI::String(std::to_string(color.g)));
+		_values["dlightVectorZ"]->setText(CEGUI::String(std::to_string(color.b)));
 	}
+
+	pLight* plight = _appScreen->_scene.findPLight("plight");
+	if (plight) {
+		glm::vec3 color = plight->diffuse();
+		_values["plightDiffuseR"]->setText(CEGUI::String(std::to_string(int(color.r * 255.f))));
+		_values["plightDiffuseG"]->setText(CEGUI::String(std::to_string(int(color.g * 255.f))));
+		_values["plightDiffuseB"]->setText(CEGUI::String(std::to_string(int(color.b * 255.f))));
+
+		color = plight->specular();
+		_values["plightSpecularR"]->setText(CEGUI::String(std::to_string(int(color.r * 255.f))));
+		_values["plightSpecularG"]->setText(CEGUI::String(std::to_string(int(color.g * 255.f))));
+		_values["plightSpecularB"]->setText(CEGUI::String(std::to_string(int(color.b * 255.f))));
+
+		color = plight->pos();
+		_values["plightPosX"]->setText(CEGUI::String(std::to_string(color.r)));
+		_values["plightPosY"]->setText(CEGUI::String(std::to_string(color.g)));
+		_values["plightPosZ"]->setText(CEGUI::String(std::to_string(color.b)));
+	}
+
+	_sliders["gammaSlider"]->setCurrentValue(_appScreen->_drender.gamma() / 3.0f);
+	_sliders["bloomSlider"]->setCurrentValue(_appScreen->_drender.bloomTreshold() / 3.0f);
+	_sliders["hdrSlider"]->setCurrentValue(_appScreen->_drender.exposure() / 3.0f);
 }
 
 void MenuScreen::onExit() {
@@ -86,7 +108,8 @@ void MenuScreen::initGUI() {
 	glm::vec2 pos{};
 	pos = initRadioButtons(glm::vec2{ 0.02f, 0.03f }, glm::vec2{ 0.02f, 0.02f }, glm::vec2{ 0.15f, 0.02f });
 	pos.y += 0.1f;
-	pos = initRGBInputs(pos, glm::vec2{ 0.03f, 0.03f }, glm::vec2{ 0.15f, 0.02f });
+	pos = initSliders(pos, glm::vec2{ 0.09, 0.03 }, glm::vec2{ 0.15, 0.02 });
+	pos = initRGBInputs(glm::vec2{ 0.8, 0.03 }, glm::vec2{ 0.03f, 0.03f }, glm::vec2{ 0.15f, 0.02f });
 
 	//Add a Quit Button
 	auto quitButton = static_cast<CEGUI::PushButton*>(
@@ -105,7 +128,7 @@ glm::vec2 MenuScreen::initRadioButtons(const glm::vec2& startPos, const glm::vec
 
 	/* dir Shadow Checker with Label */
 	auto dirShadowChecker = static_cast<CEGUI::ToggleButton*>(
-		_gui.createWidget(glm::vec4{ pos.x, pos.y, sizeA }, glm::vec4{}, "AlfiskoSkin/Checkbox", "dirShadow"));
+		_gui.createWidget(glm::vec4{ pos.x, pos.y += 2.f*sizeA.y, sizeA }, glm::vec4{}, "AlfiskoSkin/Checkbox", "dirShadow"));
 	dirShadowChecker->setSelected(true);
 	dirShadowChecker->subscribeEvent(
 		CEGUI::ToggleButton::EventSelectStateChanged,
@@ -200,13 +223,58 @@ glm::vec2 MenuScreen::initRadioButtons(const glm::vec2& startPos, const glm::vec
 		L->setProperty("NormalTextColour", "ffaaaaaa");
 	}
 
-	/* add sliders:
-	auto gammaSlider = static_cast<CEGUI::Slider*>(
-	_gui.createWidget(glm::vec4{ pos.x, pos.y += 2.f*sizeA.y, sizeA }, glm::vec4{}, "AlfiskoSkin/HorizontalSlider", "gammaSlider"));
+	return pos;
+}
 
-	auto gammaLabel = static_cast<CEGUI::DefaultWindow*>(
-	_gui.createWidget(glm::vec4{ pos.x + sizeA.x, pos.y, sizeB }, glm::vec4{}, "AlfiskoSkin/Label", "gammaLabel"));
-	gammaLabel->setText("Gamma adjustment");*/
+glm::vec2 MenuScreen::initSliders(const glm::vec2 & startPos, const glm::vec2 & sliderSize, const glm::vec2 & textSize) {
+	glm::vec2 pos = startPos;
+	glm::vec2 sizeA = sliderSize;
+	glm::vec2 sizeB = textSize;
+	std::vector<CEGUI::DefaultWindow*> labels;
+
+	std::vector<std::string> labelNames = {
+		"gammaSLabel",
+		"bloomSLabel",
+		"dhrSLabel"
+	};
+	std::vector<std::string> labelText = {
+		"Gamma adjustment",
+		"Bloom Treshold",
+		"HDR Exposure Exponent"
+	};
+	std::vector<std::string> sliderNames {
+		"gammaSlider",
+		"bloomSlider",
+		"hdrSlider"
+	};
+
+	std::vector<std::function<void()>> callbacks = {
+		std::bind(&MenuScreen::onGammaChanged, this),
+		std::bind(&MenuScreen::onBloomChanged, this),
+		std::bind(&MenuScreen::onHdrChanged, this)
+	};
+
+	/* add sliders: */
+	for (size_t i = 0; i < labelNames.size(); i++) {
+		auto label = static_cast<CEGUI::DefaultWindow*>(
+			_gui.createWidget(glm::vec4{ pos.x, pos.y += sizeA.y, sizeB }, glm::vec4{}, "AlfiskoSkin/Label", labelNames[i]));
+		label->setText(labelText[i]);
+		labels.push_back(label);
+		auto slider = static_cast<CEGUI::Slider*>(
+			_gui.createWidget(glm::vec4{ pos.x, pos.y += sizeA.y, sizeA }, glm::vec4{}, "AlfiskoSkin/HorizontalSlider", sliderNames[i]));
+		slider->subscribeEvent(
+			CEGUI::Slider::EventValueChanged,
+			CEGUI::Event::Subscriber(callbacks[i]));
+		slider->setMaxValue(1.0f);
+		slider->setClickStep(0.1f);
+		_sliders.insert(std::make_pair(sliderNames[i], slider));
+	}
+
+	/* set Formatting and color for all labels: */
+	for (auto& L : labels) {
+		L->setProperty("HorzFormatting", "LeftAligned");
+		L->setProperty("NormalTextColour", "ffaaaaaa");
+	}
 
 	return pos;
 }
@@ -222,20 +290,29 @@ glm::vec2 MenuScreen::initRGBInputs(const glm::vec2& startPos, const glm::vec2& 
 		"dLightAmbientLabel",
 		"dLightDiffuseLabel",
 		"dLightSpecularLabel",
-		"dLightVectorLabel"
+		"dLightVectorLabel",
+		"pLightDiffuseLabel",
+		"pLightSpecularLabel",
+		"pLightPositionLabel"
 	};
 	std::vector<std::string> labelText = {
 		"Direction Light Ambient Color",
 		"Directional Light Diffuse Color",
 		"Directional Light Specular Color",
-		"Directional Lights Vector"
+		"Directional Lights Vector",
+		"Point Light Diffuse Color",
+		"Point Light Specular Color",
+		"Point Light Position"
 	};
 
 	std::vector<std::function<void()>> callbacks = {
 		std::bind(&MenuScreen::onDLightAmbient, this),
 		std::bind(&MenuScreen::onDLightDiffuse, this),
 		std::bind(&MenuScreen::onDLightSpecular, this),
-		std::bind(&MenuScreen::onDLightVector, this)
+		std::bind(&MenuScreen::onDLightVector, this),
+		std::bind(&MenuScreen::onPLightDiffuse, this),
+		std::bind(&MenuScreen::onPLightSpecular, this),
+		std::bind(&MenuScreen::onPLightPosition, this)
 	};
 
 	std::vector<std::string> editboxes = {
@@ -250,7 +327,16 @@ glm::vec2 MenuScreen::initRGBInputs(const glm::vec2& startPos, const glm::vec2& 
 		"dlightSpecularB",
 		"dlightVectorX",
 		"dlightVectorY",
-		"dlightVectorZ"
+		"dlightVectorZ",
+		"plightDiffuseR",
+		"plightDiffuseG",
+		"plightDiffuseB",
+		"plightSpecularR",
+		"plightSpecularG",
+		"plightSpecularB",
+		"plightPosX",
+		"plightPosY",
+		"plightPosZ"
 	};
 
 	for (size_t i = 0; i < labelNames.size(); i++) {
@@ -391,19 +477,66 @@ void MenuScreen::onDLightVector() {
 	if (!light) return;
 
 	glm::vec3 dir{ light->dir() };
-	int x{ getInt("dlightVectorX") };
-	int y{ getInt("dlightVectorY") };
-	int z{ getInt("dlightVectorZ") };
+	float x{ getFloat("dlightVectorX") };
+	float y{ getFloat("dlightVectorY") };
+	float z{ getFloat("dlightVectorZ") };
 
-	if (x > -100000) dir.x = float(x);
-	if (y > -100000) dir.y = float(y);
-	if (z > -100000) dir.z = float(z);
+	if (x > -100000) dir.x = x;
+	if (y > -100000) dir.y = y;
+	if (z > -100000) dir.z = z;
 
 	dir = glm::normalize(dir);
-
-	std::cout << "Setting light dir to " << dir << std::endl;
-
 	light->setProperty(lightProps::dir, dir);
+}
+
+void MenuScreen::onPLightDiffuse() {
+	pLight* light = _appScreen->_scene.findPLight("plight");
+	if (!light) return;
+
+	glm::vec3 color{ light->diffuse() };
+	int red{ getInt("plightDiffuseR") };
+	int green{ getInt("plightDiffuseG") };
+	int blue{ getInt("plightDiffuseB") };
+
+	if (red >= 0) color.r = float(red) / 255.f;
+	if (green >= 0) color.g = float(green) / 255.f;
+	if (blue >= 0) color.b = float(blue) / 255.f;
+
+	light->setProperty(lightProps::diffuse, color);
+}
+
+void MenuScreen::onPLightSpecular() {
+	pLight* light = _appScreen->_scene.findPLight("plight");
+	if (!light) return;
+
+	glm::vec3 color{ light->specular() };
+	int red{ getInt("plightSpecularR") };
+	int green{ getInt("plightSpecularG") };
+	int blue{ getInt("plightSpecularB") };
+
+	if (red >= 0) color.r = float(red) / 255.f;
+	if (green >= 0) color.g = float(green) / 255.f;
+	if (blue >= 0) color.b = float(blue) / 255.f;
+
+	light->setProperty(lightProps::specular, color);
+}
+
+void MenuScreen::onPLightPosition() {
+}
+
+void MenuScreen::onGammaChanged() {
+	float value = _sliders["gammaSlider"]->getCurrentValue() * 3.0f;
+	_appScreen->_drender.setGamma(value);
+}
+
+void MenuScreen::onBloomChanged() {
+	float value = _sliders["bloomSlider"]->getCurrentValue() * 3.0f;
+	_appScreen->_drender.setBloomTreshold(value);
+}
+
+void MenuScreen::onHdrChanged() {
+	float value = _sliders["hdrSlider"]->getCurrentValue() * 3.0f;
+	_appScreen->_drender.setExposure(value);
 }
 
 int MenuScreen::getInt(const std::string & widgetName) {
@@ -420,6 +553,16 @@ int MenuScreen::getInt(const std::string & widgetName) {
 	return -100000;
 }
 
-float MenuScreen::round(float num) {
-	return floor(num * 100 + 0.5) / 100;
+float MenuScreen::getFloat(const std::string & widgetName) {
+	assert(_values.find(widgetName) != _values.end());
+
+	std::string input = _values[widgetName]->getText().c_str();
+	std::istringstream iss{ input };
+	float value{};
+
+	if (iss >> std::setprecision(3) >> value) {		//we have a float
+		return value;
+	}
+
+	return -100000.0f;
 }

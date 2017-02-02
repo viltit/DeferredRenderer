@@ -110,10 +110,6 @@ public:
 
 	void debugDraw(const Shader& shader) const;
 
-	/* getters and setters: */
-	float radius() const { return _r; }
-	glm::vec3 pos() const { return _pos; }
-
 	//override IGameObject-Method:
 	virtual void setModelMatrix(const glm::mat4& M) override {
 		//we only set the position part!
@@ -121,6 +117,12 @@ public:
 		_M[3][0] = M[3][0]; _M[3][1] = _M[3][1]; _M[3][2] = M[3][2];
 		_sphere->setModelMatrix(_M);
 	}
+
+	/* getters and setters: */
+	float radius()			const	{ return _r; }
+	glm::vec3 pos()			const	{ return _pos; }
+	glm::vec3 diffuse()		const	{ return _diffuse; }
+	glm::vec3 specular()	const	{ return _specular; }
 
 	//debug:
 	bool _front;
