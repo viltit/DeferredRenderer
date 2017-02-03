@@ -130,16 +130,38 @@ void SliderConstraint::motorOff() {
 
 
 /* Hinge ----------------------------------------------------------------- */
-HingeConstraint::HingeConstraint(const PhysicObject * obj, const glm::vec3 pivot, const glm::vec3 axis) {
+HingeConstraint::HingeConstraint(const PhysicObject * obj, const glm::vec3& pivot, const glm::vec3& axis) {
 	btVector3 pivotA = glmVecToBtVec(pivot);
 	btVector3 axisA = glmVecToBtVec(axis);
 
 	_constraint = new btHingeConstraint{ *obj->body(), pivotA, axisA };
+
 	_objA = obj;
 
 	Physics::instance()->addConstraint(this);
 	obj->addConstraint(this);
 }
+
+HingeConstraint::HingeConstraint(const PhysicObject * objA, const glm::vec3 & pivotInA, const glm::vec3& axisInA,
+								 const PhysicObject * objB, const glm::vec3 & pivotInB, const glm::vec3& axisInB)
+{
+	btVector3 pivotA = glmVecToBtVec(pivotInA);
+	btVector3 pivotB = glmVecToBtVec(pivotInB);
+	btVector3 axisA = glmVecToBtVec(axisInA);
+	btVector3 axisB = glmVecToBtVec(axisInB);
+
+	_constraint = new btHingeConstraint{ *objA->body(), *objB->body(), pivotA, pivotB, axisA, axisB, };
+
+	Physics::instance()->addConstraint(this);
+
+	_objA = objA;
+	_objB = objB;
+
+	_objA->addConstraint(this);
+	_objB->addConstraint(this);
+}
+
+
 
 HingeConstraint::~HingeConstraint() {
 	remove();

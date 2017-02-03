@@ -1,4 +1,4 @@
-# Blender MTL File: 'arch2.blend'
+# Blender MTL File: 'arch.blend'
 # Material Count: 2
 
 newmtl None
@@ -12,7 +12,7 @@ map_Kd MetalFloorsBare_Diffuse.png
 map_bump MetalFloorsBare_Normal.png
 map_Ks MetalFloorsBare_Specular.png
 
-newmtl None_BronzeCopper_Diffuse.png
+newmtl None_MetalFloorsBare_Diffuse.png
 Ns 0
 Ka 0.000000 0.000000 0.000000
 Kd 0.8 0.8 0.8

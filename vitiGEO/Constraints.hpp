@@ -71,7 +71,11 @@ private:
 /* Hinge ----------------------------------------------------------------- */
 class HingeConstraint : public Constraint {
 public:
-	HingeConstraint(const PhysicObject* obj, const glm::vec3 pivot, const glm::vec3 axis);
+	HingeConstraint(const PhysicObject* obj, const glm::vec3& pivot, const glm::vec3& axis);
+
+	HingeConstraint(const PhysicObject* objA, const glm::vec3& pivotInA, const glm::vec3& axisA,
+					const PhysicObject* objB, const glm::vec3& pivotInB, const glm::vec3& axisB);
+
 	~HingeConstraint();
 
 	void setMinMax(float min, float max);
