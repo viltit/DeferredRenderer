@@ -33,7 +33,7 @@ void Fork::init() {
 		_chain->last(), glm::vec3{ 0.2f, -0.4f, 0.0f },
 		_scene["Arch"]->physics(), glm::vec3{ 0.3f, 1.3f, 0.0f });
 
-	/* add the two grappler A */
+	/* add the two grappler A 
 	_scene.addChild(new Cuboid{ "xml/cube.xml" }, "Grappler_A");
 	_scene["Grappler_A"]->transform.setScale(glm::vec3{ 0.5f, 2.f, 0.5f });
 	_scene["Grappler_A"]->transform.setPos(glm::vec3{ -12.f, 2.f, -12.f });
@@ -43,9 +43,9 @@ void Fork::init() {
 		_scene["Grappler_A"]->physics(), glm::vec3{ 0.0f, 1.01f, 0.0f }, glm::vec3{ 1.0f, 0.0f, 0.0f },
 		_scene["Arch"]->physics(), glm::vec3{ 0.0f, -0.65f, 1.15f }, glm::vec3{ 1.0f, 0.0f, 0.0f }
 	};
-	_c1->setMinMax(0.0f, glm::radians(45.0f));
+	_c1->setMinMax(0.0f, glm::radians(45.0f));*/
 
-	/* Add grappler B: */
+	/* Add grappler B: 
 	_scene.addChild(new Cuboid{ "xml/cube.xml" }, "Grappler_B");
 	_scene["Grappler_B"]->transform.setScale(glm::vec3{ 0.5f, 2.f, 0.5f });
 	_scene["Grappler_B"]->transform.setPos(glm::vec3{ -10.f, 2.f, -10.f });
@@ -55,7 +55,7 @@ void Fork::init() {
 		_scene["Grappler_B"]->physics(), glm::vec3{ 0.0f, 1.01f, 0.0f }, glm::vec3{ 1.0f, 0.0f, 0.0f },
 		_scene["Arch"]->physics(), glm::vec3{ 0.0f, -0.65f, -1.15f }, glm::vec3{ 1.0f, 0.0f, 0.0f }
 	};
-	_c2->setMinMax(glm::radians(-45.0f), 0.0f);
+	_c2->setMinMax(glm::radians(-45.0f), 0.0f);*/
 }
 
 Fork::~Fork() {

@@ -159,6 +159,7 @@
     <ClInclude Include="AABB.hpp" />
     <ClInclude Include="Constraints.hpp" />
     <ClInclude Include="DebugInfo.hpp" />
+    <ClInclude Include="ForceField.hpp" />
     <ClInclude Include="Frustum.hpp" />
     <ClInclude Include="Geometry.hpp" />
     <ClInclude Include="Math.hpp" />
@@ -171,6 +172,7 @@
   <ItemGroup>
     <ClCompile Include="AABB.cpp" />
     <ClCompile Include="Constraints.cpp" />
+    <ClCompile Include="ForceField.cpp" />
     <ClCompile Include="Frustum.cpp" />
     <ClCompile Include="Geometry.cpp" />
     <ClCompile Include="Math.cpp" />
