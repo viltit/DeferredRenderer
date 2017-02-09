@@ -39,8 +39,6 @@ Picker::Picker(btDynamicsWorld* world, const glm::vec3& rayStart, const glm::vec
 				_p2p->setAngularLowerLimit(btVector3{0.0f, 0.0f, 0.0f});
 				_p2p->setAngularUpperLimit(btVector3{ 0.0f, 0.0f, 0.0f });
 
-				_world->addConstraint(_p2p, true);
-
 				/* set constraints strengt (cfm) and error reduction (erp): */
 				float cfm = 0.5f;
 				float erp = 0.5f;
@@ -48,12 +46,13 @@ Picker::Picker(btDynamicsWorld* world, const glm::vec3& rayStart, const glm::vec
 					_p2p->setParam(BT_CONSTRAINT_STOP_CFM, cfm, i);
 					_p2p->setParam(BT_CONSTRAINT_STOP_ERP, erp, i);
 				}
+
+				_world->addConstraint(_p2p, true);
 			}
 		}
 		_pickDist = glm::length(btVecToGlmVec(pickPos - rayS));
 	}
 }
-
 
 Picker::~Picker() {
 	remove();
@@ -68,6 +67,27 @@ bool Picker::onMouseMove(const glm::vec3& camPos, const glm::vec3& camDir, const
 	move(rayS, rayDir);
 
 	switch (input.type) {
+	case SDL_KEYDOWN:
+		switch (input.key.keysym.sym) {
+		case SDLK_r:
+		{
+			/* TO DO: Allow picked objects to be rotated by the user
+
+			auto motion = _picked->getMotionState();
+			btTransform transform;
+			motion->getWorldTransform(transform);
+			btQuaternion q = transform.getRotation();
+			btQuaternion r; r.setEulerZYX(0.1f, 0.0f, 0.0f);
+			transform.setRotation(r * q);
+			motion->setWorldTransform(transform);
+			_picked->setMotionState(motion);
+
+			initConstraint(_world, camPos, camDir);*/
+
+			break;
+		}
+		}
+		break;
 	case SDL_MOUSEMOTION:
 		break;
 	case SDL_MOUSEBUTTONUP:
