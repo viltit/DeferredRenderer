@@ -24,10 +24,11 @@ private:
 	float						_pickDist;
 
 	btDynamicsWorld*			_world;
-	btPoint2PointConstraint*	_p2p;
+	btGeneric6DofConstraint*	_p2p;
 
 	/* store the picked body and its state for proper release: */
 	int							_state;
+	btVector3					_gravity;
 	btRigidBody*				_picked;
 };
 }

@@ -243,3 +243,5 @@ ModelManifest.xml
 
 # FAKE - F# Make
 .fake/
+/GUI/test.project
+/GUI/layouts/test.layout
