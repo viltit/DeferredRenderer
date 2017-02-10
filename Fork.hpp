@@ -5,6 +5,7 @@
 #include <bt/btBulletCollisionCommon.h>
 #include <vitiGL.hpp>
 #include <PhysicObject.hpp>
+#include <ForceField.hpp>
 
 class Fork {
 public:
@@ -30,5 +31,7 @@ private:
 
 	const float _speed = 2.f;
 	const float _rotSpeed = 0.5f;
+
+	vitiGEO::ForceField* _forceField;
 };
 

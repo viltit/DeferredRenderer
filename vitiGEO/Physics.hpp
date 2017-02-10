@@ -54,6 +54,9 @@ namespace vitiGEO {
 		void stopSimulation()	{ _isOn = false;  }
 		void startSimulation()	{ _isOn = true; }
 
+		/* getters */
+		std::vector<PhysicObject*>&			objects() { return _bodies; };
+
 	protected:
 		Physics();
 

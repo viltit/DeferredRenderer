@@ -23,6 +23,9 @@ private:
 
 	float						_pickDist;
 
+	btVector3					_pivotA;
+	btVector3					_rotation;	
+
 	btDynamicsWorld*			_world;
 	btGeneric6DofConstraint*	_p2p;
 

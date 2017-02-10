@@ -3,25 +3,31 @@
 
 #pragma once
 
+#include <vector>
 
 namespace vitiGEO {
 
 class PhysicObject;
+class Constraint;
 
 class ForceField {
 public:
-	ForceField(const PhysicObject* emitter, float maxForce, float radius, bool isActive = true);
+	ForceField(PhysicObject* emitter, float maxForce, float radius, bool isActive = false);
 	~ForceField();
 
-	void update();
+	void on();
+	void off();
 
-	void on()		{ _isActive = true; }
-	void off()		{ _isActive = false; }
+	void setExclude(const std::vector<PhysicObject*> exclude) { _exclude = exclude; _exclude.push_back(_emitter); }
+
+	bool isActive() { return _isActive; }
 
 protected:
-	const PhysicObject*	_emitter;
-	
-	float			_maxForce;
+	PhysicObject*	_emitter;
+	std::vector<PhysicObject*> _exclude;
+
+	Constraint*		_constraint;
+
 	float			_radius;
 
 	bool			_isActive;
