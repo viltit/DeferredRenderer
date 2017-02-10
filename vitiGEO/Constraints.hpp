@@ -109,6 +109,8 @@ public:
 	PhysicObject* first() const		{ return _objects[0]; }
 	PhysicObject* last() const		{ return _objects[_objects.size() - 1]; }
 
+	std::vector<PhysicObject*>& objs() { return _objects; }
+
 protected:
 	std::vector<PhysicObject*>	_objects;
 	std::vector<P2PConstraint*> _p2p;

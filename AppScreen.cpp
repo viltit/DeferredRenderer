@@ -249,29 +249,15 @@ void AppScreen::updateInput() {
 				addTetrahedron(1.0, _cam.pos());
 				break;
 			case SDLK_F1:
-				_drender.setBloomTreshold(_drender.bloomTreshold() + 0.1f);
 				break;
 			case SDLK_F2:
-				_drender.setBloomTreshold(_drender.bloomTreshold() - 0.1f);
 				break;
 			case SDLK_g:
-				_drender.gramSchmidt();
-				break;
 				break;
 			case SDLK_F3:
-			{
-				pLight* light = _scene.findPLight("plight");
-				glm::vec3 pos = light->pos();
-				light->setProperty(lightProps::pos, glm::vec3{ pos.x + 1.0f, pos.y + 1.0f, pos.z + 1.0f });
-			}
-			break;
+				break;
 			case SDLK_F4:
-			{
-				pLight* light = _scene.findPLight("plight");
-				glm::vec3 pos = light->pos();
-				light->setProperty(lightProps::pos, glm::vec3{ pos.x - 1.0f, pos.y - 1.0f, pos.z - 1.0f });
-			}
-			break;
+				break;
 			case SDLK_F5:
 				break;
 			case SDLK_F6:
@@ -303,7 +289,6 @@ void AppScreen::updateInput() {
 			case SDL_BUTTON_LEFT:
 			{
 				/* get the world space position of the mouse: */
-				std::cout << "left\n";
 				glm::vec3 rayS = _cam.pos();
 				glm::vec3 rayDir = _cam.dir();
 
@@ -312,7 +297,6 @@ void AppScreen::updateInput() {
 			}
 				break;
 			case SDL_BUTTON_RIGHT:
-				std::cout << "right\n";
 				break;
 			}
 		}

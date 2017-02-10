@@ -34,6 +34,7 @@ Picker::Picker(btDynamicsWorld* world, const glm::vec3& rayStart, const glm::vec
 				btTransform transform;
 				transform.setIdentity();
 				transform.setOrigin(pickPosLocal);
+				_pivotA = pickPosLocal;
 
 				_p2p = new btGeneric6DofConstraint(*body, transform, true);
 				_p2p->setAngularLowerLimit(btVector3{0.0f, 0.0f, 0.0f});
@@ -69,23 +70,16 @@ bool Picker::onMouseMove(const glm::vec3& camPos, const glm::vec3& camDir, const
 	switch (input.type) {
 	case SDL_KEYDOWN:
 		switch (input.key.keysym.sym) {
-		case SDLK_r:
-		{
-			/* TO DO: Allow picked objects to be rotated by the user
-
-			auto motion = _picked->getMotionState();
-			btTransform transform;
-			motion->getWorldTransform(transform);
-			btQuaternion q = transform.getRotation();
-			btQuaternion r; r.setEulerZYX(0.1f, 0.0f, 0.0f);
-			transform.setRotation(r * q);
-			motion->setWorldTransform(transform);
-			_picked->setMotionState(motion);
-
-			initConstraint(_world, camPos, camDir);*/
-
+		/* rotate the picked object: */
+		case SDLK_1:
+			_rotation.setX(_rotation.getX() + 0.1f);
 			break;
-		}
+		case SDLK_2:
+			_rotation.setY(_rotation.getY() - 0.1f);
+			break;
+		case SDLK_3:
+			_rotation.setZ(_rotation.getZ() + 0.1f);
+			break;
 		}
 		break;
 	case SDL_MOUSEMOTION:
@@ -118,7 +112,9 @@ bool Picker::move(const btVector3 & rayStart, const btVector3 & rayDir) {
 	if (_p2p) {
 		btVector3 dir{ rayDir * _pickDist };
 		btVector3 pivotPoint{ rayStart + dir };
-		
+
+		_p2p->setAngularLowerLimit(_rotation);
+		_p2p->setAngularUpperLimit(_rotation + btVector3{0.01f, 0.01f, 0.01f});
 		_p2p->getFrameOffsetA().setOrigin(pivotPoint);
 		return true;
 	}

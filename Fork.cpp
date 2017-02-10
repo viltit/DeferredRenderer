@@ -33,6 +33,10 @@ void Fork::init() {
 		_chain->last(), glm::vec3{ 0.2f, -0.4f, 0.0f },
 		_scene["Arch"]->physics(), glm::vec3{ 0.3f, 1.3f, 0.0f });
 
+	/* attach force field: */
+	_forceField = new ForceField(_scene["Arch"]->physics(), 30.f, 5.f, false);
+	_forceField->setExclude(_chain->objs());
+
 	/* add the two grappler A 
 	_scene.addChild(new Cuboid{ "xml/cube.xml" }, "Grappler_A");
 	_scene["Grappler_A"]->transform.setScale(glm::vec3{ 0.5f, 2.f, 0.5f });
@@ -150,20 +154,11 @@ void Fork::onSDLEvent(SDL_Event & input, Camera& cam) {
 		case SDLK_KP_5:
 			break;
 		case SDLK_KP_0:
-			if (_motorOn) {
-				_c1->addMotor(1.0f, 100.0f);
-				_c2->addMotor(-1.0f, 100.0f);
-
-				_motorOn = false;
-				std::cout << "Motor off\n";
+			if (_forceField->isActive()) {
+				_forceField->off();
 			}
 			else {
-				_c1->motorOn();
-				_c1->addMotor(-1.0f, 100.0f);
-				_c2->motorOn();
-				_c2->addMotor(1.0f, 100.0f);
-				_motorOn = true;
-				std::cout << "Motor on\n";
+				_forceField->on();
 			}
 			break;
 		}
