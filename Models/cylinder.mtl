@@ -10,6 +10,6 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd BronzeCopper0044.diffuse.png
-map_bump BronzeCopper0044.normal.png
-map_Ks BronzeCopper0044.specular.png
+map_Kd Concrete_1_diffuse.png
+map_bump Concrete_1_normal.png
+map_Ks Concrete_1_specular.png

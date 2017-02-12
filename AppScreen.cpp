@@ -309,9 +309,19 @@ void AppScreen::addCube(float mass, const glm::vec3& pos) {
 
 	glm::vec3 v = _cam.dir() * 10.0f;
 
+	_scene.addChild(new Model{ "models/unitCube/unitCube.obj" }, name);
+	_scene[name]->transform.setPos(pos);
+	_scene[name]->addPhysics(BodyType::cuboid, 10.0f, v);
+
+	/*
+	static int i = 0;
+	std::string name = "Cube" + std::to_string(i++);
+
+	glm::vec3 v = _cam.dir() * 10.0f;
+
 	_scene.addChild(new Cuboid{ "xml/cube.xml" }, pos, name);
 	_scene[name]->transform.setScale(glm::vec3{ 1.0f, 2.0f, 0.5f });
-	_scene[name]->addPhysics(BodyType::cuboid, 10.0f, v);
+	_scene[name]->addPhysics(BodyType::cuboid, 10.0f, v);*/
 }
 
 void AppScreen::addOctahedron(float mass, const glm::vec3 & pos) {
