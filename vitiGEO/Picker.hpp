@@ -14,7 +14,7 @@ public:
 
 	bool onMouseMove(const glm::vec3& camPos, const glm::vec3& camDir, const SDL_Event& input);
 
-	void remove();
+	void remove(bool alignToAxis = false);
 
 	bool hasBody() { return (_picked) ? true : false; }
 

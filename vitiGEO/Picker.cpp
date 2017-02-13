@@ -85,18 +85,8 @@ bool Picker::onMouseMove(const glm::vec3& camPos, const glm::vec3& camDir, const
 			break;
 		case SDLK_4:
 		{
-			_picked->getMotionState()->getWorldTransform(t);
-			
-			btTransform t;
-			t = _picked->getWorldTransform();
-			t.setRotation(btQuaternion{});
-			_picked->setWorldTransform(t);
-
 			btVector3 rayDir = (_picked->getWorldTransform().getOrigin() - rayS).normalize();
-
-			remove();
-			_rotation = btVector3{ 0.0f, 0.0f, 0.0f };
-
+			remove(true);
 			reset(rayS, rayDir);
 		}
 			break;
@@ -117,11 +107,20 @@ bool Picker::onMouseMove(const glm::vec3& camPos, const glm::vec3& camDir, const
 	return keepConstraint;
 }
 
-void Picker::remove() {
+void Picker::remove(bool alignToAxis /*= false*/) {
 	if (_picked) {
 		_picked->forceActivationState(_state);
 		_picked->activate();
 		_picked->setGravity(_gravity);
+		
+		/* align to axes */
+		if (alignToAxis) {
+			btTransform t;
+			t = _picked->getWorldTransform();
+			t.setRotation(btQuaternion{});
+			_picked->setWorldTransform(t);
+		}
+
 		_picked = nullptr;
 		_state = 0;
 	}
@@ -130,6 +129,7 @@ void Picker::remove() {
 		delete _p2p;
 		_p2p = nullptr;
 	}
+	_rotation = btVector3{ 0.0f, 0.0f, 0.0f };
 }
 
 bool Picker::move(const btVector3 & rayStart, const btVector3 & rayDir) {
