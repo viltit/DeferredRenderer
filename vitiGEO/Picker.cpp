@@ -90,9 +90,11 @@ bool Picker::onMouseMove(const glm::vec3& camPos, const glm::vec3& camDir, const
 			reset(rayS, rayDir);
 		}
 			break;
-		case SDLK_5:
+		case SDLK_KP_PLUS:
+			_pickDist += 0.1f;
 			break;
-		case SDLK_6:
+		case SDLK_KP_MINUS:
+			_pickDist -= 0.1f;
 			break;
 		}
 		break;

@@ -54,7 +54,7 @@ public:
 	void drawDebugWin() { _drawDebugWin = _drawDebugWin ? false : true; }
 	void drawDShadow();
 	void drawPShadow();
-	void applyBloom()	{ _applyBloom = _applyBloom ? false : true; }
+	void applyBloom();
 
 	//debug:
 	void gramSchmidt();

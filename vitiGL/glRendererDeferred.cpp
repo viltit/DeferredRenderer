@@ -103,7 +103,7 @@ void glRendererDeferred::draw() {
 		_debug.draw(_dshader, _scene->pShadowTex());
 		_debug2.draw(_dshader, _scene->dShadowTex());
 		_debug3.draw(_dshader, _tbo[color]);
-		_debug4.draw(_dshader, _tbo[normal]);
+		_debug4.draw(_dshader, _tbo[bloom]);
 	}
 }
 
@@ -152,6 +152,24 @@ void glRendererDeferred::drawDShadow() {
 
 void glRendererDeferred::drawPShadow() {
 	_drawPShadow = _drawPShadow ? false : true;
+}
+
+void glRendererDeferred::applyBloom() {
+	_applyBloom = _applyBloom ? false : true;
+
+	Shader* s = _framebuffer.shader();
+	s->on();
+
+	if (_applyBloom) {
+		GLuint uniform = glGetSubroutineIndex(s->program(), GL_FRAGMENT_SHADER, "bloomOn");
+		glUniformSubroutinesuiv(GL_FRAGMENT_SHADER, 1, &uniform);
+	}
+	else {
+		GLuint uniform = glGetSubroutineIndex(s->program(), GL_FRAGMENT_SHADER, "bloomOff");
+		glUniformSubroutinesuiv(GL_FRAGMENT_SHADER, 1, &uniform);
+	}
+
+	s->off();
 }
 
 void glRendererDeferred::gramSchmidt() {
