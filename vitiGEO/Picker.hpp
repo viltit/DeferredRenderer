@@ -21,6 +21,8 @@ public:
 private:
 	bool move(const btVector3& rayStart, const btVector3& rayDir);
 
+	void reset(const btVector3& rayStart, const btVector3& rayDir);
+
 	float						_pickDist;
 
 	btVector3					_pivotA;

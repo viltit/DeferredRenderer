@@ -85,4 +85,12 @@ glm::quat btQuatToGlmQuat(const btQuaternion& q);
 
 glm::vec3 btVecToGlmVec(const btVector3& v);
 
+/*	get Euler angles from quaternion: 
+	(modfied code from https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles) */
+glm::vec3 toEuler(const glm::quat q);
+
+
+/* get Euler angle from btQuaternion: */
+btVector3 toEuler(const btQuaternion& q);
+
 }
