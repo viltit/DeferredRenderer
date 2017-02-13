@@ -18,6 +18,7 @@
 <li>reduce dir shadow acne</li>
 <li>get rid of 'washed-out' colors</li>
 <li>option to save a scene and load a scene</li>
+</ul>
 
 <h2>Random Ideas:</h2>
 <ul>
