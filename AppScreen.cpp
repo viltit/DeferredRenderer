@@ -135,8 +135,8 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 
 	_timer.on();
 
-	/* debug: */
-	_scene.print();
+	/* debug: 
+	_scene.print();*/
 }
 
 
@@ -144,12 +144,14 @@ AppScreen::~AppScreen() {
 }
 
 void AppScreen::onEntry() {
-	SDL_ShowCursor(0);
+	SDL_SetRelativeMouseMode(SDL_TRUE);
+	//SDL_CaptureMouse(SDL_TRUE); not a good solution
 	Physics::instance()->startSimulation();
 	if (_timer.is_paused()) _timer.unpause();
 }
 
 void AppScreen::onExit() {
+	//SDL_CaptureMouse(SDL_FALSE);
 	Physics::instance()->stopSimulation();
 	_timer.pause();
 }
@@ -163,10 +165,6 @@ void AppScreen::update() {
 	/* update all components: */
 	Physics::instance()->update(frameTime);
 	_cam.update();
-
-	//debug: add coordinate system axes:
-	glRendererDebug::instance()->addLine(glm::vec3{ 0.0f, 0.0f, 0.0f }, glm::vec3{ 10.0f, 0.0f, 0.0f }, glm::vec4{ 1.0f, 0.0f, 0.0f, 0.5f });
-	glRendererDebug::instance()->addLine(glm::vec3{ 0.0f, 0.0f, 0.0f }, glm::vec3{ 0.0f, 10.0f, 0.0f }, glm::vec4{ 0.0f, 1.0f, 0.0f, 0.5f });
 
 	updateInput();
 	_scene.update(frameTime);
@@ -291,8 +289,6 @@ void AppScreen::updateInput() {
 				/* get the world space position of the mouse: */
 				glm::vec3 rayS = _cam.pos();
 				glm::vec3 rayDir = _cam.dir();
-
-				DebugInfo::instance()->addStaticLine(glm::vec4{ rayS, 0.1f }, glm::vec4{ rayDir * 100.0f , 0.1f });
 				Physics::instance()->picker(rayS, rayDir);
 			}
 				break;

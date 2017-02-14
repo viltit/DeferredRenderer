@@ -67,7 +67,6 @@ Window::Window(const std::string & name, unsigned int width, unsigned int height
 #ifdef CONSOLE_LOG
 	std::cout << "\t\tfinished.\n";
 #endif
-
 }
 
 Window::~Window() {

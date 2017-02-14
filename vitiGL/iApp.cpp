@@ -35,6 +35,7 @@ void IApp::run() {
 		draw();
 		_window->swap();
 		update();
+		
 	}
 }
 
