@@ -6,7 +6,7 @@
 <li>Rework gui. Make a cegui-layout file. Sliders instead of input fields.</li>
 <li>Object Picking:
   <ul>
-  <li>Rotate to align to axis</li>
+  <li>Rotate to align to axis-<em>done</em></li>
   <li>Helper gui for the user</li>
   <li>maybe: automaticaly put another object on top of the picked one</li>
   </ul></li>
