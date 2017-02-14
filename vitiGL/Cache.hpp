@@ -18,11 +18,34 @@
 #include <glm/glm.hpp>
 
 #include <AABB.hpp>
-
+#include "Model.hpp"
 
 namespace vitiGL {
 
 struct slData;
+
+/*	Model cache ---------------------------------------------------------------- */
+struct ModelData {
+	std::vector<std::vector<Vertex>> vertices;
+	std::vector<std::vector<GLuint>> indices;
+	std::vector<std::vector<std::pair<int, GLuint>>> textures;
+};
+
+
+class ModelCache {
+public:
+	ModelCache();
+	~ModelCache();
+
+	bool isLoaded		(const std::string& modelPath);
+
+	ModelData& pull		(const std::string& modelPath);
+	void push			(const std::string& modelPath, ModelData model);
+
+private:
+	std::map<std::string, ModelData> _cache;
+};
+
 
 /* Vertex buffer objects and vertex arrray objects: -------------------------- */
 
@@ -97,10 +120,15 @@ public:
 	static void pushVertex(const std::string & meshName, GLuint vao, GLuint vbo, 
 		int numVertices, vitiGEO::AABB aabb, const std::vector<glm::vec3>& Vertices);
 
+	static bool			isModelLoaded(const std::string& modelPath);
+	static ModelData	pullModel(const std::string& modelPath);
+	static void			pushModel(const std::string& modelPath, ModelData model);
+
 private:
 	static TextureCache  _textureCache;
 	static ShapeCache	 _shapeCache;
 	static VertexCache	 _vertexCache;
+	static ModelCache	 _modelCache;
 };
 
 }

@@ -17,8 +17,54 @@ namespace vitiGL {
 
 int Model::id = 0;
 
-Model::Model(const std::string& filePath, bool textureFolder)
-{
+Model::Model(const std::string& filePath, bool textureFolder) {
+	if (Cache::isModelLoaded(filePath)) loadFromCache(filePath);
+	else loadFromFile(filePath, textureFolder);
+}
+
+
+Model::~Model() {
+}
+
+std::vector<vitiGEO::AABB*> Model::aabb() {
+	std::vector<vitiGEO::AABB*> temp;
+	for (auto& C : _children) {
+		Mesh* mesh = static_cast<Mesh*>(C->obj());
+		temp.push_back(mesh->getAABB());
+	}
+
+	return temp;
+}
+
+std::vector<std::vector<glm::vec3>> Model::vertices() {
+	std::vector<std::vector<glm::vec3>> vertices;
+	for (auto& C : _children) {
+		Mesh* mesh = static_cast<Mesh*>(C->obj());
+		vertices.push_back(mesh->vertices());
+	}
+	return vertices;
+}
+
+void Model::loadFromCache(const std::string & filePath) {
+	ModelData modelData = Cache::pullModel(filePath);
+
+	assert(modelData.vertices.size() == modelData.indices.size() == modelData.textures.size());
+
+	if (modelData.vertices.size() == 1) {
+		Mesh* mesh = new Mesh{ modelData.vertices[0], modelData.indices[0], modelData.textures[0] };
+		_obj = mesh;
+	}
+	else {
+		for (size_t i = 0; i < modelData.vertices.size(); i++) {
+			Mesh* mesh = new Mesh{ modelData.vertices[0], modelData.indices[0], modelData.textures[0] };
+			std::string meshName = _name + ".child" + std::to_string(++id);
+			SceneNode* child = new SceneNode{ meshName, mesh, glm::vec3{} };
+			addChild(child);
+		}
+	}
+}
+
+void Model::loadFromFile(const std::string & filePath, bool textureFolder) {
 #ifdef CONSOLE_LOG
 	std::cout << "\nSTART PROCESSING OBJ FILE " << filePath << std::endl;
 	std::cout << "------------------------------------------------------\n";
@@ -46,6 +92,9 @@ Model::Model(const std::string& filePath, bool textureFolder)
 	bool hasChildren = true;
 	if (shapes.size() == 1) hasChildren = false;
 
+	/* prepare variables to put the model in the cache: */
+	ModelData modelData;
+
 	/*	create a vitiGL::Mesh for each tinyobj::shape: */
 	for (const auto& shape : shapes) {
 		std::cout << "Processing a shape named " << shape.name << std::endl;
@@ -68,9 +117,9 @@ Model::Model(const std::string& filePath, bool textureFolder)
 
 			/* TO DO: Check if normals are delivered
 			vertex.normal = {
-				attribs.normals[3 * index.normal_index + 0],
-				attribs.normals[3 * index.normal_index + 1],
-				attribs.normals[3 * index.normal_index + 2],
+			attribs.normals[3 * index.normal_index + 0],
+			attribs.normals[3 * index.normal_index + 1],
+			attribs.normals[3 * index.normal_index + 2],
 			};*/
 
 			if (uniqueVertices.count(vertex) == 0) {
@@ -80,7 +129,7 @@ Model::Model(const std::string& filePath, bool textureFolder)
 			indices.push_back(GLuint(uniqueVertices[vertex]));
 		}
 
-		/* get the textures: 
+		/* get the textures:
 		std::cout << "Material properties:\n";
 		std::cout << "--------------------\n";
 		std::cout << "Ambient texture: " << materials[i].ambient_texname << std::endl;
@@ -106,8 +155,8 @@ Model::Model(const std::string& filePath, bool textureFolder)
 			try {
 				std::cout << "Trying to open diffuse texture file " << basePath + materials[matIndex].diffuse_texname << std::endl;
 				textures.push_back(std::make_pair(
-						TEXTURE_DIFFUSE,
-						Cache::getTexture(basePath + materials[matIndex].diffuse_texname))
+					TEXTURE_DIFFUSE,
+					Cache::getTexture(basePath + materials[matIndex].diffuse_texname))
 				);
 			}
 			catch (fileError) {
@@ -118,7 +167,7 @@ Model::Model(const std::string& filePath, bool textureFolder)
 				textures.push_back(std::make_pair(
 					TEXTURE_SPECULAR,
 					Cache::getTexture(basePath + materials[matIndex].specular_texname))
-				);	
+				);
 			}
 			catch (fileError) {
 			}
@@ -142,7 +191,6 @@ Model::Model(const std::string& filePath, bool textureFolder)
 			}
 			catch (fileError) {
 			}
-
 		}
 
 		/* if we only have one mesh, the model directly contains the mesh: */
@@ -162,30 +210,15 @@ Model::Model(const std::string& filePath, bool textureFolder)
 
 			addChild(child);
 		}
+
+		/* store the values for the cache */
+		modelData.vertices.push_back(vertices);
+		modelData.indices.push_back(indices);
+		modelData.textures.push_back(textures);
 	}
 	std::cout << "END PROCESSING OBJ FILE " << filePath << std::endl << std::endl;
-}
 
-
-Model::~Model() {
-}
-
-std::vector<vitiGEO::AABB*> Model::aabb() {
-	std::vector<vitiGEO::AABB*> temp;
-	for (auto& C : _children) {
-		Mesh* mesh = static_cast<Mesh*>(C->obj());
-		temp.push_back(mesh->getAABB());
-	}
-
-	return temp;
-}
-
-std::vector<std::vector<glm::vec3>> Model::vertices() {
-	std::vector<std::vector<glm::vec3>> vertices;
-	for (auto& C : _children) {
-		Mesh* mesh = static_cast<Mesh*>(C->obj());
-		vertices.push_back(mesh->vertices());
-	}
-	return vertices;
+	/* put the model in the cache: */
+	Cache::pushModel(filePath, modelData);
 }
 }

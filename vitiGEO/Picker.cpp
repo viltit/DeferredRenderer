@@ -96,6 +96,9 @@ bool Picker::onMouseMove(const glm::vec3& camPos, const glm::vec3& camDir, const
 		case SDLK_KP_MINUS:
 			_pickDist -= 0.1f;
 			break;
+		//test: add another cube on top of the picked one
+		case SDLK_5:
+			break;
 		}
 		break;
 	case SDL_MOUSEMOTION:

@@ -13,6 +13,34 @@ namespace vitiGL {
 TextureCache	Cache::_textureCache;
 ShapeCache		Cache::_shapeCache;
 VertexCache		Cache::_vertexCache;
+ModelCache		Cache::_modelCache;
+
+/* MODEL BUFFER ---------------------------------------------------------------------------- */
+ModelCache::ModelCache() {
+}
+
+ModelCache::~ModelCache() {
+	//to do
+}
+
+bool ModelCache::isLoaded(const std::string & modelPath) {
+	auto i = _cache.find(modelPath);
+	if (i != _cache.end()) return true;
+	return false;
+}
+
+ModelData& ModelCache::pull(const std::string & modelPath) {
+	auto i = _cache.find(modelPath);
+	if (i == _cache.end()) throw vitiError(("<VertexCache::pull>Trying to access inexisting data (name identifier = " + modelPath + ").").c_str());
+
+	return (i->second);
+}
+
+void ModelCache::push(const std::string & modelPath, ModelData model) {
+	auto i = _cache.find(modelPath);
+	if (i != _cache.end()) throw vitiError(("<VertexCache::push>Trying to push already existing data (name identifier = " + modelPath + ").").c_str());
+	_cache.insert(std::make_pair(modelPath, model));
+}
 
 
 /*	VERTEX BUFFERS ------------------------------------------------------------------------ */
@@ -152,5 +180,16 @@ void Cache::pushVertex(const std::string & meshName, GLuint vao, GLuint vbo, int
 	_vertexCache.push(meshName, vao, vbo, numVertices, aabb, Vertices);
 }
 
+bool Cache::isModelLoaded(const std::string& modelPath) {
+	return _modelCache.isLoaded(modelPath);
+}
+
+ModelData Cache::pullModel(const std::string& modelPath) {
+	return _modelCache.pull(modelPath);
+}
+
+void Cache::pushModel(const std::string& modelPath, ModelData model) {
+	_modelCache.push(modelPath, model);
+}
 
 }

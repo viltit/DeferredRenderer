@@ -27,6 +27,9 @@ public:
 	std::vector<std::vector<glm::vec3>> vertices();
 
 private:
+	void loadFromCache(const std::string& filePath);
+	void loadFromFile(const std::string& filePath, bool textureFolder);
+
 	static int id;
 };
 
