@@ -79,7 +79,7 @@ void glRendererDeferred::draw() {
 	drawLight();
 	drawFinal();
 
-	/* apply pp-effects: */
+	/* draw Skybox and transparent objects: */
 	_framebuffer.on();
 	_quad.draw(_dshader, _tbo[finalCol]);
 
@@ -88,13 +88,8 @@ void glRendererDeferred::draw() {
 
 	_framebuffer.off();
 
-	if (_applyBloom) {
-		Shader* s = _framebuffer.shader();
-		s->on();
-		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D, _tbo[bloom]);
-		glUniform1i(s->getUniform("bloom"), 2);
-	}
+	/* apply bloom */
+	drawBloom();
 
 	/* draw the final image on the screen: */
 	_framebuffer.draw();
@@ -152,24 +147,6 @@ void glRendererDeferred::drawDShadow() {
 
 void glRendererDeferred::drawPShadow() {
 	_drawPShadow = _drawPShadow ? false : true;
-}
-
-void glRendererDeferred::applyBloom() {
-	_applyBloom = _applyBloom ? false : true;
-
-	Shader* s = _framebuffer.shader();
-	s->on();
-
-	if (_applyBloom) {
-		GLuint uniform = glGetSubroutineIndex(s->program(), GL_FRAGMENT_SHADER, "bloomOn");
-		glUniformSubroutinesuiv(GL_FRAGMENT_SHADER, 1, &uniform);
-	}
-	else {
-		GLuint uniform = glGetSubroutineIndex(s->program(), GL_FRAGMENT_SHADER, "bloomOff");
-		glUniformSubroutinesuiv(GL_FRAGMENT_SHADER, 1, &uniform);
-	}
-
-	s->off();
 }
 
 void glRendererDeferred::gramSchmidt() {
@@ -370,6 +347,31 @@ void glRendererDeferred::drawFinal() {
 	}
 
 	glEnable(GL_DEPTH_TEST);
+}
+
+void glRendererDeferred::drawBloom() {
+	Shader* s = _framebuffer.shader();
+	s->on();
+	if (_applyBloom) {
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, _tbo[bloom]);
+		glUniform1i(s->getUniform("bloom"), 2);
+
+		/* This did nnot work for some reason 
+		GLuint uniform = glGetSubroutineIndex(s->program(), GL_FRAGMENT_SHADER, "bloomOn");
+		glUniformSubroutinesuiv(GL_FRAGMENT_SHADER, 1, &uniform);*/
+
+		glUniform1i(s->getUniform("applyBloom"), 1);
+
+	}
+	else {
+		/*
+		GLuint uniform = glGetSubroutineIndex(s->program(), GL_FRAGMENT_SHADER, "blomOff");
+		glUniformSubroutinesuiv(GL_FRAGMENT_SHADER, 1, &uniform);*/
+
+		glUniform1i(s->getUniform("applyBloom"), 0);
+	}
+	s->off();
 }
 
 void glRendererDeferred::initGeoBuffer() {

@@ -1,4 +1,4 @@
-#version 400 core
+#version 450 core
 
 in vec2 fUV;
 out vec4 color;
@@ -14,9 +14,11 @@ uniform float height;
 uniform float gamma = 1.2f;
 uniform float exposure = 0.4f;
 
-/* subroutine for bloom on and off: */
+uniform int applyBloom;
+
+/* subroutine for bloom on and off: 
 subroutine vec3 GetBloom();
-subroutine uniform GetBloom getBloom;
+subroutine uniform GetBloom getBloom;*/
 
 void main() {
 	float offset_x = 1.0f / width;
@@ -47,8 +49,10 @@ void main() {
 	color = vec4(col, 1.0);
 
 	//bloom:
-	vec4 bloomCol = vec4(getBloom(), 0.0f);
-	color += bloomCol;
+	if (applyBloom == 1) {
+		vec4 bloomCol = vec4(texture(bloom, fUV).rgb, 0.0f);
+		color += bloomCol;
+	}
 
 	//exposure tone mapping:
 	color.rgb = vec3(1.0f) - exp(-color.rgb * exposure);
@@ -57,7 +61,7 @@ void main() {
 	color.rgb = pow(color.rgb, vec3(1.0 / gamma));
 }
 
-/* subroutines for bloom */
+/* subroutines for bloom 
 subroutine (GetBloom)
 vec3 bloomOn() {
 	return texture(bloom, fUV).rgb;
@@ -67,4 +71,4 @@ subroutine (GetBloom)
 vec3 bloomOff() {
 	color = vec4(0.0f, 0.0f, 0.0f, 1.0f);
 	return vec3(0.0f, 0.0f, 100000.0f);
-}
+}*/

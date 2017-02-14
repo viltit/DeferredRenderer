@@ -54,7 +54,7 @@ public:
 	void drawDebugWin() { _drawDebugWin = _drawDebugWin ? false : true; }
 	void drawDShadow();
 	void drawPShadow();
-	void applyBloom();
+	void applyBloom()	{ _applyBloom = _applyBloom ? false : true; }
 
 	//debug:
 	void gramSchmidt();
@@ -87,6 +87,9 @@ protected:
 	void		drawGeo();
 	void		drawLight();
 	void		drawFinal();
+
+	/* post processing drawing stages: */
+	void		drawBloom();
 
 	/* forward drawing: */
 	void		drawSkybox();
