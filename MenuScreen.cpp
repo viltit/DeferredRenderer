@@ -13,7 +13,8 @@ using namespace vitiGEO;
 MenuScreen::MenuScreen(App* app, AppScreen* appScreen, vitiGL::Window* window) 
 	:	IAppScreen	{ app },
 		_appScreen  { appScreen },
-		_gui		{ "GUI", "AlfiskoSkin.scheme" }
+		_gui		{ "GUI", "AlfiskoSkin.scheme" },
+		_window		{ window }
 {
 	assert(_appScreen);
 
@@ -26,7 +27,8 @@ MenuScreen::MenuScreen(App* app, AppScreen* appScreen, vitiGL::Window* window)
 
 	SDL_ShowCursor(0);
 
-	initGUI();
+	_menu = _gui.createLayout("layouts/menu.layout");
+	//initGUI();
 }
 
 
@@ -34,7 +36,7 @@ MenuScreen::~MenuScreen() {
 }
 
 void MenuScreen::onEntry() {
-	/* get lights RGB values and other data: */
+	/* get lights RGB values and other data:
 	dLight* light = _appScreen->_scene.findDLight("dlight");
 
 	if (light) {
@@ -79,7 +81,7 @@ void MenuScreen::onEntry() {
 
 	_sliders["gammaSlider"]->setCurrentValue(_appScreen->_drender.gamma() / 3.0f);
 	_sliders["bloomSlider"]->setCurrentValue(_appScreen->_drender.bloomTreshold() / 3.0f);
-	_sliders["hdrSlider"]->setCurrentValue(_appScreen->_drender.exposure() / 3.0f);
+	_sliders["hdrSlider"]->setCurrentValue(_appScreen->_drender.exposure() / 3.0f); */
 }
 
 void MenuScreen::onExit() {

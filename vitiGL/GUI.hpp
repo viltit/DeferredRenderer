@@ -28,7 +28,7 @@ public:
 	CEGUI::Window* createWidget(const glm::vec4& destRectPercent, const glm::vec4& destRectPixel,
 								const std::string& scheme, const std::string& name = "");
 
-	CEGUI::Window* createConsole(const std::string& layoutFile);
+	CEGUI::Window* createLayout(const std::string& layoutFile);
 
 	void setWidgetDestRect(CEGUI::Window* widget, const glm::vec4& destRectPercent, const glm::vec4& destRectPixel);
 

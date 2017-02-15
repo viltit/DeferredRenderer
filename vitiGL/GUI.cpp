@@ -57,7 +57,7 @@ void GUI::draw() {
 	glEnable(GL_DEPTH_TEST);
 }
 
-CEGUI::Window* GUI::createConsole(const std::string & layoutFile) {
+CEGUI::Window* GUI::createLayout(const std::string & layoutFile) {
 	CEGUI::Window* window = CEGUI::WindowManager::getSingleton().loadLayoutFromFile(_resourceDir + "/" + layoutFile, "console");
 	_root->addChild(window);
 	return window;

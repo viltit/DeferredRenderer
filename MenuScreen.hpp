@@ -58,6 +58,9 @@ private:
 	int getInt(const std::string& widgetName);
 	float getFloat(const std::string& widgetName);
 
+	CEGUI::Window*		_menu;
+	vitiGL::Window*		_window;
+
 	AppScreen*			_appScreen;
 	vitiGL::GUI			_gui;
 	vitiGL::Timer		_timer;

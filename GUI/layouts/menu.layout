@@ -2,38 +2,39 @@
 
 <GUILayout version="4" >
     <Window type="DefaultWindow" name="DefaultWindow" >
-        <Property name="Area" value="{{0,0},{0,0},{1,0},{1,0}}" />
-        <Property name="Font" value="DejaVuSans-12" />
-        <Property name="MaxSize" value="{{1,0},{1,0}}" />
+        <Property name="Font" value="DejaVuSans-10" />
         <Window type="AlfiskoSkin/FrameWindow" name="General" >
-            <Property name="Area" value="{{0,0},{0,5},{0.3,-112},{0.3,498}}" />
+            <Property name="Area" value="{{0.05,0},{0.05,0},{0.2,0},{0.9,0}}" />
             <Property name="Text" value="General Settings" />
-            <Property name="TitlebarFont" value="DejaVuSans-12" />
+            <Property name="TitlebarFont" value="DejaVuSans-10" />
             <AutoWindow namePath="__auto_titlebar__" >
-                <Property name="Font" value="DejaVuSans-12" />
+                <Property name="Font" value="DejaVuSans-10" />
                 <Property name="AlwaysOnTop" value="false" />
             </AutoWindow>
             <Window type="AlfiskoSkin/Checkbox" name="dirShadow" >
-                <Property name="Area" value="{{0,10},{0,10},{0,30},{0,42}}" />
+                <Property name="Area" value="{{0.1,0},{0.0005,0},{0.2,0},{0.11,0}}" />
             </Window>
             <Window type="AlfiskoSkin/Checkbox" name="pointShadow" >
-                <Property name="Area" value="{{0,10},{0,40},{0,30},{0,72}}" />
+                <Property name="Area" value="{{0,5},{0,35},{0,30},{0,65}}" />
             </Window>
             <Window type="AlfiskoSkin/Checkbox" name="bloom" >
-                <Property name="Area" value="{{0,10},{0,70},{0,30},{0,102}}" />
+                <Property name="Area" value="{{0,5},{0,70},{0,30},{0,105}}" />
             </Window>
             <Window type="AlfiskoSkin/Checkbox" name="debugChecker" >
-                <Property name="Area" value="{{0,10},{0,130},{0,30},{0,162}}" />
+                <Property name="Area" value="{{0,5},{0,120},{0,30},{0,155}}" />
             </Window>
             <Window type="AlfiskoSkin/Checkbox" name="wireframeChecker" >
-                <Property name="Area" value="{{0,10},{0,160},{0,30},{0,192}}" />
+                <Property name="Area" value="{{0,5},{0,160},{0,30},{0,195}}" />
             </Window>
             <Window type="AlfiskoSkin/Checkbox" name="normalsChecker" >
-                <Property name="Area" value="{{0,10},{0,190},{0,30},{0,222}}" />
+                <Property name="Area" value="{{0,5},{0,200},{0,30},{0,235}}" />
+            </Window>
+			<Window type="AlfiskoSkin/Checkbox" name="physicsChecker" >
+                <Property name="Area" value="{{0,5},{0,240},{0,30},{0,275}}" />
             </Window>
             <Window type="AlfiskoSkin/Label" name="dShadowLabel" >
-                <Property name="Area" value="{{0,45},{0,10},{0,224},{0,42}}" />
-                <Property name="Font" value="DejaVuSans-12" />
+                <Property name="Area" value="{{0,50},{0,5},{0,250},{0,30}}" />
+                <Property name="Font" value="DejaVuSans-10" />
                 <Property name="Text" value="Directional Shadow" />
                 <Property name="MaxSize" value="{{1,0},{1,0}}" />
                 <Property name="HorzFormatting" value="LeftAligned" />
@@ -41,7 +42,7 @@
             </Window>
             <Window type="AlfiskoSkin/Label" name="pShadowLabel" >
                 <Property name="Area" value="{{0,45},{0,40},{0,224},{0,72}}" />
-                <Property name="Font" value="DejaVuSans-12" />
+                <Property name="Font" value="DejaVuSans-10" />
                 <Property name="Text" value="Point Shadow" />
                 <Property name="MaxSize" value="{{1,0},{1,0}}" />
                 <Property name="HorzFormatting" value="LeftAligned" />
@@ -49,7 +50,7 @@
             </Window>
             <Window type="AlfiskoSkin/Label" name="bloomLabel" >
                 <Property name="Area" value="{{0,45},{0,70},{0,224},{0,102}}" />
-                <Property name="Font" value="DejaVuSans-12" />
+                <Property name="Font" value="DejaVuSans-10" />
                 <Property name="Text" value="Bloom" />
                 <Property name="MaxSize" value="{{1,0},{1,0}}" />
                 <Property name="HorzFormatting" value="LeftAligned" />
@@ -57,7 +58,7 @@
             </Window>
             <Window type="AlfiskoSkin/Label" name="debugLabel" >
                 <Property name="Area" value="{{0,45},{0,130},{0,224},{0,162}}" />
-                <Property name="Font" value="DejaVuSans-12" />
+                <Property name="Font" value="DejaVuSans-10" />
                 <Property name="Text" value="Debug Window" />
                 <Property name="MaxSize" value="{{1,0},{1,0}}" />
                 <Property name="HorzFormatting" value="LeftAligned" />
@@ -65,7 +66,7 @@
             </Window>
             <Window type="AlfiskoSkin/Label" name="wireframeLabel" >
                 <Property name="Area" value="{{0,45},{0,160},{0,224},{0,192}}" />
-                <Property name="Font" value="DejaVuSans-12" />
+                <Property name="Font" value="DejaVuSans-10" />
                 <Property name="Text" value="Draw Wireframes" />
                 <Property name="MaxSize" value="{{1,0},{1,0}}" />
                 <Property name="HorzFormatting" value="LeftAligned" />
@@ -73,18 +74,15 @@
             </Window>
             <Window type="AlfiskoSkin/Label" name="normalsLabel" >
                 <Property name="Area" value="{{0,45},{0,190},{0,224},{0,222}}" />
-                <Property name="Font" value="DejaVuSans-12" />
+                <Property name="Font" value="DejaVuSans-10" />
                 <Property name="Text" value="Draw Vertex Normals" />
                 <Property name="MaxSize" value="{{1,0},{1,0}}" />
                 <Property name="HorzFormatting" value="LeftAligned" />
                 <Property name="NormalTextColour" value="FFAAAAAA" />
             </Window>
-            <Window type="AlfiskoSkin/Checkbox" name="physicsChecker" >
-                <Property name="Area" value="{{0,10},{0,220},{0,30},{0,252}}" />
-            </Window>
             <Window type="AlfiskoSkin/Label" name="physicsLabel" >
                 <Property name="Area" value="{{0,45},{0,220},{0,224},{0,252}}" />
-                <Property name="Font" value="DejaVuSans-12" />
+                <Property name="Font" value="DejaVuSans-10" />
                 <Property name="Text" value="Draw Physic Shapes" />
                 <Property name="MaxSize" value="{{1,0},{1,0}}" />
                 <Property name="HorzFormatting" value="LeftAligned" />
@@ -95,14 +93,14 @@
             </Window>
             <Window type="AlfiskoSkin/Label" name="gammaSLabel" >
                 <Property name="Area" value="{{0,10},{0,330},{0,225},{0,362}}" />
-                <Property name="Font" value="DejaVuSans-12" />
+                <Property name="Font" value="DejaVuSans-10" />
                 <Property name="Text" value="Gamma correction" />
                 <Property name="MaxSize" value="{{1,0},{1,0}}" />
                 <Property name="NormalTextColour" value="FFAAAAAA" />
             </Window>
             <Window type="AlfiskoSkin/Label" name="bloomSLabel" >
                 <Property name="Area" value="{{0,10},{0,425},{0,225},{0,457}}" />
-                <Property name="Font" value="DejaVuSans-12" />
+                <Property name="Font" value="DejaVuSans-10" />
                 <Property name="Text" value="Bloom treshhold" />
                 <Property name="MaxSize" value="{{1,0},{1,0}}" />
                 <Property name="NormalTextColour" value="FFAAAAAA" />
@@ -112,7 +110,7 @@
             </Window>
             <Window type="AlfiskoSkin/Label" name="hdrSLabel" >
                 <Property name="Area" value="{{0,10},{0,520},{0,225},{0,552}}" />
-                <Property name="Font" value="DejaVuSans-12" />
+                <Property name="Font" value="DejaVuSans-10" />
                 <Property name="Text" value="HDR Exposure Exponent" />
                 <Property name="MaxSize" value="{{1,0},{1,0}}" />
                 <Property name="NormalTextColour" value="FFAAAAAA" />
@@ -122,25 +120,25 @@
             </Window>
             <Window type="AlfiskoSkin/Button" name="continueButton" >
                 <Property name="Area" value="{{0,129},{0,625},{0,225},{0,665}}" />
-                <Property name="Font" value="DejaVuSans-12" />
+                <Property name="Font" value="DejaVuSans-10" />
                 <Property name="Text" value="Continue" />
             </Window>
             <Window type="AlfiskoSkin/Button" name="quitButton" >
                 <Property name="Area" value="{{0,19},{0,625},{0,115},{0,665}}" />
-                <Property name="Font" value="DejaVuSans-12" />
+                <Property name="Font" value="DejaVuSans-10" />
                 <Property name="Text" value="Quit" />
             </Window>
         </Window>
         <Window type="AlfiskoSkin/FrameWindow" name="PLight" >
             <Property name="Area" value="{{0,1000},{0,5},{0.3,891},{0.3,209}}" />
-            <Property name="Font" value="DejaVuSans-12" />
+            <Property name="Font" value="DejaVuSans-10" />
             <Property name="Text" value="Point Light" />
             <AutoWindow namePath="__auto_titlebar__" >
                 <Property name="AlwaysOnTop" value="false" />
             </AutoWindow>
             <Window type="AlfiskoSkin/Label" name="pLightSpecularLabel" >
                 <Property name="Area" value="{{0,1},{0,125},{0,240},{0,157}}" />
-                <Property name="Font" value="DejaVuSans-12" />
+                <Property name="Font" value="DejaVuSans-10" />
                 <Property name="Text" value="Specular RGB" />
                 <Property name="MaxSize" value="{{1,0},{1,0}}" />
                 <Property name="NormalTextColour" value="FFAAAAAA" />
@@ -152,7 +150,7 @@
             </Window>
             <Window type="AlfiskoSkin/Label" name="pLightDiffuseLabel" >
                 <Property name="Area" value="{{0,1},{0,5},{0,240},{0,37}}" />
-                <Property name="Font" value="DejaVuSans-12" />
+                <Property name="Font" value="DejaVuSans-10" />
                 <Property name="Text" value="Diffuse RGB" />
                 <Property name="MaxSize" value="{{1,0},{1,0}}" />
                 <Property name="NormalTextColour" value="FFAAAAAA" />
@@ -180,7 +178,7 @@
             </Window>
             <Window type="AlfiskoSkin/Label" name="pLightPosLabel" >
                 <Property name="Area" value="{{0,1},{0,245},{0,240},{0,277}}" />
-                <Property name="Font" value="DejaVuSans-12" />
+                <Property name="Font" value="DejaVuSans-10" />
                 <Property name="Text" value="Position XYZ" />
                 <Property name="MaxSize" value="{{1,0},{1,0}}" />
                 <Property name="NormalTextColour" value="FFAAAAAA" />
@@ -201,7 +199,7 @@
         </Window>
         <Window type="AlfiskoSkin/FrameWindow" name="DLight" >
             <Property name="Area" value="{{0,735},{0,5},{0.3,613},{0.3,209}}" />
-            <Property name="Font" value="DejaVuSans-12" />
+            <Property name="Font" value="DejaVuSans-10" />
             <Property name="Text" value="Directional Light" />
             <AutoWindow namePath="__auto_titlebar__" >
                 <Property name="AlwaysOnTop" value="false" />
@@ -224,7 +222,7 @@
             </Window>
             <Window type="AlfiskoSkin/Label" name="dLightSpecularLabel" >
                 <Property name="Area" value="{{0,-2},{0,125},{0,237},{0,157}}" />
-                <Property name="Font" value="DejaVuSans-12" />
+                <Property name="Font" value="DejaVuSans-10" />
                 <Property name="Text" value="Specular RGB" />
                 <Property name="MaxSize" value="{{1,0},{1,0}}" />
                 <Property name="NormalTextColour" value="FFAAAAAA" />
@@ -240,7 +238,7 @@
             </Window>
             <Window type="AlfiskoSkin/Label" name="dLightDirLabel" >
                 <Property name="Area" value="{{0,-2},{0,245},{0,237},{0,277}}" />
-                <Property name="Font" value="DejaVuSans-12" />
+                <Property name="Font" value="DejaVuSans-10" />
                 <Property name="Text" value="Direction XYZ" />
                 <Property name="MaxSize" value="{{1,0},{1,0}}" />
                 <Property name="NormalTextColour" value="FFAAAAAA" />
@@ -252,7 +250,7 @@
             </Window>
             <Window type="AlfiskoSkin/Label" name="dLightDiffuseLabel" >
                 <Property name="Area" value="{{0,2},{0,5},{0,241},{0,37}}" />
-                <Property name="Font" value="DejaVuSans-12" />
+                <Property name="Font" value="DejaVuSans-10" />
                 <Property name="Text" value="Diffuse RGB" />
                 <Property name="MaxSize" value="{{1,0},{1,0}}" />
                 <Property name="NormalTextColour" value="FFAAAAAA" />

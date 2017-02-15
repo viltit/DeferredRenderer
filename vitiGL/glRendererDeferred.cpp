@@ -52,6 +52,8 @@ namespace vitiGL {
 	glUniform2f(_lshader.getUniform("texelSize"), _texelSize.x, _texelSize.y); // to do: not needed every frame!
 	_lshader.off();
 
+	_framebuffer.setKernel(Kernel::sharpen);
+
 	initGeoBuffer();
 	initLightBuffer();
 	initFinalBuffer();

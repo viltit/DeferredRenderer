@@ -5,7 +5,7 @@
 
 int main(int argc, char** argv) {
 	try {
-		App app("test", 600, 600, vitiGL::wStyle::full);
+		App app("Renderer");
 		app.run();
 	}
 	catch (...) {
