@@ -145,13 +145,13 @@ AppScreen::~AppScreen() {
 
 void AppScreen::onEntry() {
 	SDL_SetRelativeMouseMode(SDL_TRUE);
-	//SDL_CaptureMouse(SDL_TRUE); not a good solution
+	SDL_CaptureMouse(SDL_TRUE);
 	Physics::instance()->startSimulation();
 	if (_timer.is_paused()) _timer.unpause();
 }
 
 void AppScreen::onExit() {
-	//SDL_CaptureMouse(SDL_FALSE);
+	SDL_CaptureMouse(SDL_FALSE);
 	Physics::instance()->stopSimulation();
 	_timer.pause();
 }
@@ -277,7 +277,10 @@ void AppScreen::updateInput() {
 		case SDL_MOUSEMOTION:
 			int dx, dy;
 			SDL_GetMouseState(&dx, &dy);
+			std::cout << "Mouse pos: " << dx << "/" << dy << std::endl;
 			_cam.rotate(dx, dy);
+			/* reset the mouse to the screen-center:*/
+			_window->centerMouse();
 			break;
 		case SDL_MOUSEWHEEL:
 			_cam.zoom(input.wheel.y);

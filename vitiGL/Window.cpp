@@ -82,4 +82,8 @@ void Window::swap() const {
 	SDL_GL_SwapWindow(window);
 }
 
+void Window::centerMouse() const {
+	SDL_WarpMouseInWindow(window, w / 2, h / 2);
+}
+
 }

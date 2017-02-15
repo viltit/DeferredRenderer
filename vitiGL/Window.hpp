@@ -32,6 +32,8 @@ public:
 	void	clear() const;		//Clear screen
 	void	swap() const;		//Update screen
 
+	void	centerMouse() const;
+
 	/* getters, inline: */
 	int		width() const { return w; }
 	int		height() const { return h; }
