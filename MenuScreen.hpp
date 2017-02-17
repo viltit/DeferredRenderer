@@ -26,7 +26,7 @@ private:
 	void initGUI();
 	void initRadioButtons();
 	void initSliders();
-	glm::vec2 initRGBInputs(const glm::vec2& startPos, const glm::vec2& buttonSize, const glm::vec2& textSize);
+	void initRGBInputs();
 
 	void updateInput();
 
@@ -42,7 +42,6 @@ private:
 	void onDShadowToggled();
 	void onBloomToggled();
 
-	void onDLightAmbient();
 	void onDLightDiffuse();
 	void onDLightSpecular();
 	void onDLightVector();
@@ -66,7 +65,7 @@ private:
 	vitiGL::Timer		_timer;
 
 	/* this maps stores all editboxes that can change the scenes values: */
-	std::map<std::string, CEGUI::Editbox*> _values;
+	std::map<std::string, CEGUI::Slider*> _values;
 
 	/* this map stores all sliders: */
 	std::map<std::string, CEGUI::Slider*> _sliders;

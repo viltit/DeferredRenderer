@@ -184,15 +184,15 @@
                 <Property name="NormalTextColour" value="FFAAAAAA" />
                 <Property name="HorizontalAlignment" value="Centre" />
             </Window>
-            <Window type="AlfiskoSkin/HorizontalSlider" name="pLlightPosX" >
+            <Window type="AlfiskoSkin/HorizontalSlider" name="pLightPosX" >
                 <Property name="Area" value="{{0.03,0},{0.52,0},{0.97,0},{0.58,0}}" />
                 <Property name="Text" value="R" />
             </Window>
-            <Window type="AlfiskoSkin/HorizontalSlider" name="pLlightPosY" >
+            <Window type="AlfiskoSkin/HorizontalSlider" name="pLightPosY" >
                 <Property name="Area" value="{{0.03,0},{0.58,0},{0.97,0},{0.64,0}}" />
                 <Property name="Text" value="R" />
             </Window>
-            <Window type="AlfiskoSkin/HorizontalSlider" name="pLlightPosZ" >
+            <Window type="AlfiskoSkin/HorizontalSlider" name="pLightPosZ" >
                 <Property name="Area" value="{{0.03,0},{0.64,0},{0.97,0},{0.7,0}}" />
                 <Property name="Text" value="R" />
             </Window>

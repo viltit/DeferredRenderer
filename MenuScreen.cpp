@@ -109,6 +109,7 @@ int MenuScreen::previous() const {
 void MenuScreen::initGUI() {
 	initRadioButtons();
 	initSliders();
+	initRGBInputs();
 }
 
 void MenuScreen::initRadioButtons() {
@@ -176,93 +177,59 @@ void MenuScreen::initSliders() {
 	}
 }
 
-glm::vec2 MenuScreen::initRGBInputs(const glm::vec2& startPos, const glm::vec2& buttonSize, const glm::vec2& textSize) {
-	glm::vec2 pos = startPos;
-	glm::vec2 sizeA = buttonSize;
-	glm::vec2 sizeB = textSize;
-	std::vector<CEGUI::DefaultWindow*> labels;
-
-	/* Store this somewhere else, maybe in a textfile? */
-	std::vector<std::string> labelNames = {
-		"dLightAmbientLabel",
-		"dLightDiffuseLabel",
-		"dLightSpecularLabel",
-		"dLightVectorLabel",
-		"pLightDiffuseLabel",
-		"pLightSpecularLabel",
-		"pLightPositionLabel"
-	};
-	std::vector<std::string> labelText = {
-		"Direction Light Ambient Color",
-		"Directional Light Diffuse Color",
-		"Directional Light Specular Color",
-		"Directional Lights Vector",
-		"Point Light Diffuse Color",
-		"Point Light Specular Color",
-		"Point Light Position"
+void MenuScreen::initRGBInputs() {
+	std::vector<std::string> submenus = {
+		"PLight",
+		"DLight"
 	};
 
-	std::vector<std::function<void()>> callbacks = {
-		std::bind(&MenuScreen::onDLightAmbient, this),
-		std::bind(&MenuScreen::onDLightDiffuse, this),
-		std::bind(&MenuScreen::onDLightSpecular, this),
-		std::bind(&MenuScreen::onDLightVector, this),
+	std::vector<std::function<void()>> callbacks1 = {
 		std::bind(&MenuScreen::onPLightDiffuse, this),
 		std::bind(&MenuScreen::onPLightSpecular, this),
 		std::bind(&MenuScreen::onPLightPosition, this)
 	};
-
-	std::vector<std::string> editboxes = {
-		"dlightAmbientR",
-		"dlightAmbientG",
-		"dlightAmbientB",
-		"dlightDiffuseR",
-		"dlightDiffuseG",
-		"dlightDiffuseB",
-		"dlightSpecularR",
-		"dlightSpecularG",
-		"dlightSpecularB",
-		"dlightVectorX",
-		"dlightVectorY",
-		"dlightVectorZ",
-		"plightDiffuseR",
-		"plightDiffuseG",
-		"plightDiffuseB",
-		"plightSpecularR",
-		"plightSpecularG",
-		"plightSpecularB",
-		"plightPosX",
-		"plightPosY",
-		"plightPosZ"
+	std::vector<std::function<void()>> callbacks2 = {
+		std::bind(&MenuScreen::onDLightDiffuse, this),
+		std::bind(&MenuScreen::onDLightSpecular, this),
+		std::bind(&MenuScreen::onDLightVector, this)
+	};
+	std::vector<std::string> sliders1 = {
+		"pLightDiffuseR",
+		"pLightDiffuseG",
+		"pLightDiffuseB",
+		"pLightSpecularR",
+		"pLightSpecularG",
+		"pLightSpecularB",
+		"pLightPosX",
+		"pLightPosY",
+		"pLightPosZ"
+	};
+	std::vector<std::string> sliders2 = {
+		"dLightDiffuseR",
+		"dLightDiffuseG",
+		"dLightDiffuseB",
+		"dLightSpecularR",
+		"dLightSpecularG",
+		"dLightSpecularB",
+		"dLightVectorX",
+		"dLightVectorY",
+		"dLightVectorZ"
 	};
 
-	for (size_t i = 0; i < labelNames.size(); i++) {
-		auto label = static_cast<CEGUI::DefaultWindow*>(
-			_gui.createWidget(glm::vec4{ pos.x, pos.y = pos.y + buttonSize.y, sizeB }, glm::vec4{}, "AlfiskoSkin/Label", labelNames[i]));
-		label->setText(labelText[i]);
-		labels.push_back(label);
-		pos.y += textSize.y;
-
-		glm::vec2 rowPos = pos;
-		for (int j = 3 * i; j < 3 * i + 3; j++) {
-			auto dlightDiffuseR = static_cast<CEGUI::Editbox*>(
-				_gui.createWidget(
-					glm::vec4{ rowPos.x, pos.y = pos.y, sizeA.x, sizeA.y },
-					glm::vec4{}, "AlfiskoSkin/Editbox", editboxes[j]));
-			dlightDiffuseR->subscribeEvent(
-				CEGUI::Editbox::EventTextChanged,
-				CEGUI::Event::Subscriber(callbacks[i]));
-			_values.insert(std::make_pair(editboxes[j], dlightDiffuseR));
-			rowPos.x += buttonSize.x;
-		}
+	for (size_t i = 0; i < sliders1.size(); i++) {
+		auto slider = static_cast<CEGUI::Slider*>(_menu->getChild("PLight")->getChild(sliders1[i]));
+		slider->subscribeEvent(
+			CEGUI::Slider::EventValueChanged,
+			CEGUI::Event::Subscriber(callbacks1[i/3]));
+		_values.insert(std::make_pair(sliders1[i], slider));
 	}
-	/* set Formatting and color for all labels: */
-	for (auto& L : labels) {
-		L->setProperty("HorzFormatting", "CenterAligned");
-		L->setProperty("NormalTextColour", "ffaaaaaa");
+	for (size_t i = 0; i < sliders2.size(); i++) {
+		auto slider = static_cast<CEGUI::Slider*>(_menu->getChild("DLight")->getChild(sliders2[i]));
+		slider->subscribeEvent(
+			CEGUI::Slider::EventValueChanged,
+			CEGUI::Event::Subscriber(callbacks2[i / 3]));
+		_values.insert(std::make_pair(sliders2[i], slider));
 	}
-
-	return pos;
 }
 
 void MenuScreen::updateInput() {
@@ -321,34 +288,15 @@ void MenuScreen::onBloomToggled() {
 	_appScreen->_drender.applyBloom();
 }
 
-void MenuScreen::onDLightAmbient() {
-	dLight* light = _appScreen->_scene.findDLight("dlight");
-	if (!light) return;
-
-	glm::vec3 color{ light->ambient() };
-	int red{ getInt("dlightAmbientR") };
-	int green{ getInt("dlightAmbientG") };
-	int blue{ getInt("dlightAmbientB") };
-
-	if (red >= 0) color.r = float(red) / 255.f;
-	if (green >= 0) color.g = float(green) / 255.f;
-	if (blue >= 0) color.b = float(blue) / 255.f;
-
-	light->setProperty(lightProps::ambient, color);
-}
-
 void MenuScreen::onDLightDiffuse() {
 	dLight* light = _appScreen->_scene.findDLight("dlight");
 	if (!light) return;
 
-	glm::vec3 color{ light->diffuse() };
-	int red		{ getInt("dlightDiffuseR") };
-	int green	{ getInt("dlightDiffuseG") };
-	int blue	{ getInt("dlightDiffuseB") };
+	glm::vec3 color{};
 
-	if (red >= 0) color.r = float(red) / 255.f;
-	if (green >= 0) color.g = float(green) / 255.f;
-	if (blue >= 0) color.b = float(blue) / 255.f;
+	color.r = _values["dLightDiffuseR"]->getCurrentValue() * 400.0f / 255.f;
+	color.g = _values["dLightDiffuseG"]->getCurrentValue() * 400.0f / 255.f;
+	color.b = _values["dLightDiffuseB"]->getCurrentValue() * 400.0f / 255.f;
 		
 	light->setProperty(lightProps::diffuse, color);
 }
@@ -357,14 +305,11 @@ void MenuScreen::onDLightSpecular() {
 	dLight* light = _appScreen->_scene.findDLight("dlight");
 	if (!light) return;
 
-	glm::vec3 color{ light->specular() };
-	int red{ getInt("dlightSpecularR") };
-	int green{ getInt("dlightSpecularG") };
-	int blue{ getInt("dlightSpecularB") };
+	glm::vec3 color{};
 
-	if (red >= 0) color.r = float(red) / 255.f;
-	if (green >= 0) color.g = float(green) / 255.f;
-	if (blue >= 0) color.b = float(blue) / 255.f;
+	color.r = _values["dLightSpecularR"]->getCurrentValue() * 400.0f / 255.f;
+	color.g = _values["dLightSpecularG"]->getCurrentValue() * 400.0f / 255.f;
+	color.b = _values["dLightSpecularB"]->getCurrentValue() * 400.0f / 255.f;
 
 	light->setProperty(lightProps::specular, color);
 }
@@ -373,17 +318,13 @@ void MenuScreen::onDLightVector() {
 	dLight* light = _appScreen->_scene.findDLight("dlight");
 	if (!light) return;
 
-	glm::vec3 dir{ light->dir() };
-	float x{ getFloat("dlightVectorX") };
-	float y{ getFloat("dlightVectorY") };
-	float z{ getFloat("dlightVectorZ") };
+	glm::vec3 pos{};
 
-	if (x > -100000) dir.x = x;
-	if (y > -100000) dir.y = y;
-	if (z > -100000) dir.z = z;
+	pos.x = (_values["dLightVectorX"]->getCurrentValue() - 0.5f) * 60.f; //put in range [-30 / 30]
+	pos.y = (_values["dLightVectorY"]->getCurrentValue() - 0.5f) * 60.f;
+	pos.z = (_values["dLightVectorZ"]->getCurrentValue() -0.5f) * 60.f;
 
-	dir = glm::normalize(dir);
-	light->setProperty(lightProps::dir, dir);
+	light->setProperty(lightProps::dir, pos);
 }
 
 void MenuScreen::onPLightDiffuse() {
