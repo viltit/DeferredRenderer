@@ -24,8 +24,8 @@ public:
 
 private:
 	void initGUI();
-	glm::vec2 initRadioButtons(const glm::vec2& startPos, const glm::vec2& buttonSize, const glm::vec2& textSize);
-	glm::vec2 initSliders(const glm::vec2& startPos, const glm::vec2& sliderSize, const glm::vec2& textSize);
+	void initRadioButtons();
+	void initSliders();
 	glm::vec2 initRGBInputs(const glm::vec2& startPos, const glm::vec2& buttonSize, const glm::vec2& textSize);
 
 	void updateInput();

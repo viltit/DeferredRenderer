@@ -28,7 +28,7 @@ MenuScreen::MenuScreen(App* app, AppScreen* appScreen, vitiGL::Window* window)
 	SDL_ShowCursor(0);
 
 	_menu = _gui.createLayout("layouts/menu.layout");
-	//initGUI();
+	initGUI();
 }
 
 
@@ -77,11 +77,11 @@ void MenuScreen::onEntry() {
 		_values["plightPosX"]->setText(CEGUI::String(std::to_string(color.r)));
 		_values["plightPosY"]->setText(CEGUI::String(std::to_string(color.g)));
 		_values["plightPosZ"]->setText(CEGUI::String(std::to_string(color.b)));
-	}
+	}*/
 
 	_sliders["gammaSlider"]->setCurrentValue(_appScreen->_drender.gamma() / 3.0f);
 	_sliders["bloomSlider"]->setCurrentValue(_appScreen->_drender.bloomTreshold() / 3.0f);
-	_sliders["hdrSlider"]->setCurrentValue(_appScreen->_drender.exposure() / 3.0f); */
+	_sliders["hdrSlider"]->setCurrentValue(_appScreen->_drender.exposure() / 3.0f); 
 }
 
 void MenuScreen::onExit() {
@@ -107,178 +107,73 @@ int MenuScreen::previous() const {
 }
 
 void MenuScreen::initGUI() {
-	glm::vec2 pos{};
-	pos = initRadioButtons(glm::vec2{ 0.02f, 0.03f }, glm::vec2{ 0.02f, 0.02f }, glm::vec2{ 0.15f, 0.02f });
-	pos.y += 0.1f;
-	pos = initSliders(pos, glm::vec2{ 0.09, 0.03 }, glm::vec2{ 0.15, 0.02 });
-	pos = initRGBInputs(glm::vec2{ 0.8, 0.03 }, glm::vec2{ 0.03f, 0.03f }, glm::vec2{ 0.15f, 0.02f });
-
-	//Add a Quit Button
-	auto quitButton = static_cast<CEGUI::PushButton*>(
-		_gui.createWidget(glm::vec4{ 0.8f, 0.8f, 0.1f, 0.05f }, glm::vec4{}, "AlfiskoSkin/Button", "quitButton"));
-	quitButton->setText(CEGUI::String("Quit"));
-	quitButton->subscribeEvent(
-		CEGUI::PushButton::EventClicked,
-		CEGUI::Event::Subscriber(&MenuScreen::onExitClicked, this));
+	initRadioButtons();
+	initSliders();
 }
 
-glm::vec2 MenuScreen::initRadioButtons(const glm::vec2& startPos, const glm::vec2& buttonSize, const glm::vec2& textSize) {
-	glm::vec2 pos = startPos;
-	glm::vec2 sizeA = buttonSize;
-	glm::vec2 sizeB = textSize;
-	std::vector<CEGUI::DefaultWindow*> labels;
-
-	/* dir Shadow Checker with Label */
-	auto dirShadowChecker = static_cast<CEGUI::ToggleButton*>(
-		_gui.createWidget(glm::vec4{ pos.x, pos.y += 2.f*sizeA.y, sizeA }, glm::vec4{}, "AlfiskoSkin/Checkbox", "dirShadow"));
+void MenuScreen::initRadioButtons() {
+	auto dirShadowChecker = static_cast<CEGUI::ToggleButton*>(_menu->getChild("General")->getChild("dirShadow"));
 	dirShadowChecker->setSelected(true);
 	dirShadowChecker->subscribeEvent(
 		CEGUI::ToggleButton::EventSelectStateChanged,
 		CEGUI::Event::Subscriber(&MenuScreen::onDShadowToggled, this));
 
-	auto dirShadowLabel = static_cast<CEGUI::DefaultWindow*>(
-		_gui.createWidget(glm::vec4{ pos.x + sizeA.x, pos.y, sizeB }, glm::vec4{}, "AlfiskoSkin/Label", "dirShadowLabel"));
-	dirShadowLabel->setText("Directional Light Shadows");
-	labels.push_back(dirShadowLabel);
-
-	/* point Shadow Checker */
-	auto pointShadowChecker = static_cast<CEGUI::ToggleButton*>(
-		_gui.createWidget(glm::vec4{ pos.x, pos.y += 2.f*sizeA.y, sizeA }, glm::vec4{}, "AlfiskoSkin/Checkbox", "pointShadow"));
+	auto pointShadowChecker = static_cast<CEGUI::ToggleButton*>(_menu->getChild("General")->getChild("pointShadow"));
 	pointShadowChecker->setSelected(true);
 	pointShadowChecker->subscribeEvent(
 		CEGUI::ToggleButton::EventSelectStateChanged,
 		CEGUI::Event::Subscriber(&MenuScreen::onPShadowToggled, this));
 
-	auto pointShadowLabel = static_cast<CEGUI::DefaultWindow*>(
-		_gui.createWidget(glm::vec4{ pos.x + sizeA.x, pos.y, sizeB }, glm::vec4{}, "AlfiskoSkin/Label", "pointShadowLabel"));
-	pointShadowLabel->setText("Point Light Shadows");
-	labels.push_back(pointShadowLabel);
-
-	/* bloom Checker --> needs rework in the renderer for performance gain when its off */
-	auto bloomChecker = static_cast<CEGUI::ToggleButton*>(
-		_gui.createWidget(glm::vec4{ pos.x, pos.y += 2.f*sizeA.y, sizeA }, glm::vec4{}, "AlfiskoSkin/Checkbox", "bloom"));
+	auto bloomChecker = static_cast<CEGUI::ToggleButton*>(_menu->getChild("General")->getChild("bloom"));
 	bloomChecker->setSelected(true);
 	bloomChecker->subscribeEvent(
 		CEGUI::ToggleButton::EventSelectStateChanged,
 		CEGUI::Event::Subscriber(&MenuScreen::onBloomToggled, this));
 
-	auto bloomLabel = static_cast<CEGUI::DefaultWindow*>(
-		_gui.createWidget(glm::vec4{ pos.x + sizeA.x, pos.y, sizeB }, glm::vec4{}, "AlfiskoSkin/Label", "bloomLabel"));
-	bloomLabel->setText("Bloom");
-	labels.push_back(bloomLabel);
-
-	/* Debug window checker: */
-	auto debugChecker = static_cast<CEGUI::ToggleButton*>(
-		_gui.createWidget(glm::vec4{ pos.x, pos.y += 2.f*sizeA.y, sizeA }, glm::vec4{}, "AlfiskoSkin/Checkbox", "debugChecker"));
+	auto debugChecker = static_cast<CEGUI::ToggleButton*>(_menu->getChild("General")->getChild("debugChecker"));
 	debugChecker->setSelected(false);
 	debugChecker->subscribeEvent(
 		CEGUI::ToggleButton::EventSelectStateChanged,
 		CEGUI::Event::Subscriber(&MenuScreen::onDebugWinToggled, this));
 
-	auto debugLabel = static_cast<CEGUI::DefaultWindow*>(
-		_gui.createWidget(glm::vec4{ pos.x + sizeA.x, pos.y, sizeB }, glm::vec4{}, "AlfiskoSkin/Label", "debugLabel"));
-	debugLabel->setText("Debug Windows");
-	labels.push_back(debugLabel);
-
-	/* Wireframe checker: */
-	auto wireframeChecker = static_cast<CEGUI::ToggleButton*>(
-		_gui.createWidget(glm::vec4{ pos.x, pos.y += 2.f*sizeA.y, sizeA }, glm::vec4{}, "AlfiskoSkin/Checkbox", "wireframeChecker"));
+	auto wireframeChecker = static_cast<CEGUI::ToggleButton*>(_menu->getChild("General")->getChild("wireframeChecker"));
 	wireframeChecker->setSelected(false);
 	wireframeChecker->subscribeEvent(
 		CEGUI::ToggleButton::EventSelectStateChanged,
 		CEGUI::Event::Subscriber(&MenuScreen::onWireframeToggled, this));
 
-	auto wireframeLabel = static_cast<CEGUI::DefaultWindow*>(
-		_gui.createWidget(glm::vec4{ pos.x + sizeA.x, pos.y, sizeB }, glm::vec4{}, "AlfiskoSkin/Label", "wireframeLabel"));
-	wireframeLabel->setText("Draw Wireframes");
-	labels.push_back(wireframeLabel);
-
-	/* Normals checker: */
-	auto normalsChecker = static_cast<CEGUI::ToggleButton*>(
-		_gui.createWidget(glm::vec4{ pos.x, pos.y += 2.f*sizeA.y, sizeA }, glm::vec4{}, "AlfiskoSkin/Checkbox", "normalsChecker"));
+	auto normalsChecker = static_cast<CEGUI::ToggleButton*>(_menu->getChild("General")->getChild("normalsChecker"));
 	normalsChecker->setSelected(false);
 	normalsChecker->subscribeEvent(
 		CEGUI::ToggleButton::EventSelectStateChanged,
 		CEGUI::Event::Subscriber(&MenuScreen::onNormalsToggled, this));
 
-	auto normalsLabel = static_cast<CEGUI::DefaultWindow*>(
-		_gui.createWidget(glm::vec4{ pos.x + sizeA.x, pos.y, sizeB }, glm::vec4{}, "AlfiskoSkin/Label", "normalsLabel"));
-	normalsLabel->setText("Draw Normals");
-	labels.push_back(normalsLabel);
-
-	/* Physics checker: */
-	auto physicsChecker = static_cast<CEGUI::ToggleButton*>(
-		_gui.createWidget(glm::vec4{ pos.x, pos.y += 2.f*sizeA.y, sizeA }, glm::vec4{}, "AlfiskoSkin/Checkbox", "physicsChecker"));
+	auto physicsChecker = static_cast<CEGUI::ToggleButton*>(_menu->getChild("General")->getChild("physicsChecker"));
 	physicsChecker->setSelected(false);
 	physicsChecker->subscribeEvent(
 		CEGUI::ToggleButton::EventSelectStateChanged,
 		CEGUI::Event::Subscriber(&MenuScreen::onPhysicsToggled, this));
-
-	auto physicsLabel = static_cast<CEGUI::DefaultWindow*>(
-		_gui.createWidget(glm::vec4{ pos.x + sizeA.x, pos.y, sizeB }, glm::vec4{}, "AlfiskoSkin/Label", "physicsLabel"));
-	physicsLabel->setText("Draw Physics Wireframe");
-	labels.push_back(physicsLabel);
-
-	/* set Formatting and color for all labels: */
-	for (auto& L : labels) {
-		L->setProperty("HorzFormatting", "LeftAligned");
-		L->setProperty("NormalTextColour", "ffaaaaaa");
-	}
-
-	return pos;
 }
-
-glm::vec2 MenuScreen::initSliders(const glm::vec2 & startPos, const glm::vec2 & sliderSize, const glm::vec2 & textSize) {
-	glm::vec2 pos = startPos;
-	glm::vec2 sizeA = sliderSize;
-	glm::vec2 sizeB = textSize;
-	std::vector<CEGUI::DefaultWindow*> labels;
-
-	std::vector<std::string> labelNames = {
-		"gammaSLabel",
-		"bloomSLabel",
-		"dhrSLabel"
-	};
-	std::vector<std::string> labelText = {
-		"Gamma adjustment",
-		"Bloom Treshold",
-		"HDR Exposure Exponent"
-	};
-	std::vector<std::string> sliderNames {
-		"gammaSlider",
-		"bloomSlider",
-		"hdrSlider"
-	};
-
+void MenuScreen::initSliders() {
 	std::vector<std::function<void()>> callbacks = {
 		std::bind(&MenuScreen::onGammaChanged, this),
 		std::bind(&MenuScreen::onBloomChanged, this),
 		std::bind(&MenuScreen::onHdrChanged, this)
 	};
+	std::vector<std::string> names = {
+		"gammaSlider",
+		"bloomSlider",
+		"hdrSlider"
+	};
 
-	/* add sliders: */
-	for (size_t i = 0; i < labelNames.size(); i++) {
-		auto label = static_cast<CEGUI::DefaultWindow*>(
-			_gui.createWidget(glm::vec4{ pos.x, pos.y += sizeA.y, sizeB }, glm::vec4{}, "AlfiskoSkin/Label", labelNames[i]));
-		label->setText(labelText[i]);
-		labels.push_back(label);
-		auto slider = static_cast<CEGUI::Slider*>(
-			_gui.createWidget(glm::vec4{ pos.x, pos.y += sizeA.y, sizeA }, glm::vec4{}, "AlfiskoSkin/HorizontalSlider", sliderNames[i]));
-		slider->subscribeEvent(
-			CEGUI::Slider::EventValueChanged,
+	for (size_t i = 0; i < names.size(); i++) {
+		auto slider = static_cast<CEGUI::Slider*>(_menu->getChild("General")->getChild(names[i]));
+		slider->subscribeEvent(CEGUI::Slider::EventValueChanged,
 			CEGUI::Event::Subscriber(callbacks[i]));
 		slider->setMaxValue(1.0f);
 		slider->setClickStep(0.1f);
-		_sliders.insert(std::make_pair(sliderNames[i], slider));
+		_sliders.insert(std::make_pair(names[i], slider));
 	}
-
-	/* set Formatting and color for all labels: */
-	for (auto& L : labels) {
-		L->setProperty("HorzFormatting", "LeftAligned");
-		L->setProperty("NormalTextColour", "ffaaaaaa");
-	}
-
-	return pos;
 }
 
 glm::vec2 MenuScreen::initRGBInputs(const glm::vec2& startPos, const glm::vec2& buttonSize, const glm::vec2& textSize) {
@@ -527,6 +422,7 @@ void MenuScreen::onPLightPosition() {
 }
 
 void MenuScreen::onGammaChanged() {
+	std::cout << "Gamma Slider\n";
 	float value = _sliders["gammaSlider"]->getCurrentValue() * 3.0f;
 	_appScreen->_drender.setGamma(value);
 }

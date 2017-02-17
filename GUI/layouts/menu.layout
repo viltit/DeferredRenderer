@@ -12,28 +12,28 @@
                 <Property name="AlwaysOnTop" value="false" />
             </AutoWindow>
             <Window type="AlfiskoSkin/Checkbox" name="dirShadow" >
-                <Property name="Area" value="{{0.1,0},{0.0005,0},{0.2,0},{0.11,0}}" />
+                <Property name="Area" value="{{0.03,0},{0.01,0},{0.15,0},{0.04,0}}" />
             </Window>
             <Window type="AlfiskoSkin/Checkbox" name="pointShadow" >
-                <Property name="Area" value="{{0,5},{0,35},{0,30},{0,65}}" />
+                <Property name="Area" value="{{0.03,0},{0.05,0},{0.15,0},{0.08,0}}" />
             </Window>
             <Window type="AlfiskoSkin/Checkbox" name="bloom" >
-                <Property name="Area" value="{{0,5},{0,70},{0,30},{0,105}}" />
+                <Property name="Area" value="{{0.03,0},{0.09,0},{0.15,0},{0.12,0}}" />
             </Window>
             <Window type="AlfiskoSkin/Checkbox" name="debugChecker" >
-                <Property name="Area" value="{{0,5},{0,120},{0,30},{0,155}}" />
+                <Property name="Area" value="{{0.03,0},{0.16,0},{0.15,0},{0.19,0}}" />
             </Window>
             <Window type="AlfiskoSkin/Checkbox" name="wireframeChecker" >
-                <Property name="Area" value="{{0,5},{0,160},{0,30},{0,195}}" />
+                <Property name="Area" value="{{0.03,0},{0.2,0},{0.15,0},{0.23,0}}" />
             </Window>
             <Window type="AlfiskoSkin/Checkbox" name="normalsChecker" >
-                <Property name="Area" value="{{0,5},{0,200},{0,30},{0,235}}" />
+                <Property name="Area" value="{{0.03,0},{0.24,0},{0.15,0},{0.27,0}}" />
             </Window>
 			<Window type="AlfiskoSkin/Checkbox" name="physicsChecker" >
-                <Property name="Area" value="{{0,5},{0,240},{0,30},{0,275}}" />
+                <Property name="Area" value="{{0.03,0},{0.28,0},{0.15,0},{0.31,0}}" />
             </Window>
             <Window type="AlfiskoSkin/Label" name="dShadowLabel" >
-                <Property name="Area" value="{{0,50},{0,5},{0,250},{0,30}}" />
+                <Property name="Area" value="{{0.2,0},{0.01,0},{0.8,0},{0.04,0}" />
                 <Property name="Font" value="DejaVuSans-10" />
                 <Property name="Text" value="Directional Shadow" />
                 <Property name="MaxSize" value="{{1,0},{1,0}}" />
@@ -41,7 +41,7 @@
                 <Property name="NormalTextColour" value="FFAAAAAA" />
             </Window>
             <Window type="AlfiskoSkin/Label" name="pShadowLabel" >
-                <Property name="Area" value="{{0,45},{0,40},{0,224},{0,72}}" />
+                <Property name="Area" value="{{0.2,0},{0.05,0},{0.8,0},{0.08,0}}" />
                 <Property name="Font" value="DejaVuSans-10" />
                 <Property name="Text" value="Point Shadow" />
                 <Property name="MaxSize" value="{{1,0},{1,0}}" />
@@ -49,7 +49,7 @@
                 <Property name="NormalTextColour" value="FFAAAAAA" />
             </Window>
             <Window type="AlfiskoSkin/Label" name="bloomLabel" >
-                <Property name="Area" value="{{0,45},{0,70},{0,224},{0,102}}" />
+                <Property name="Area" value="{{0.2,0},{0.09,0},{0.8,0},{0.12,0}}" />
                 <Property name="Font" value="DejaVuSans-10" />
                 <Property name="Text" value="Bloom" />
                 <Property name="MaxSize" value="{{1,0},{1,0}}" />
@@ -57,7 +57,7 @@
                 <Property name="NormalTextColour" value="FFAAAAAA" />
             </Window>
             <Window type="AlfiskoSkin/Label" name="debugLabel" >
-                <Property name="Area" value="{{0,45},{0,130},{0,224},{0,162}}" />
+                <Property name="Area" value="{{0.2,0},{0.16,0},{0.8,0},{0.19,0}}" />
                 <Property name="Font" value="DejaVuSans-10" />
                 <Property name="Text" value="Debug Window" />
                 <Property name="MaxSize" value="{{1,0},{1,0}}" />
@@ -65,7 +65,7 @@
                 <Property name="NormalTextColour" value="FFAAAAAA" />
             </Window>
             <Window type="AlfiskoSkin/Label" name="wireframeLabel" >
-                <Property name="Area" value="{{0,45},{0,160},{0,224},{0,192}}" />
+                <Property name="Area" value="{{0.2,0},{0.2,0},{0.8,0},{0.23,0}}" />
                 <Property name="Font" value="DejaVuSans-10" />
                 <Property name="Text" value="Draw Wireframes" />
                 <Property name="MaxSize" value="{{1,0},{1,0}}" />
@@ -73,7 +73,7 @@
                 <Property name="NormalTextColour" value="FFAAAAAA" />
             </Window>
             <Window type="AlfiskoSkin/Label" name="normalsLabel" >
-                <Property name="Area" value="{{0,45},{0,190},{0,224},{0,222}}" />
+                <Property name="Area" value="{{0.2,0},{0.24,0},{0.8,0},{0.27,0}}" />
                 <Property name="Font" value="DejaVuSans-10" />
                 <Property name="Text" value="Draw Vertex Normals" />
                 <Property name="MaxSize" value="{{1,0},{1,0}}" />
@@ -81,187 +81,187 @@
                 <Property name="NormalTextColour" value="FFAAAAAA" />
             </Window>
             <Window type="AlfiskoSkin/Label" name="physicsLabel" >
-                <Property name="Area" value="{{0,45},{0,220},{0,224},{0,252}}" />
+                <Property name="Area" value="{{0.2,0},{0.28,0},{0.8,0},{0.31,0}}" />
                 <Property name="Font" value="DejaVuSans-10" />
                 <Property name="Text" value="Draw Physic Shapes" />
                 <Property name="MaxSize" value="{{1,0},{1,0}}" />
                 <Property name="HorzFormatting" value="LeftAligned" />
                 <Property name="NormalTextColour" value="FFAAAAAA" />
             </Window>
-            <Window type="AlfiskoSkin/HorizontalSlider" name="gammaSlider" >
-                <Property name="Area" value="{{0,10},{0,365},{0,225},{0,397}}" />
-            </Window>
-            <Window type="AlfiskoSkin/Label" name="gammaSLabel" >
-                <Property name="Area" value="{{0,10},{0,330},{0,225},{0,362}}" />
+			<Window type="AlfiskoSkin/Label" name="gammaSLabel" >
+                <Property name="Area" value="{{0.03,0},{0.35,0},{0.97,0},{0.38,0}}" />
                 <Property name="Font" value="DejaVuSans-10" />
                 <Property name="Text" value="Gamma correction" />
                 <Property name="MaxSize" value="{{1,0},{1,0}}" />
                 <Property name="NormalTextColour" value="FFAAAAAA" />
             </Window>
+            <Window type="AlfiskoSkin/HorizontalSlider" name="gammaSlider" >
+                <Property name="Area" value="{{0.03,0},{0.38,0},{0.97,0},{0.43,0}}" />
+            </Window>
             <Window type="AlfiskoSkin/Label" name="bloomSLabel" >
-                <Property name="Area" value="{{0,10},{0,425},{0,225},{0,457}}" />
+                <Property name="Area" value="{{0.03,0},{0.43,0},{0.97,0},{0.46,0}}" />
                 <Property name="Font" value="DejaVuSans-10" />
                 <Property name="Text" value="Bloom treshhold" />
                 <Property name="MaxSize" value="{{1,0},{1,0}}" />
                 <Property name="NormalTextColour" value="FFAAAAAA" />
             </Window>
-            <Window type="AlfiskoSkin/HorizontalSlider" name="bloomSlider" >
-                <Property name="Area" value="{{0,10},{0,460},{0,225},{0,492}}" />
+			<Window type="AlfiskoSkin/HorizontalSlider" name="bloomSlider" >
+                <Property name="Area" value="{{0.03,0},{0.46,0},{0.97,0},{0.51,0}}" />
             </Window>
             <Window type="AlfiskoSkin/Label" name="hdrSLabel" >
-                <Property name="Area" value="{{0,10},{0,520},{0,225},{0,552}}" />
+                <Property name="Area" value="{{0.03,0},{0.51,0},{0.97,0},{0.54,0}}" />
                 <Property name="Font" value="DejaVuSans-10" />
                 <Property name="Text" value="HDR Exposure Exponent" />
                 <Property name="MaxSize" value="{{1,0},{1,0}}" />
                 <Property name="NormalTextColour" value="FFAAAAAA" />
             </Window>
             <Window type="AlfiskoSkin/HorizontalSlider" name="hdrSlider" >
-                <Property name="Area" value="{{0,10},{0,555},{0,225},{0,587}}" />
+                <Property name="Area" value="{{0.03,0},{0.54,0},{0.97,0},{0.59,0}}" />
             </Window>
             <Window type="AlfiskoSkin/Button" name="continueButton" >
-                <Property name="Area" value="{{0,129},{0,625},{0,225},{0,665}}" />
+                <Property name="Area" value="{{0.03,0},{0.94,0},{0.48,0},{0.99,0}}" />
                 <Property name="Font" value="DejaVuSans-10" />
                 <Property name="Text" value="Continue" />
             </Window>
             <Window type="AlfiskoSkin/Button" name="quitButton" >
-                <Property name="Area" value="{{0,19},{0,625},{0,115},{0,665}}" />
+                <Property name="Area" value="{{0.52,0},{0.94,0},{0.97,0},{0.99,0}}" />
                 <Property name="Font" value="DejaVuSans-10" />
                 <Property name="Text" value="Quit" />
             </Window>
         </Window>
         <Window type="AlfiskoSkin/FrameWindow" name="PLight" >
-            <Property name="Area" value="{{0,1000},{0,5},{0.3,891},{0.3,209}}" />
+            <Property name="Area" value="{{0.7,0},{0.05,0},{0.8,0},{0.75,0}}" />
             <Property name="Font" value="DejaVuSans-10" />
             <Property name="Text" value="Point Light" />
             <AutoWindow namePath="__auto_titlebar__" >
                 <Property name="AlwaysOnTop" value="false" />
             </AutoWindow>
-            <Window type="AlfiskoSkin/Label" name="pLightSpecularLabel" >
-                <Property name="Area" value="{{0,1},{0,125},{0,240},{0,157}}" />
+            <Window type="AlfiskoSkin/Label" name="pLightDiffuseLabel" >
+                <Property name="Area" value="{{0.03,0},{0.03,0},{0.97,0},{0.06,0}}" />
                 <Property name="Font" value="DejaVuSans-10" />
                 <Property name="Text" value="Specular RGB" />
                 <Property name="MaxSize" value="{{1,0},{1,0}}" />
                 <Property name="NormalTextColour" value="FFAAAAAA" />
                 <Property name="HorizontalAlignment" value="Centre" />
             </Window>
-            <Window type="AlfiskoSkin/VerticalSlider" name="pLightDiffuseB" >
-                <Property name="Area" value="{{0,170},{0,40},{0,204},{0,116}}" />
+            <Window type="AlfiskoSkin/HorizontalSlider" name="pLightDiffuseR" >
+                <Property name="Area" value="{{0.03,0},{0.06,0},{0.97,0},{0.12,0}}" />
                 <Property name="Text" value="R" />
             </Window>
-            <Window type="AlfiskoSkin/Label" name="pLightDiffuseLabel" >
-                <Property name="Area" value="{{0,1},{0,5},{0,240},{0,37}}" />
+			<Window type="AlfiskoSkin/HorizontalSlider" name="pLightDiffuseG" >
+                <Property name="Area" value="{{0.03,0},{0.12,0},{0.97,0},{0.18,0}}" />
+                <Property name="Text" value="R" />
+            </Window>
+			<Window type="AlfiskoSkin/HorizontalSlider" name="pLightDiffuseB" >
+                <Property name="Area" value="{{0.03,0},{0.18,0},{0.97,0},{0.24,0}}" />
+                <Property name="Text" value="R" />
+            </Window>
+            <Window type="AlfiskoSkin/Label" name="pLightSpecularLabel" >
+                <Property name="Area" value="{{0.03,0},{0.26,0},{0.97,0},{0.29,0}}" />
                 <Property name="Font" value="DejaVuSans-10" />
                 <Property name="Text" value="Diffuse RGB" />
                 <Property name="MaxSize" value="{{1,0},{1,0}}" />
                 <Property name="NormalTextColour" value="FFAAAAAA" />
                 <Property name="HorizontalAlignment" value="Centre" />
             </Window>
-            <Window type="AlfiskoSkin/VerticalSlider" name="pLightDiffuseR" >
-                <Property name="Area" value="{{0,50},{0,40},{0,84},{0,116}}" />
+            <Window type="AlfiskoSkin/HorizontalSlider" name="pLightSpecularR" >
+                <Property name="Area" value="{{0.03,0},{0.29,0},{0.97,0},{0.35,0}}" />
                 <Property name="Text" value="R" />
             </Window>
-            <Window type="AlfiskoSkin/VerticalSlider" name="pLightDiffuseG" >
-                <Property name="Area" value="{{0,110},{0,40},{0,144},{0,116}}" />
+            <Window type="AlfiskoSkin/HorizontalSlider" name="pLightSpecularG" >
+                <Property name="Area" value="{{0.03,0},{0.35,0},{0.97,0},{0.41,0}}" />
                 <Property name="Text" value="R" />
             </Window>
-            <Window type="AlfiskoSkin/VerticalSlider" name="pLightSpecularR" >
-                <Property name="Area" value="{{0,50},{0,160},{0,84},{0,236}}" />
-                <Property name="Text" value="R" />
-            </Window>
-            <Window type="AlfiskoSkin/VerticalSlider" name="pLightSpecularG" >
-                <Property name="Area" value="{{0,110},{0,160},{0,144},{0,236}}" />
-                <Property name="Text" value="R" />
-            </Window>
-            <Window type="AlfiskoSkin/VerticalSlider" name="pLightSpecularB" >
-                <Property name="Area" value="{{0,170},{0,160},{0,204},{0,236}}" />
+            <Window type="AlfiskoSkin/HorizontalSlider" name="pLightSpecularB" >
+                <Property name="Area" value="{{0.03,0},{0.41,0},{0.97,0},{0.47,0}}" />
                 <Property name="Text" value="R" />
             </Window>
             <Window type="AlfiskoSkin/Label" name="pLightPosLabel" >
-                <Property name="Area" value="{{0,1},{0,245},{0,240},{0,277}}" />
+                <Property name="Area" value="{{0.03,0},{0.49,0},{0.97,0},{0.52,0}}" />
                 <Property name="Font" value="DejaVuSans-10" />
                 <Property name="Text" value="Position XYZ" />
                 <Property name="MaxSize" value="{{1,0},{1,0}}" />
                 <Property name="NormalTextColour" value="FFAAAAAA" />
                 <Property name="HorizontalAlignment" value="Centre" />
             </Window>
-            <Window type="AlfiskoSkin/VerticalSlider" name="pLlightPosX" >
-                <Property name="Area" value="{{0,49},{0,285},{0,83},{0,361}}" />
+            <Window type="AlfiskoSkin/HorizontalSlider" name="pLlightPosX" >
+                <Property name="Area" value="{{0.03,0},{0.52,0},{0.97,0},{0.58,0}}" />
                 <Property name="Text" value="R" />
             </Window>
-            <Window type="AlfiskoSkin/VerticalSlider" name="pLlightPosY" >
-                <Property name="Area" value="{{0,109},{0,285},{0,143},{0,361}}" />
+            <Window type="AlfiskoSkin/HorizontalSlider" name="pLlightPosY" >
+                <Property name="Area" value="{{0.03,0},{0.58,0},{0.97,0},{0.64,0}}" />
                 <Property name="Text" value="R" />
             </Window>
-            <Window type="AlfiskoSkin/VerticalSlider" name="pLlightPosZ" >
-                <Property name="Area" value="{{0,169},{0,285},{0,203},{0,361}}" />
+            <Window type="AlfiskoSkin/HorizontalSlider" name="pLlightPosZ" >
+                <Property name="Area" value="{{0.03,0},{0.64,0},{0.97,0},{0.7,0}}" />
                 <Property name="Text" value="R" />
             </Window>
         </Window>
         <Window type="AlfiskoSkin/FrameWindow" name="DLight" >
-            <Property name="Area" value="{{0,735},{0,5},{0.3,613},{0.3,209}}" />
+            <Property name="Area" value="{{0.81,0},{0.05,0},{0.92,0},{0.75,0}}" />
             <Property name="Font" value="DejaVuSans-10" />
             <Property name="Text" value="Directional Light" />
             <AutoWindow namePath="__auto_titlebar__" >
                 <Property name="AlwaysOnTop" value="false" />
             </AutoWindow>
-            <Window type="AlfiskoSkin/VerticalSlider" name="dLightVectorZ" >
-                <Property name="Area" value="{{0,164},{0,280},{0,198},{0,356}}" />
-                <Property name="Text" value="R" />
-            </Window>
-            <Window type="AlfiskoSkin/VerticalSlider" name="dLightVectorY" >
-                <Property name="Area" value="{{0,104},{0,280},{0,138},{0,356}}" />
-                <Property name="Text" value="R" />
-            </Window>
-            <Window type="AlfiskoSkin/VerticalSlider" name="dLightVectorX" >
-                <Property name="Area" value="{{0,44},{0,280},{0,78},{0,356}}" />
-                <Property name="Text" value="R" />
-            </Window>
-            <Window type="AlfiskoSkin/VerticalSlider" name="dLightSpecularR" >
-                <Property name="Area" value="{{0,44},{0,160},{0,78},{0,236}}" />
-                <Property name="Text" value="R" />
-            </Window>
-            <Window type="AlfiskoSkin/Label" name="dLightSpecularLabel" >
-                <Property name="Area" value="{{0,-2},{0,125},{0,237},{0,157}}" />
-                <Property name="Font" value="DejaVuSans-10" />
-                <Property name="Text" value="Specular RGB" />
-                <Property name="MaxSize" value="{{1,0},{1,0}}" />
-                <Property name="NormalTextColour" value="FFAAAAAA" />
-                <Property name="HorizontalAlignment" value="Centre" />
-            </Window>
-            <Window type="AlfiskoSkin/VerticalSlider" name="dLightSpecularG" >
-                <Property name="Area" value="{{0,104},{0,160},{0,138},{0,236}}" />
-                <Property name="Text" value="R" />
-            </Window>
-            <Window type="AlfiskoSkin/VerticalSlider" name="dLightSpecularB" >
-                <Property name="Area" value="{{0,164},{0,160},{0,198},{0,236}}" />
-                <Property name="Text" value="R" />
-            </Window>
-            <Window type="AlfiskoSkin/Label" name="dLightDirLabel" >
-                <Property name="Area" value="{{0,-2},{0,245},{0,237},{0,277}}" />
-                <Property name="Font" value="DejaVuSans-10" />
-                <Property name="Text" value="Direction XYZ" />
-                <Property name="MaxSize" value="{{1,0},{1,0}}" />
-                <Property name="NormalTextColour" value="FFAAAAAA" />
-                <Property name="HorizontalAlignment" value="Centre" />
-            </Window>
-            <Window type="AlfiskoSkin/VerticalSlider" name="dLightDiffuseR" >
-                <Property name="Area" value="{{0,44},{0,40},{0,78},{0,116}}" />
-                <Property name="Text" value="R" />
-            </Window>
-            <Window type="AlfiskoSkin/Label" name="dLightDiffuseLabel" >
-                <Property name="Area" value="{{0,2},{0,5},{0,241},{0,37}}" />
+			<Window type="AlfiskoSkin/Label" name="dLightDiffuseLabel" >
+                <Property name="Area" value="{{0.03,0},{0.03,0},{0.97,0},{0.06,0}}" />
                 <Property name="Font" value="DejaVuSans-10" />
                 <Property name="Text" value="Diffuse RGB" />
                 <Property name="MaxSize" value="{{1,0},{1,0}}" />
                 <Property name="NormalTextColour" value="FFAAAAAA" />
                 <Property name="HorizontalAlignment" value="Centre" />
             </Window>
-            <Window type="AlfiskoSkin/VerticalSlider" name="dLightDiffuseG" >
-                <Property name="Area" value="{{0.2813,33},{0.0104291,36},{0.2813,67},{0.0104291,112}}" />
+			<Window type="AlfiskoSkin/HorizontalSlider" name="dLightDiffuseR" >
+                <Property name="Area" value="{{0.03,0},{0.06,0},{0.97,0},{0.12,0}}" />
                 <Property name="Text" value="R" />
             </Window>
-            <Window type="AlfiskoSkin/VerticalSlider" name="dLightDiffuseB" >
-                <Property name="Area" value="{{0.2813,93},{0.0104291,36},{0.2813,127},{0.0104291,112}}" />
+            <Window type="AlfiskoSkin/HorizontalSlider" name="dLightDiffuseG" >
+                <Property name="Area" value="{{0.03,0},{0.12,0},{0.97,0},{0.18,0}}" />
+                <Property name="Text" value="R" />
+            </Window>
+            <Window type="AlfiskoSkin/HorizontalSlider" name="dLightDiffuseB" >
+                <Property name="Area" value="{{0.03,0},{0.18,0},{0.97,0},{0.24,0}}" />
+                <Property name="Text" value="R" />
+            </Window>
+			<Window type="AlfiskoSkin/Label" name="dLightSpecularLabel" >
+                <Property name="Area" value="{{0.03,0},{0.26,0},{0.97,0},{0.29,0}}" />
+                <Property name="Font" value="DejaVuSans-10" />
+                <Property name="Text" value="Specular RGB" />
+                <Property name="MaxSize" value="{{1,0},{1,0}}" />
+                <Property name="NormalTextColour" value="FFAAAAAA" />
+                <Property name="HorizontalAlignment" value="Centre" />
+            </Window>
+			<Window type="AlfiskoSkin/HorizontalSlider" name="dLightSpecularR" >
+                <Property name="Area" value="{{0.03,0},{0.29,0},{0.97,0},{0.35,0}}" />
+                <Property name="Text" value="R" />
+            </Window>
+            <Window type="AlfiskoSkin/HorizontalSlider" name="dLightSpecularG" >
+                <Property name="Area" value="{{0.03,0},{0.35,0},{0.97,0},{0.41,0}}" />
+                <Property name="Text" value="R" />
+            </Window>
+            <Window type="AlfiskoSkin/HorizontalSlider" name="dLightSpecularB" >
+                <Property name="Area" value="{{0.03,0},{0.41,0},{0.97,0},{0.47,0}}" />
+                <Property name="Text" value="R" />
+            </Window>
+			<Window type="AlfiskoSkin/Label" name="dLightDirLabel" >
+                <Property name="Area" value="{{0.03,0},{0.49,0},{0.97,0},{0.52,0}}" />
+                <Property name="Font" value="DejaVuSans-10" />
+                <Property name="Text" value="Direction XYZ" />
+                <Property name="MaxSize" value="{{1,0},{1,0}}" />
+                <Property name="NormalTextColour" value="FFAAAAAA" />
+                <Property name="HorizontalAlignment" value="Centre" />
+            </Window>
+			<Window type="AlfiskoSkin/HorizontalSlider" name="dLightVectorX" >
+                <Property name="Area" value="{{0.03,0},{0.52,0},{0.97,0},{0.58,0}}" />
+                <Property name="Text" value="R" />
+            </Window>
+			<Window type="AlfiskoSkin/HorizontalSlider" name="dLightVectorY" >
+                <Property name="Area" value="{{0.03,0},{0.58,0},{0.97,0},{0.64,0}}" />
+                <Property name="Text" value="R" />
+            </Window>
+            <Window type="AlfiskoSkin/HorizontalSlider" name="dLightVectorZ" >
+                <Property name="Area" value="{{0.03,0},{0.64,0},{0.97,0},{0.7,0}}" />
                 <Property name="Text" value="R" />
             </Window>
         </Window>
