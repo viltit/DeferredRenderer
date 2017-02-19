@@ -36,48 +36,49 @@ MenuScreen::~MenuScreen() {
 }
 
 void MenuScreen::onEntry() {
-	/* get lights RGB values and other data:
+	/* get lights RGB values and other data: */
 	dLight* light = _appScreen->_scene.findDLight("dlight");
 
 	if (light) {
-		glm::vec3 color = light->ambient();
-		_values["dlightAmbientR"]->setText(CEGUI::String(std::to_string(int(color.r * 255.f))));
-		_values["dlightAmbientG"]->setText(CEGUI::String(std::to_string(int(color.g * 255.f))));
-		_values["dlightAmbientB"]->setText(CEGUI::String(std::to_string(int(color.b * 255.f))));
+		float f = 255.f / 400.f;
+		glm::vec3 color = light->diffuse();
 
-		color = light->diffuse();
-		_values["dlightDiffuseR"]->setText(CEGUI::String(std::to_string(int(color.r * 255.f))));
-		_values["dlightDiffuseG"]->setText(CEGUI::String(std::to_string(int(color.g * 255.f))));
-		_values["dlightDiffuseB"]->setText(CEGUI::String(std::to_string(int(color.b * 255.f))));
+		_values["dLightDiffuseR"]->setCurrentValue(color.r * f);
+		_values["dLightDiffuseG"]->setCurrentValue(color.g * f);
+		_values["dLightDiffuseB"]->setCurrentValue(color.b * f);
 
 		color = light->specular();
-		_values["dlightSpecularR"]->setText(CEGUI::String(std::to_string(int(color.r * 255.f))));
-		_values["dlightSpecularG"]->setText(CEGUI::String(std::to_string(int(color.g * 255.f))));
-		_values["dlightSpecularB"]->setText(CEGUI::String(std::to_string(int(color.b * 255.f))));
+		_values["dLightSpecularR"]->setCurrentValue(color.r * f);
+		_values["dLightSpecularG"]->setCurrentValue(color.g * f);
+		_values["dLightSpecularB"]->setCurrentValue(color.b * f);
 
 		color = light->dir();
-		_values["dlightVectorX"]->setText(CEGUI::String(std::to_string(color.r)));
-		_values["dlightVectorY"]->setText(CEGUI::String(std::to_string(color.g)));
-		_values["dlightVectorZ"]->setText(CEGUI::String(std::to_string(color.b)));
+		f = f / 60.f;
+		_values["dLightVectorX"]->setCurrentValue(color.x * f + 0.5f);
+		_values["dLightVectorY"]->setCurrentValue(color.y * f + 0.5f);
+		_values["dLightVectorZ"]->setCurrentValue(color.z * f + 0.5f);
 	}
 
 	pLight* plight = _appScreen->_scene.findPLight("plight");
 	if (plight) {
-		glm::vec3 color = plight->diffuse();
-		_values["plightDiffuseR"]->setText(CEGUI::String(std::to_string(int(color.r * 255.f))));
-		_values["plightDiffuseG"]->setText(CEGUI::String(std::to_string(int(color.g * 255.f))));
-		_values["plightDiffuseB"]->setText(CEGUI::String(std::to_string(int(color.b * 255.f))));
+		glm::vec3 color = light->diffuse();
+		float f = 255.f / 400.f;
+
+		_values["pLightDiffuseR"]->setCurrentValue(color.r * f);
+		_values["pLightDiffuseG"]->setCurrentValue(color.g * f);
+		_values["pLightDiffuseB"]->setCurrentValue(color.b * f);
 
 		color = plight->specular();
-		_values["plightSpecularR"]->setText(CEGUI::String(std::to_string(int(color.r * 255.f))));
-		_values["plightSpecularG"]->setText(CEGUI::String(std::to_string(int(color.g * 255.f))));
-		_values["plightSpecularB"]->setText(CEGUI::String(std::to_string(int(color.b * 255.f))));
+		_values["pLightSpecularR"]->setCurrentValue(color.r * f);
+		_values["pLightSpecularG"]->setCurrentValue(color.g * f);
+		_values["pLightSpecularB"]->setCurrentValue(color.b * f);
 
+		f = f / 60.f;
 		color = plight->pos();
-		_values["plightPosX"]->setText(CEGUI::String(std::to_string(color.r)));
-		_values["plightPosY"]->setText(CEGUI::String(std::to_string(color.g)));
-		_values["plightPosZ"]->setText(CEGUI::String(std::to_string(color.b)));
-	}*/
+		_values["pLightPosX"]->setCurrentValue(color.x * f + 0.5f);
+		_values["pLightPosY"]->setCurrentValue(color.y * f + 0.5f);
+		_values["pLightPosZ"]->setCurrentValue(color.z * f + 0.5f);
+	}
 
 	_sliders["gammaSlider"]->setCurrentValue(_appScreen->_drender.gamma() / 3.0f);
 	_sliders["bloomSlider"]->setCurrentValue(_appScreen->_drender.bloomTreshold() / 3.0f);
@@ -331,14 +332,11 @@ void MenuScreen::onPLightDiffuse() {
 	pLight* light = _appScreen->_scene.findPLight("plight");
 	if (!light) return;
 
-	glm::vec3 color{ light->diffuse() };
-	int red{ getInt("plightDiffuseR") };
-	int green{ getInt("plightDiffuseG") };
-	int blue{ getInt("plightDiffuseB") };
+	glm::vec3 color{};
 
-	if (red >= 0) color.r = float(red) / 255.f;
-	if (green >= 0) color.g = float(green) / 255.f;
-	if (blue >= 0) color.b = float(blue) / 255.f;
+	color.r = _values["pLightDiffuseR"]->getCurrentValue() * 400.0f / 255.f;
+	color.g = _values["pLightDiffuseG"]->getCurrentValue() * 400.0f / 255.f;
+	color.b = _values["pLightDiffuseB"]->getCurrentValue() * 400.0f / 255.f;
 
 	light->setProperty(lightProps::diffuse, color);
 }
@@ -347,19 +345,26 @@ void MenuScreen::onPLightSpecular() {
 	pLight* light = _appScreen->_scene.findPLight("plight");
 	if (!light) return;
 
-	glm::vec3 color{ light->specular() };
-	int red{ getInt("plightSpecularR") };
-	int green{ getInt("plightSpecularG") };
-	int blue{ getInt("plightSpecularB") };
+	glm::vec3 color{};
 
-	if (red >= 0) color.r = float(red) / 255.f;
-	if (green >= 0) color.g = float(green) / 255.f;
-	if (blue >= 0) color.b = float(blue) / 255.f;
+	color.r = _values["pLightSpecularR"]->getCurrentValue() * 400.0f / 255.f;
+	color.g = _values["pLightSpecularG"]->getCurrentValue() * 400.0f / 255.f;
+	color.b = _values["pLightSpecularB"]->getCurrentValue() * 400.0f / 255.f;
 
 	light->setProperty(lightProps::specular, color);
 }
 
 void MenuScreen::onPLightPosition() {
+	pLight* light = _appScreen->_scene.findPLight("plight");
+	if (!light) return;
+
+	glm::vec3 pos{};
+
+	pos.x = (_values["pLightPosX"]->getCurrentValue() -0.5f) * 60.f;
+	pos.y = (_values["pLightPosY"]->getCurrentValue() - 0.5f) * 60.0f;
+	pos.z = (_values["pLightPosZ"]->getCurrentValue() -0.5f) * 60.f;
+
+	light->setProperty(lightProps::pos, pos);
 }
 
 void MenuScreen::onGammaChanged() {
