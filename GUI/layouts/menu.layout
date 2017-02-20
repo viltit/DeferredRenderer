@@ -139,7 +139,7 @@
             <Window type="AlfiskoSkin/Label" name="pLightDiffuseLabel" >
                 <Property name="Area" value="{{0.03,0},{0.03,0},{0.97,0},{0.06,0}}" />
                 <Property name="Font" value="DejaVuSans-10" />
-                <Property name="Text" value="Specular RGB" />
+                <Property name="Text" value="Diffuse RGB" />
                 <Property name="MaxSize" value="{{1,0},{1,0}}" />
                 <Property name="NormalTextColour" value="FFAAAAAA" />
                 <Property name="HorizontalAlignment" value="Centre" />
@@ -159,7 +159,7 @@
             <Window type="AlfiskoSkin/Label" name="pLightSpecularLabel" >
                 <Property name="Area" value="{{0.03,0},{0.26,0},{0.97,0},{0.29,0}}" />
                 <Property name="Font" value="DejaVuSans-10" />
-                <Property name="Text" value="Diffuse RGB" />
+                <Property name="Text" value="Specular RGB" />
                 <Property name="MaxSize" value="{{1,0},{1,0}}" />
                 <Property name="NormalTextColour" value="FFAAAAAA" />
                 <Property name="HorizontalAlignment" value="Centre" />

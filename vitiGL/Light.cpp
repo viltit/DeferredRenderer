@@ -136,7 +136,7 @@ void pLight::setProperty(lightProps property, const glm::vec3 & value) {
 	switch (property) {
 	case lightProps::pos:
 		_pos = value;
-		_M[3][0] = _pos.x; _M[3][1] = _pos.y; _M[3][2] = _pos.z;
+		_M[3][0] = _pos.x; _M[3][1] = _pos.y; _M[3][2] = _pos.z; //Problem: scene_node::update overwrties this
 		_sphere->setModelMatrix(_M);
 		break;
 	case lightProps::ambient:

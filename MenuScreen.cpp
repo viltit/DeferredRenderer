@@ -53,7 +53,7 @@ void MenuScreen::onEntry() {
 		_values["dLightSpecularB"]->setCurrentValue(color.b * f);
 
 		color = light->dir();
-		f = f / 60.f;
+		f = 1.f / 60.f;
 		_values["dLightVectorX"]->setCurrentValue(color.x * f + 0.5f);
 		_values["dLightVectorY"]->setCurrentValue(color.y * f + 0.5f);
 		_values["dLightVectorZ"]->setCurrentValue(color.z * f + 0.5f);
@@ -61,7 +61,7 @@ void MenuScreen::onEntry() {
 
 	pLight* plight = _appScreen->_scene.findPLight("plight");
 	if (plight) {
-		glm::vec3 color = light->diffuse();
+		glm::vec3 color = plight->diffuse();
 		float f = 255.f / 400.f;
 
 		_values["pLightDiffuseR"]->setCurrentValue(color.r * f);
@@ -73,7 +73,7 @@ void MenuScreen::onEntry() {
 		_values["pLightSpecularG"]->setCurrentValue(color.g * f);
 		_values["pLightSpecularB"]->setCurrentValue(color.b * f);
 
-		f = f / 60.f;
+		f = 1.f / 60.f;
 		color = plight->pos();
 		_values["pLightPosX"]->setCurrentValue(color.x * f + 0.5f);
 		_values["pLightPosY"]->setCurrentValue(color.y * f + 0.5f);
@@ -108,6 +108,17 @@ int MenuScreen::previous() const {
 }
 
 void MenuScreen::initGUI() {
+	//Exit and Continue Button:
+	auto exitButton = static_cast<CEGUI::PushButton*>(_menu->getChild("General")->getChild("quitButton"));
+	exitButton->subscribeEvent(
+		CEGUI::PushButton::EventClicked,
+		CEGUI::Event::Subscriber(&MenuScreen::onExitClicked, this));
+
+	auto continueButton = static_cast<CEGUI::PushButton*>(_menu->getChild("General")->getChild("continueButton"));
+	continueButton->subscribeEvent(
+		CEGUI::PushButton::EventClicked,
+		CEGUI::Event::Subscriber(&MenuScreen::onContinueClicked, this));
+
 	initRadioButtons();
 	initSliders();
 	initRGBInputs();
@@ -222,6 +233,8 @@ void MenuScreen::initRGBInputs() {
 		slider->subscribeEvent(
 			CEGUI::Slider::EventValueChanged,
 			CEGUI::Event::Subscriber(callbacks1[i/3]));
+		slider->setMaxValue(1.0f);
+		slider->setClickStep(0.1f);
 		_values.insert(std::make_pair(sliders1[i], slider));
 	}
 	for (size_t i = 0; i < sliders2.size(); i++) {
@@ -229,6 +242,8 @@ void MenuScreen::initRGBInputs() {
 		slider->subscribeEvent(
 			CEGUI::Slider::EventValueChanged,
 			CEGUI::Event::Subscriber(callbacks2[i / 3]));
+		slider->setMaxValue(1.0f);
+		slider->setClickStep(0.1f);
 		_values.insert(std::make_pair(sliders2[i], slider));
 	}
 }
@@ -364,6 +379,7 @@ void MenuScreen::onPLightPosition() {
 	pos.y = (_values["pLightPosY"]->getCurrentValue() - 0.5f) * 60.0f;
 	pos.z = (_values["pLightPosZ"]->getCurrentValue() -0.5f) * 60.f;
 
+	_appScreen->_scene["plight"]->transform.setPos(pos);
 	light->setProperty(lightProps::pos, pos);
 }
 
