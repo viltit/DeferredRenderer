@@ -137,6 +137,7 @@
     <ClInclude Include="AppScreen.hpp" />
     <ClInclude Include="Fork.hpp" />
     <ClInclude Include="MenuScreen.hpp" />
+    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp" />
@@ -188,6 +189,12 @@
     <None Include="Shaders\Shadows\shadowcubeFinal.vert.glsl" />
     <None Include="Shaders\simple.frag.glsl" />
     <None Include="Shaders\simple.vert.glsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="DeferredRenderer.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\viti.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
