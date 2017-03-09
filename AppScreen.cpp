@@ -137,6 +137,9 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 
 	/* debug: 
 	_scene.print();*/
+
+	//test:
+	SceneSaver{ &_scene, "scene.xml" };
 }
 
 

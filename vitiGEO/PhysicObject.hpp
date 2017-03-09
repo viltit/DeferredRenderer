@@ -67,6 +67,8 @@ public:
 
 	void		setGravity(glm::vec3 g)					{ _body->setGravity(glmVecToBtVec(g)); }
 
+	float		mass()									{ return 1.f / _body->getInvMass(); }
+
 	/* access to btRigidBody, btCollisionShape and the Transform Class: */
 	btRigidBody* body() const							{ return _body; }
 	btCollisionShape* shape() const						{ return _shape; }

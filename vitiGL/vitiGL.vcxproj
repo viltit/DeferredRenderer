@@ -178,6 +178,7 @@
     <ClCompile Include="Skybox.cpp" />
     <ClCompile Include="sQuad.cpp" />
     <ClCompile Include="Timer.cpp" />
+    <ClCompile Include="tinyxml2.cpp" />
     <ClCompile Include="vitiGL.cpp" />
     <ClCompile Include="vitiGlobals.cpp" />
     <ClCompile Include="vitiTypes.cpp" />
@@ -215,6 +216,7 @@
     <ClInclude Include="Skybox.hpp" />
     <ClInclude Include="sQuad.hpp" />
     <ClInclude Include="Timer.hpp" />
+    <ClInclude Include="tinyxml2.h" />
     <ClInclude Include="tiny_obj_loader.h" />
     <ClInclude Include="vitiGL.hpp" />
     <ClInclude Include="vitiGlobals.hpp" />

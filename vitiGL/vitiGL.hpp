@@ -20,6 +20,7 @@
 #include "DrawNormals.hpp"
 #include "Skybox.hpp"
 #include "glRendererDebug.hpp"
+#include "SceneSaver.hpp"
 
 
 namespace vitiGL {
