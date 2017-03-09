@@ -37,7 +37,7 @@ enum class BodyType {
 
 class PhysicObject {
 public:
-	PhysicObject(Transform* transform);
+	PhysicObject(Transform* transform, BodyType type);
 	virtual ~PhysicObject();
 
 	virtual void remove();
@@ -85,10 +85,15 @@ public:
 		_constraints.erase(std::remove(_constraints.begin(), _constraints.end(), c), _constraints.end()); 
 	}
 
+	/* get the type: */
+	BodyType type() const { return _type; }
+
 protected:
 	Transform*		_transform;
 	btRigidBody*	_body;
 	btCollisionShape* _shape;
+
+	BodyType 		_type;	
 
 	mutable std::vector<Constraint*> _constraints;
 };
