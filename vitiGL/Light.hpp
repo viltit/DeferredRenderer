@@ -123,6 +123,7 @@ public:
 	glm::vec3 pos()			const	{ return _pos; }
 	glm::vec3 diffuse()		const	{ return _diffuse; }
 	glm::vec3 specular()	const	{ return _specular; }
+	glm::vec3 attenuation() const	{ return _attenuation;  }
 
 	//debug:
 	bool _front;

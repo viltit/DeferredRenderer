@@ -487,6 +487,21 @@
         <Node>
             <Name>dlight</Name>
             <Type>dLight</Type>
+            <Direction>
+                <X>0.408248</X>
+                <Y>-0.816497</Y>
+                <Z>-0.408248</Z>
+            </Direction>
+            <Diffuse>
+                <R>0.800000</R>
+                <G>0.100000</G>
+                <B>0.000000</B>
+            </Diffuse>
+            <Specular>
+                <R>1.000000</R>
+                <G>0.000000</G>
+                <B>0.000000</B>
+            </Specular>
             <Transform>
                 <Pos>
                     <X>0.000000</X>
@@ -509,6 +524,26 @@
         <Node>
             <Name>plight</Name>
             <Type>pLight</Type>
+            <Position>
+                <X>0.000000</X>
+                <Y>15.000000</Y>
+                <Z>10.000000</Z>
+            </Position>
+            <Attenuation>
+                <Constant>1.000000</Constant>
+                <Linear>0.027000</Linear>
+                <Quadratic>0.002800</Quadratic>
+            </Attenuation>
+            <Diffuse>
+                <R>10.000000</R>
+                <G>5.000000</G>
+                <B>0.000000</B>
+            </Diffuse>
+            <Specular>
+                <R>20.000000</R>
+                <G>10.000000</G>
+                <B>0.000000</B>
+            </Specular>
             <Transform>
                 <Pos>
                     <X>0.000000</X>

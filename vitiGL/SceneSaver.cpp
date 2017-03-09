@@ -69,22 +69,28 @@ bool SceneSaver::processObj(SceneNode* sceneNode, XMLNode* xmlNode) {
 	switch (sceneNode->obj()->type()) {
 	case ObjType::shape:
 		tag->SetText("Shape");
+		xmlNode->InsertEndChild(tag);
 		break;
 	case ObjType::mesh:
 		tag->SetText("Mesh");
+		xmlNode->InsertEndChild(tag);
 		break;
 	case ObjType::dlight:
 		tag->SetText("dLight");
+		xmlNode->InsertEndChild(tag);
+		processDLight(sceneNode, xmlNode);
 		break;
 	case ObjType::plight:
 		tag->SetText("pLight");
+		xmlNode->InsertEndChild(tag);
+		processPLight(sceneNode, xmlNode);
 		break;
 	case ObjType::skybox:
 		tag->SetText("Skybox");
+		xmlNode->InsertEndChild(tag);
 		break;
 	}
 	
-	xmlNode->InsertEndChild(tag);
 	return true;
 }
 
@@ -181,6 +187,78 @@ bool SceneSaver::processPhysics(SceneNode* sceneNode, XMLNode* parent) {
 	insert(physics, "Damping", damping);
 	float angularDamping = obj->angularDamping();
 	insert(physics, "AngularDamping", angularDamping);
+}
+
+void SceneSaver::processDLight(SceneNode * sceneNode, tinyxml2::XMLNode * parent) {
+	//store direction:
+	XMLNode* direction = _doc.NewElement("Direction");
+	parent->InsertEndChild(direction);
+
+	glm::vec3 dir = static_cast<dLight*>(sceneNode->obj())->dir();
+	
+	insert(direction, "X", dir.x);
+	insert(direction, "Y", dir.y);
+	insert(direction, "Z", dir.z);
+
+	//store diffuse and specular color:
+	XMLNode* diffuse = _doc.NewElement("Diffuse");
+	parent->InsertEndChild(diffuse);
+
+	glm::vec3 diff = static_cast<dLight*>(sceneNode->obj())->diffuse();
+
+	insert(diffuse, "R", diff.r);
+	insert(diffuse, "G", diff.g);
+	insert(diffuse, "B", diff.b);
+
+	XMLNode* specular = _doc.NewElement("Specular");
+	parent->InsertEndChild(specular);
+
+	glm::vec3 spec = static_cast<dLight*>(sceneNode->obj())->specular();
+
+	insert(specular, "R", spec.r);
+	insert(specular, "G", spec.g);
+	insert(specular, "B", spec.b);
+}
+
+void SceneSaver::processPLight(SceneNode * sceneNode, tinyxml2::XMLNode * parent) {
+	//store position:
+	XMLNode* position = _doc.NewElement("Position");
+	parent->InsertEndChild(position);
+
+	glm::vec3 pos = static_cast<pLight*>(sceneNode->obj())->pos();
+
+	insert(position, "X", pos.x);
+	insert(position, "Y", pos.y);
+	insert(position, "Z", pos.z);
+
+	//store attenuation:
+	XMLNode* attenuation = _doc.NewElement("Attenuation");
+	parent->InsertEndChild(attenuation);
+
+	glm::vec3 att = static_cast<pLight*>(sceneNode->obj())->attenuation();
+
+	insert(attenuation, "Constant", att.x);
+	insert(attenuation, "Linear", att.y);
+	insert(attenuation, "Quadratic", att.z);
+
+	//store diffuse and specular color:
+	XMLNode* diffuse = _doc.NewElement("Diffuse");
+	parent->InsertEndChild(diffuse);
+
+	glm::vec3 diff = static_cast<pLight*>(sceneNode->obj())->diffuse();
+
+	insert(diffuse, "R", diff.r);
+	insert(diffuse, "G", diff.g);
+	insert(diffuse, "B", diff.b);
+
+	XMLNode* specular = _doc.NewElement("Specular");
+	parent->InsertEndChild(specular);
+
+	glm::vec3 spec = static_cast<pLight*>(sceneNode->obj())->specular();
+
+	insert(specular, "R", spec.r);
+	insert(specular, "G", spec.g);
+	insert(specular, "B", spec.b);
 }
 
 void SceneSaver::insert(tinyxml2::XMLNode * parent, const std::string & tagName, const std::string & value) {
