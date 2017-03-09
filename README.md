@@ -10,8 +10,10 @@
   <li>Helper gui for the user</li>
   <li>maybe: automaticaly put another object on top of the picked one</li>
   </ul></li>
-  <li>option to save a scene and load a scene</li>
-  <li>add an installer, preferably with auto-download of msvs c++ runtime dll's</li>
+  <li>option to save a scene and load a scene
+  <p><em>Working on it</em></p>
+  </li>
+  <li>add an installer, preferably with auto-download of msvs c++ runtime dll's <b>-done</b></li>
   <li>detect if the user has an outdated opengl driver and give a message before abort</li>
 </ul>
 
