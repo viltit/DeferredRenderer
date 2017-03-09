@@ -7,10 +7,11 @@
 
 namespace vitiGEO {
 
-	PhysicObject::PhysicObject(Transform* transform)
+	PhysicObject::PhysicObject(Transform* transform, BodyType type)
 		: _transform{ transform },
 		  _body{ nullptr },
-		  _shape{ nullptr }
+		  _shape{ nullptr },
+		  _type{ type }
 	{}
 
 	PhysicObject::~PhysicObject() {
@@ -40,7 +41,7 @@ namespace vitiGEO {
 		const glm::vec3& dimensions,
 		const glm::vec3 & initVelocity)
 
-		: PhysicObject{ transform }
+		: PhysicObject{ transform, BodyType::cuboid }
 	{
 		/* adapt orientation and position: */
 		btTransform t;
@@ -87,7 +88,7 @@ namespace vitiGEO {
 		float d,
 		const glm::vec3 & normal)
 
-		: PhysicObject{ transform }
+		: PhysicObject{ transform, BodyType::plane }
 	{
 		/* adapt orientation and position: */
 		btTransform t;
@@ -123,14 +124,14 @@ namespace vitiGEO {
 	}
 
 
-	/* */
+	/*---------------------CONVEX HULL ------------------------------------  */
 	ConvexHullObject::ConvexHullObject(
 		Transform * transform,
 		const std::vector<glm::vec3>& points,
 		const void * node, float mass,
 		const glm::vec3 & initialVelocity)
 
-		: PhysicObject{ transform }
+		: PhysicObject{ transform, BodyType::convexHull }
 	{
 		/* adapt orientation and position: */
 		btTransform t;
@@ -178,8 +179,9 @@ namespace vitiGEO {
 		}
 	}
 
+/*---------------------------------SPHERE ---------------------------------------------  */
 	SphereObject::SphereObject(Transform * transform, const void * node, float mass, float radius, const glm::vec3& initialVelocity)
-		: PhysicObject{ transform }
+		: PhysicObject{ transform, BodyType::sphere }
 	{
 		/* adapt orientation and position: */
 		btTransform t;
@@ -229,7 +231,7 @@ namespace vitiGEO {
 		std::vector<float> mass,
 		glm::vec3 initialVelocity)
 
-		: PhysicObject{ parent },
+		: PhysicObject{ parent, BodyType::mulitBody },
 		_transforms{ children },
 		_masses{ mass }
 	{
@@ -298,9 +300,6 @@ namespace vitiGEO {
 
 
 	void MultiBody::update() {
-
-		assert(_transforms.size() == numChildren);
-
 		size_t numChildren = static_cast<btCompoundShape*>(_shape)->getNumChildShapes();
 		btCompoundShape* shape = static_cast<btCompoundShape*>(_shape);
 
@@ -335,7 +334,7 @@ namespace vitiGEO {
 		const glm::vec3 & dimensions, 
 		const glm::vec3 & initVelocity)
 
-		: PhysicObject(transform)
+		: PhysicObject(transform, BodyType::cylinder)
 
 	{
 		/* adapt orientation and position: */
@@ -377,6 +376,7 @@ namespace vitiGEO {
 		}
 	}
 
+ 	/* -----------------------------CONE ----------------------------*/
 	ConeObject::ConeObject(
 		Transform * transform, 
 		const void * node, 
@@ -384,7 +384,7 @@ namespace vitiGEO {
 		const glm::vec3 & dimensions, 
 		const glm::vec3 & initVelocity)
 
-		: PhysicObject(transform)
+		: PhysicObject(transform, BodyType::cone)
 	{
 		/* adapt orientation and position: */
 		btTransform t;
