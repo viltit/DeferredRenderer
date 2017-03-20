@@ -1,12 +1,13 @@
 #pragma once
 
 #include <glm/glm.hpp>
-#include <GL\glew.h>
+#include <GL/glew.h>
 #include <vector>
 
 #include "vitiTypes.hpp"
 #include "IGameObject.hpp"
 #include "Material.hpp"
+#include "Error.hpp"
 
 #include <AABB.hpp>	//from vitiGEO static library
 
@@ -39,7 +40,7 @@ struct slData {
 	------------------------------------------------------------------------------------------ */
 class Shape : public IGameObject {
 public:
-	Shape();
+	Shape(const std::string& configFile, ShapeType sType);
 	virtual ~Shape();
 
 	virtual void draw(const Shader& shader) const override;
@@ -58,6 +59,8 @@ public:
 
 	bool isTransparent() const { return material.isTransparent(); }
 
+	ShapeType subtype() const  { return sType; }
+
 protected:
 	virtual void initVertices(std::vector<Vertex>& vertices) = 0; //pure abstract function !!
 	virtual void uploadVertices(const std::vector<Vertex>& vertices);
@@ -75,14 +78,16 @@ protected:
 	int			numVertices;
 	bool		invert;		//invert the normals
 	bool		sRGB;		//gamma-correct diffuse textures on loading
+
+	ShapeType 	sType; 		//Shape Type for scene reconstruction 
 };
 
 
 /*	------------------------ CLASS SHAPEI for indexed drawing ------------------------------- */
 class ShapeI : public IGameObject {
 public:
-	ShapeI();
-	ShapeI(ObjType type);
+	ShapeI(const std::string& configFile);
+	ShapeI(ObjType type, const std::string& configFile);
 	virtual ~ShapeI();
 
 	virtual void draw(const Shader& shader) const override;
@@ -172,7 +177,6 @@ public:
 	~Icosahedron();
 
 protected:
-	Icosahedron() : Shape() {}	/* for sub-class sphere */
 	void initVertices(std::vector<Vertex>& vertices) override;
 
 	glm::vec3	size;
@@ -195,5 +199,11 @@ private:
 	glm::vec3 middle_pos(const glm::vec3& point_a, const glm::vec3& point_b, float size);
 	glm::vec2 middle_uv(const glm::vec2& uv_a, const glm::vec2& uv_b);
 };
+
+
+/* Helper function to convert ShapeType enum class in a string and vice verca: --------------- */
+std::string shapeTypeToString(ShapeType type);
+
+ShapeType stringToShapeType(const std::string& name);
 
 }

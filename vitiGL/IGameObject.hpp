@@ -3,6 +3,7 @@
 #pragma once
 
 #include <glm/glm.hpp>
+#include <string>
 
 namespace vitiGL {
 
@@ -16,10 +17,21 @@ enum class ObjType {
 	mesh
 };
 
+/* we need this enum for saving the scene in an xml */
+enum class ShapeType {
+	tetrahedron,
+	cuboid,
+	octahedron,
+	icosahedron,
+	sphere,
+	mesh	
+};
+
 class IGameObject {
 public:
-	IGameObject(ObjType type) 
-		: _type { type }
+	IGameObject(ObjType type, const std::string& configFile) 
+		: _type { type },
+		  _configFile { configFile }
 	{};
 
 	virtual ~IGameObject() {};
@@ -31,9 +43,12 @@ public:
 	virtual glm::mat4 matrix() const					{ return _M; }
 
 	ObjType type()										{ return _type; }
+	std::string file() 									{ return _configFile; }
+
 
 protected:
 	glm::mat4	_M;
 	ObjType		_type;
+	std::string _configFile;
 };
 }

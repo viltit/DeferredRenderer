@@ -172,6 +172,7 @@
   <ItemGroup>
     <ClCompile Include="AABB.cpp" />
     <ClCompile Include="Constraints.cpp" />
+    <ClCompile Include="DebugInfo.cpp" />
     <ClCompile Include="ForceField.cpp" />
     <ClCompile Include="Frustum.cpp" />
     <ClCompile Include="Geometry.cpp" />

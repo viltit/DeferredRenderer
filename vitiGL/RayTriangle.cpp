@@ -16,9 +16,9 @@ void RayTriangle::start() {
 	float size = 3 * 3 * 3 * sizeof(float);
 
 	/* Set up the shader program: */
-	_shader.init("Shaders/Raytracing/Triangle.vert.glsl",
-		"Shaders/Raytracing/Triangle.frag.glsl",
-		"Shaders/Raytracing/Triangle.geo.glsl");
+	_shader.init("Shaders/Raytracing/triangle.vert.glsl",
+		"Shaders/Raytracing/triangle.frag.glsl",
+		"Shaders/Raytracing/triangle.geo.glsl");
 
 	const char* varyingNames[] = {
 		"uv",

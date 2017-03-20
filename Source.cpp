@@ -1,7 +1,5 @@
 #include "App.hpp"
 
-#include <conio.h>
-
 
 int main(int argc, char** argv) {
 	try {
@@ -11,6 +9,5 @@ int main(int argc, char** argv) {
 	catch (...) {
 
 	}
-	char c = _getch();
 	return 0;
 }

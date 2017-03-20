@@ -29,7 +29,7 @@ Material::~Material() {
 
 void Material::setUniforms(const Shader & shader) const {
 
-	assert(_tbo.size() < 5 , "<Material>: more than 4 textures defined");
+	assert(_tbo.size() < 5);
 
 	for (size_t i = 0; i < _tbo.size(); i++) {
 		if (_tbo[i] != 0) {

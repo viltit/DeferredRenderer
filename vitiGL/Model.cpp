@@ -51,12 +51,12 @@ void Model::loadFromCache(const std::string & filePath) {
 	assert(modelData.vertices.size() == modelData.indices.size() == modelData.textures.size());
 
 	if (modelData.vertices.size() == 1) {
-		Mesh* mesh = new Mesh{ modelData.vertices[0], modelData.indices[0], modelData.textures[0] };
+		Mesh* mesh = new Mesh{ filePath, modelData.vertices[0], modelData.indices[0], modelData.textures[0] };
 		_obj = mesh;
 	}
 	else {
 		for (size_t i = 0; i < modelData.vertices.size(); i++) {
-			Mesh* mesh = new Mesh{ modelData.vertices[0], modelData.indices[0], modelData.textures[0] };
+			Mesh* mesh = new Mesh{ filePath, modelData.vertices[0], modelData.indices[0], modelData.textures[0] };
 			std::string meshName = _name + ".child" + std::to_string(++id);
 			SceneNode* child = new SceneNode{ meshName, mesh, glm::vec3{} };
 			addChild(child);
@@ -195,13 +195,13 @@ void Model::loadFromFile(const std::string & filePath, bool textureFolder) {
 
 		/* if we only have one mesh, the model directly contains the mesh: */
 		if (!hasChildren) {
-			Mesh* mesh = new Mesh{ vertices, indices, textures };
+			Mesh* mesh = new Mesh{ filePath, vertices, indices, textures };
 			_obj = mesh;
 		}
 
 		else {
 			/* if we have several meshes, they are children of the model: */
-			Mesh* mesh = new Mesh{ vertices, indices, textures };
+			Mesh* mesh = new Mesh{ filePath, vertices, indices, textures };
 			std::string meshName = shape.name;
 			if (meshName == "") meshName = "Mesh_" + std::to_string(++id);
 			else meshName += "_" + std::to_string(++id);

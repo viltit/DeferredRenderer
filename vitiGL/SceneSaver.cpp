@@ -67,27 +67,34 @@ bool SceneSaver::processObj(SceneNode* sceneNode, XMLNode* xmlNode) {
 	XMLElement* tag = _doc.NewElement("Type");	
 
 	switch (sceneNode->obj()->type()) {
+	//shapes need their subtype too:
 	case ObjType::shape:
 		tag->SetText("Shape");
+		processSubType(sceneNode, xmlNode);
+		processConfigFile(sceneNode, xmlNode);
 		xmlNode->InsertEndChild(tag);
 		break;
 	case ObjType::mesh:
 		tag->SetText("Mesh");
+		processConfigFile(sceneNode, xmlNode);
 		xmlNode->InsertEndChild(tag);
 		break;
 	case ObjType::dlight:
 		tag->SetText("dLight");
 		xmlNode->InsertEndChild(tag);
+		processConfigFile(sceneNode, xmlNode);
 		processDLight(sceneNode, xmlNode);
 		break;
 	case ObjType::plight:
 		tag->SetText("pLight");
 		xmlNode->InsertEndChild(tag);
+		processConfigFile(sceneNode, xmlNode);
 		processPLight(sceneNode, xmlNode);
 		break;
 	case ObjType::skybox:
 		tag->SetText("Skybox");
 		xmlNode->InsertEndChild(tag);
+		processConfigFile(sceneNode, xmlNode);
 		break;
 	}
 	
@@ -237,9 +244,9 @@ void SceneSaver::processPLight(SceneNode * sceneNode, tinyxml2::XMLNode * parent
 
 	glm::vec3 att = static_cast<pLight*>(sceneNode->obj())->attenuation();
 
-	insert(attenuation, "Constant", att.x);
-	insert(attenuation, "Linear", att.y);
-	insert(attenuation, "Quadratic", att.z);
+	insert(attenuation, "X", att.x);
+	insert(attenuation, "Y", att.y);
+	insert(attenuation, "Z", att.z);
 
 	//store diffuse and specular color:
 	XMLNode* diffuse = _doc.NewElement("Diffuse");
@@ -259,6 +266,37 @@ void SceneSaver::processPLight(SceneNode * sceneNode, tinyxml2::XMLNode * parent
 	insert(specular, "R", spec.r);
 	insert(specular, "G", spec.g);
 	insert(specular, "B", spec.b);
+}
+
+
+void SceneSaver::processConfigFile(SceneNode* sceneNode, XMLNode* parent) {
+	std::string configFile = sceneNode->obj()->file();
+	insert(parent, "ResourceFile", configFile);	
+}
+
+void SceneSaver::processSubType(SceneNode* sceneNode, XMLNode* parent) {
+	Shape* shape = static_cast<Shape*>(sceneNode->obj());
+	XMLElement* tag = _doc.NewElement("Subtype");
+	switch (shape->subtype()) {
+		case ShapeType::sphere:
+			tag->SetText("Sphere");
+			break;
+		case ShapeType::octahedron:
+			tag->SetText("Octahedron");
+			break;
+		case ShapeType::tetrahedron:
+			tag->SetText("Tetrahedron");
+			break;
+		case ShapeType::icosahedron:
+			tag->SetText("Icosahedron");
+			break;
+		case ShapeType::cuboid:
+			tag->SetText("Cuboid");
+			break;
+		default:
+			throw vitiError("<SceneSaver::processSubType> Unknown shape type.");
+	}
+	parent->InsertEndChild(tag);
 }
 
 void SceneSaver::insert(tinyxml2::XMLNode * parent, const std::string & tagName, const std::string & value) {

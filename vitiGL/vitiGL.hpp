@@ -1,6 +1,6 @@
 #pragma once
 
-#include <SDL2\SDL.h>
+#include <SDL2/SDL.h>
 #include <iostream>
 #include "Window.hpp"
 #include "Camera.hpp"
@@ -21,7 +21,7 @@
 #include "Skybox.hpp"
 #include "glRendererDebug.hpp"
 #include "SceneSaver.hpp"
-
+#include "SceneLoader.hpp"
 
 namespace vitiGL {
 

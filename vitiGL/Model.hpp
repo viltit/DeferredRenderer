@@ -8,7 +8,6 @@
 #include <string>
 
 #include "Scene.hpp"
-#include "AABBShape.hpp"
 #include <AABB.hpp>
 
 namespace vitiGL {

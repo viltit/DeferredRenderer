@@ -18,15 +18,15 @@ Window::Window(const std::string & name, unsigned int width, unsigned int height
 
 	//Check for Window style flags with bitwise operators:
 	Uint32 flags = SDL_WINDOW_OPENGL | SDL_WINDOW_INPUT_GRABBED;
-	if (unsigned int(wStyle::noBorder) & unsigned int(style))
+	if ((unsigned int)wStyle::noBorder & (unsigned int)style)
 		flags |= SDL_WINDOW_BORDERLESS;
-	if (unsigned int(wStyle::full) & unsigned int(style))
+	if ((unsigned int)wStyle::full & (unsigned int)style)
 		flags |= SDL_WINDOW_FULLSCREEN;
-	if (unsigned int(wStyle::max) & unsigned int(style))
+	if ((unsigned int)wStyle::max & (unsigned int)style)
 		flags |= SDL_WINDOW_MAXIMIZED;
 
 	//in case of fullscreen, adjust width and height:
-	if ((unsigned int(wStyle::full) & unsigned int(style)) || (unsigned int(wStyle::max) & unsigned int(style))) {
+	if (((unsigned int)wStyle::full & (unsigned int)style) || ((unsigned int)wStyle::max & (unsigned int)style)) {
 		SDL_DisplayMode resolution;
 		SDL_GetDisplayMode(0, 0, &resolution);
 		w = resolution.w;

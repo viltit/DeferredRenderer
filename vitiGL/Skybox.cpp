@@ -6,7 +6,7 @@
 namespace vitiGL {
 
 Skybox::Skybox(const std::vector<std::string>& texturePath) 
-	:	IGameObject { ObjType::skybox },
+	:	IGameObject { ObjType::skybox, "" },
 		_tbo		{ 0 },
 		_vao		{ 0 },
 		_vbo		{ 0 }

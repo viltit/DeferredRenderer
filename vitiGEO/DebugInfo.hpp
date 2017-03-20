@@ -11,10 +11,7 @@ namespace vitiGEO {
 
 class DebugInfo {
 public:
-	static DebugInfo* instance() {
-		static DebugInfo instance{};
-		return &instance;
-	}
+	static DebugInfo* instance();
 
 	void clear() {
 		_points.clear();

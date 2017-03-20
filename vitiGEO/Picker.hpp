@@ -3,7 +3,7 @@
 #include <glm/glm.hpp>
 #include <bt/btBulletDynamicsCommon.h>
 
-#include <SDL2\SDL.h>
+#include <SDL2/SDL.h>
 
 namespace vitiGEO {
 

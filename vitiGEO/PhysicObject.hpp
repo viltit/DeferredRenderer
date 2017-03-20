@@ -33,6 +33,10 @@ enum class BodyType {
 	mulitBody	/* consists of several other bodies */
 };
 
+/* Helper functions to turn body type in a string and vice verca: */
+std::string bodyTypeToString(BodyType type);
+BodyType stringToBodyType(const std::string& name);
+
 /*	ABSTRACT BASE CLASS -------------------------------------------------------------------- */
 
 class PhysicObject {
@@ -67,7 +71,7 @@ public:
 
 	void		setGravity(glm::vec3 g)					{ _body->setGravity(glmVecToBtVec(g)); }
 
-	float		mass()									{ return 1.f / _body->getInvMass(); }
+	float		mass()									{ return _body->getInvMass() > 0.f ?  1.f / _body->getInvMass() : 0.f; }
 
 	/* access to btRigidBody, btCollisionShape and the Transform Class: */
 	btRigidBody* body() const							{ return _body; }

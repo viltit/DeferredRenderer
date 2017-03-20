@@ -8,8 +8,8 @@
 
 namespace vitiGL {
 
-Mesh::Mesh(std::vector<Vertex>& vertices, std::vector<GLuint> indices, std::vector<std::pair<int, GLuint>>& textures)
-	:	ShapeI	{ ObjType::mesh }
+Mesh::Mesh(const std::string& configFile, std::vector<Vertex>& vertices, std::vector<GLuint> indices, std::vector<std::pair<int, GLuint>>& textures)
+	:	ShapeI	{ ObjType::mesh, configFile }
 		
 {
 	/* WIP: add aabb and aabbShape: */
@@ -47,31 +47,6 @@ Mesh::Mesh(std::vector<Vertex>& vertices, std::vector<GLuint> indices, std::vect
 			throw vitiError("<Mesh::Mesh> Invalid Texture index.");
 		}
 	}
-}
-
-Mesh::Mesh(const Mesh& mesh) 
-{
-	vbo = mesh.vbo;
-	vao = mesh.vao;
-	ebo = mesh.ebo;
-	material = mesh.material;
-	numVertices = mesh.numVertices;
-	aabb = mesh.aabb;
-	_vertices = mesh._vertices;
-}
-
-Mesh::Mesh(Mesh && mesh) {
-	vbo = mesh.vbo;
-	vao = mesh.vao;
-	material = mesh.material;
-	ebo = mesh.ebo;
-	numVertices = mesh.numVertices;
-	aabb = mesh.aabb;
-	_vertices = mesh._vertices;
-
-	mesh.vbo = 0;
-	mesh.vao = 0;
-	mesh.ebo = 0;
 }
 
 Mesh::~Mesh() {

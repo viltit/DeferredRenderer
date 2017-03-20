@@ -39,7 +39,7 @@ public:
 	/* getters and setters are inline: */
 	GLuint		texture() const { return _finalImg; }
 
-	glm::vec3 DirShadowmap::TransformTransposed(const glm::vec3 &point, const glm::mat4& matrix);
+	glm::vec3 TransformTransposed(const glm::vec3 &point, const glm::mat4& matrix);
 
 protected:
 	void		initFramebuffer();

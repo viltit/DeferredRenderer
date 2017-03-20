@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include <SDL2\SDL.h>
+#include <SDL2/SDL.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <map>
 
@@ -81,6 +81,9 @@ public:
 	SceneNode*	parent()		{ return _parent; }
 	auto		childrenBegin() { return _children.begin(); }
 	auto		childrenEnd()	{ return _children.end(); }
+
+	/* override transform: */
+	void setTransform(const vitiGEO::Transform& t) { transform = t; }
 
 	/* public variable transform for accessing translations, rotations etc.: */
 	vitiGEO::Transform transform;
@@ -171,7 +174,6 @@ public:
 		if (node == nullptr) throw vitiError{ ("Invalid index in scene[" + nodeName + "]").c_str() };
 		return node;
 	}
-
 
 	//debug - switch front and back face for point light drawing:
 	void switchCull() {

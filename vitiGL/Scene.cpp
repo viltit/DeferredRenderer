@@ -21,6 +21,7 @@ using namespace vitiGEO;
 SceneNode::SceneNode(const std::string& name, IGameObject* object, glm::vec3 pos)
 	:	_parent		{ nullptr },
 		_obj		{ object },
+		_physics 	{ nullptr },
 		_name		{ name }
 {
 	/* get the initial position in case the Shape already has one: */

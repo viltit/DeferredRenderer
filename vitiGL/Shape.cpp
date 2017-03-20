@@ -12,13 +12,14 @@
 
 namespace vitiGL {
 
-Shape::Shape() 
-	:	IGameObject { ObjType::shape },
+Shape::Shape(const std::string& configFile, ShapeType sType) 
+	:	IGameObject { ObjType::shape, configFile },
 		vao			{ 0 },
 		vbo			{ 0 },
 		numVertices	{ 0 },
 		invert		{ false },
-		sRGB		{ true }
+		sRGB		{ true },
+		sType		{ sType } 
 {}
 
 
@@ -153,16 +154,16 @@ void Shape::calcTangents(std::vector<Vertex>& vertices, bool bitangents) {
 CLASS SHAPEI FOR INDEXED DRAWING
 ----------------------------------------------------------------------------------------------------- */
 
-ShapeI::ShapeI() 
-	:	IGameObject	{ ObjType::shape },
+ShapeI::ShapeI(const std::string& configFile) 
+	:	IGameObject	{ ObjType::shape, configFile },
 		vao			{ 0 },
 		vbo			{ 0 },
 		ebo			{ 0 },
 		numVertices	{ 0 }
 {}
 
-ShapeI::ShapeI(ObjType type)
-	:	IGameObject	{ type },
+ShapeI::ShapeI(ObjType type, const std::string& configFile)
+	:	IGameObject	{ type, configFile },
 		vao			{ 0 },
 		vbo			{ 0 },
 		ebo			{ 0 },
@@ -343,7 +344,7 @@ void ShapeI::normalizeSeam(std::vector<Vertex>& vertices, std::vector<GLuint>& i
 	----------------------------------------------------------------------------------------------------- */
 
 Cuboid::Cuboid(const std::string& configFile, const glm::vec3& position)
-	:	Shape()
+	:	Shape(configFile, ShapeType::cuboid)
 {
 	VertexData vdata{ 0, 0, 0, vitiGEO::AABB{ }, _vertices };
 	slData sdata = Cache::getShape(configFile);
@@ -445,7 +446,9 @@ void Cuboid::initVertices(std::vector<Vertex>& vertices) {
 }
 
 /*	------------------------------------------------------------------------------------------------------------- */
-Tetrahedron::Tetrahedron(const std::string & configFile, const glm::vec3& position) : Shape() {
+Tetrahedron::Tetrahedron(const std::string & configFile, const glm::vec3& position) 
+		: Shape(configFile, ShapeType::tetrahedron) 
+{
 	/* load data from config file: */
 	VertexData vdata{ 0, 0, 0, vitiGEO::AABB{}, _vertices };
 	slData sdata = Cache::getShape(configFile);
@@ -522,7 +525,8 @@ void Tetrahedron::initVertices(std::vector<Vertex>& vertices) {
 
 /*	------------------------------------------------------------------------------------------------------------- */
 
-Octahedron::Octahedron(const std::string& configFile, const glm::vec3& position) : Shape() {
+Octahedron::Octahedron(const std::string& configFile, const glm::vec3& position) 
+		: Shape(configFile, ShapeType::octahedron) {
 	
 	VertexData vdata{ 0, 0, 0, vitiGEO::AABB{}, _vertices };
 	slData sdata = Cache::getShape(configFile);
@@ -627,7 +631,7 @@ void Octahedron::initVertices(std::vector<Vertex>& vertices) {
 /*	------------------------------------------------------------------------------------------------------------- */
 
 Icosahedron::Icosahedron(const std::string & configFile, const glm::vec3& position)
-	: Shape()
+	: Shape(configFile, ShapeType::icosahedron)
 {
 	/* load data from config file: */
 	VertexData vdata{ 0, 0, 0, vitiGEO::AABB{}, _vertices };
@@ -796,8 +800,10 @@ void Icosahedron::initVertices(std::vector<Vertex>& vertices) {
 	vertices[id++].uv = uv[12];	vertices[id++].uv = uv[13];	vertices[id++].uv = uv[7];
 }
 
-Sphere::Sphere(const std::string & configFile) : Icosahedron() {
+Sphere::Sphere(const std::string & configFile) : Icosahedron(configFile) {
 	/* load data from config file: */
+	sType = ShapeType::sphere;
+	
 	VertexData vdata{ 0, 0, 0, vitiGEO::AABB{}, _vertices };
 	slData sdata = Cache::getShape(configFile);
 
@@ -899,5 +905,38 @@ glm::vec3 Sphere::middle_pos(const glm::vec3 & point_a, const glm::vec3 & point_
 glm::vec2 Sphere::middle_uv(const glm::vec2& uv_a, const glm::vec2& uv_b) {
 	return (uv_b - uv_a) * 0.5f + uv_a;		/* plain middle point: */
 }
+
+
+std::string shapeTypeToString(ShapeType type) {
+	switch (type) {
+		case ShapeType::cuboid: 
+			return "Cuboid";
+		case ShapeType::sphere: 
+			return "Sphere";
+		case ShapeType::mesh: 
+			return "Mesh";
+		case ShapeType::tetrahedron:		   	
+			return "Tetrahedron";
+		case ShapeType::icosahedron:
+			return "Icosahedron";
+		case ShapeType::octahedron:
+			return "Octahedron";
+		default:
+			throw vitiError("<shapeTypeToString> Unknown Shape type");
+	}
+}
+
+
+ShapeType stringToShapeType(const std::string& name) {
+	if (name == "Cuboid") return ShapeType::cuboid;
+	else if (name == "Sphere") return ShapeType::sphere;
+	else if (name == "Mesh") return ShapeType::mesh;
+	else if (name == "Tetrahedron") return ShapeType::tetrahedron;
+	else if (name == "Icosahedron") return ShapeType::icosahedron;
+	else if (name == "Octahedron") return ShapeType::octahedron;
+	
+	throw vitiError(("<stringToShapeType> Could not convert string '" + name + " to a ShapeType").c_str());
+}
+
 
 }

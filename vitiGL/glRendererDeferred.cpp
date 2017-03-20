@@ -19,7 +19,7 @@ namespace vitiGL {
 		_lshader	{ "Shaders/DeferredRenderer/light.vert.glsl", "Shaders/DeferredRenderer/light.frag.glsl" },
 		_fshader	{ "Shaders/DeferredRenderer/final.vert.glsl", "Shaders/DeferredRenderer/final.frag.glsl" },
 		_dshader	{ "Shaders/simple.vert.glsl", "Shaders/simple.frag.glsl" },
-		_sbshader	{ "Shaders/Skybox/Skybox.vert.glsl", "Shaders/Skybox/skybox.frag.glsl" },
+		_sbshader	{ "Shaders/Skybox/skybox.vert.glsl", "Shaders/Skybox/skybox.frag.glsl" },
 		_tshader	{ "Shaders/DeferredRenderer/vertex.glsl", "Shaders/DeferredRenderer/fragment.glsl" },
 		/* Debug Windows: */
 		_debug		{ QuadPos::topRight },

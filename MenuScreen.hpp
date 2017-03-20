@@ -31,8 +31,8 @@ private:
 	void updateInput();
 
 	/* event handlers: */
-	bool MenuScreen::onExitClicked(const CEGUI::EventArgs& e);
-	bool MenuScreen::onContinueClicked(const CEGUI::EventArgs& e);
+	bool onExitClicked(const CEGUI::EventArgs& e);
+	bool onContinueClicked(const CEGUI::EventArgs& e);
 
 	void onPhysicsToggled();
 	void onNormalsToggled();

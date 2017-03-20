@@ -3,13 +3,10 @@
 
 #include "App.hpp"
 
-#include <conio.h>
-
 #include <glm/glm.hpp>
 
 #include "vitiGEO/Ray.hpp"
 #include "vitiGEO/AABB.hpp"
-#include "vitiGL/AABBShape.hpp"
 #include "vitiGEO/DebugInfo.hpp"
 #include "vitiGL/RayTriangle.hpp"
 #include "vitiGEO/Physics.hpp"
@@ -77,7 +74,7 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	/* compound object test: */
 
 
-	/* test: load cylinder obj model: */
+	/* test: load cylinder obj model: 
 	_scene.addChild(new Model("Models/cylinder.obj"), "Cylinder");
 	_scene["Cylinder"]->transform.setScale(glm::vec3{ 1.0f, 1.5f, 1.0f });
 	_scene["Cylinder"]->transform.setPos(glm::vec3{ -5.f, 3.0f, -5.0f });
@@ -101,7 +98,7 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	_scene["Wall"]->transform.rotateTo(45.0f, glm::vec3{ 0.0f, 0.0f, 1.0f });
 	_scene["Wall"]->addPhysics(BodyType::cuboid, 0.0f);
 
-	/* add a directional and a point light: */
+	  add a directional and a point light: 
 	dLight* dlight = new dLight{ "dlight", glm::vec3{ 0.5f, -1.0f, -0.5f } };
 	dlight->setProperty(lightProps::diffuse, glm::vec3{ 0.8f, 0.1f, 0.0f });
 	dlight->setProperty(lightProps::specular, glm::vec3{ 1.f, 0.0f, 0.0f });
@@ -117,7 +114,7 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	_scene.addChild(plight, "plight");
 	_scene.setShadowcaster("plight");
 
-	/* add Skybox: */
+	 add Skybox: */
 	std::vector<std::string> faces;
 	faces.push_back("Textures/Skybox/right.jpg");
 	faces.push_back("Textures/Skybox/left.jpg");
@@ -138,8 +135,10 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	/* debug: 
 	_scene.print();*/
 
-	//test:
-	SceneSaver{ &_scene, "scene.xml" };
+	//test: save scene
+	//SceneSaver saver{ &_scene, "scene.xml" };
+	//and load:
+	SceneLoader loader{ &_scene, &_cam,  "scene.xml" };
 }
 
 
@@ -280,7 +279,6 @@ void AppScreen::updateInput() {
 		case SDL_MOUSEMOTION:
 			int dx, dy;
 			SDL_GetMouseState(&dx, &dy);
-			std::cout << "Mouse pos: " << dx << "/" << dy << std::endl;
 			_cam.rotate(dx, dy);
 			/* reset the mouse to the screen-center:*/
 			_window->centerMouse();
@@ -311,7 +309,7 @@ void AppScreen::addCube(float mass, const glm::vec3& pos) {
 
 	glm::vec3 v = _cam.dir() * 10.0f;
 
-	_scene.addChild(new Model{ "models/unitCube/unitCube.obj" }, name);
+	_scene.addChild(new Model{ "Models/unitCube/unitCube.obj" }, name);
 	_scene[name]->transform.setPos(pos);
 	_scene[name]->addPhysics(BodyType::cuboid, 10.0f, v);
 

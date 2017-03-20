@@ -41,7 +41,7 @@ class Camera;
 class Light : public IGameObject {
 public:
 	Light(ObjType type) 
-		:	IGameObject{ type }
+		:	IGameObject{ type, "" }
 	{}
 	virtual ~Light() {}
 

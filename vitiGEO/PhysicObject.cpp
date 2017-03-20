@@ -7,6 +7,30 @@
 
 namespace vitiGEO {
 
+std::string bodyTypeToString(BodyType type) {
+	switch (type) {
+		case BodyType::plane: return "Plane";
+		case BodyType::cuboid: return "Cuboid";
+		case BodyType::cone: return "Cone";
+		case BodyType::cylinder: return "Cylinder";
+		case BodyType::convexHull: return "ConvexHull";
+		case BodyType::sphere: return "Sphere";
+		case BodyType::mulitBody: return "MultiBody";
+		//default:
+			//throw vitiError("<bodyTypeToString> Unknown body type.");			  
+	}
+}
+
+BodyType stringToBodyType(const std::string& name) {
+	if (name == "plane") return BodyType::plane;
+	else if (name == "cuboid") return BodyType::cuboid;
+	else if (name == "cone") return BodyType::cone;
+	else if (name == "cylinder") return BodyType::cylinder;
+	else if (name == "convexHull") return BodyType::convexHull;
+	else if (name == "sphere") return BodyType::sphere;
+	else if (name == "multiBody") return BodyType::mulitBody;	
+}
+
 	PhysicObject::PhysicObject(Transform* transform, BodyType type)
 		: _transform{ transform },
 		  _body{ nullptr },

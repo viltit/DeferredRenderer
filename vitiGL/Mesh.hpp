@@ -13,21 +13,15 @@
 #include <string>
 
 #include "Shape.hpp"
-#include "AABBShape.hpp"
 
 namespace vitiGL {
 
 class Mesh : public ShapeI {
 public:
-	Mesh	(std::vector<Vertex>& vertices, 
+	Mesh	(const std::string& configFile,
+			 std::vector<Vertex>& vertices, 
 			 std::vector<GLuint> indices, 
 			 std::vector<std::pair<int, GLuint>>& textures);
-
-	/* copy constructor: */
-	Mesh(const Mesh& m);
-
-	/* move constructor: */
-	Mesh(Mesh&& mesh);
 
 	~Mesh();
 

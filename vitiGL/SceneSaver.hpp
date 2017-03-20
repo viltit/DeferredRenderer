@@ -1,3 +1,5 @@
+#pragma once
+
 #include <string>
 
 #include "tinyxml2.h"
@@ -21,6 +23,10 @@ private:
 
 	void processDLight(SceneNode* sceneNode, tinyxml2::XMLNode* parent);
 	void processPLight(SceneNode* sceneNode, tinyxml2::XMLNode* parent);
+
+	void processConfigFile(SceneNode* sceneNode, tinyxml2::XMLNode* parent);
+
+	void processSubType(SceneNode* sceneNode, tinyxml2::XMLNode* parent);
 
 	void insert(tinyxml2::XMLNode* parent, const std::string& tag, const std::string& value);
 	void insert(tinyxml2::XMLNode* parent, const std::string& tag, float value);
