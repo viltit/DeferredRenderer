@@ -3,6 +3,8 @@
 #include "App.hpp"
 #include "AppScreen.hpp"
 
+#include <SceneSaver.hpp>
+
 #include <sstream>
 #include <iomanip>
 #include <Physics.hpp>
@@ -36,6 +38,15 @@ MenuScreen::~MenuScreen() {
 }
 
 void MenuScreen::onEntry() {
+	//hide save and load masks:
+	_menu->getChild("loadPopup")->hide();
+	_menu->getChild("savePopup")->hide();
+
+	//make sure all other menu parts are shown:
+	_menu->getChild("General")->show();
+	_menu->getChild("PLight")->show();
+	_menu->getChild("DLight")->show();	
+
 	/* get lights RGB values and other data: */
 	dLight* light = _appScreen->_scene.findDLight("dlight");
 
@@ -108,6 +119,28 @@ int MenuScreen::previous() const {
 }
 
 void MenuScreen::initGUI() {
+	//Subscribe close button events:
+	auto frameGeneral = static_cast<CEGUI::FrameWindow*>(_menu->getChild("General"));
+	frameGeneral->subscribeEvent(
+		CEGUI::FrameWindow::EventCloseClicked, 
+		CEGUI::Event::Subscriber(&MenuScreen::onMainClose, this));
+	auto framePLight = static_cast<CEGUI::FrameWindow*>(_menu->getChild("PLight"));
+	framePLight->subscribeEvent(
+		CEGUI::FrameWindow::EventCloseClicked,
+		CEGUI::Event::Subscriber(&MenuScreen::onPLightClose, this));
+	auto frameDLight = static_cast<CEGUI::FrameWindow*>(_menu->getChild("DLight"));
+	frameDLight->subscribeEvent(
+		CEGUI::FrameWindow::EventCloseClicked,
+		CEGUI::Event::Subscriber(&MenuScreen::onDLightClose, this));
+	auto saveWidget = static_cast<CEGUI::FrameWindow*>(_menu->getChild("savePopup"));
+	saveWidget->subscribeEvent(
+		CEGUI::FrameWindow::EventCloseClicked,
+		CEGUI::Event::Subscriber(&MenuScreen::onSaveClose, this));
+	auto loadWidget = static_cast<CEGUI::FrameWindow*>(_menu->getChild("loadPopup"));
+	loadWidget->subscribeEvent(
+		CEGUI::FrameWindow::EventCloseClicked,
+		CEGUI::Event::Subscriber(&MenuScreen::onLoadClose, this));
+
 	//Exit and Continue Button:
 	auto exitButton = static_cast<CEGUI::PushButton*>(_menu->getChild("General")->getChild("quitButton"));
 	exitButton->subscribeEvent(
@@ -118,6 +151,21 @@ void MenuScreen::initGUI() {
 	continueButton->subscribeEvent(
 		CEGUI::PushButton::EventClicked,
 		CEGUI::Event::Subscriber(&MenuScreen::onContinueClicked, this));
+
+	//Save Scene and load Scene Buttons:
+	auto loadButton = static_cast<CEGUI::PushButton*>(_menu->getChild("General")->getChild("loadButton"));
+	loadButton->subscribeEvent(
+		CEGUI::PushButton::EventClicked,
+		CEGUI::Event::Subscriber(&MenuScreen::onLoad, this));
+
+	auto saveButton = static_cast<CEGUI::PushButton*>(_menu->getChild("General")->getChild("saveButton"));
+	saveButton->subscribeEvent(
+		CEGUI::PushButton::EventClicked,
+		CEGUI::Event::Subscriber(&MenuScreen::onSave, this));
+	//Save Scene Editbox handler:
+	_menu->getChild("savePopup")->getChild("saveInput")->subscribeEvent(
+		CEGUI::Editbox::EventTextAccepted,
+		CEGUI::Event::Subscriber(&MenuScreen::onSaveFinished, this));	
 
 	initRadioButtons();
 	initSliders();
@@ -266,6 +314,27 @@ void MenuScreen::updateInput() {
 	}
 }
 
+void MenuScreen::onMainClose() {
+	auto frame = static_cast<CEGUI::FrameWindow*>(_menu->getChild("General"));
+	frame->hide();
+}
+
+void MenuScreen::onDLightClose() {
+	_menu->getChild("DLight")->hide();
+}
+
+void MenuScreen::onSaveClose() {
+	_menu->getChild("savePopup")->hide();
+}
+
+void MenuScreen::onLoadClose() {
+	_menu->getChild("loadPopup")->hide();
+}
+
+void MenuScreen::onPLightClose() {
+	_menu->getChild("PLight")->hide();
+}
+
 bool MenuScreen::onExitClicked(const CEGUI::EventArgs & e) {
 	_state = ScreenState::exit;
 	return true;
@@ -273,6 +342,67 @@ bool MenuScreen::onExitClicked(const CEGUI::EventArgs & e) {
 
 bool MenuScreen::onContinueClicked(const CEGUI::EventArgs & e) {
 	_state = ScreenState::next;
+	return true;
+}
+
+bool MenuScreen::onLoad(const CEGUI::EventArgs& e) {
+	auto loadWidget = static_cast<CEGUI::FrameWindow*>(_menu->getChild("loadPopup"));
+	auto saveWidget = static_cast<CEGUI::FrameWindow*>(_menu->getChild("savePopup"));
+
+	saveWidget->hide();
+	loadWidget->show();
+	return true;
+}
+
+bool MenuScreen::onSave(const CEGUI::EventArgs& e) {
+	auto saveWidget = static_cast<CEGUI::FrameWindow*>(_menu->getChild("savePopup"));
+	auto loadWidget = static_cast<CEGUI::FrameWindow*>(_menu->getChild("loadPopup"));
+
+	loadWidget->hide();
+	saveWidget->show();
+
+	return true;
+}
+
+bool MenuScreen::onSaveFinished(const CEGUI::EventArgs& e) {
+	//get the text of the input box:
+	std::string filename = _menu->getChild("savePopup")->getChild("saveInput")->getText().c_str();	
+
+	//process the string(ie add .xml if it's not already there, add subpath)
+	size_t pos = filename.find(".");
+	if (pos == std::string::npos) {
+		filename += ".xml";
+	}
+	else if (filename.substr(pos) != ".xml") {
+		filename.erase(pos);
+		filename += ".xml";
+	}
+	char chars[] = "()/\\[]{}";
+	for (size_t i = 0; i < std::strlen(chars); ++i) {
+		filename.erase(std::remove(filename.begin(), filename.end(), chars[i]), filename.end());
+	}
+
+	//finally, add our subpath for the savefiles:
+	std::string subpath = "SavedScenes/";
+	filename = subpath + filename;
+
+	try {
+		SceneSaver saver { _appScreen->scene(), filename };
+	}
+	catch(vitiError e) {
+		auto saveLabel = static_cast<CEGUI::FrameWindow*>(_menu->getChild("savePopup")->getChild("saveLabel"));
+		saveLabel->setText("Error while saving file.");
+		return false;		
+	}
+
+	//hide the save dialog again:
+	_menu->getChild("savePopup")->hide();	
+
+	return true;
+}
+
+bool MenuScreen::onLoadFinished(const CEGUI::EventArgs& e) {
+
 	return true;
 }
 

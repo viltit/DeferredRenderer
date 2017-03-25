@@ -3,7 +3,8 @@
 <GUILayout version="4" >
     <Window type="DefaultWindow" name="DefaultWindow" >
         <Property name="Font" value="DejaVuSans-10" />
-        <Window type="AlfiskoSkin/FrameWindow" name="General" >
+		<Window type="AlfiskoSkin/FrameWindow" name="General" >
+			<Property name="ClippedByParent" value="False" />
             <Property name="Area" value="{{0.05,0},{0.05,0},{0.2,0},{0.9,0}}" />
             <Property name="Text" value="General Settings" />
             <Property name="TitlebarFont" value="DejaVuSans-10" />
@@ -117,7 +118,17 @@
             </Window>
             <Window type="AlfiskoSkin/HorizontalSlider" name="hdrSlider" >
                 <Property name="Area" value="{{0.03,0},{0.54,0},{0.97,0},{0.59,0}}" />
-            </Window>
+			</Window>
+			<Window type ="AlfiskoSkin/Button" name="loadButton">
+				<Property name="Area" value="{{0.03,0},{0.86,0},{0.48,0},{0.91,0}}" />
+                <Property name="Font" value="DejaVuSans-10" />
+				<Property name="Text" value="Load Scene" />
+			</Window>
+			<Window type ="AlfiskoSkin/Button" name="saveButton">
+				<Property name="Area" value="{{0.52,0},{0.86,0},{0.97,0},{0.91,0}}" />
+                <Property name="Font" value="DejaVuSans-10" />
+                <Property name="Text" value="Save Scene" />
+			</Window>
             <Window type="AlfiskoSkin/Button" name="continueButton" >
                 <Property name="Area" value="{{0.03,0},{0.94,0},{0.48,0},{0.99,0}}" />
                 <Property name="Font" value="DejaVuSans-10" />
@@ -128,7 +139,29 @@
                 <Property name="Font" value="DejaVuSans-10" />
                 <Property name="Text" value="Quit" />
             </Window>
-        </Window>
+		</Window>
+		<Window type="AlfiskoSkin/FrameWindow" name="loadPopup" >
+  			<Property name="Area" value="{{0.4,0},{0.4,0},{0.6,0},{0.6,0}}" />
+            <Property name="Text" value="Load a scene" />
+			<Window type = "AlfiskoSkin/Label" name = "loadLabel">
+				<Property name="Area" value = "{{0.1, 0}, {0.1, 0}, {0.9, 0}, {0.3, 0}}" />
+				<Property name="Text" value = "Enter the file name." />
+			</Window>
+			<Window type="AlfiskoSkin/Editbox" name="loadInput" >
+				<Property name="Area" value = "{{0.1, 0}, {0.5, 0}, {0.9, 0}, {0.8, 0}}" />
+			</Window>
+		</Window>
+		<Window type="AlfiskoSkin/FrameWindow" name="savePopup" >
+			<Property name="Area" value="{{0.4, 0},{0.4,0},{0.6,0},{0.6,0}}" />
+			<Property name="Text" value="Save your scene" />
+			<Window type="AlfiskoSkin/Label" name="saveLabel" >
+				<Property name="Area" value="{{0.1,0},{0.1,0},{0.9,0},{0.3,0}}" />
+				<Property name="Text" value="Enter save file name" />
+			</Window>
+			<Window type="AlfiskoSkin/Editbox" name="saveInput">
+				<Property name="Area" value="{{0.1,0},{0.5,0},{0.9,0},{0.8,0}}" />
+			</Window>
+		</Window>
         <Window type="AlfiskoSkin/FrameWindow" name="PLight" >
             <Property name="Area" value="{{0.7,0},{0.05,0},{0.8,0},{0.75,0}}" />
             <Property name="Font" value="DejaVuSans-10" />

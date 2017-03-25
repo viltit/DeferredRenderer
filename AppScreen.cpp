@@ -1,3 +1,4 @@
+
 #include "AppScreen.hpp"
 #include "vitiGL.hpp"
 
@@ -27,7 +28,7 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	_fork{ _scene }
 {
 	Physics::instance()->setDebugRenderer(glRendererBTDebug::instance());
-	_fork.init();
+	//_fork.init();
 
 
 	_index = SCREEN_INDEX_APP;
@@ -74,7 +75,7 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	/* compound object test: */
 
 
-	/* test: load cylinder obj model: 
+	/* test: load cylinder obj model:
 	_scene.addChild(new Model("Models/cylinder.obj"), "Cylinder");
 	_scene["Cylinder"]->transform.setScale(glm::vec3{ 1.0f, 1.5f, 1.0f });
 	_scene["Cylinder"]->transform.setPos(glm::vec3{ -5.f, 3.0f, -5.0f });
@@ -98,7 +99,7 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	_scene["Wall"]->transform.rotateTo(45.0f, glm::vec3{ 0.0f, 0.0f, 1.0f });
 	_scene["Wall"]->addPhysics(BodyType::cuboid, 0.0f);
 
-	  add a directional and a point light: 
+	//add a directional and a point light: 
 	dLight* dlight = new dLight{ "dlight", glm::vec3{ 0.5f, -1.0f, -0.5f } };
 	dlight->setProperty(lightProps::diffuse, glm::vec3{ 0.8f, 0.1f, 0.0f });
 	dlight->setProperty(lightProps::specular, glm::vec3{ 1.f, 0.0f, 0.0f });
@@ -114,7 +115,7 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	_scene.addChild(plight, "plight");
 	_scene.setShadowcaster("plight");
 
-	 add Skybox: */
+	// add Skybox:
 	std::vector<std::string> faces;
 	faces.push_back("Textures/Skybox/right.jpg");
 	faces.push_back("Textures/Skybox/left.jpg");
@@ -123,7 +124,7 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	faces.push_back("Textures/Skybox/back.jpg");
 	faces.push_back("Textures/Skybox/front.jpg");
 	Skybox* skybox = new Skybox(faces);
-	_scene.addChild(skybox, "Skybox");
+	_scene.addChild(skybox, "Skybox"); */
 
 	_scene.addCamera(&_cam);
 
@@ -194,7 +195,7 @@ int AppScreen::previous() const {
 void AppScreen::updateInput() {
 	SDL_Event input;
 	while (SDL_PollEvent(&input)) {
-		_fork.onSDLEvent(input, _cam);
+		//_fork.onSDLEvent(input, _cam);
 
 		//temporary solution for object picking:
 		Physics::instance()->update(_cam.pos(), _cam.dir(), input);
@@ -249,7 +250,10 @@ void AppScreen::updateInput() {
 				addTetrahedron(1.0, _cam.pos());
 				break;
 			case SDLK_F1:
+				{
+				SceneSaver saver{ &_scene, "test.xml" };
 				break;
+				}
 			case SDLK_F2:
 				break;
 			case SDLK_g:

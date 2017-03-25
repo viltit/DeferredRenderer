@@ -23,11 +23,15 @@ public:
 
 	virtual void draw(const Shader& shader) const override;
 
+	std::vector<std::string>& textures() { return _textures; }
+
 protected:
 	void initVertices();
 
 	GLuint _tbo;
 	GLuint _vao;
 	GLuint _vbo;
+
+	std::vector<std::string> _textures; //for scene saving
 };
 }

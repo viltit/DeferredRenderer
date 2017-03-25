@@ -33,6 +33,9 @@ public:
 	//get the latest screen content:
 	GLuint	texture() const { return _drender.texture(); }
 
+	//get a pointer to the scene:
+	vitiGL::Scene* scene() { return &_scene; }
+
 protected:
 	void updateInput();
 

@@ -30,10 +30,24 @@ private:
 
 	void updateInput();
 
-	/* event handlers: */
+	/* event handlers: ----------------------------------------------- */
+	//close Menus:
+	void onMainClose();
+	void onPLightClose();
+	void onDLightClose();
+	void onSaveClose();
+	void onLoadClose();
+
+	//Push Buttons:
 	bool onExitClicked(const CEGUI::EventArgs& e);
 	bool onContinueClicked(const CEGUI::EventArgs& e);
 
+	bool onLoad(const CEGUI::EventArgs& e);
+	bool onSave(const CEGUI::EventArgs& e);
+	bool onSaveFinished(const CEGUI::EventArgs& e);
+	bool onLoadFinished(const CEGUI::EventArgs& e);
+
+	//Radio Buttons
 	void onPhysicsToggled();
 	void onNormalsToggled();
 	void onWireframeToggled();
@@ -42,6 +56,7 @@ private:
 	void onDShadowToggled();
 	void onBloomToggled();
 
+	//Sliders:
 	void onDLightDiffuse();
 	void onDLightSpecular();
 	void onDLightVector();
@@ -52,6 +67,7 @@ private:
 	void onGammaChanged();
 	void onBloomChanged();
 	void onHdrChanged();
+	/* end of ecent handlers ------------------------------------------ */
 
 	/* Convert Cegui-String from editbox to an int: */
 	int getInt(const std::string& widgetName);

@@ -1,14 +1,20 @@
 #include "SceneSaver.hpp"
 
 #include "Scene.hpp"
+#include "Skybox.hpp"
+
 #include <iostream>
+#include <experimental/filesystem>
 
 using namespace tinyxml2;
+
+namespace fs = std::experimental::filesystem;
 
 namespace vitiGL {
 
 SceneSaver::SceneSaver(Scene* scene, const std::string& fileName) {
 	if (scene) saveScene(scene, fileName);	
+	auto dpath = fs::path(fileName);
 }
 
 SceneSaver::~SceneSaver() {}
@@ -57,6 +63,7 @@ bool SceneSaver::processNode(SceneNode* sceneNode, XMLNode* parent) {
 	auto end = sceneNode->childrenEnd();
 
 	for (auto i = begin; i != end; i++) {
+		std::cout << "SceneSaver: Processing a node named " << (*i)->name() << std::endl;
 		processNode((*i), xnode);
 	}
 
@@ -94,7 +101,7 @@ bool SceneSaver::processObj(SceneNode* sceneNode, XMLNode* xmlNode) {
 	case ObjType::skybox:
 		tag->SetText("Skybox");
 		xmlNode->InsertEndChild(tag);
-		processConfigFile(sceneNode, xmlNode);
+		processSkybox(sceneNode, xmlNode);
 		break;
 	}
 	
@@ -268,6 +275,23 @@ void SceneSaver::processPLight(SceneNode * sceneNode, tinyxml2::XMLNode * parent
 	insert(specular, "B", spec.b);
 }
 
+void SceneSaver::processSkybox(SceneNode* sceneNode, XMLNode* xmlNode) {
+	std::vector<std::string> textures = static_cast<Skybox*>(sceneNode->obj())->textures();
+	std::string names[6] = {
+		"right",
+		"left",
+		"top",
+		"bottom",
+		"back",
+		"front"
+	};
+	XMLNode* tex = _doc.NewElement("Textures");
+	xmlNode->InsertEndChild(tex);
+
+	for (size_t i = 0; i < textures.size(); i++) {
+		insert(tex, names[i], textures[i]);
+	}
+}
 
 void SceneSaver::processConfigFile(SceneNode* sceneNode, XMLNode* parent) {
 	std::string configFile = sceneNode->obj()->file();

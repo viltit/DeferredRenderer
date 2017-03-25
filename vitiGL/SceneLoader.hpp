@@ -32,6 +32,7 @@ private:
 	void processMesh(SceneNode* sceneNode, tinyxml2::XMLNode* xmlParent);
 	void processDLight(SceneNode* sceneNode, tinyxml2::XMLNode* xmlParent);
 	void processPLight(SceneNode* sceneNode, tinyxml2::XMLNode* xmlNode);
+	void processSkybox(SceneNode* sceneNode, tinyxml2::XMLNode* xmlNode);
 
 	vitiGEO::Transform 	processTransform	(tinyxml2::XMLNode* xmlNode);
 	void processPhysics(SceneNode* sceneNode, tinyxml2::XMLNode* xmlNode); //xmlNode -> <Physics>

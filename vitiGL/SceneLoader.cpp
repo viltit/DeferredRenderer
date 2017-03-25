@@ -2,6 +2,7 @@
 
 #include "Scene.hpp"
 #include "Model.hpp"
+#include "Skybox.hpp"
 #include "Camera.hpp"
 #include "Error.hpp"
 
@@ -56,7 +57,7 @@ bool SceneLoader::processNode(SceneNode* sceneParent, XMLNode* xmlParent) {
 		else if (type == "Shape") processShape(sceneParent, xmlParent);
 		else if (type == "dLight") processDLight(sceneParent, xmlParent);
 		else if (type == "pLight") processPLight(sceneParent, xmlParent);
-		else if (type == "Skybox");	
+		else if (type == "Skybox") processSkybox(sceneParent, xmlParent);	
 	}
 	
 	//process all children of this node:
@@ -129,6 +130,26 @@ void SceneLoader::processMesh(SceneNode* sceneNode, XMLNode* xmlNode) {
 	if (pNode) processPhysics(_scene->findByName(name), pNode);	
 }
 
+void SceneLoader::processSkybox(SceneNode* sceneNdoe, XMLNode* xmlNode) {
+	std::string name { getString(xmlNode, "Name") };
+	std::string index[6] = {
+		"right",
+		"left",
+		"top",
+		"bottom",
+		"back",
+		"front"
+	};
+	XMLNode* texNode = xmlNode->FirstChildElement("Textures");
+	if (!texNode) throw vitiError("<SceneLoader::processSkybox> No textures found.");
+
+	std::vector<std::string> textures;
+	for (size_t i = 0; i < 6; i++) {
+		textures.push_back(getString(texNode, index[i]));
+	}
+	Skybox* skybox = new Skybox{ textures };
+	_scene->addChild(skybox, name);
+}
 
 void SceneLoader::processDLight(SceneNode* sceneNode, XMLNode* xmlNode) {
 	glm::vec3 dir 		{ getVector(xmlNode, "Direction") };
@@ -165,6 +186,8 @@ void SceneLoader::processPLight(SceneNode* sceneNode, XMLNode* xmlNode) {
 	_scene->setShadowcaster(name);
 	
 }
+
+
 
 Transform SceneLoader::processTransform(XMLNode* xmlParent) {
 	Transform t;

@@ -1,6 +1,8 @@
 #include "Skybox.hpp"
 
 #include "Shader.hpp"
+#include "Error.hpp"
+
 #include <src/SOIL.h>
 
 namespace vitiGL {
@@ -9,8 +11,11 @@ Skybox::Skybox(const std::vector<std::string>& texturePath)
 	:	IGameObject { ObjType::skybox, "" },
 		_tbo		{ 0 },
 		_vao		{ 0 },
-		_vbo		{ 0 }
+		_vbo		{ 0 },
+		_textures 	{ texturePath }
 {
+	if (texturePath.size() != 6) throw vitiError(
+		"<Skybox::Skybox> Skybox needs exactly six faces");
 
 	/* generate texture and load the cubemap: */
 	glGenTextures(1, &_tbo);
@@ -38,9 +43,9 @@ Skybox::Skybox(const std::vector<std::string>& texturePath)
 }
 
 Skybox::~Skybox() {
-	if (_tbo) glDeleteTextures(1, &_tbo);
-	if (_vao) glDeleteVertexArrays(1, &_vao);
-	if (_vbo) glDeleteBuffers(1, &_vbo);
+	//if (_tbo) glDeleteTextures(1, &_tbo);
+	//if (_vao) glDeleteVertexArrays(1, &_vao);
+	//if (_vbo) glDeleteBuffers(1, &_vbo);
 }
 
 void Skybox::draw(const Shader & shader) const {

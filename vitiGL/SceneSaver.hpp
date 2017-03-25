@@ -23,6 +23,7 @@ private:
 
 	void processDLight(SceneNode* sceneNode, tinyxml2::XMLNode* parent);
 	void processPLight(SceneNode* sceneNode, tinyxml2::XMLNode* parent);
+	void processSkybox(SceneNode* sceneNode, tinyxml2::XMLNode* parent);
 
 	void processConfigFile(SceneNode* sceneNode, tinyxml2::XMLNode* parent);
 
