@@ -4,17 +4,13 @@
 #include "Skybox.hpp"
 
 #include <iostream>
-#include <experimental/filesystem>
 
 using namespace tinyxml2;
-
-namespace fs = std::experimental::filesystem;
 
 namespace vitiGL {
 
 SceneSaver::SceneSaver(Scene* scene, const std::string& fileName) {
 	if (scene) saveScene(scene, fileName);	
-	auto dpath = fs::path(fileName);
 }
 
 SceneSaver::~SceneSaver() {}

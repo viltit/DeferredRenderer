@@ -3,11 +3,16 @@
 #include "App.hpp"
 #include "AppScreen.hpp"
 
+#include <FileIO.hpp>
 #include <SceneSaver.hpp>
+#include <SceneLoader.hpp>
 
 #include <sstream>
 #include <iomanip>
 #include <Physics.hpp>
+
+//Define path for saved scenes
+#define SAVEDIR "Scenes/"
 
 using namespace vitiGL;
 using namespace vitiGEO;
@@ -23,7 +28,7 @@ MenuScreen::MenuScreen(App* app, AppScreen* appScreen, vitiGL::Window* window)
 	_index = SCREEN_INDEX_MENU;
 
 	/* Initialize gui elements: */
-	_gui.setScheme("AlfiskoSkin.scheme");
+	_gui.setScheme("GWEN.scheme");
 	_gui.setFont("DejaVuSans-10");
 	_gui.setMouseCursor("AlfiskoSkin/MouseArrow");
 
@@ -132,14 +137,6 @@ void MenuScreen::initGUI() {
 	frameDLight->subscribeEvent(
 		CEGUI::FrameWindow::EventCloseClicked,
 		CEGUI::Event::Subscriber(&MenuScreen::onDLightClose, this));
-	auto saveWidget = static_cast<CEGUI::FrameWindow*>(_menu->getChild("savePopup"));
-	saveWidget->subscribeEvent(
-		CEGUI::FrameWindow::EventCloseClicked,
-		CEGUI::Event::Subscriber(&MenuScreen::onSaveClose, this));
-	auto loadWidget = static_cast<CEGUI::FrameWindow*>(_menu->getChild("loadPopup"));
-	loadWidget->subscribeEvent(
-		CEGUI::FrameWindow::EventCloseClicked,
-		CEGUI::Event::Subscriber(&MenuScreen::onLoadClose, this));
 
 	//Exit and Continue Button:
 	auto exitButton = static_cast<CEGUI::PushButton*>(_menu->getChild("General")->getChild("quitButton"));
@@ -157,15 +154,39 @@ void MenuScreen::initGUI() {
 	loadButton->subscribeEvent(
 		CEGUI::PushButton::EventClicked,
 		CEGUI::Event::Subscriber(&MenuScreen::onLoad, this));
-
 	auto saveButton = static_cast<CEGUI::PushButton*>(_menu->getChild("General")->getChild("saveButton"));
 	saveButton->subscribeEvent(
 		CEGUI::PushButton::EventClicked,
 		CEGUI::Event::Subscriber(&MenuScreen::onSave, this));
-	//Save Scene Editbox handler:
-	_menu->getChild("savePopup")->getChild("saveInput")->subscribeEvent(
-		CEGUI::Editbox::EventTextAccepted,
-		CEGUI::Event::Subscriber(&MenuScreen::onSaveFinished, this));	
+
+	//SavePopup Events
+	auto savePopup = static_cast<CEGUI::FrameWindow*>(_menu->getChild("savePopup"));
+	savePopup->subscribeEvent(
+		CEGUI::FrameWindow::EventCloseClicked,
+		CEGUI::Event::Subscriber(&MenuScreen::onSaveCancel, this));		
+	auto savePopupOK = static_cast<CEGUI::PushButton*>(_menu->getChild("savePopup")->getChild("saveOK"));
+	savePopupOK->subscribeEvent(
+		CEGUI::PushButton::EventClicked,
+		CEGUI::Event::Subscriber(&MenuScreen::onSaveFinished, this));		
+	auto savePopupCancel = static_cast<CEGUI::PushButton*>(_menu->getChild("savePopup")->getChild("saveCancel"));
+	savePopupCancel->subscribeEvent(
+		CEGUI::PushButton::EventClicked,
+		CEGUI::Event::Subscriber(&MenuScreen::onSaveCancel, this));		
+
+	//LoadPopup Events
+	auto loadPopup = static_cast<CEGUI::FrameWindow*>(_menu->getChild("loadPopup"));
+	loadPopup->subscribeEvent(
+		CEGUI::FrameWindow::EventCloseClicked,
+		CEGUI::Event::Subscriber(&MenuScreen::onLoadCancel, this));		
+	auto loadPopupOK = static_cast<CEGUI::PushButton*>(_menu->getChild("loadPopup")->getChild("loadOK"));
+	loadPopupOK->subscribeEvent(
+		CEGUI::PushButton::EventClicked,
+		CEGUI::Event::Subscriber(&MenuScreen::onLoadFinished, this));		
+	auto loadPopupCancel = static_cast<CEGUI::PushButton*>(_menu->getChild("loadPopup")->getChild("loadCancel"));
+	loadPopupCancel->subscribeEvent(
+		CEGUI::PushButton::EventClicked,
+		CEGUI::Event::Subscriber(&MenuScreen::onLoadCancel, this));		
+
 
 	initRadioButtons();
 	initSliders();
@@ -323,14 +344,6 @@ void MenuScreen::onDLightClose() {
 	_menu->getChild("DLight")->hide();
 }
 
-void MenuScreen::onSaveClose() {
-	_menu->getChild("savePopup")->hide();
-}
-
-void MenuScreen::onLoadClose() {
-	_menu->getChild("loadPopup")->hide();
-}
-
 void MenuScreen::onPLightClose() {
 	_menu->getChild("PLight")->hide();
 }
@@ -346,20 +359,56 @@ bool MenuScreen::onContinueClicked(const CEGUI::EventArgs & e) {
 }
 
 bool MenuScreen::onLoad(const CEGUI::EventArgs& e) {
-	auto loadWidget = static_cast<CEGUI::FrameWindow*>(_menu->getChild("loadPopup"));
-	auto saveWidget = static_cast<CEGUI::FrameWindow*>(_menu->getChild("savePopup"));
+	_menu->getChild("savePopup")->hide();	
+	_menu->getChild("loadPopup")->show();
 
-	saveWidget->hide();
-	loadWidget->show();
+	CEGUI::Combobox* comboBox = static_cast<CEGUI::Combobox*>(_menu->getChild("loadPopup")->getChild("loadInput"));
+
+	//empty the combo box
+	comboBox->clearAllSelections();
+	for (auto& e : _loadList) comboBox->removeItem(e);
+	_loadList.clear();
+
+
+	//get all files in our save directory
+	std::vector<DirEntry> entries;
+	if (!FileIO::dirEntries(SAVEDIR, entries)) return false;
+	
+	//add these files to the Combobox
+	for (auto& e : entries) {
+		if (!e.isDir) {
+			e.path.erase(0, std::string(SAVEDIR).size()); //remove "Scenes/"
+			_loadList.push_back(new CEGUI::ListboxTextItem(e.path));
+			comboBox->addItem(_loadList.back());
+		}
+	}		
+
 	return true;
 }
 
 bool MenuScreen::onSave(const CEGUI::EventArgs& e) {
-	auto saveWidget = static_cast<CEGUI::FrameWindow*>(_menu->getChild("savePopup"));
-	auto loadWidget = static_cast<CEGUI::FrameWindow*>(_menu->getChild("loadPopup"));
+	_menu->getChild("savePopup")->show();
+	_menu->getChild("loadPopup")->hide();
 
-	loadWidget->hide();
-	saveWidget->show();
+	CEGUI::Combobox* comboBox = static_cast<CEGUI::Combobox*>(_menu->getChild("savePopup")->getChild("saveInput"));
+
+	//emtpy the combobox:
+	comboBox->clearAllSelections();
+	for (auto& e: _saveList) comboBox->removeItem(e);
+  	_saveList.clear();
+
+	//get all files in our save dir:
+	std::vector<DirEntry> entries;
+	if (!FileIO::dirEntries(SAVEDIR, entries)) return false;
+
+	//and add these files to the Combobox:
+	for (auto& e : entries) {
+		if (!e.isDir) {
+			e.path.erase(0, std::string(SAVEDIR).size()); //remove "Scenes/"
+			_saveList.push_back(new CEGUI::ListboxTextItem(e.path));
+			comboBox->addItem(_saveList.back());
+		}
+	}		
 
 	return true;
 }
@@ -383,15 +432,14 @@ bool MenuScreen::onSaveFinished(const CEGUI::EventArgs& e) {
 	}
 
 	//finally, add our subpath for the savefiles:
-	std::string subpath = "SavedScenes/";
+	std::string subpath = SAVEDIR;
 	filename = subpath + filename;
 
 	try {
 		SceneSaver saver { _appScreen->scene(), filename };
 	}
+
 	catch(vitiError e) {
-		auto saveLabel = static_cast<CEGUI::FrameWindow*>(_menu->getChild("savePopup")->getChild("saveLabel"));
-		saveLabel->setText("Error while saving file.");
 		return false;		
 	}
 
@@ -402,8 +450,45 @@ bool MenuScreen::onSaveFinished(const CEGUI::EventArgs& e) {
 }
 
 bool MenuScreen::onLoadFinished(const CEGUI::EventArgs& e) {
+	//get the path of the file to load:
+	std::string filename = _menu->getChild("loadPopup")->getChild("loadInput")->getText().c_str();
+	filename = SAVEDIR + filename;
 
+	//TO DO: Check for errors
+	
+	//get the root node of the existing scene and delete it:
+	std::cout << "\n\nMENU ---> LOADING A NEW SCENE from file " << filename << "..................\n";
+	Scene* scene = _appScreen->scene();
+
+	std::cout << "Removing root scene node...\n";
+	scene->remove("root");
+
+	//make sure all scene lists are empty:
+	std::cout << "Make all scene lists empty...\n";
+	scene->updateLists();
+
+	//Load the new scene:
+	Camera cam = _appScreen->_cam;
+	SceneLoader loader(scene, &cam, filename);	
+	
+	_menu->getChild("loadPopup")->hide();
+	std::cout << "<MenuScreen::onLoadFinished> Finished.\n";
+
+	//debug:
+	SceneNode* node = scene->findByName("root");
+	for (auto& i = node->childrenBegin(); i != node->childrenEnd(); i++) {
+		if (!(*i)) std::cout << "ROOT HAS NULLPTR AS CHILDREN\n";
+	}
+	
 	return true;
+}
+
+void MenuScreen::onLoadCancel() {
+	_menu->getChild("loadPopup")->hide();
+}
+
+void MenuScreen::onSaveCancel() {
+	_menu->getChild("savePopup")->hide();
 }
 
 void MenuScreen::onPhysicsToggled() {

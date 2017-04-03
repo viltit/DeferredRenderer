@@ -139,7 +139,7 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	//test: save scene
 	//SceneSaver saver{ &_scene, "scene.xml" };
 	//and load:
-	SceneLoader loader{ &_scene, &_cam,  "scene.xml" };
+	SceneLoader loader{ &_scene, &_cam,  "Scenes/test.xml" };
 }
 
 

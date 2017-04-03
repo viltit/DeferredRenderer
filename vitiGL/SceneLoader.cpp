@@ -6,7 +6,6 @@
 #include "Camera.hpp"
 #include "Error.hpp"
 
-
 using namespace tinyxml2;
 using namespace vitiGEO;
 
@@ -17,6 +16,7 @@ SceneLoader::SceneLoader(Scene* scene, Camera* cam, const std::string& filePath)
 	_cam{ cam },
 	_filename{ filePath }
 {
+	std::cout << "<SceneLoader::SceneLoader> Constructor invoked\n";
 	assert(_scene);
 	assert(_cam);
 	
@@ -37,6 +37,8 @@ SceneLoader::SceneLoader(Scene* scene, Camera* cam, const std::string& filePath)
 
 	//now process all the roots children by recursion:
 	processNode(_scene->findByName("root"), root);	
+
+	std::cout << "<SceneLoader::SceneLoader> Finished!\n";
 }
 
 SceneLoader::~SceneLoader() 
@@ -141,8 +143,6 @@ void SceneLoader::processSkybox(SceneNode* sceneNdoe, XMLNode* xmlNode) {
 		"front"
 	};
 	XMLNode* texNode = xmlNode->FirstChildElement("Textures");
-	if (!texNode) throw vitiError("<SceneLoader::processSkybox> No textures found.");
-
 	std::vector<std::string> textures;
 	for (size_t i = 0; i < 6; i++) {
 		textures.push_back(getString(texNode, index[i]));

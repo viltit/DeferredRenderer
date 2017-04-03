@@ -137,7 +137,11 @@ public:
 	/* access scene elements: */
 	SceneNode* findByName(const std::string& name);
 	
+	//update all scene objects
 	void update(const Uint32& deltaTime);
+
+	//check lists for nullpointer sceneNodes and remove them:
+	void updateLists();
 
 	/* draw every Shape in the scene: */
 	void drawShapes(const Shader& shader);

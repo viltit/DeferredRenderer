@@ -121,17 +121,34 @@ void SceneNode::removeChild(SceneNode * s) {
 }
 
 void SceneNode::remove() {
-	/* tell the parent that the child is dead: */
-	for (auto i = _parent->childrenBegin(); i != _parent->childrenEnd(); i++) {
-		if (*i == this) {
-			_parent->_children.erase(i);
+	/*
+	if (_obj) {
+		std::cout << "... deleting _obj...\n";
+		delete _obj;
+		_obj = nullptr;
+	}
+	if (_physics) {
+		std::cout << "...deleting _physics...\n";
+		delete _physics;
+		_physics = nullptr;
+	}*/
 
-#ifdef CONSOLE_LOG
-			std::cout << "Deleting a child named " << _name << " from parent " << _parent->name() << std::endl;
-#endif
-			break;
+	/* tell the parent that the child is dead: */
+	if (_parent) {
+		for (auto i = _parent->childrenBegin(); i != _parent->childrenEnd(); i++) {
+			if (*i == this) {
+				_parent->_children.erase(i);
+			}
 		}
 	}
+
+	/*delete all children:
+	for (auto& C : _children) {
+		if (C) {
+			delete C;
+			C = nullptr;
+		}
+	}*/
 }
 
 
@@ -429,6 +446,9 @@ void Scene::removeFromList(SceneNode * node) {
 }
 
 void Scene::remove(const std::string & name) {
+	std::cout << "<SceneNode::remove> invoked for a node named " << name << std::endl;
+
+	bool newRoot{ false };
 	SceneNode* node = findByName(name);
 	if (!node) 
 		throw vitiError(("<Scene::remove>Trying to remove an inexisting scene node with the name " + name).c_str());
@@ -436,12 +456,21 @@ void Scene::remove(const std::string & name) {
 	/* tell the nodes parent its child has died: */
 	node->remove();
 
+	/* we always need a root */
+	if (node == _root) newRoot = true;
+
 	/* take the nodes game object and all its children out of the respective scene lists: */
 	removeFromList(node);
 
 	/* delete the node and all its children from memory: */
 	delete node;
 	node = nullptr;
+
+	if (newRoot) {
+		std::string name = "root";
+		_root = new SceneNode{ name };
+		_scene.insert(std::make_pair(name, _root));
+	}
 }
 
 
@@ -454,6 +483,24 @@ SceneNode * Scene::findByName(const std::string & name) {
 
 void Scene::update(const Uint32 & deltaTime) {
 	_root->update(deltaTime);
+}
+
+void Scene::updateLists() {
+	for (auto& N : _scene) {
+		if (!N.second) _scene.erase(N.first);
+	}
+	for (auto& N : _shapes) {
+		if (!N.second) _shapes.erase(N.first);
+	}
+	for (auto& N : _transparent) {
+		if (!N.second) _transparent.erase(N.first);
+	}
+	for (auto& N : _dlights) {
+		if (!N.second) _dlights.erase(N.first);
+	}
+	for (auto& N : _plights) {
+		if (!N.second) _plights.erase(N.first);
+	}
 }
 
 void Scene::drawShapes(const Shader & shader) {

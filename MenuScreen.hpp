@@ -35,8 +35,6 @@ private:
 	void onMainClose();
 	void onPLightClose();
 	void onDLightClose();
-	void onSaveClose();
-	void onLoadClose();
 
 	//Push Buttons:
 	bool onExitClicked(const CEGUI::EventArgs& e);
@@ -46,6 +44,8 @@ private:
 	bool onSave(const CEGUI::EventArgs& e);
 	bool onSaveFinished(const CEGUI::EventArgs& e);
 	bool onLoadFinished(const CEGUI::EventArgs& e);
+	void onLoadCancel();
+	void onSaveCancel();
 
 	//Radio Buttons
 	void onPhysicsToggled();
@@ -86,6 +86,7 @@ private:
 	/* this map stores all sliders: */
 	std::map<std::string, CEGUI::Slider*> _sliders;
 
-	CEGUI::PushButton*	_quitButton;
+	std::vector<CEGUI::ListboxTextItem*> _loadList;
+	std::vector<CEGUI::ListboxTextItem*> _saveList;
 };
 
