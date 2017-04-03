@@ -437,5 +437,14 @@ BodyType stringToBodyType(const std::string& name) {
 	}
 
 	ConeObject::~ConeObject() {
+		if (_body) {
+			Physics::instance()->removeObject(this);
+			delete _body;
+			_body = nullptr;
+		}
+		if (_shape) {
+			delete _shape;
+			_shape = nullptr;
+		}
 	}
 }

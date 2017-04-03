@@ -456,29 +456,36 @@ bool MenuScreen::onLoadFinished(const CEGUI::EventArgs& e) {
 
 	//TO DO: Check for errors
 	
-	//get the root node of the existing scene and delete it:
-	std::cout << "\n\nMENU ---> LOADING A NEW SCENE from file " << filename << "..................\n";
-	Scene* scene = _appScreen->scene();
+	try {
+		//get the root node of the existing scene and delete it:
+		std::cout << "\n\nMENU ---> LOADING A NEW SCENE from file " << filename << "..................\n";
+		Scene* scene = _appScreen->scene();
+		scene->remove("root");
 
-	std::cout << "Removing root scene node...\n";
-	scene->remove("root");
+		//make sure all scene lists are empty:
+		scene->updateLists();
 
-	//make sure all scene lists are empty:
-	std::cout << "Make all scene lists empty...\n";
-	scene->updateLists();
+		//reset Physics:
+		Physics::instance()->reset();
+		Physics::instance()->setDebugRenderer(glRendererBTDebug::instance());
 
-	//Load the new scene:
-	Camera cam = _appScreen->_cam;
-	SceneLoader loader(scene, &cam, filename);	
+		//Load the new scene:
+		Camera cam = _appScreen->_cam;
+		SceneLoader loader(scene, &cam, filename);
+
+
+		_state = ScreenState::next;
+	}
+
+	catch (vitiError e) {
+		std::cout << "<MenuScreen::onLoadFinished> Error." << std::endl;
+		return false;
+	}
 	
 	_menu->getChild("loadPopup")->hide();
-	std::cout << "<MenuScreen::onLoadFinished> Finished.\n";
 
-	//debug:
-	SceneNode* node = scene->findByName("root");
-	for (auto& i = node->childrenBegin(); i != node->childrenEnd(); i++) {
-		if (!(*i)) std::cout << "ROOT HAS NULLPTR AS CHILDREN\n";
-	}
+	//re-adjust sliders:
+	onEntry();
 	
 	return true;
 }

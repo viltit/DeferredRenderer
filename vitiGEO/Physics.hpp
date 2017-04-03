@@ -38,6 +38,9 @@ namespace vitiGEO {
 		void update(unsigned int deltaTime);
 		void update(const glm::vec3& camPos, const glm::vec3& camDir, const SDL_Event& input);
 
+		//delete physics and restart:
+		void reset();
+
 		void addObject(PhysicObject* obj);
 		void removeObject(PhysicObject* obj);
 

@@ -72,6 +72,20 @@ void Physics::update(const glm::vec3& camPos, const glm::vec3& camDir, const SDL
 	}
 }
 
+void Physics::reset() {
+	DELETE(_world);
+	DELETE(_solver);
+	DELETE(_broadphase);
+	DELETE(_dispatcher);
+	DELETE(_config);
+
+	_config = new btDefaultCollisionConfiguration();
+	_dispatcher = new btCollisionDispatcher(_config);
+	_broadphase = new btDbvtBroadphase();
+	_solver = new btSequentialImpulseConstraintSolver();
+	_world = new btDiscreteDynamicsWorld(_dispatcher, _broadphase, _solver, _config);
+}
+
 void Physics::addObject(PhysicObject* obj) {
 	_world->addRigidBody(obj->body());
 	_bodies.push_back(obj);

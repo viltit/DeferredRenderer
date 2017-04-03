@@ -139,7 +139,7 @@ AppScreen::AppScreen(App* app, vitiGL::Window* window)
 	//test: save scene
 	//SceneSaver saver{ &_scene, "scene.xml" };
 	//and load:
-	SceneLoader loader{ &_scene, &_cam,  "Scenes/test.xml" };
+	SceneLoader loader{ &_scene, &_cam,  "Scenes/bug.xml" };
 }
 
 
@@ -263,6 +263,7 @@ void AppScreen::updateInput() {
 			case SDLK_F4:
 				break;
 			case SDLK_F5:
+				_scene.print();
 				break;
 			case SDLK_F6:
 				break;

@@ -187,20 +187,28 @@ public:
 	}
 
 	//debug:
-	void print() {
-		std::cout << "--------------- SCENE NODES:\n";
-		for (auto& S : _scene) {
-			std::cout << "scene node name: " << S.first << "\t\tMemory address: " << S.second << std::endl;
-		}
+	void print(SceneNode* node = nullptr) {
+		if (!node) node = _root;
 
-		std::cout << "--------------- SHAPE LIST:\n";
-		for (auto& S : _shapes) {
-			std::cout << S.first << "\t\tMemory address: " << S.second << std::endl;
-		}
+		std::cout << "--------- LIST OF ALL SCENE ELEMENTS --------------- \n";
+		for (auto i = node->childrenBegin(); i != node->childrenEnd(); i++) {
+			std::cout << "Name: " << (*i)->name();
+			if ((*i)->parent()) std::cout << "\tParent: " << (*i)->parent()->name();   
+			else std::cout << "\tParent: none";
 
-		std::cout << "--------------- TRANSPARENT LIST:\n";
-		for (auto& S : _transparent) {
-			std::cout << S.first << "\t\tMemory address: " << S.second << std::endl;
+			std::cout << "\tPhysics: ";
+			if ((*i)->physics()) std::cout << "yes";
+			else std::cout << "no";
+			
+			std::cout << "\tPos: ";
+			if ((*i)->type() == ObjType::dlight) std::cout << static_cast<dLight*>((*i)->obj())->dir();
+			else if ((*i)->type() == ObjType::plight) {
+				std::cout << static_cast<pLight*>((*i)->obj())->pos();
+				std::cout << static_cast<pLight*>((*i)->obj())->attenuation();
+			}
+			else std::cout << (*i)->transform.pos();
+
+			std::cout << "\n";
 		}
 	}
 
