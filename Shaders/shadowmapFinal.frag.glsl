@@ -52,13 +52,15 @@ float updateDirShadow(int c) {
 	float bias = max(0.0005 * dot(1.0 - normalize(fsIn.normal), dlightDir), 0.00005);
 	fragPosNormed.z -= bias;
 
-	/* take samples and average them for smooth shadows: */
+	/* take samples and average them for smooth shadows: 
+	==> this somehow makes cascade borders visible
 	float shadow = 0;
 	for (int x = -1; x <= 1; x++) {
 		for (int y = -1; y <= 1; y++) {
 			shadow += textureProjOffset(shadowMap[c], fragPosNormed, ivec2(x, y));
 		}
-	}
+	}*/
+	float shadow = texture(shadowMap[c], fragPosNormed.xyz);
 
-	return (shadow / 9.0f);
+	return (shadow);
 }
